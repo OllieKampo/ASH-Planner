@@ -1,0 +1,1 @@
+This folder contains configuration files for ASH corresponding to each Blocks World Plus (BWP) experimental problem included in the thesis.

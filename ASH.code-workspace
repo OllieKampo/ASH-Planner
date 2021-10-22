@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"workbench.panel.defaultLocation": "right",
+		"python.terminal.activateEnvInCurrentTerminal": true,
+		"cSpell.words": [
+			"UNSAT",
+			"constrs",
+			"outf"
+		],
+		"python.pythonPath": "C:\\Users\\Ollie Kampo\\Anaconda3\\envs\\ASH\\python.exe"
+	}
+}

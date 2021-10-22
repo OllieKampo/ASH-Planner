@@ -1,0 +1,19 @@
+{
+    "name" : "Electric Vehicle Remanufacturing",
+    "acronym" : "EVR",
+    "systems" : {
+        "simple" : "",
+        "moderate" : "",
+        "complex" : ""
+    },
+    "worlds" : {
+        "small" : "",
+        "medium" : "",
+        "large" : ""
+    },
+    "problems" : {
+        "easy" : "",
+        "normal" : "",
+        "hard" : ""
+    }
+}

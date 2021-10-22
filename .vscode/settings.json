@@ -1,0 +1,7 @@
+{
+    "python.pythonPath": "C:\\Users\\Ollie Kampo\\anaconda3\\envs\\ASH_2\\python.exe",
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true,
+    "python.linting.mypyEnabled": false
+}

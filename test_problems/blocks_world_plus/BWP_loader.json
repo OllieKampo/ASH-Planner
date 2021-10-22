@@ -1,0 +1,19 @@
+{
+    "name" : "The Blocks World Plus",
+    "acronym" : "BWP",
+    "systems" : {
+        "standard" : "BWP_system_laws_standard.lp",
+        "tasking" : "BWP_system_laws_tasking.lp",
+        "complex" : "BWP_system_laws_complex.lp"
+    },
+    "worlds" : {
+        "small" : "BWP_world_structure_puzzles_1.py",
+        "medium" : "BWP_world_structure_puzzles_3.py",
+        "large" : "BWP_world_structure_puzzles_5.py"
+    },
+    "problems" : {
+        "easy" : "BWP_problem_basic.py",
+        "normal" : "BWP_problem_closed_doors.py",
+        "hard" : "BWP_problem_closed_doors_extra_travel.py"
+    }
+}

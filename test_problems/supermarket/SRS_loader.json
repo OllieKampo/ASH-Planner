@@ -1,0 +1,19 @@
+{
+    "name" : "Supermarket Restocking",
+    "acronym" : "SRS",
+    "systems" : {
+        "simple" : "",
+        "moderate" : "",
+        "complex" : ""
+    },
+    "worlds" : {
+        "small" : "",
+        "medium" : "",
+        "large" : ""
+    },
+    "problems" : {
+        "easy" : "",
+        "normal" : "",
+        "hard" : ""
+    }
+}

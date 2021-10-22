@@ -1,0 +1,1 @@
+node(4).node(1).node(3).node(5).node(10).node(8).node(6).node(7).node(2).node(9).delivery_node(4).delivery_node(8).delivery_node(2).delivery_node(1).arc(2,4).arc(6,7).arc(9,8).arc(5,2).arc(2,10).arc(1,10).arc(10,2).arc(1,4).arc(3,5).arc(4,5).arc(3,1).arc(7,8).arc(9,6).arc(8,9).arc(5,3).arc(10,1).arc(8,7).arc(7,9).arc(6,3).arc(4,6).
