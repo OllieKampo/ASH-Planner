@@ -35,33 +35,29 @@ from core.Helpers import center_text
 _EXP_logger: logging.Logger = logging.getLogger(__name__)
 _EXP_logger.setLevel(logging.DEBUG)
 
-class Results(_collections_abc.MutableSet):
-    "Encapsulates the results of experimental trails as a set of hierarchical plans."
+class Results:
+    "Encapsulates the results of experimental trails as a collection of hierarchical plans."
     
     __slots__ = ("__plans",
                  "__dataframe",
                  "__is_changed")
     
     def __init__(self) -> None:
-        self.__plans: set[Planner.HierarchicalPlan] = {}
+        self.__plans: list[Planner.HierarchicalPlan] = []
         self.__dataframe: Optional[pandas.DataFrame] = None
         self.__is_changed: bool = False
     
-    def __contains__(self, x: object) -> bool:
-        return x in self.__plans
+    def __getitem__(self, index: int) -> Planner.HierarchicalPlan:
+        return self.__plans[index]
     
     def __iter__(self) -> Iterator[Planner.HierarchicalPlan]:
         yield from self.__plans
     
     def __len__(self) -> int:
-        return len(self.plans)
+        return len(self.__plans)
     
     def add(self, plan: Planner.HierarchicalPlan) -> None:
-        self.__plans.add(plan)
-        self.__is_changed = True
-    
-    def discard(self, plan: Planner.HierarchicalPlan) -> None:
-        self.__plans.discard(plan)
+        self.__plans.append(plan)
         self.__is_changed = True
     
     @property
@@ -89,10 +85,11 @@ class Results(_collections_abc.MutableSet):
         
         max_: int = 100
         
-        # ## Collate the data into a dictionary
-        # data_dict: Dict[str, List[float]] = {"Run" : [], "Inc" : [], "AL" : [], "GT" : [], "ST" : [], "TT" : [], "L" : [], "A" : []}
+        ## Collate the data into a dictionary
+        data_dict: dict[str, list[float]] = {"Run" : [], "Inc" : [], "AL" : [], "GT" : [], "ST" : [], "TT" : [], "L" : [], "A" : []}
+        
         # for run, datum in enumerate(self.data):
-        #     curr_step: Dict[int, Dict[int, int]] = {}
+        #     curr_step: dict[int, dict[int, int]] = {}
         #     for iteration in datum.statistics:
         #         curr_step[iteration] = {}
         #         for level in datum.statistics[iteration]:
@@ -127,7 +124,7 @@ class Results(_collections_abc.MutableSet):
         self.__dataframe = pandas.DataFrame(data_dict)
         return self.__dataframe
     
-    def to_dsv(self, file: str, sep: str =" ", endl: str = "\n", index: bool = True) -> None:
+    def to_dsv(self, file: str, sep: str = " ", endl: str = "\n", index: bool = True) -> None:
         "Save the currently collected data to a Delimiter-Seperated Values (DSV) file."
         dataframe = self.process()
         dataframe.to_csv(file, sep=sep, line_terminator=endl, index=index)
@@ -165,43 +162,43 @@ class Experiment:
     def run_experiments(self) -> Results:
         results: Results = self.__run_all()
         dataframe: pandas.DataFrame = results.process()
-        _EXP_logger.info(center_text("Experimental Results", prefix="\n\n", postfix="\n\n", framing_width=40, centering_width=60)
-                         + dataframe.to_string(columns=["RU", "IT", "AL", "GT", "ST", "TT", "S", "A"], index=False))
+        # _EXP_logger.info("\n\n" + center_text("Experimental Results", framing_width=40, centering_width=60)
+        #                  + "\n\n" + dataframe.to_string(columns=["RU", "IT", "AL", "GT", "ST", "TT", "S", "A"], index=False))
         return results
     
     def __run_all(self) -> Results:
-        _EXP_logger.info(center_text(f"Running experiments : Initial runs = {self.__initial_runs} : Experimental runs = {self.__experimental_runs}",
-                                     prefix="\n\n", framing_width=96, centering_width=100, framing_char="#"))
+        _EXP_logger.info("\n\n" + center_text(f"Running experiments : Initial runs = {self.__initial_runs} : Experimental runs = {self.__experimental_runs}",
+                                              framing_width=96, centering_width=100, framing_char="#"))
         
         results = Results()
         hierarchical_plan: Planner.HierarchicalPlan
         planning_time: float
         
         ## Do initial runs
-        for run in tqdm.tqdm(range(1, self.__initial_runs + 1), disable=not self.__enable_tqdm, leave=False, ncols=180, colour="purple"):
+        for run in tqdm.tqdm(range(1, self.__initial_runs + 1), desc="Initial runs completed", disable=not self.__enable_tqdm, leave=False, ncols=180, colour="white", unit="run"):
             hierarchical_plan, planning_time = self.__run()
             _EXP_logger.log(logging.DEBUG if self.__enable_tqdm else logging.INFO,
-                            center_text(f"Initial run {run} : Time {planning_time:.6f}s",
-                                        prefix="\n\n", framing_width=48, centering_width=60))
+                            "\n\n" + center_text(f"Initial run {run} : Time {planning_time:.6f}s",
+                                                 framing_width=48, centering_width=60))
         
         experiment_real_start_time = time.perf_counter()
         experiment_process_start_time = time.process_time()
         
         ## Do experimental runs
-        for run in tqdm.tqdm(range(1, self.__experimental_runs + 1), disable=not self.__enable_tqdm, leave=False, ncols=180, colour="purple"):
+        for run in tqdm.tqdm(range(1, self.__experimental_runs + 1), desc="Experimental runs completed", disable=not self.__enable_tqdm, leave=False, ncols=180, colour="white", unit="run"):
             hierarchical_plan, planning_time = self.__run()
             results.add(hierarchical_plan)
             _EXP_logger.log(logging.DEBUG if self.__enable_tqdm else logging.INFO,
-                            center_text(f"Experimental run {run} : Time {planning_time:.6f}s",
-                                        prefix="\n\n", framing_width=48, centering_width=60))
+                            "\n\n" + center_text(f"Experimental run {run} : Time {planning_time:.6f}s",
+                                                 framing_width=48, centering_width=60))
         
         experiment_real_total_time: float = time.perf_counter() - experiment_real_start_time
         experiment_process_total_time: float = time.process_time() - experiment_process_start_time
         
-        _EXP_logger.info(center_text(f"Completed {self.__experimental_runs} experimental runs : "
-                                     f"Real time {experiment_real_total_time:.6f}s, "
-                                     f"Proccess time {experiment_process_total_time:.6f}s",
-                                     prefix="\n\n", framing_width=96, centering_width=100, framing_char="#"))
+        _EXP_logger.info("\n\n" + center_text(f"Completed {self.__experimental_runs} experimental runs : "
+                                              f"Real time {experiment_real_total_time:.6f}s, "
+                                              f"Proccess time {experiment_process_total_time:.6f}s",
+                                              framing_width=96, centering_width=100, framing_char="#"))
         
         return results
     

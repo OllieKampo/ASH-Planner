@@ -22,21 +22,20 @@
 import argparse
 import datetime
 import functools
+import itertools
 import logging
 import os
 import sys
 from typing import Any, Optional, Sequence, Type, Union
 import time
 import json
-from unicodedata import name
 import numpy
 from matplotlib import pyplot
-from scipy.linalg.basic import solve
 
 import core.Planner as Planner
 import core.Strategies as Strategies
 from core.Helpers import center_text
-# import Experiment
+import Experiment
 
 ## Main module logger
 _Launcher_logger: logging.Logger = logging.getLogger(__name__)
@@ -212,9 +211,9 @@ def __main() -> int:
     
     ## Find the verbosity mode;
     ##      - Results is a special mode where output from the planner is disabled and only experimental results are shown
-    if namespace.ash_output != "results":
+    if namespace.ash_output != "experiment":
         verbosity = Planner.Verbosity[namespace.ash_output.capitalize()]
-    else: verbosity = Planner.Verbosity.Disable
+    else: verbosity = Planner.Verbosity.Minimal
     
     ## Setup the planner
     planner = Planner.HierarchicalPlanner(namespace.files, name="Main", threads=namespace.threads,
@@ -302,19 +301,30 @@ def __main() -> int:
                 ## Obtain the bounds, blends and backwards horizon for the strategy
                 bounds: dict[int, Union[Number, tuple[Number]]] = {}
                 blend: dict[int, Strategies.Blend] = {}
+                horizon: dict[int, Number] = {}
                 
-                for level in planner.domain.level_range:
+                level_range: range = planner.constrained_level_range(namespace.bottom_level, namespace.top_level)
+                for level in level_range:
                     bounds[level] = get_hierarchical_arg(namespace.division_strategy_bounds, level)
                     blend[level] = Strategies.Blend(get_hierarchical_arg(namespace.left_blend_quantities, level, 0),
                                                     get_hierarchical_arg(namespace.right_blend_quantities, level, 0))
+                    horizon[level] = get_hierarchical_arg(namespace.backwards_horizon, level)
                     
+                    ## Blending together more than half of partial problems is generally not advisable;
+                    ##      - In particular, if the right blend of problem X overlaps with the left blend of problem X + 2, then problem X + 1
                     if ((isinstance((left := blend[level].left), float) and left > 0.5)
                         or isinstance((right := blend[level].right), float) and right > 0.5):
                         _Launcher_logger.warn("Blend quantities of greater than 0.5 are generally detrimental to performance.")
+                    
+                    ## Ensure that there is not a left blend requiring revision of a refined plan on a saved grounding;
+                    ##      - It is not possible to do this since it is not possible to change any sub-goal stages that have already been committed.
+                    if (namespace.save_grounding
+                        and not namespace.avoid_refining_sgoals_marked_for_blending
+                        and blend[level].left > 0):
+                        raise ValueError("It is not possible to left blend on a saved grounding without avoiding refining sgoals marked for blending.")
                 
                 ## Instantiate the strategy with its specific bounds
                 reactive_bound_type = Strategies.ReactiveBoundType(f"{namespace.bound_type}_time_bound")
-                horizon: Number = namespace.backwards_horizon
                 moving_average: int = namespace.moving_average
                 preemptive: bool = namespace.preemptive_division
                 interrupting: bool = namespace.interrupting_division
@@ -422,57 +432,168 @@ def __main() -> int:
         
         ## Graphify statistics as requested
         if namespace.display_graph:
-            # __display_graphs()
-            ## TODO Do this for each partial problem/plan
-            func, x_points, y_points, popt, pcov = hierarchical_plan[namespace.bottom_level].regress_total_time
+            # __display_graphs() TODO
+            
+            import math
+            
+            bar_width: float
+            # def bar_width(bar: int, tbars: int, pad: float) -> float:
+            #     return ((1.0 / tbars) - pad) * (-((tbars/2) - 0.5 + 1) + bar)
+            
+            ## Find the regression plots for each partial plan
+            regression_lines: dict[int, dict[str, Any]] = {"total" : {}, "ground" : {}, "search" : {}}
+            for increment, partial_plan in hierarchical_plan.partial_plans[namespace.bottom_level].items():
+                func, x_points, y_points, popt, pcov = partial_plan.regress_total_time
+                regression_lines["total"][increment] = {"func" : func, "x_points" : x_points, "y_points" : y_points, "popt" : popt, "pcov" : pcov}
+                func, x_points, y_points, popt, pcov = partial_plan.regress_grounding_time
+                regression_lines["ground"][increment] = {"func" : func, "x_points" : x_points, "y_points" : y_points, "popt" : popt, "pcov" : pcov}
+                func, x_points, y_points, popt, pcov = partial_plan.regress_solving_time
+                regression_lines["search"][increment] = {"func" : func, "x_points" : x_points, "y_points" : y_points, "popt" : popt, "pcov" : pcov}
             
             ## Generate four graphs;
             ##      - Planning statistics per abstraction level bar chart,
             ##      - Ground level planning times against search length (one line per abstraction level), (conformance mapping here too?)
             ##      - Total number of achieved sub-goal stages against search length (one line per abstraction level), (deviation and balance here too?)
             ##      - Planning time per online planning increment.
-            figure, axes = pyplot.subplots(2, 1)
+            figure, axes = pyplot.subplots(2, 2)
             
             xlabels = [str(n) for n in reversed(planner.domain.level_range)]
             x = numpy.arange(len(xlabels))
-            bar_width = 0.30
             
-            grounding_times, solving_times, total_times, memory = [], [], [], []
+            grounding_times, solving_times, total_times, latency_times, completion_times = [], [], [], [], []
+            memory_rss, memory_vms = [], []
+            concat_length, concat_actions = [], []
+            concat_length_expansion, concat_actions_expansion = [], []
+            concat_subplan_length_deviation, concat_subplan_actions_deviation = [], []
+            concat_subplan_length_balance, concat_subplan_actions_balance = [], []
+            
+            # problems, average_yield_times, par_deviation, par_balance = [], [], [], []
+            
             for level in reversed(hierarchical_plan.level_range):
-                grand_totals = hierarchical_plan.concatenated_plans[level].planning_statistics.grand_totals
-                grounding_times.append(grand_totals.grounding_time)
-                solving_times.append(grand_totals.solving_time)
-                total_times.append(grand_totals.total_time)
-                memory.append(grand_totals.memory.vms)
+                overall_totals = hierarchical_plan.get_overall_totals(level)
+                
+                grounding_times.append(overall_totals.grounding_time)
+                solving_times.append(overall_totals.solving_time)
+                total_times.append(overall_totals.total_time)
+                # average_yield_times.append(hierarchical_plan.get_average_yield_time(level))
+                latency_times.append(hierarchical_plan.get_latency_time(level))
+                completion_times.append(hierarchical_plan.get_completion_time(level))
+                
+                memory_rss.append(overall_totals.memory.rss)
+                memory_vms.append(overall_totals.memory.vms)
+                
+                concat_length.append(hierarchical_plan.concatenated_plans[level].plan_length)
+                concat_actions.append(hierarchical_plan.concatenated_plans[level].total_actions)
+                
+                factor: Planner.Expansion = hierarchical_plan.concatenated_plans[level].get_plan_expansion_factor()
+                deviation: Planner.Expansion = hierarchical_plan.concatenated_plans[level].get_expansion_deviation()
+                balance: Planner.Expansion = hierarchical_plan.concatenated_plans[level].get_degree_of_balance()
+                
+                concat_length_expansion.append(factor.length)
+                concat_actions_expansion.append(factor.action)
+                concat_subplan_length_deviation.append(deviation.length)
+                concat_subplan_actions_deviation.append(deviation.action)
+                concat_subplan_length_balance.append(balance.length)
+                concat_subplan_actions_balance.append(balance.action)
+                
+                # problems.append(len(hierarchical_plan.partial_plans[level]))
+                # par_deviation.append(hierarchical_plan.get_partial_plan_expansion_deviation())
+                # par_balance.append(hierarchical_plan.get_partial_plan_balance())
             
-            axes[0].bar(x - (bar_width * 1.5), memory, bar_width, label="Memory (Mb)")
-            axes[0].bar(x - (bar_width * 0.5), grounding_times, bar_width, label="Average Grounding Time (s)")
-            axes[0].bar(x + (bar_width * 0.5), solving_times, bar_width, label="Average Solving Time (s)")
-            axes[0].bar(x + (bar_width * 1.5), total_times, bar_width, label="Average Total Time (s)")
-            axes[0].set_ylabel("Time (s)")
-            axes[0].set_xlabel("Abstraction level")
-            axes[0].set_xticks(x)
-            axes[0].legend()
+            ## Hierarchical grand total planning time statistics
+            bar_width = 0.19 # bar_width(bars=5, pad=0.01)
+            axes[0, 0].bar(x - (bar_width * 2.0), grounding_times, bar_width, label="Grounding Time (s)")
+            axes[0, 0].bar(x - (bar_width * 1.0), solving_times, bar_width, label="Solving Time (s)")
+            axes[0, 0].bar(x, total_times, bar_width, label="Total Time (s)")
+            axes[0, 0].bar(x + (bar_width * 1.0), latency_times, bar_width, label="Latency Time (s)")
+            axes[0, 0].bar(x + (bar_width * 2.0), completion_times, bar_width, label="Completion Time (s)")
+            axes[0, 0].set_xticks(x)
+            axes[0, 0].set_xticklabels(xlabels)
+            axes[0, 0].set_ylabel("Time (s)")
+            axes[0, 0].set_xlabel("Abstraction level")
+            axes[0, 0].legend()
             
-            # Display the division points applied to this level;
-            #   - highlight proactively chosen division points in yellow,
-            #   - highlight reactively chosen division points in orange,
-            #   - highlight inherited divisions in red (the start and end of each division scenario).
-            division_points: list[Strategies.DivisionPoint] = hierarchical_plan.get_division_points(namespace.bottom_level + 1)
+            ## Hierarchical required memory statistics
+            bar_width = 0.45
+            axes[0, 1].bar(x - (bar_width * 0.5), memory_rss, bar_width, label="Resident Set Size")
+            axes[0, 1].bar(x + (bar_width * 0.5), memory_vms, bar_width, label="Virtual Memory Size")
+            axes[0, 1].set_xticks(x)
+            axes[0, 1].set_xticklabels(xlabels)
+            axes[0, 1].set_ylabel("Required Memory (Mb)")
+            axes[0, 1].set_xlabel("Abstraction level")
+            axes[0, 1].legend()
             
-            axes[1].plot(x_points, y_points, "green", label="Search time")
-            axes[1].plot(x_points, func(x_points, *popt), color="red", label="Search time regression")
-            axes[1].bar(hierarchical_plan[namespace.bottom_level].keys(), [max(y_points) if hierarchical_plan[namespace.bottom_level].conformance_mapping is not None and step in hierarchical_plan[namespace.bottom_level].conformance_mapping.sgoals_achieved_at.values() is not None else 0 for step in hierarchical_plan[namespace.bottom_level]],
-                        width=0.30, color="cyan", label="Matching children")
-            axes[1].bar(hierarchical_plan[namespace.bottom_level].keys(), [max(y_points) if any(step == hierarchical_plan[namespace.bottom_level].conformance_mapping.sgoals_achieved_at.get(point.index, -1) and point.proactive and not point.inherited for point in division_points) else 0 for step in hierarchical_plan[namespace.bottom_level]],
-                        width=0.30, color="yellow", label="Proactive divisions")
-            axes[1].bar(hierarchical_plan[namespace.bottom_level].keys(), [max(y_points) if any(step == hierarchical_plan[namespace.bottom_level].conformance_mapping.sgoals_achieved_at.get(point.index, -1) - point.preemptive and point.reactive for point in division_points) else 0 for step in hierarchical_plan[namespace.bottom_level]],
-                        width=0.30, color="blue", label="Reactive divisions")
-            axes[1].bar(hierarchical_plan[namespace.bottom_level].keys(), [max(y_points) if any(step == hierarchical_plan[namespace.bottom_level].conformance_mapping.sgoals_achieved_at.get(point.index, -1) and point.inherited for point in division_points) else 0 for step in hierarchical_plan[namespace.bottom_level]],
-                        width=0.30, color="red", label="Inherited divisions")
-            axes[1].set_ylabel("Time (s)")
-            axes[1].set_xlabel("Search length")
-            axes[1].legend()
+            ## Hierarchical concatenated plan quality statistics
+            bar_width = 0.45
+            axes[1, 0].bar(x - (bar_width * 0.5), concat_length, bar_width, label="Concatenated Length")
+            axes[1, 0].bar(x + (bar_width * 0.5), concat_actions, bar_width, label="Concatenated Actions")
+            ## TODO Trailing plan length?
+            axes[1, 0].set_xticks(x)
+            axes[1, 0].set_xticklabels(xlabels)
+            axes[1, 0].set_ylabel("Plan Quality")
+            axes[1, 0].set_xlabel("Abstraction level")
+            axes[1, 0].legend()
+            
+            ## Problems per level
+            # axes[1, 1].bar(x - (bar_width * 1.5), problems, bar_width, label="Partial Problems")
+            # axes[1, 1].bar(x - (bar_width * 0.5), average_yield_times, bar_width, label="Resident Set Size")
+            # axes[1, 1].bar(x + (bar_width * 0.5), par_deviation, bar_width, label="Resident Set Size")
+            # axes[1, 1].bar(x + (bar_width * 1.5), par_balance, bar_width, label="Resident Set Size")
+            bar_width = 0.15
+            axes[1, 1].bar(x - (bar_width * 2.5), concat_length_expansion, bar_width, label="Concatenated length expansion")
+            axes[1, 1].bar(x - (bar_width * 1.5), concat_actions_expansion, bar_width, label="Concatenated action expansion")
+            axes[1, 1].bar(x - (bar_width * 0.5), concat_subplan_length_deviation, bar_width, label="Sub-plan length deviation")
+            axes[1, 1].bar(x + (bar_width * 0.5), concat_subplan_actions_deviation, bar_width, label="Sub-plan action deviation")
+            axes[1, 1].bar(x + (bar_width * 1.5), concat_subplan_length_balance, bar_width, label="Sub-plan length balance")
+            axes[1, 1].bar(x + (bar_width * 2.5), concat_subplan_actions_balance, bar_width, label="Sub-plan action balance")
+            axes[1, 1].set_xticks(x)
+            axes[1, 1].set_xticklabels(xlabels)
+            axes[1, 1].set_ylabel("Plan Refinement Expansion")
+            # axes[1, 1].set_ylabel("Partial Problems/Plans")
+            axes[1, 1].set_xlabel("Abstraction level")
+            axes[1, 1].legend()
+            
+            # # Display the division points applied to this level;
+            # #   - highlight proactively chosen division points in yellow,
+            # #   - highlight reactively chosen division points in orange,
+            # #   - highlight inherited divisions in red (the start and end of each division scenario).
+            # division_points: list[Strategies.DivisionPoint] = hierarchical_plan.get_division_points(namespace.bottom_level + 1)
+            
+            # bottom_level_plan: Planner.MonolevelPlan = hierarchical_plan[namespace.bottom_level]
+            
+            # ## TODO add sequential yield steps
+            # for time_type in regression_lines:
+            #     for increment, line in regression_lines[time_type].items():
+            #         axes[1, 0].plot(line["x_points"], line["y_points"], "green")
+            #         axes[1, 0].plot(line["x_points"], line["func"](line["x_points"], *line["popt"]), color="red")
+            
+            # matching_child_steps: list[int] = []
+            # if bottom_level_plan.conformance_mapping is not None:
+            #     for step in bottom_level_plan:
+            #         if bottom_level_plan.conformance_mapping.sgoals_achieved_at.reversed_get(step) is not None:
+            #             matching_child_steps.append(step) 
+            
+            # max_y_points: int = max(y_points)
+            
+            # axes[1, 0].bar(bottom_level_plan.keys(), [max_y_points if step in matching_child_steps else 0 for step in bottom_level_plan],
+            #             width=0.30, color="cyan", label="Matching children")
+            # axes[1, 0].bar(bottom_level_plan.keys(), [max(y_points) if any(step == bottom_level_plan.conformance_mapping.sgoals_achieved_at.get(point.index, -1) and point.proactive and not point.inherited for point in division_points) else 0 for step in bottom_level_plan],
+            #             width=0.30, color="yellow", label="Proactive divisions")
+            # axes[1, 0].bar(bottom_level_plan.keys(), [max(y_points) if any(step == bottom_level_plan.conformance_mapping.sgoals_achieved_at.get(point.index, -1) - point.preemptive and point.reactive for point in division_points) else 0 for step in bottom_level_plan],
+            #             width=0.30, color="blue", label="Reactive divisions")
+            # axes[1, 0].bar(bottom_level_plan.keys(), [max(y_points) if any(step == bottom_level_plan.conformance_mapping.sgoals_achieved_at.get(point.index, -1) and point.inherited for point in division_points) else 0 for step in bottom_level_plan],
+            #             width=0.30, color="red", label="Inherited divisions")
+            # axes[1, 0].set_ylabel("Time (s)")
+            # axes[1, 0].set_xlabel("Search length")
+            # axes[1, 0].legend()
+            
+            # axes[1, 1].plot(bottom_level_plan.keys(), list(itertools.accumulate(1 if step in matching_child_steps else 0 for step in bottom_level_plan)),
+            #                 color="cyan", label="Goal Progression (total achieved sub-goal stages)")
+            # axes[1, 1].plot(bottom_level_plan.keys(), list(itertools.accumulate(((bottom_level_plan.conformance_mapping.get_subplan_length(index), index) if (index := bottom_level_plan.conformance_mapping.sgoals_achieved_at.reversed_get(step)[0]) is not None else None for step in bottom_level_plan),
+            #                                                                     func=lambda value, init: ((init * (value[1] - 1)) + value[0]) / value[1] if value is not None else init)),
+            #                 color="red", label="Expansion Factor (goal-wise)")
+            # axes[1, 1].plot(bottom_level_plan.keys(), list(itertools.accumulate(1 if bottom_level_plan.conformance_mapping.sgoals_achieved_at.reversed_get(step) is not None else 0 for step in bottom_level_plan)),
+            #                 width=bar_width, color="magenta", label="Expansion Deviation (goal-wise)")
             
             pyplot.show()
         
@@ -480,32 +601,36 @@ def __main() -> int:
         
     else:
         ## Run the experiments
-        experiment = Experiment(planner, namespace, planning_function)
-        data: Data = experiment.run_experiments()
+        experiment = Experiment.Experiment(planner,
+                                           planning_function,
+                                           namespace.initial_runs,
+                                           namespace.experimental_runs,
+                                           namespace.ash_output == "experiment")
+        results: Experiment.Results = experiment.run_experiments()
         
-        if namespace.excel_file is not None:
-            data.to_excel(namespace.excel_file)
-        if namespace.data_file is not None:
-            data.to_dsv(namespace.data_file, sep=namespace.data_sep, endl=namespace.data_end)
+        # if namespace.excel_file is not None:
+        #     data.to_excel(namespace.excel_file)
+        # if namespace.data_file is not None:
+        #     data.to_dsv(namespace.data_file, sep=namespace.data_sep, endl=namespace.data_end)
         
-        if namespace.display_graph:
-            xlabels = [str(n) for n in reversed(planner.domain.level_range)]
-            x = numpy.arange(len(xlabels))
-            bar_width = 0.30
+        # if namespace.display_graph:
+        #     xlabels = [str(n) for n in reversed(planner.domain.level_range)]
+        #     x = numpy.arange(len(xlabels))
+        #     bar_width = 0.30
             
-            figure: matplotlib.figure.Figure
-            figure, axis = matplotlib.pyplot.subplots()
-            rects1 = axis.bar(x - bar_width, data.averages.grounding_time, bar_width, label="Average Grounding Time (s)")
-            rects2 = axis.bar(x, data.averages.solving_time, bar_width, label="Average Solving Time (s)")
-            rects3 = axis.bar(x + bar_width, data.averages.total_time, bar_width, label="Average Total Time (s)")
+        #     figure: matplotlib.figure.Figure
+        #     figure, axis = matplotlib.pyplot.subplots()
+        #     rects1 = axis.bar(x - bar_width, data.averages.grounding_time, bar_width, label="Average Grounding Time (s)")
+        #     rects2 = axis.bar(x, data.averages.solving_time, bar_width, label="Average Solving Time (s)")
+        #     rects3 = axis.bar(x + bar_width, data.averages.total_time, bar_width, label="Average Total Time (s)")
             
-            axis.set_ylabel("Time (s)")
-            axis.set_title(f"Average computation times per abstraction level :: {'Conformance Refinement' if namespace.planning_mode == 'hcr' else 'Classical'}")
-            axis.set_xticks(x)
-            axis.set_xticklabels(xlabels)
-            axis.legend()
+        #     axis.set_ylabel("Time (s)")
+        #     axis.set_title(f"Average computation times per abstraction level :: {'Conformance Refinement' if namespace.planning_mode == 'hcr' else 'Classical'}")
+        #     axis.set_xticks(x)
+        #     axis.set_xticklabels(xlabels)
+        #     axis.legend()
             
-            matplotlib.pyplot.show()
+        #     matplotlib.pyplot.show()
     
     
     
@@ -639,9 +764,10 @@ def __setup() -> argparse.Namespace:
     parser.add_argument("-i", "--instructions", action="store_true", help="show the program's instructions on launch and exit")
     
     ## Launcher options
-    parser.add_argument("-ao", "--ash_output", choices=["verbose", "standard", "simple", "results"], default="simple", type=str,
+    parser.add_argument("-ao", "--ash_output", choices=["verbose", "standard", "simple", "experiment"], default="simple", type=str,
                         help="the output verbosity of ASH; 'verbose' (full details of planned actions and the achievement sub-goal stages), "
-                        "'standard' (only planned actions), 'simple' (tqdm progress bars and results), or 'results' (experiment tracking tqdm progress bars and results), by default 'simple'")
+                        "'standard' (only planned actions), 'simple' (tqdm progress bars, plans and results), "
+                        "or 'experiment' (experiment tracking tqdm progress bars and results only), by default 'simple'")
     parser.add_argument("-co", "--clingo_output", **bool_options(default=False),
                         help="whether to enable output from Clingo, by default False")
     parser.add_argument("-cl", "--console_logging", choices=["DEBUG", "INFO", "WARN"], default="INFO",
@@ -654,9 +780,8 @@ def __setup() -> argparse.Namespace:
                         help="whether to display experimental results in a simple graph upon completion of all experimental runs")
     
     ## Experimentation options
-    parser.add_argument("-op", "--operation", choices=["standard", "test", "experiment", "find-problem-inconsistencies"], default="standard", type=str,
+    parser.add_argument("-op", "--operation", choices=["standard", "experiment", "find-problem-inconsistencies"], default="standard", type=str,
                         help="the operating mode of ASH; 'standard' (generate a single hierarchical refinement diagram and save the generated plans), "
-                             "'test' (run as standard, but on completion allow the user to query the state and plans, useful for debugging domain definitions), "
                              "'experiment' (run the planner several times, generating a fresh plan each time, and gathering aggregate experimental statistics), "
                              "'find-problem-inconsistencies' (only generate the initial states and final goals, then return), by default 'standard'")
     parser.add_argument("-er", "--experimental_runs", default=1, type=int,
@@ -729,7 +854,7 @@ def __setup() -> argparse.Namespace:
                              "as fast as possible, afterwards solve the lowest unsolved partial problem until the ground level is complete), 'complete-first' (solve all "
                              "partial problems at each level before moving to the next level, successively completing each level until the ground is reached), "
                              "or 'hybrid' (uses a mix of the prior, solve only the initial partial problems first, propagating directly down to the ground level as fast as possible, then successively complete each level), by default 'ground-first'")
-    parser.add_argument("-strat", "--division_strategy", choices=["none", "basic", "steady", "hasty", "relentless", "impetuous", "rapid-basic", "rapid-steady", "rapid-hasty", "cautious", "reckless", "sensible", "audacious"], default="none", type=str,
+    parser.add_argument("-strat", "--division_strategy", choices=["none", "basic", "steady", "hasty", "jumpy", "relentless", "impetuous", "rapid-basic", "rapid-steady", "rapid-hasty", "cautious", "reckless", "sensible", "audacious"], default="none", type=str,
                         help="the division strategy to use; 'none', 'basic', 'steady', 'hasty', 'cautious', 'reckless', 'sensible',  'impetuous', or 'audacious', by default 'none'")
     parser.add_argument("-bound", "--division_strategy_bounds", nargs="+", default=None, action=StoreHierarchicalArguments, type=str, metavar="value | level1=value1 level_i=value_i [...] level_n=value_n",
                         help="the bound used on the division strategy, this a maximum or minimum bound on the size, complexity, or planning time of the partial "
@@ -740,8 +865,8 @@ def __setup() -> argparse.Namespace:
                              "'differential' (the rate of change (increase) in the total incremental planning time (seconds/step/step), averaged over the moving range), 'integral' (the sum of the total incremental planning times (seconds) over the moving range), "
                              "'predictive' (the predicted total incremental planning time of the next search step (seconds/step)), or "
                              "'cumulative' (the sum of all total incremental planning times (seconds) since the last reactive division, essentially an alias for an integral bound type with no range bound), by default 'incremental'")
-    parser.add_argument("-horizon", "--backwards_horizon", default=0, type=int,
-                        help="the backwards horizon used when making continuous reactive divisions, continuous divisions cannot be commited until the horizon is reached")
+    parser.add_argument("-horizon", "--backwards_horizon", nargs="+", default=0, action=StoreHierarchicalArguments, type=str, metavar="value | level1=value1 level_i=value_i [...] level_n=value_n",
+                        help="the backwards horizon used when making continuous reactive divisions, continuous divisions cannot be commited until the horizon is reached, by default 0")
     parser.add_argument("-preempt", "--preemptive_division", **bool_options(default=False),
                         help="whether to use preemptive reactive division, this allows a reactive division to be commited on any child step of the current sub-goal stage, "
                              "otherwise if disabled reactive divisions can only be commited on a minimal matching child step (the step at which the current sub-goal stage was originally minimally achieved), by default False")
@@ -757,7 +882,7 @@ def __setup() -> argparse.Namespace:
     parser.add_argument("-rblend", "--right_blend_quantities", nargs="+", default=0, action=StoreHierarchicalArguments, type=str, metavar="value | level1=value1 level_i=value_i [...] level_n=value_n",
                         help="the number of sub-goal stages to blend each partial problem with the following adjacent partial problem in divided planning, "
                              "given as either a single value (used at all abstraction levels) or a dictionary of level-value pairs, by default 0 (disables right blending)")
-    parser.add_argument("-avoid_refining_blends", "--avoid_refining_sgoals_marked_for_blending", **bool_options(default=False),
+    parser.add_argument("-avoid", "--avoid_refining_sgoals_marked_for_blending", **bool_options(default=False),
                         help="whether to avoid refining sub-goal stages marked for blending at the previous level, this is done by prohibiting proactively generated division scenarios "
                              "from dividing sub-goal stage inside the left blend of the right point of the current (partial) refinement planning problem, this can save overall planning time "
                              "by avoiding refining sub-goal stages that are guaranteed to be revised by blending at the higher abstraction levels but can reduce plan quality at the lower abstraction levels, "

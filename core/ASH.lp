@@ -145,13 +145,14 @@ holds(AL, F, false, step) :- not holds(AL, F, true, step), fluent(AL, defined, F
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% Plan Module - Generate legal plans
 %**% #program plan_module(step, start, concurrency, achieve_fgoals).
+%%%%
 %%%% Parameters
 %%%% ----------
 %%%%    step: int - A natural number defining the current planning horizon (equivalent to the search length).
 %%%%    start: int - A natural number defining the step to begin planning from.
-%%%%    concurrency: bool - A Boolean, True to enable action concurrency, False to disable.
-%%%%                        If concurrency is disabled, exactly one action is planned per step, if it is enabled, a set of at least one action is planned per step.
+%%%%    concurrency: bool - A Boolean, True to enable action concurrency (set of at least one action is planned per step), False to disable (exactly one action is planned per step).
 %%%%    achieve_fgoals: bool - A Boolean, True to enforce achievement of the final-goal (used for final single-return problems), False otherwise.
+%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -162,36 +163,36 @@ holds(AL, F, false, step) :- not holds(AL, F, true, step), fluent(AL, defined, F
 %% Generator rule for actions at the current planning level whilst either;
 %%      - at least one unsatisfied goal existed at the previous step,
 %%      - the search space is being generated.
-{ occurs(AL, ROBOT, A, step) : action(AL, _, ROBOT, A) } :- pl(AL), step > start.
-% { occurs(AL, ROBOT, A, step) : action(AL, _, ROBOT, A) } :- gen_search_space_at(step), pl(AL), step > start.
+{ occurs(AL, ROBOT, A, step) : action(AL, _, _, ROBOT, A) } :- pl(AL), step > start.
+% { occurs(AL, ROBOT, A, step) : action(AL, _, _, ROBOT, A) } :- gen_search_space_at(step), pl(AL), step > start.
 
 %% Rules defining whether actions are taken on each step
-occurs(AL, ROBOT, step) :- occurs(AL, ROBOT, A, step), action(AL, _, ROBOT, A), pl(AL), step > start.
+occurs(AL, ROBOT, step) :- occurs(AL, ROBOT, A, step), action(AL, _, _, ROBOT, A), pl(AL), step > start.
 occurs(AL, step) :- occurs(AL, ROBOT, step), insta_of(AL, robot, ROBOT), pl(AL), step > start.
 
 %% Activity constraint - Prevent the robots from being idle whilst the plan is incomplete
 %%      - Plan exactly one action on each step in sequential planning,
 %%      - Plan at least one action on each step in concurrent planning.
-:- not { occurs(AL, R, A, step) : action(AL, _, ROBOT, A) } = 1, pl(AL), step > start, concurrency = false.
-:- not { occurs(AL, R, A, step) : action(AL, _, ROBOT, A) } >= 1, pl(AL), step > start, concurrency = true.
+:- not { occurs(AL, R, A, step) : action(AL, _, _, ROBOT, A) } = 1, pl(AL), step > start, concurrency = false.
+:- not { occurs(AL, R, A, step) : action(AL, _, _, ROBOT, A) } >= 1, pl(AL), step > start, concurrency = true.
 
 %% Actions planned at the current planning level have their effects applied at the current step
 holds(AL, F, V, step) :- occurs(AL, ROBOT, A, step), effect(AL, ROBOT, A, F, V, step),
-                         action(AL, _, ROBOT, A), fluent(AL, inertial, F, V), pl(AL), step > start.
+                         action(AL, _, _, ROBOT, A), fluent(AL, inertial, F, V), pl(AL), step > start.
 holds(AL, F, V, step) :- occurs(AL, ROBOT, A, step), effect(AL, ROBOT, A, F, V),
-                         action(AL, _, ROBOT, A), fluent(AL, inertial, F, V), pl(AL), step > start.
+                         action(AL, _, _, ROBOT, A), fluent(AL, inertial, F, V), pl(AL), step > start.
 
 %% If the positive preconditions of an action are not satisfied in a given state then the action is impossible
 :- occurs(AL, ROBOT, A, step), precond(AL, ROBOT, A, F, V, true, step), not holds(AL, F, V, step - 1),
-   action(AL, _, ROBOT, A), fluent(AL, inertial, F, V), pl(AL), step > start.
+   action(AL, _, _, ROBOT, A), fluent(AL, inertial, F, V), pl(AL), step > start.
 :- occurs(AL, ROBOT, A, step), precond(AL, ROBOT, A, F, V, true), not holds(AL, F, V, step - 1),
-   action(AL, _, ROBOT, A), fluent(AL, inertial, F, V), pl(AL), step > start.
+   action(AL, _, _, ROBOT, A), fluent(AL, inertial, F, V), pl(AL), step > start.
 
 %% If the negative preconditions of an action are not satisfied in a given state then the action is impossible
 :- occurs(AL, ROBOT, A, step), precond(AL, ROBOT, A, F, V, false, step), holds(AL, F, V, step - 1),
-   action(AL, _, ROBOT, A), fluent(AL, inertial, F, V), pl(AL), step > start.
+   action(AL, _, _, ROBOT, A), fluent(AL, inertial, F, V), pl(AL), step > start.
 :- occurs(AL, ROBOT, A, step), precond(AL, ROBOT, A, F, V, false), holds(AL, F, V, step - 1),
-   action(AL, _, ROBOT, A), fluent(AL, inertial, F, V), pl(AL), step > start.
+   action(AL, _, _, ROBOT, A), fluent(AL, inertial, F, V), pl(AL), step > start.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% Rules for action concurrency
@@ -199,49 +200,49 @@ holds(AL, F, V, step) :- occurs(AL, ROBOT, A, step), effect(AL, ROBOT, A, F, V),
 
 %% If concurrency is disabled then plan actions sequentially
 :- occurs(AL, ROBOT, A_1, step), occurs(AL, ROBOT, A_2, step), A_1 != A_2,
-   action(AL, _, ROBOT, A_1), action(AL, _, ROBOT, A_2), pl(AL), step > start, concurrency = false.
+   action(AL, _, _, ROBOT, A_1), action(AL, _, _, ROBOT, A_2), pl(AL), step > start, concurrency = false.
 
 %% If a robot plans a sequentially restricted action then it cannot concurrently plan another action on the same step
 :- occurs(AL, ROBOT, A_1, step), occurs(AL, ROBOT, A_2, step), A_1 != A_2,
-   action(AL, sequential, ROBOT, A_1), action(AL, _, ROBOT, A_2), pl(AL), step > start, concurrency = true.
+   action(AL, sequential, _, ROBOT, A_1), action(AL, _, _, ROBOT, A_2), pl(AL), step > start, concurrency = true.
 
 %% Concurrently planned actions should not effect the same fluent
 :- occurs(AL, ROBOT_1, A_1, step), occurs(AL, ROBOT_2, A_2, step), effect(AL, ROBOT_1, A_1, F, V_1, step), effect(AL, ROBOT_2, A_2, F, V_2, step),
-   action(AL, concurrent, ROBOT_1, A_1), action(AL, concurrent, ROBOT_2, A_2), fluent(AL, inertial, F, V_1), fluent(AL, inertial, F, V_2),
+   action(AL, concurrent, _, ROBOT_1, A_1), action(AL, concurrent, _, ROBOT_2, A_2), fluent(AL, inertial, F, V_1), fluent(AL, inertial, F, V_2),
    A_1 != A_2, ROBOT_1 != ROBOT_2, pl(AL), step > start, concurrency = true.
 :- occurs(AL, ROBOT_1, A_1, step), occurs(AL, ROBOT_2, A_2, step), effect(AL, ROBOT_1, A_1, F, V_1, step), effect(AL, ROBOT_2, A_2, F, V_2),
-   action(AL, concurrent, ROBOT_1, A_1), action(AL, concurrent, ROBOT_2, A_2), fluent(AL, inertial, F, V_1), fluent(AL, inertial, F, V_2),
+   action(AL, concurrent, _, ROBOT_1, A_1), action(AL, concurrent, _, ROBOT_2, A_2), fluent(AL, inertial, F, V_1), fluent(AL, inertial, F, V_2),
    A_1 != A_2, ROBOT_1 != ROBOT_2, pl(AL), step > start, concurrency = true.
 :- occurs(AL, ROBOT_1, A_1, step), occurs(AL, ROBOT_2, A_2, step), effect(AL, ROBOT_1, A_1, F, V_1), effect(AL, ROBOT_2, A_2, F, V_2),
-   action(AL, concurrent, ROBOT_1, A_1), action(AL, concurrent, ROBOT_2, A_2), fluent(AL, inertial, F, V_1), fluent(AL, inertial, F, V_2),
+   action(AL, concurrent, _, ROBOT_1, A_1), action(AL, concurrent, _, ROBOT_2, A_2), fluent(AL, inertial, F, V_1), fluent(AL, inertial, F, V_2),
    A_1 != A_2, ROBOT_1 != ROBOT_2, pl(AL), step > start, concurrency = true.
 
 %% Concurrently planned actions must also be sequentially plannable in all possible permutations;
 %%      - Do not plan an action whose effect would falsify the positive precondition of a concurrently planned action,
 %%      - Do not plan an action whose effect would truify the negative precondition of a concurrently planned action.
 :- occurs(AL, ROBOT_1, A_1, step), occurs(AL, ROBOT_2, A_2, step), effect(AL, ROBOT_1, A_1, F, V_1, step), precond(AL, ROBOT_2, A_2, F, V_2, true, step),
-   action(AL, concurrent, ROBOT_1, A_1), action(AL, concurrent, ROBOT_2, A_2), fluent(AL, inertial, F, V_1), fluent(AL, inertial, F, V_2),
+   action(AL, concurrent, _, ROBOT_1, A_1), action(AL, concurrent, _, ROBOT_2, A_2), fluent(AL, inertial, F, V_1), fluent(AL, inertial, F, V_2),
    A_1 != A_2, V_1 != V_2, pl(AL), step > start, concurrency = true.
 :- occurs(AL, ROBOT_1, A_1, step), occurs(AL, ROBOT_2, A_2, step), effect(AL, ROBOT_1, A_1, F, V_1, step), precond(AL, ROBOT_2, A_2, F, V_2, true),
-   action(AL, concurrent, ROBOT_1, A_1), action(AL, concurrent, ROBOT_2, A_2), fluent(AL, inertial, F, V_1), fluent(AL, inertial, F, V_2),
+   action(AL, concurrent, _, ROBOT_1, A_1), action(AL, concurrent, _, ROBOT_2, A_2), fluent(AL, inertial, F, V_1), fluent(AL, inertial, F, V_2),
    A_1 != A_2, V_1 != V_2, pl(AL), step > start, concurrency = true.
 :- occurs(AL, ROBOT_1, A_1, step), occurs(AL, ROBOT_2, A_2, step), effect(AL, ROBOT_1, A_1, F, V, step), precond(AL, ROBOT_2, A_2, F, V, false, step),
-   action(AL, concurrent, ROBOT_1, A_1), action(AL, concurrent, ROBOT_2, A_2), fluent(AL, inertial, F, V),
+   action(AL, concurrent, _, ROBOT_1, A_1), action(AL, concurrent, _, ROBOT_2, A_2), fluent(AL, inertial, F, V),
    A_1 != A_2, pl(AL), step > start, concurrency = true.
 :- occurs(AL, ROBOT_1, A_1, step), occurs(AL, ROBOT_2, A_2, step), effect(AL, ROBOT_1, A_1, F, V, step), precond(AL, ROBOT_2, A_2, F, V, false),
-   action(AL, concurrent, ROBOT_1, A_1), action(AL, concurrent, ROBOT_2, A_2), fluent(AL, inertial, F, V),
+   action(AL, concurrent, _, ROBOT_1, A_1), action(AL, concurrent, _, ROBOT_2, A_2), fluent(AL, inertial, F, V),
    A_1 != A_2, pl(AL), step > start, concurrency = true.
 :- occurs(AL, ROBOT_1, A_1, step), occurs(AL, ROBOT_2, A_2, step), effect(AL, ROBOT_1, A_1, F, V_1), precond(AL, ROBOT_2, A_2, F, V_2, true, step),
-   action(AL, concurrent, ROBOT_1, A_1), action(AL, concurrent, ROBOT_2, A_2), fluent(AL, inertial, F, V_1), fluent(AL, inertial, F, V_2),
+   action(AL, concurrent, _, ROBOT_1, A_1), action(AL, concurrent, _, ROBOT_2, A_2), fluent(AL, inertial, F, V_1), fluent(AL, inertial, F, V_2),
    A_1 != A_2, V_1 != V_2, pl(AL), step > start, concurrency = true.
 :- occurs(AL, ROBOT_1, A_1, step), occurs(AL, ROBOT_2, A_2, step), effect(AL, ROBOT_1, A_1, F, V_1), precond(AL, ROBOT_2, A_2, F, V_2, true),
-   action(AL, concurrent, ROBOT_1, A_1), action(AL, concurrent, ROBOT_2, A_2), fluent(AL, inertial, F, V_1), fluent(AL, inertial, F, V_2),
+   action(AL, concurrent, _, ROBOT_1, A_1), action(AL, concurrent, _, ROBOT_2, A_2), fluent(AL, inertial, F, V_1), fluent(AL, inertial, F, V_2),
    A_1 != A_2, V_1 != V_2, pl(AL), step > start, concurrency = true.
 :- occurs(AL, ROBOT_1, A_1, step), occurs(AL, ROBOT_2, A_2, step), effect(AL, ROBOT_1, A_1, F, V), precond(AL, ROBOT_2, A_2, F, V, false, step),
-   action(AL, concurrent, ROBOT_1, A_1), action(AL, concurrent, ROBOT_2, A_2), fluent(AL, inertial, F, V),
+   action(AL, concurrent, _, ROBOT_1, A_1), action(AL, concurrent, _, ROBOT_2, A_2), fluent(AL, inertial, F, V),
    A_1 != A_2, pl(AL), step > start, concurrency = true.
 :- occurs(AL, ROBOT_1, A_1, step), occurs(AL, ROBOT_2, A_2, step), effect(AL, ROBOT_1, A_1, F, V), precond(AL, ROBOT_2, A_2, F, V, false),
-   action(AL, concurrent, ROBOT_1, A_1), action(AL, concurrent, ROBOT_2, A_2), fluent(AL, inertial, F, V),
+   action(AL, concurrent, _, ROBOT_1, A_1), action(AL, concurrent, _, ROBOT_2, A_2), fluent(AL, inertial, F, V),
    A_1 != A_2, pl(AL), step > start, concurrency = true.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -271,10 +272,10 @@ incomplete_plan(step) :- final_goal(AL, F, V, B), not goal_satisfied(AL, F, V, B
 %%        this is for transparency and ease of parsing the answer sets and is thus
 %%        considered an implementation detail only, it is strictly not necessary in the theory.
 sub_goal(AL, ROBOT, A, F, V, step) :- occurs(AL, ROBOT, A, step), effect(AL, ROBOT, A, F, V, step),
-                                      action(AL, _, ROBOT, A), fluent(AL, inertial, F, V),
+                                      action(AL, _, _, ROBOT, A), fluent(AL, inertial, F, V),
                                       pl(AL), AL != 1, step > start.
 sub_goal(AL, ROBOT, A, F, V, step) :- occurs(AL, ROBOT, A, step), effect(AL, ROBOT, A, F, V),
-                                      action(AL, _, ROBOT, A), fluent(AL, inertial, F, V),
+                                      action(AL, _, _, ROBOT, A), fluent(AL, inertial, F, V),
                                       pl(AL), AL != 1, step > start.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -293,20 +294,21 @@ sub_goal(AL, ROBOT, A, F, V, step) :- occurs(AL, ROBOT, A, step), effect(AL, ROB
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Minimise quanity of actions (level 2):
-%%      - Eliminate any unnecessary, redundant or superfluous actions from the plan by minimising the total number of actions in the minimal length plan.
-:~ occurs(AL, ROBOT, A, step), action(AL, _, ROBOT, A), incomplete_plan(step - 1), pl(AL), step > start, minimise_actions = true. [1 @ 2, ROBOT, A, step]
+%%      - Eliminate any unnecessary actions from the plan by minimising the total number of actions in the minimal length plan.
+:~ occurs(AL, ROBOT, A, step), action(AL, _, _, ROBOT, A), pl(AL), minimise_actions = true. [1 @ 2, ROBOT, A, step]
 
 %% Final goal preemptive achievement heuristics:
 %%      - Heuristics are better when deciding on individual (arbitrary) choices (they only work for choice rules but are more efficient that optimisation statements and don't produce all answer sets),
 %%      - Since they are essentially preferences and priority levels over deciding the truth of atoms in choice rules, such at the occurs predicate atoms.
-#heuristic occurs(AL, ROBOT, A, step) : action(AL, _, ROBOT, A), effect(AL, ROBOT, A, F, V), fluent(AL, inertial, F, V), final_goal(AL, F, V, true), pl(AL), step > start, preempt_pos_fgoals = true. [10 @ 1, true]
-#heuristic occurs(AL, ROBOT, A, step) : action(AL, _, ROBOT, A), effect(AL, ROBOT, A, F, V, step), fluent(AL, inertial, F, V), final_goal(AL, F, V, true), pl(AL), step > start, preempt_pos_fgoals = true. [10 @ 1, true]
-#heuristic occurs(AL, ROBOT, A, step) : action(AL, _, ROBOT, A), effect(AL, ROBOT, A, F, V), fluent(AL, inertial, F, V), final_goal(AL, F, V, false), pl(AL), step > start, preempt_neg_fgoals = true. [10 @ 0, false]
-#heuristic occurs(AL, ROBOT, A, step) : action(AL, _, ROBOT, A), effect(AL, ROBOT, A, F, V, step), fluent(AL, inertial, F, V), final_goal(AL, F, V, false), pl(AL), step > start, preempt_neg_fgoals = true. [10 @ 0, false]
+#heuristic occurs(AL, ROBOT, A, step) : action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V), fluent(AL, inertial, F, V), final_goal(AL, F, V, true), pl(AL), step > start, preempt_pos_fgoals = true. [10 @ 1, true]
+#heuristic occurs(AL, ROBOT, A, step) : action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V, step), fluent(AL, inertial, F, V), final_goal(AL, F, V, true), pl(AL), step > start, preempt_pos_fgoals = true. [10 @ 1, true]
+#heuristic occurs(AL, ROBOT, A, step) : action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V), fluent(AL, inertial, F, V), final_goal(AL, F, V, false), pl(AL), step > start, preempt_neg_fgoals = true. [10 @ 0, false]
+#heuristic occurs(AL, ROBOT, A, step) : action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V, step), fluent(AL, inertial, F, V), final_goal(AL, F, V, false), pl(AL), step > start, preempt_neg_fgoals = true. [10 @ 0, false]
 
 %% Final goal achievement ordering preferences:
 %%      - The chosen ordering over the intermediate achievement of intermediate fgoals are then effectively encoded into the sgoals and maintained by the order over achievement of sgoals, resultantly it only makes sense to have an ordering preference over the achievement of fgoals at the top-level
-% :~ goal_satisfied(AL, F, V, true, current_step), order_of(AL, F, V, fgoal_order). [(number_of_ordered_fgoals - fgoal_order[starts from zero]) * current_step @ 4, F, V]
+:~ goal_satisfied(AL, F, V, B, step), goal_order(AL, F, V, B, ORDER), final_goal(AL, F, V, B), fluent(AL, _, F, V), pl(AL), boolean(B), max_order(M). [(((M + 1) - ORDER) * (-step)) @ 4, AL, F, V, B]
+max_order(M) :- M = #max { ORDER : goal_order(AL, F, V, B, ORDER) }, final_goal(AL, F, V, B), fluent(AL, _, F, V), pl(AL), boolean(B).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -322,7 +324,7 @@ sub_goal(AL, ROBOT, A, F, V, step) :- occurs(AL, ROBOT, A, step), effect(AL, ROB
 %%      - Maximising the current sub-goal index maximises the progression through the goal sequence
 % :~ gen_search_space_at(step), final_goal(AL, F, V, B), goal_satisfied(AL, F, V, B, step - 1), fluent(AL, _, F, V), pl(AL), boolean(B), enforce_achieve_fgoals(step - 1). [-1 @ 1, AL, F, V, B, step]
 :~ gen_search_space_at(step), incomplete_plan(step - 1), enforce_achieve_fgoals(step - 1). [1 @ 1, step]
-% :~ gen_search_space_at(step), current_sub_goal(AL + 1, ROBOT, A, F, V, I_SG, step - 1), sub_goal(AL + 1, ROBOT, A, F, V, I_SG), action(AL + 1, _, ROBOT, A), fluent(AL + 1, inertial, F, V), pl(AL). [1 @ 1, AL, ROBOT, A, F, V, I_SG, step]
+% :~ gen_search_space_at(step), current_sub_goal(AL + 1, ROBOT, A, F, V, I_SG, step - 1), sub_goal(AL + 1, ROBOT, A, F, V, I_SG), action(AL + 1, _, _, ROBOT, A), fluent(AL + 1, inertial, F, V), pl(AL). [1 @ 1, AL, ROBOT, A, F, V, I_SG, step]
 % :~ gen_search_space_at(step), current_sub_goal_index(AL + 1, I, step - 1), sgoals_index(I), pl(AL). [-I @ 1, AL, I, step]
 
 %% Keep incrementing until a complete plan is found
@@ -364,15 +366,15 @@ sgoals_index(first..last) :- last != none.
 sgoals_index(first..L) :- last = none, L = @get_total_last_sgoals(PL), pl(PL).
 
 %% The current sub-goal stage is initially that with whose sequence index is equal to the first included index
-current_sub_goal(AL + 1, ROBOT, A, F, V, first, start) :- sub_goal(AL + 1, ROBOT, A, F, V, first),
-                                                          action(AL + 1, _, ROBOT, A), fluent(AL + 1, inertial, F, V),
-                                                          pl(AL).
+current_sub_goal(AL + 1, ROBOT, A, F, V, first, start + 1) :- sub_goal(AL + 1, ROBOT, A, F, V, first), %% TODO
+                                                              action(AL + 1, _, _, ROBOT, A), fluent(AL + 1, inertial, F, V),
+                                                              pl(AL).
 
 %% A current sub-goal is satisfied on the step its value holds
 sub_goal_satisfied(AL + 1, ROBOT, A, F, V, I_SG, step) :- sub_goal(AL + 1, ROBOT, A, F, V, I_SG),
                                                           current_sub_goal(AL + 1, ROBOT, A, F, V, I_SG, step),
                                                           holds(AL + 1, F, V, step),
-                                                          action(AL + 1, _, ROBOT, A), fluent(AL + 1, inertial, F, V),
+                                                          action(AL + 1, _, _, ROBOT, A), fluent(AL + 1, inertial, F, V),
                                                           pl(AL).
 
 %% The current sub-goal stage is unachieved if any current sub-goal with that index is not satisfied
@@ -380,21 +382,21 @@ unachieved_sgoals(AL + 1, I_SG, step) :- current_sub_goal_index(AL + 1, I_SG, st
                                          sub_goal(AL + 1, ROBOT, A, F, V, I_SG),
                                          current_sub_goal(AL + 1, ROBOT, A, F, V, I_SG, step),
                                          not sub_goal_satisfied(AL + 1, ROBOT, A, F, V, I_SG, step),
-                                         action(AL + 1, _, ROBOT, A), fluent(AL + 1, inertial, F, V),
+                                         action(AL + 1, _, _, ROBOT, A), fluent(AL + 1, inertial, F, V),
                                          pl(AL).
 
 %% Sequential sub-goal stage achievement: A current sub-goal is propagated to the next time step if it has not yet been satisifed
 current_sub_goal(AL + 1, ROBOT, A, F, V, I_SG, step) :- sub_goal(AL + 1, ROBOT, A, F, V, I_SG),
                                                         current_sub_goal(AL + 1, ROBOT, A, F, V, I_SG, step - 1),
                                                         not sub_goal_satisfied(AL + 1, ROBOT, A, F, V, I_SG, step - 1),
-                                                        action(AL + 1, _, ROBOT, A), fluent(AL + 1, inertial, F, V),
+                                                        action(AL + 1, _, _, ROBOT, A), fluent(AL + 1, inertial, F, V),
                                                         type = sequential, pl(AL).
 
 %% Simultaneous sub-goal stage achievement: A current sub-goal is propagated to the next time step if the current sub-goal stage is unachieved
 current_sub_goal(AL + 1, ROBOT, A, F, V, I_SG, step) :- sub_goal(AL + 1, ROBOT, A, F, V, I_SG),
                                                         current_sub_goal(AL + 1, ROBOT, A, F, V, I_SG, step - 1),
                                                         unachieved_sgoals(AL + 1, I_SG, step - 1),
-                                                        action(AL + 1, _, ROBOT, A), fluent(AL + 1, inertial, F, V),
+                                                        action(AL + 1, _, _, ROBOT, A), fluent(AL + 1, inertial, F, V),
                                                         type = simultaneous, pl(AL).
 
 %% If there are no current sub-goals from the index value that was current at the previous time step then the next sub-goals in the sequence become current
@@ -402,7 +404,7 @@ current_sub_goal(AL + 1, ROBOT_1, A_1, F_1, V_1, I_SG + 1, step) :- include_sgoa
                                                                     sub_goal(AL + 1, ROBOT_1, A_1, F_1, V_1, I_SG + 1),
                                                                     current_sub_goal_index(AL + 1, I_SG, step - 1),
                                                                     not current_sub_goal_index(AL + 1, I_SG, step),
-                                                                    action(AL + 1, _, ROBOT_1, A_1), fluent(AL + 1, inertial, F_1, V_1),
+                                                                    action(AL + 1, _, _, ROBOT_1, A_1), fluent(AL + 1, inertial, F_1, V_1),
                                                                     pl(AL).
 
 %% A sub-goal stage is achieved on the step after the last step upon which its sequence index is current;
@@ -424,43 +426,49 @@ current_sub_goal_index(AL + 1, FI, SS) :- restart_from(FI, SS), pl(AL).
 %% The current sub-goal sequence index is equal to the index value of the current sub-goals
 current_sub_goal_index(AL + 1, I_SG, step) :- sub_goal(AL + 1, ROBOT, A, F, V, I_SG),
                                               current_sub_goal(AL + 1, ROBOT, A, F, V, I_SG, step),
-                                              action(AL + 1, _, ROBOT, A), fluent(AL + 1, inertial, F, V),
+                                              action(AL + 1, _, _, ROBOT, A), fluent(AL + 1, inertial, F, V),
                                               pl(AL).
 
 %% The plan is incomplete at some step I if there is at least one sub-goal that is current at step I
 incomplete_plan(step) :- sub_goal(AL + 1, ROBOT, A, F, V, I_SG),
                          current_sub_goal(AL + 1, ROBOT, A, F, V, I_SG, step),
                          not sub_goal_satisfied(AL + 1, ROBOT, A, F, V, I_SG, step),
-                         action(AL + 1, _, ROBOT, A), fluent(AL + 1, inertial, F, V),
+                         action(AL + 1, _, _, ROBOT, A), fluent(AL + 1, inertial, F, V),
                          pl(AL).
 incomplete_plan(step) :- sub_goal(AL + 1, ROBOT, A, F, V, I_SG),
                          current_sub_goal(AL + 1, ROBOT, A, F, V, I_SG, step),
                          include_sgoals(I_SG + 1, step),
-                         action(AL + 1, _, ROBOT, A), fluent(AL + 1, inertial, F, V),
+                         action(AL + 1, _, _, ROBOT, A), fluent(AL + 1, inertial, F, V),
                          pl(AL).
 
-#heuristic occurs(AL, ROBOT, A, step) : action(AL, _, ROBOT, A), effect(AL, ROBOT, A, F, V), fluent(AL, inertial, F, V), current_sub_goal(AL + 1, ROBOT, A, F, V, _, step - 1), pl(AL), step > start, preempt_pos_fgoals = true. [10 @ 2, true]
-#heuristic occurs(AL, ROBOT, A, step) : action(AL, _, ROBOT, A), effect(AL, ROBOT, A, F, V, step), fluent(AL, inertial, F, V), current_sub_goal(AL + 1, ROBOT, A, F, V, _, step - 1), pl(AL), step > start, preempt_pos_fgoals = true. [10 @ 2, true]
+#heuristic occurs(AL, ROBOT, A, step) : action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V), fluent(AL, inertial, F, V), current_sub_goal(AL + 1, ROBOT, A, F, V, _, step - 1), pl(AL), step > start, preempt_pos_fgoals = true. [10 @ 2, true]
+#heuristic occurs(AL, ROBOT, A, step) : action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V, step), fluent(AL, inertial, F, V), current_sub_goal(AL + 1, ROBOT, A, F, V, _, step - 1), pl(AL), step > start, preempt_pos_fgoals = true. [10 @ 2, true]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%% Goal Abstraction Module - Generate conforming valid goal states across all levels in the abstraction hierarchy
+%%%% Goal Abstraction Module - Generate a conforming final-goal over all levels in the abstraction hierarchy
 %**% #program goal_abstraction_module.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Goals are applied as current state at step 0
-holds(AL, F, V, 0) :- final_goal(AL, F, V, true), goal_fluent(AL, F), fluent(AL, _, F, V), al(AL).
-not holds(AL, F, V, 0) :- final_goal(AL, F, V, false), goal_fluent(AL, F), fluent(AL, _, F, V), al(AL).
+%% Initial final-goals are applied in the initial state
+holds(AL, F, V, 0) :- final_goal(AL, F, V, true), goal_fluent(AL, F), fluent(AL, inertial, F, V), al(AL).
+not holds(AL, F, V, 0) :- final_goal(AL, F, V, false), goal_fluent(AL, F), fluent(AL, inertial, F, V), al(AL).
 
-%% State at step 0 converted back to goals
+%% Defined final-goals must be satisfied in the initial state
+:- holds(AL, F, false, 0), final_goal(AL, F, true, true), goal_fluent(AL, F), fluent(AL, defined, F, _), al(AL).
+:- holds(AL, F, false, 0), final_goal(AL, F, false, false), goal_fluent(AL, F), fluent(AL, defined, F, _), al(AL).
+:- holds(AL, F, true, 0), final_goal(AL, F, false, true), goal_fluent(AL, F), fluent(AL, defined, F, _), al(AL).
+:- holds(AL, F, true, 0), final_goal(AL, F, true, false), goal_fluent(AL, F), fluent(AL, defined, F, _), al(AL).
+
+%% Convert the initial state back to final-goal literals
 final_goal(AL, F, V, true) :- holds(AL, F, V, 0), goal_fluent(AL, F), fluent(AL, _, F, V), al(AL).
 final_goal(AL, F, V, false) :- not holds(AL, F, V, 0), goal_fluent(AL, F), fluent(AL, _, F, V), al(AL).
 
 %% Law of Awareness - All inertial fluents can take any value from their range in the initial state
 { holds(AL, F, V, 0) } :- goal_fluent(AL, F), fluent(AL, inertial, F, V), al(AL).
 
-%% Law of Continuity - Fluents must have unique values to ensure the state is complete
+%% Law of Continuity - All Fluents must have unique values to ensure the state is complete
 :- not { holds(AL, F, V, 0) : fluent(AL, _, F, V) } = 1, goal_fluent(AL, F), fluent(AL, _, F, _), al(AL).
 
 %% Closed world assumption for defined fluents with a boolean range - If there is no reason to believe a defined fluent is true then it must be false

@@ -1,0 +1,115 @@
+{
+    "sub_goal_stages": {
+        "1": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "move((hallway,1))",
+                "F": "in(talos)",
+                "V": "(hallway,1)",
+                "I": 1
+            }
+        ],
+        "2": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "configure(manipulator_arm_1,extended)",
+                "F": "configuration(manipulator_arm_1)",
+                "V": "extended",
+                "I": 2
+            }
+        ],
+        "3": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "grasp(manipulator_arm_1,(((store_room,1),door),handle(outer)))",
+                "F": "grasping(manipulator_arm_1)",
+                "V": "(((store_room,1),door),handle(outer))",
+                "I": 3
+            }
+        ],
+        "4": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "actuate(manipulator_arm_1,((store_room,1),door))",
+                "F": "configuration(((store_room,1),door))",
+                "V": "open",
+                "I": 4
+            }
+        ],
+        "5": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "release(manipulator_arm_1,(((store_room,1),door),handle(outer)))",
+                "F": "grasping(manipulator_arm_1)",
+                "V": "nothing",
+                "I": 5
+            }
+        ],
+        "6": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "configure(manipulator_arm_1,retracted)",
+                "F": "configuration(manipulator_arm_1)",
+                "V": "retracted",
+                "I": 6
+            }
+        ],
+        "7": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "move((store_room,1))",
+                "F": "in(talos)",
+                "V": "(store_room,1)",
+                "I": 7
+            }
+        ],
+        "8": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "configure(manipulator_arm_2,extended)",
+                "F": "configuration(manipulator_arm_2)",
+                "V": "extended",
+                "I": 8
+            }
+        ],
+        "9": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "grasp(manipulator_arm_2,(block,6))",
+                "F": "grasping(manipulator_arm_2)",
+                "V": "(block,6)",
+                "I": 9
+            }
+        ],
+        "10": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "configure(manipulator_arm_2,retracted)",
+                "F": "configuration(manipulator_arm_2)",
+                "V": "retracted",
+                "I": 10
+            }
+        ],
+        "11": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "move((hallway,1))",
+                "F": "in(talos)",
+                "V": "(hallway,1)",
+                "I": 11
+            }
+        ]
+    },
+    "problem_divisions": []
+}

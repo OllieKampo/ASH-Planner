@@ -1048,8 +1048,8 @@ class Answer(NamedTuple):
     >>> answer.fmodel
     Model(symbols=frozenset(), cost=[], optimality_proven=False, number=-1, thread_id=-1, model_type=None)
     """
-    result: Result
-    statistics: Statistics
+    result: Result ## TODO Change to base_result and inc_result
+    statistics: Statistics ## TODO Change to base_statistics and inc_statistics
     base_models: Union[list[Model], ModelCount]
     inc_models: dict[int, Union[list[Model], ModelCount]]
     
@@ -2787,6 +2787,8 @@ class LogicProgram:
             if halt_reason_description is None:
                 halt_reason_description = "Unknown (an error occured)"
             
+            ## self.__halt_reason = halt_reason ## TODO and add to result?
+            ## Incremental result also has stop_condition: Optional[StopCondition] which was the requested stop condition
             self.__logger.log(self.__verbosity, f"Incremental ground and solve completed in {total_cumulative_time:.6f}s due to: {halt_reason_description}.")
     
     

@@ -1,0 +1,143 @@
+[12-11-2021_15-30-11] DEBUG :: __main__ >> 
+  ####################################################################################################################  
+                                                                                                                        
+                                                ░█████╗░░██████╗██╗░░██╗                                                
+                                                ██╔══██╗██╔════╝██║░░██║                                                
+                                                ███████║╚█████╗░███████║                                                
+                                                ██╔══██║░╚═══██╗██╔══██║                                                
+                                                ██║░░██║██████╔╝██║░░██║                                                
+                                                ╚═╝░░╚═╝╚═════╝░╚═╝░░╚═╝                                                
+                                                                                                                        
+                        =======================================================================                         
+                            ASH - The ASP based Hierarchical Conformance Refinement Planner                             
+                                      Copyright (C)  2021  Oliver Michael Kamperis                                      
+                        =======================================================================                         
+                                                                                                                        
+          This program comes with ABSOLUTELY NO WARRANTY; for details use `--warranty'. This is free software,          
+            and you are welcome to redistribute it under certain conditions; use `--conditions' for details.            
+                    For help and usage instructions use `--help' and `--instructions' respectively.                     
+                                                                                                                        
+  ####################################################################################################################  
+
+[12-11-2021_15-30-11] DEBUG :: __main__ >> 
+                    ================================================================================                    
+                                                                                                                        
+                            THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY                            
+                         APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT                         
+                       HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY                        
+                        OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,                        
+                         THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR                         
+                       PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM                       
+                        IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF                        
+                                     ALL NECESSARY SERVICING, REPAIR OR CORRECTION.                                     
+                                                                                                                        
+                    ================================================================================                    
+
+[12-11-2021_15-30-11] DEBUG :: __main__ >> 
+                    ================================================================================                    
+                                                                                                                        
+                            ASH - The ASP based Hierarchical Conformance Refinement Planner                             
+                                      Copyright (C)  2021  Oliver Michael Kamperis                                      
+                                             Email: o.m.kamperis@gmail.com                                              
+                                                                                                                        
+                          This program is free software: you can redistribute it and/or modify                          
+                          it under the terms of the GNU General Public License as published by                          
+                           the Free Software Foundation, either version 3 of the License, or                            
+                                                   any later version.                                                   
+                                                                                                                        
+                            This program is distributed in the hope that it will be useful,                             
+                             but WITHOUT ANY WARRANTY; without even the implied warranty of                             
+                              MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                              
+                                      GNU General Public License for more details.                                      
+                                                                                                                        
+                           You should have received a copy of the GNU General Public License                            
+                         along with this program. If not, see <https://www.gnu.org/licenses/>.                          
+                                                                                                                        
+                    ================================================================================                    
+
+[12-11-2021_15-30-11] DEBUG :: __main__ >> Command line arguments:
+'./test_problems/blocks_world_plus/BWP_system_laws.lp'
+'./test_problems/blocks_world_plus/BWP_problem_small_1.lp'
+'-conc'
+'False'
+'-ao'
+'simple'
+'-strat'
+'basic'
+'-bound'
+'2'
+
+[12-11-2021_15-30-11] DEBUG :: __main__ >> Parsed command line argumenys:
+('files', ['./test_problems/blocks_world_plus/BWP_system_laws.lp', './test_problems/blocks_world_plus/BWP_problem_small_1.lp'])
+('display_loader', None)
+('domain_rules', None)
+('domain_structure', None)
+('problem_specifics', None)
+('load_schema', None)
+('plan_file', './solutions/plans/ASH_Plan_2021-11-12_15-30-11.txt')
+('log_file', './logs/ASH_Log_2021-11-12_15-30-11.log')
+('excel_file', None)
+('data_file', None)
+('data_sep', ' ')
+('data_end', '\n')
+('save_schema', './solutions/schemas/ASH_Schema_2021-11-12_15-30-11.txt')
+('schema_level', 1)
+('warranty', False)
+('conditions', False)
+('instructions', False)
+('ash_output', 'simple')
+('clingo_output', False)
+('console_logging', 'INFO')
+('disable_logging', False)
+('disable_pause_on_start', False)
+('display_graph', True)
+('operation', 'standard')
+('experimental_runs', 1)
+('initial_runs', 0)
+('pause_on_run_completion', False)
+('threads', 8)
+('planning_time_limit', 3600)
+('search_length_limit', None)
+('planning_mode', 'hcr')
+('conformance_type', 'sequential')
+('enable_concurrency', False)
+('minimise_actions', None)
+('sequential_yielding', True)
+('detect_interleaving', False)
+('minimum_search_length_bound', True)
+('make_observable', False)
+('problem_space', None)
+('pause_on_level_change', False)
+('pause_on_increment_change', False)
+('top_level', None)
+('bottom_level', 1)
+('online_method', 'ground-first')
+('division_strategy', 'basic')
+('division_strategy_bounds', 2)
+('bound_type', 'incremental')
+('backwards_horizon', 0)
+('preemptive_division', False)
+('interrupting_division', False)
+('moving_average', 1)
+('left_blend_quantities', 0)
+('right_blend_quantities', 0)
+('avoid_refining_sgoals_marked_for_blending', False)
+('treat_tasks_as_independent', True)
+('save_grounding', False)
+('positive_final_goal_preemptive_achievement_heuristic', None)
+('negative_final_goal_preemptive_achievement_heuristic', None)
+('final_goal_intermediate_achievement_ordering_preferences', None)
+('detect_dependencies', False)
+
+[12-11-2021_15-34-18] ERROR :: __main__ >> Exception during main:
+
+Traceback (most recent call last):
+  File "C:\Users\Ollie Kampo\OneDrive - University of Birmingham\Desktop\ASH - Planner\launch.py", line 859, in <module>
+    try:
+  File "C:\Users\Ollie Kampo\OneDrive - University of Birmingham\Desktop\ASH - Planner\launch.py", line 210, in __main
+    input("Press any key to begin...")
+EOFError
+[12-11-2021_15-34-18] INFO :: __main__ >> Overall time: Real = 247.63325229999998, Process = 0.125
+
+[12-11-2021_15-34-18] INFO :: __main__ >> Exiting with code -1
+

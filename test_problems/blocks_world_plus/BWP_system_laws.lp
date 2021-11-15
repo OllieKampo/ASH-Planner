@@ -13,9 +13,9 @@
 #const abstraction_max = 3.
 
 %% Abstraction types
-#const reduc = 3.
-#const conde = 2.
-#const groun = 1.
+#const reduc = 3. % Classical
+#const conde = 2. % Refine both
+#const groun = 1. % Refine both
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Class Type Declarations - class(AL, CLS) declares a class CLS at abstraction level AL
@@ -123,7 +123,7 @@ state(AL, extensible, extended) :- AL < reduc, al(AL).
 state(AL, extensible, retracted) :- AL < reduc, al(AL).
 
 %% End effectors can be aligned with graspable objects
-state(AL, manipulator_end, aligned_with(OBJ)) :- insta_of(AL, graspable, OBJ), class(AL, manipulator_end), AL < reduc, al(AL).
+state(AL, manipulator_end, aligned_with(OBJ)) :- insta_of(AL, graspable, OBJ), class(AL_I, manipulator_end), AL <= AL_I, AL < reduc, al(AL).
 state(AL, manipulator_end, aligned_with(nothing)) :- AL < reduc, al(AL).
 
 %% Doors can be open or closed
@@ -170,7 +170,7 @@ fluent(AL_1, inertial, in(OBJ), L) :- insta_of(AL_1, location, L),
                                       insta_of(AL_2, object, OBJ), OBJ != nothing,
                                       not insta_of(AL_2, grounded, OBJ),
                                       sl(AL_1), sl(AL_2),
-                                      AL_2 >= AL_1. % true = @is_sgoal_fluent(AL_1, inertial, in(OBJ), L).
+                                      AL_2 >= AL_1.
 
 %% Objects can be placed on other surfaces
 fluent(AL_1, inertial, on(OBJ), SURFACE) :- OBJ != SURFACE,
@@ -221,58 +221,58 @@ fluent(AL, defined, complete(COLOUR), B) :- insta_of(AL, colour, COLOUR),
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% Actions - Define the available actions here
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%% Actions are given in the form - action(abstraction_level, action_type, actor, action)
+%%%% Actions are given in the form - action(abstraction_level, sequencing_type, action_type, actor, action)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Agent Actions
 
 %% Robots can move between locations
-action(AL, sequential, ROBO, move(L)) :- insta_of(AL, robot, ROBO),
-                                         insta_of(AL, location, L),
-                                         sl(AL).
+action(AL, sequential, locomotion, ROBO, move(L)) :- insta_of(AL, robot, ROBO),
+                                                     insta_of(AL, location, L),
+                                                     sl(AL).
 
 %% Robots can grasp objects with their graspers
-action(AL, concurrent, ROBO, grasp(DESC, OBJ)) :- desce_of(AL, ROBO, DESC),
-                                                  insta_of(AL, armed_robot, ROBO),
-                                                  insta_of(AL, grasper, DESC),
-                                                  insta_of(AL, graspable, OBJ), OBJ != nothing,
-                                                  sl(AL).
+action(AL, concurrent, manipulation, ROBO, grasp(DESC, OBJ)) :- desce_of(AL, ROBO, DESC),
+                                                                insta_of(AL, armed_robot, ROBO),
+                                                                insta_of(AL, grasper, DESC),
+                                                                insta_of(AL, graspable, OBJ), OBJ != nothing,
+                                                                sl(AL).
 
 %% Robots can release objects from their graspers
-action(AL, concurrent, ROBO, release(DESC, OBJ)) :- desce_of(AL, ROBO, DESC),
-                                                    insta_of(AL, armed_robot, ROBO),
-                                                    insta_of(AL, grasper, DESC),
-                                                    insta_of(AL, graspable, OBJ), OBJ != nothing,
-                                                    sl(AL).
+action(AL, concurrent, manipulation, ROBO, release(DESC, OBJ)) :- desce_of(AL, ROBO, DESC),
+                                                                  insta_of(AL, armed_robot, ROBO),
+                                                                  insta_of(AL, grasper, DESC),
+                                                                  insta_of(AL, graspable, OBJ), OBJ != nothing,
+                                                                  sl(AL).
 
 %% Robots can set the configuration state of their configurable components
-action(AL, concurrent, ROBO, configure(DESC, STATE)) :- desce_of(AL, ROBO, DESC),
-                                                        insta_of(AL, armed_robot, ROBO),
-                                                        insta_of(AL, configurable, DESC),
-                                                        state_of(AL, DESC, STATE),
-                                                        AL < reduc, sl(AL).
+action(AL, concurrent, configuration, ROBO, configure(DESC, STATE)) :- desce_of(AL, ROBO, DESC),
+                                                                       insta_of(AL, armed_robot, ROBO),
+                                                                       insta_of(AL, configurable, DESC),
+                                                                       state_of(AL, DESC, STATE),
+                                                                       AL < reduc, sl(AL).
 
 %% Robots can put objects on surfaces
-action(AL, concurrent, ROBO, put(DESC, OBJ, SURFACE)) :- OBJ != SURFACE, SURFACE != nothing,
-                                                         desce_of(AL, ROBO, DESC),
-                                                         insta_of(AL, armed_robot, ROBO),
-                                                         insta_of(AL, grasper, DESC),
-                                                         insta_of(AL, placeable, OBJ),
-                                                         insta_of(AL, surface, SURFACE),
-                                                         sl(AL).
+action(AL, concurrent, manipulation, ROBO, put(DESC, OBJ, SURFACE)) :- OBJ != SURFACE, SURFACE != nothing,
+                                                                       desce_of(AL, ROBO, DESC),
+                                                                       insta_of(AL, armed_robot, ROBO),
+                                                                       insta_of(AL, grasper, DESC),
+                                                                       insta_of(AL, placeable, OBJ),
+                                                                       insta_of(AL, surface, SURFACE),
+                                                                       sl(AL).
 
 %% Robots can lift objects off of surfaces
-action(AL, concurrent, ROBO, lift(DESC, OBJ)) :- desce_of(AL, ROBO, DESC),
-                                                 insta_of(AL, armed_robot, ROBO),
-                                                 insta_of(AL, grasper, DESC),
-                                                 insta_of(AL, placeable, OBJ),
-                                                 sl(AL).
+action(AL, concurrent, manipulation, ROBO, lift(DESC, OBJ)) :- desce_of(AL, ROBO, DESC),
+                                                               insta_of(AL, armed_robot, ROBO),
+                                                               insta_of(AL, grasper, DESC),
+                                                               insta_of(AL, placeable, OBJ),
+                                                               sl(AL).
 
 %% Robots can actuate doors
-action(AL, concurrent, ROBO, actuate(DESC, D)) :- insta_of(AL, armed_robot, ROBO),
-                                                  insta_of(AL, grasper, DESC),
-                                                  insta_of(AL, door, D),
-                                                  AL < reduc, sl(AL).
+action(AL, concurrent, manipulation, ROBO, actuate(DESC, D)) :- insta_of(AL, armed_robot, ROBO),
+                                                                insta_of(AL, grasper, DESC),
+                                                                insta_of(AL, door, D),
+                                                                AL < reduc, sl(AL).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -286,14 +286,14 @@ action(AL, concurrent, ROBO, actuate(DESC, D)) :- insta_of(AL, armed_robot, ROBO
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% When a robot moves its location changes
-effect(AL, ROBO, move(L), in(ROBO), L) :- action(AL, _, ROBO, move(L)),
+effect(AL, ROBO, move(L), in(ROBO), L) :- action(AL, _, _, ROBO, move(L)),
                                           fluent(AL, inertial, in(ROBO), L),
                                           insta_of(AL, robot, ROBO),
                                           insta_of(AL, location, L),
                                           pl(AL).
 
 %% When a robot grasps an object the object becomes grasped
-effect(AL, ROBO, grasp(DESC, OBJ), grasping(DESC), OBJ) :- action(AL, _, ROBO, grasp(DESC, OBJ)),
+effect(AL, ROBO, grasp(DESC, OBJ), grasping(DESC), OBJ) :- action(AL, _, _, ROBO, grasp(DESC, OBJ)),
                                                            fluent(AL, inertial, grasping(DESC), OBJ),
                                                            desce_of(AL, ROBO, DESC),
                                                            insta_of(AL, armed_robot, ROBO),
@@ -302,7 +302,7 @@ effect(AL, ROBO, grasp(DESC, OBJ), grasping(DESC), OBJ) :- action(AL, _, ROBO, g
                                                            pl(AL).
 
 %% When a robot releases an object the object is no longer grasped
-effect(AL, ROBO, release(DESC, OBJ), grasping(DESC), nothing) :- action(AL, _, ROBO, release(DESC, OBJ)),
+effect(AL, ROBO, release(DESC, OBJ), grasping(DESC), nothing) :- action(AL, _, _, ROBO, release(DESC, OBJ)),
                                                                  fluent(AL, inertial, grasping(DESC), nothing),
                                                                  desce_of(AL, ROBO, DESC),
                                                                  insta_of(AL, armed_robot, ROBO),
@@ -310,7 +310,7 @@ effect(AL, ROBO, release(DESC, OBJ), grasping(DESC), nothing) :- action(AL, _, R
                                                                  pl(AL).
 
 %% When a robot releases an object from an end effector it is no longer aligned with that object
-effect(AL, ROBO, release(END, OBJ), configuration(END), aligned_with(nothing)) :- action(AL, _, ROBO, release(END, OBJ)),
+effect(AL, ROBO, release(END, OBJ), configuration(END), aligned_with(nothing)) :- action(AL, _, _, ROBO, release(END, OBJ)),
                                                                                   fluent(AL, inertial, configuration(END), aligned_with(nothing)),
                                                                                   desce_of(AL, ROBO, END),
                                                                                   insta_of(AL, armed_robot, ROBO),
@@ -320,7 +320,7 @@ effect(AL, ROBO, release(END, OBJ), configuration(END), aligned_with(nothing)) :
                                                                                   AL < reduc, pl(AL).
 
 %% When a robot configures a component it causes the state of that component to change
-effect(AL, ROBO, configure(DESC, STATE), configuration(DESC), STATE) :- action(AL, _, ROBO, configure(DESC, STATE)),
+effect(AL, ROBO, configure(DESC, STATE), configuration(DESC), STATE) :- action(AL, _, _, ROBO, configure(DESC, STATE)),
                                                                         fluent(AL, inertial, configuration(DESC), STATE),
                                                                         desce_of(AL, ROBO, DESC),
                                                                         insta_of(AL, robot, ROBO),
@@ -330,7 +330,7 @@ effect(AL, ROBO, configure(DESC, STATE), configuration(DESC), STATE) :- action(A
 
 %% When a robot retracts a manipulator limb any of its sibling end effectors are no longer aligned with any objects unless it is grasping an object
 effect(AL, ROBO, configure(ARM, retracted), configuration(END), aligned_with(nothing), t) :- holds(AL, grasping(END), nothing, t - 1),
-                                                                                             action(AL, _, ROBO, configure(ARM, retracted)),
+                                                                                             action(AL, _, _, ROBO, configure(ARM, retracted)),
                                                                                              fluent(AL, inertial, configuration(END), aligned_with(nothing)),
                                                                                              desce_of(AL, ROBO, ARM),
                                                                                              desce_of(AL, ROBO, END),
@@ -342,7 +342,7 @@ effect(AL, ROBO, configure(ARM, retracted), configuration(END), aligned_with(not
                                                                                              AL < reduc, pl(AL).
 
 %% When a robot puts an object on a surface the object is on that surface
-effect(AL, ROBO, put(DESC, OBJ, SURFACE), on(OBJ), SURFACE) :- action(AL, _, ROBO, put(DESC, OBJ, SURFACE)),
+effect(AL, ROBO, put(DESC, OBJ, SURFACE), on(OBJ), SURFACE) :- action(AL, _, _, ROBO, put(DESC, OBJ, SURFACE)),
                                                                fluent(AL, inertial, on(OBJ), SURFACE),
                                                                OBJ != SURFACE, SURFACE != nothing,
                                                                desce_of(AL, ROBO, DESC),
@@ -353,7 +353,7 @@ effect(AL, ROBO, put(DESC, OBJ, SURFACE), on(OBJ), SURFACE) :- action(AL, _, ROB
                                                                pl(AL).
 
 %% When a robot lifts an object the object is on nothing
-effect(AL, ROBO, lift(DESC, OBJ), on(OBJ), nothing) :- action(AL, _, ROBO, lift(DESC, OBJ)),
+effect(AL, ROBO, lift(DESC, OBJ), on(OBJ), nothing) :- action(AL, _, _, ROBO, lift(DESC, OBJ)),
                                                        fluent(AL, inertial, on(OBJ), nothing),
                                                        desce_of(AL, ROBO, DESC),
                                                        insta_of(AL, armed_robot, ROBO),
@@ -363,6 +363,7 @@ effect(AL, ROBO, lift(DESC, OBJ), on(OBJ), nothing) :- action(AL, _, ROBO, lift(
 
 %% When a robot actuates a door its configuration is flipped, if it was closed it becomes open and vice versa
 effect(AL, ROBO, actuate(DESC, D), configuration(D), STATE_1, t) :- holds(AL, configuration(D), STATE_2, t - 1),
+                                                                    action(AL, _, _, ROBO, actuate(DESC, D)),
                                                                     fluent(AL, inertial, configuration(D), STATE_1),
                                                                     fluent(AL, inertial, configuration(D), STATE_2),
                                                                     insta_of(AL, armed_robot, ROBO),
@@ -380,7 +381,7 @@ effect(AL, ROBO, actuate(DESC, D), configuration(D), STATE_1, t) :- holds(AL, co
 
 %% A robot can only move between locations that are connected
 precond(AL, ROBO, move(L_2), in(ROBO), L_1, false) :- not is(AL, connected(L_1, L_2)), L_1 != L_2,
-                                                      action(AL, _, ROBO, move(L_2)),
+                                                      action(AL, _, _, ROBO, move(L_2)),
                                                       fluent(AL, inertial, in(ROBO), L_1),
                                                       static(AL, connected(L_1, L_2)),
                                                       insta_of(AL, robot, ROBO),
@@ -392,7 +393,7 @@ precond(AL, ROBO, move(L_2), in(ROBO), L_1, false) :- not is(AL, connected(L_1, 
 % { precond(AL, ROBO, move(P_2), in(ROBO), P_1, true, t) : is(AL, connected(P_1, P_2)),
 %                                                          fluent(AL, inertial, in(ROBO), P_1),
 %                                                          static(AL, connected(P_1, P_2)), P_1 != P_2,
-%                                                          insta_of(AL, location, P_1) } = 1 :- action(AL, _, ROBO, move(P_2)),
+%                                                          insta_of(AL, location, P_1) } = 1 :- action(AL, _, _, ROBO, move(P_2)),
 %                                                                                               insta_of(AL, robot, ROBO),
 %                                                                                               insta_of(AL, location, P_2),
 %                                                                                               AL < reduc, pl(AL).
@@ -400,7 +401,7 @@ precond(AL, ROBO, move(L_2), in(ROBO), L_1, false) :- not is(AL, connected(L_1, 
 %% A robot can only move between locations that are connected by a door if that door is open
 precond(AL, ROBO, move(L_2), configuration(D), open, true, t) :- holds(AL, in(ROBO), L_1, t - 1),
                                                                  is(AL, connected_by_door(D, L_1, L_2)), L_1 != L_2,
-                                                                 action(AL, _, ROBO, move(L_2)),
+                                                                 action(AL, _, _, ROBO, move(L_2)),
                                                                  fluent(AL, inertial, configuration(D), open),
                                                                  fluent(AL, _, in(ROBO), L_1),
                                                                  static(AL, connected_by_door(D, L_1, L_2)),
@@ -413,7 +414,7 @@ precond(AL, ROBO, move(L_2), configuration(D), open, true, t) :- holds(AL, in(RO
 %% An armed robot can only open a door if it is grasping at least one of its handles
 { precond(AL, ROBO, actuate(COMP, D), grasping(COMP), H, true, t) : desce_of(AL, D, H),
                                                                     insta_of(AL, handle, H),
-                                                                    action(AL, _, ROBO, actuate(COMP, D)),
+                                                                    action(AL, _, _, ROBO, actuate(COMP, D)),
                                                                     fluent(AL, inertial, grasping(COMP), H) } = 1 :- desce_of(AL, ROBO, COMP),
                                                                                                                      insta_of(AL, armed_robot, ROBO),
                                                                                                                      insta_of(AL, grasper, COMP),
@@ -423,7 +424,7 @@ precond(AL, ROBO, move(L_2), configuration(D), open, true, t) :- holds(AL, in(RO
 % %% An armed robot can only open a door if it is grasping at least one of its handles
 % not occurs(AL, ROBO, actuate(DESC, D), t) :- not { holds(AL, grasping(DESC), H, t - 1) : desce_of(AL, D, H),
 %                                                                     insta_of(AL, handle, H),
-%                                                                     action(AL, ROBO, actuate(DESC, D)),
+%                                                                     action(AL, _, _, ROBO, actuate(DESC, D)),
 %                                                                     fluent(AL, inertial, grasping(DESC), H) } = 1, desce_of(AL, ROBO, DESC),
 %                                                                                                                      insta_of(AL, robot, ROBO),
 %                                                                                                                      insta_of(AL, grasper, DESC),
@@ -432,7 +433,7 @@ precond(AL, ROBO, move(L_2), configuration(D), open, true, t) :- holds(AL, in(RO
 
 %% An armed robot can only grasp a grounded object when it is in the same location as it
 precond(AL, ROBO, grasp(DESC, OBJ), in(ROBO), L, true) :- is(AL, in(OBJ, L)),
-                                                          action(AL, _, ROBO, grasp(DESC, OBJ)),
+                                                          action(AL, _, _, ROBO, grasp(DESC, OBJ)),
                                                           fluent(AL, inertial, in(ROBO), L),
                                                           static(AL, in(OBJ, L)),
                                                           desce_of(AL, ROBO, DESC),
@@ -444,7 +445,7 @@ precond(AL, ROBO, grasp(DESC, OBJ), in(ROBO), L, true) :- is(AL, in(OBJ, L)),
                                                           AL < reduc, pl(AL).
 
 %% An armed robot can only move if all of its extensible components are retracted
-precond(AL, ROBO, move(L), configuration(DESC), retracted, true) :- action(AL, _, ROBO, move(L)),
+precond(AL, ROBO, move(L), configuration(DESC), retracted, true) :- action(AL, _, _, ROBO, move(L)),
                                                                     fluent(AL, inertial, configuration(DESC), retracted),
                                                                     desce_of(AL, ROBO, DESC),
                                                                     insta_of(AL, armed_robot, ROBO),
@@ -455,7 +456,7 @@ precond(AL, ROBO, move(L), configuration(DESC), retracted, true) :- action(AL, _
 
 %% An armed robot can only grasp an object when it is in the same location as that object
 precond(AL, ROBO, grasp(DESC, OBJ), in(OBJ), L, true, t) :- holds(AL, in(ROBO), L, t - 1), OBJ != nothing,
-                                                            action(AL, _, ROBO, grasp(DESC, OBJ)),
+                                                            action(AL, _, _, ROBO, grasp(DESC, OBJ)),
                                                             fluent(AL, inertial, in(OBJ), L),
                                                             fluent(AL, inertial, in(ROBO), L),
                                                             desce_of(AL, ROBO, DESC),
@@ -466,7 +467,7 @@ precond(AL, ROBO, grasp(DESC, OBJ), in(OBJ), L, true, t) :- holds(AL, in(ROBO), 
                                                             pl(AL).
 
 precond(AL, ROBO, grasp(DESC, OBJ), in(ROBO), L, true, t) :- holds(AL, in(OBJ), L, t - 1), OBJ != nothing,
-                                                             action(AL, _, ROBO, grasp(DESC, OBJ)),
+                                                             action(AL, _, _, ROBO, grasp(DESC, OBJ)),
                                                              fluent(AL, inertial, in(OBJ), L),
                                                              fluent(AL, inertial, in(ROBO), L),
                                                              desce_of(AL, ROBO, DESC),
@@ -478,7 +479,7 @@ precond(AL, ROBO, grasp(DESC, OBJ), in(ROBO), L, true, t) :- holds(AL, in(OBJ), 
 
 %% An armed robot can only grasp an object with a given grasper if it is not currently grasping another object with that grasper
 precond(AL, ROBO, grasp(DESC, OBJ), grasping(DESC), nothing, true) :- OBJ != nothing,
-                                                                      action(AL, _, ROBO, grasp(DESC, OBJ)),
+                                                                      action(AL, _, _, ROBO, grasp(DESC, OBJ)),
                                                                       fluent(AL, inertial, grasping(DESC), nothing),
                                                                       desce_of(AL, ROBO, DESC),
                                                                       insta_of(AL, armed_robot, ROBO),
@@ -488,7 +489,7 @@ precond(AL, ROBO, grasp(DESC, OBJ), grasping(DESC), nothing, true) :- OBJ != not
 
 %% An armed robot cannot grasp an object that has another object on top of it
 precond(AL, ROBO, grasp(DESC, OBJ_1), on(OBJ_2), OBJ_1, false) :- OBJ_1 != OBJ_2, OBJ_1 != nothing,
-                                                                  action(AL, _, ROBO, grasp(DESC, OBJ_1)),
+                                                                  action(AL, _, _, ROBO, grasp(DESC, OBJ_1)),
                                                                   fluent(AL, inertial, on(OBJ_2), OBJ_1),
                                                                   desce_of(AL, ROBO, DESC),
                                                                   insta_of(AL, armed_robot, ROBO),
@@ -500,7 +501,7 @@ precond(AL, ROBO, grasp(DESC, OBJ_1), on(OBJ_2), OBJ_1, false) :- OBJ_1 != OBJ_2
 
 %% An armed robot can only grasp an object with a grasper that is extensible if it is extended
 precond(AL, ROBO, grasp(DESC, OBJ), configuration(DESC), extended, true) :- OBJ != nothing,
-                                                                            action(AL, _, ROBO, grasp(DESC, OBJ)),
+                                                                            action(AL, _, _, ROBO, grasp(DESC, OBJ)),
                                                                             fluent(AL, inertial, configuration(DESC), extended),
                                                                             desce_of(AL, ROBO, DESC),
                                                                             insta_of(AL, armed_robot, ROBO),
@@ -511,7 +512,7 @@ precond(AL, ROBO, grasp(DESC, OBJ), configuration(DESC), extended, true) :- OBJ 
 
 %% An armed robot can only grasp an object with a grasper that is not extensible but has extensible siblings is those siblings are extended
 precond(AL, ROBO, grasp(DESC_1, OBJ), configuration(DESC_2), extended, true) :- OBJ != nothing,
-                                                                                action(AL, _, ROBO, grasp(DESC_1, OBJ)),
+                                                                                action(AL, _, _, ROBO, grasp(DESC_1, OBJ)),
                                                                                 fluent(AL, inertial, configuration(DESC_2), extended),
                                                                                 desce_of(AL, ROBO, DESC_1),              
                                                                                 desce_of(AL, ROBO, DESC_2),
@@ -525,7 +526,7 @@ precond(AL, ROBO, grasp(DESC_1, OBJ), configuration(DESC_2), extended, true) :- 
 
 %% An armed robot can only grasp an object with an end effector if that end effector is aligned with that object
 precond(AL, ROBO, grasp(END, OBJ), configuration(END), aligned_with(OBJ), true) :- OBJ != nothing,
-                                                                                   action(AL, _, ROBO, grasp(END, OBJ)),
+                                                                                   action(AL, _, _, ROBO, grasp(END, OBJ)),
                                                                                    fluent(AL, inertial, configuration(END), aligned_with(OBJ)),
                                                                                    desce_of(AL, ROBO, END),
                                                                                    insta_of(AL, armed_robot, ROBO),
@@ -536,7 +537,7 @@ precond(AL, ROBO, grasp(END, OBJ), configuration(END), aligned_with(OBJ), true) 
 
 %% An armed robot can only release an object when it is grasping that object
 precond(AL, ROBO, release(DESC, OBJ), grasping(DESC), OBJ, true) :- OBJ != nothing,
-                                                                    action(AL, _, ROBO, release(DESC, OBJ)),
+                                                                    action(AL, _, _, ROBO, release(DESC, OBJ)),
                                                                     fluent(AL, inertial, grasping(DESC), OBJ),
                                                                     desce_of(AL, ROBO, DESC),
                                                                     insta_of(AL, armed_robot, ROBO),
@@ -546,7 +547,7 @@ precond(AL, ROBO, release(DESC, OBJ), grasping(DESC), OBJ, true) :- OBJ != nothi
 
 %% An armed robot can only release an object from a grasper that is extensible if it is extended
 precond(AL, ROBO, release(DESC, OBJ), configuration(DESC), extended, true) :- OBJ != nothing,
-                                                                              action(AL, _, ROBO, release(DESC, OBJ)),
+                                                                              action(AL, _, _, ROBO, release(DESC, OBJ)),
                                                                               fluent(AL, inertial, configuration(DESC), extended),
                                                                               desce_of(AL, ROBO, DESC),
                                                                               insta_of(AL, armed_robot, ROBO),
@@ -557,7 +558,7 @@ precond(AL, ROBO, release(DESC, OBJ), configuration(DESC), extended, true) :- OB
 
 %% An armed robot can only release an object from a grasper that is not extensible but has extensible siblings is those siblings are extended
 precond(AL, ROBO, release(DESC_1, OBJ), configuration(DESC_2), extended, true) :- OBJ != nothing,
-                                                                                  action(AL, _, ROBO, release(DESC_1, OBJ)),
+                                                                                  action(AL, _, _, ROBO, release(DESC_1, OBJ)),
                                                                                   fluent(AL, inertial, configuration(DESC_2), extended),
                                                                                   desce_of(AL, ROBO, DESC_1),
                                                                                   desce_of(AL, ROBO, DESC_2),
@@ -570,7 +571,7 @@ precond(AL, ROBO, release(DESC_1, OBJ), configuration(DESC_2), extended, true) :
                                                                                   pl(AL).
 
 %% An armed robot can only change the configuration of the descendant components of its manipulator arms if the extensible descendant sibling components of that arm are extended
-precond(AL, ROBO, configure(DESC_1, STATE), configuration(DESC_2), extended, true) :- action(AL, _, ROBO, configure(DESC_1, STATE)),
+precond(AL, ROBO, configure(DESC_1, STATE), configuration(DESC_2), extended, true) :- action(AL, _, _, ROBO, configure(DESC_1, STATE)),
                                                                                       fluent(AL, inertial, configuration(DESC_2), extended),
                                                                                       desce_of(AL, ROBO, DESC_1),
                                                                                       desce_of(AL, ROBO, DESC_2),
@@ -586,7 +587,7 @@ precond(AL, ROBO, configure(DESC_1, STATE), configuration(DESC_2), extended, tru
                                                                                       AL < reduc, pl(AL).
 
 %% An armed robot can only align an end effector with an object if it is grasping nothing with that end effector
-precond(AL, ROBO, configure(DESC, aligned_with(OBJ)), grasping(DESC), nothing, true) :- action(AL, _, ROBO, configure(DESC, aligned_with(OBJ))),
+precond(AL, ROBO, configure(DESC, aligned_with(OBJ)), grasping(DESC), nothing, true) :- action(AL, _, _, ROBO, configure(DESC, aligned_with(OBJ))),
                                                                                         fluent(AL, inertial, grasping(DESC), nothing),
                                                                                         desce_of(AL, ROBO, DESC),
                                                                                         insta_of(AL, armed_robot, ROBO),
@@ -597,7 +598,7 @@ precond(AL, ROBO, configure(DESC, aligned_with(OBJ)), grasping(DESC), nothing, t
 
 % An armed robot can only put an object on a surface when it is in the same location as that surface
 precond(AL, ROBO, put(DESC, OBJ, SURFACE), in(SURFACE), L, true, t) :- holds(AL, in(ROBO), L, t - 1),
-                                                                       action(AL, _, ROBO, put(DESC, OBJ, SURFACE)),
+                                                                       action(AL, _, _, ROBO, put(DESC, OBJ, SURFACE)),
                                                                        fluent(AL, inertial, in(SURFACE), L),
                                                                        fluent(AL, inertial, in(ROBO), L),
                                                                        desce_of(AL, ROBO, DESC),
@@ -609,7 +610,7 @@ precond(AL, ROBO, put(DESC, OBJ, SURFACE), in(SURFACE), L, true, t) :- holds(AL,
                                                                        pl(AL).
 
 precond(AL, ROBO, put(DESC, OBJ, SURFACE), in(ROBO), L, true, t) :- holds(AL, in(SURFACE), L, t - 1),
-                                                                    action(AL, _, ROBO, put(DESC, OBJ, SURFACE)),
+                                                                    action(AL, _, _, ROBO, put(DESC, OBJ, SURFACE)),
                                                                     fluent(AL, inertial, in(SURFACE), L),
                                                                     fluent(AL, inertial, in(ROBO), L),
                                                                     desce_of(AL, ROBO, DESC),
@@ -622,7 +623,7 @@ precond(AL, ROBO, put(DESC, OBJ, SURFACE), in(ROBO), L, true, t) :- holds(AL, in
 
 %% An armed robot cannot put an object on top of another object that already has some other object on top of it
 precond(AL, ROBO, put(DESC, OBJ_1, BLOCK), on(OBJ_2), BLOCK, false) :- OBJ_1 != OBJ_2,
-                                                                       action(AL, _, ROBO, put(DESC, OBJ_1, SURFACE)),
+                                                                       action(AL, _, _, ROBO, put(DESC, OBJ_1, SURFACE)),
                                                                        fluent(AL, inertial, on(OBJ_2), BLOCK),
                                                                        desce_of(AL, ROBO, DESC),
                                                                        insta_of(AL, armed_robot, ROBO),
@@ -634,7 +635,7 @@ precond(AL, ROBO, put(DESC, OBJ_1, BLOCK), on(OBJ_2), BLOCK, false) :- OBJ_1 != 
 
 %% An armed robot can only put an object on a surface when it is grasping that object
 precond(AL, ROBO, put(DESC, OBJ, SURFACE), grasping(DESC), OBJ, true) :- OBJ != SURFACE, OBJ != nothing, SURFACE != nothing,
-                                                                         action(AL, _, ROBO, put(DESC, OBJ, SURFACE)),
+                                                                         action(AL, _, _, ROBO, put(DESC, OBJ, SURFACE)),
                                                                          fluent(AL, inertial, grasping(DESC), OBJ),
                                                                          desce_of(AL, ROBO, DESC),
                                                                          insta_of(AL, armed_robot, ROBO),
@@ -645,7 +646,7 @@ precond(AL, ROBO, put(DESC, OBJ, SURFACE), grasping(DESC), OBJ, true) :- OBJ != 
 
 %% An armed robot cannot put an object on another object if any robot is grasping the other object with any of its graspers
 precond(AL, ROBO_1, put(DESC_1, OBJ_1, OBJ_2), grasping(DESC_2), OBJ_2, false) :- OBJ_1 != OBJ_2, DESC_1 != DESC_2,
-                                                                                  action(AL, _, ROBO, put(DESC_1, OBJ_1, OBJ_2)),
+                                                                                  action(AL, _, _, ROBO, put(DESC_1, OBJ_1, OBJ_2)),
                                                                                   fluent(AL, inertial, grasping(DESC_2), OBJ_2),
                                                                                   desce_of(AL, ROBO_1, DESC_1),
                                                                                   desce_of(AL, ROBO_2, DESC_2),
@@ -659,7 +660,7 @@ precond(AL, ROBO_1, put(DESC_1, OBJ_1, OBJ_2), grasping(DESC_2), OBJ_2, false) :
                                                                                   pl(AL).
 
 %% An armed robot can only put an object on a surface with a grasper that is extensible if it is extended
-precond(AL, ROBO, put(DESC, OBJ, SURFACE), configuration(DESC), extended, true) :- action(AL, _, ROBO, put(DESC, OBJ, SURFACE)),
+precond(AL, ROBO, put(DESC, OBJ, SURFACE), configuration(DESC), extended, true) :- action(AL, _, _, ROBO, put(DESC, OBJ, SURFACE)),
                                                                                    fluent(AL, inertial, configuration(DESC), extended),
                                                                                    desce_of(AL, ROBO, DESC),
                                                                                    insta_of(AL, armed_robot, ROBO),
@@ -670,7 +671,7 @@ precond(AL, ROBO, put(DESC, OBJ, SURFACE), configuration(DESC), extended, true) 
                                                                                    AL < reduc, pl(AL).
 
 %% An armed robot can only put an object on aa surface with a grasper that is not extensible but has extensible siblings is those siblings are extended
-precond(AL, ROBO, put(DESC_1, OBJ, SURFACE), configuration(DESC_2), extended, true) :- action(AL, _, ROBO, put(DESC_1, OBJ, SURFACE)),
+precond(AL, ROBO, put(DESC_1, OBJ, SURFACE), configuration(DESC_2), extended, true) :- action(AL, _, _, ROBO, put(DESC_1, OBJ, SURFACE)),
                                                                                        fluent(AL, inertial, configuration(DESC_2), extended),
                                                                                        desce_of(AL, ROBO, DESC_1),
                                                                                        desce_of(AL, ROBO, DESC_2),
@@ -685,7 +686,7 @@ precond(AL, ROBO, put(DESC_1, OBJ, SURFACE), configuration(DESC_2), extended, tr
 
 %% An armed robot cannot lift a grasped object that has another object on top of it
 precond(AL, ROBO, lift(DESC, OBJ_1), on(OBJ_2), OBJ_1, false) :- OBJ_1 != OBJ_2,
-                                                                 action(AL, _, ROBO, lift(DESC, OBJ_1)),
+                                                                 action(AL, _, _, ROBO, lift(DESC, OBJ_1)),
                                                                  fluent(AL, inertial, on(OBJ_2), OBJ_1),
                                                                  desce_of(AL, ROBO, DESC),
                                                                  insta_of(AL, armed_robot, ROBO),
@@ -697,7 +698,7 @@ precond(AL, ROBO, lift(DESC, OBJ_1), on(OBJ_2), OBJ_1, false) :- OBJ_1 != OBJ_2,
 
 %% An armed robot can only lift a block that it is grasping
 precond(AL, ROBO, lift(DESC, OBJ), grasping(DESC), OBJ, true) :- OBJ != SURFACE,
-                                                                 action(AL, _, ROBO, lift(DESC, OBJ)),
+                                                                 action(AL, _, _, ROBO, lift(DESC, OBJ)),
                                                                  fluent(AL, inertial, grasping(DESC), OBJ),
                                                                  desce_of(AL, ROBO, DESC),
                                                                  insta_of(AL, armed_robot, ROBO),
@@ -711,7 +712,7 @@ precond(AL, ROBO, lift(DESC, OBJ), grasping(DESC), OBJ, true) :- OBJ != SURFACE,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%% State Variable Relations - Rules constraining the range of valid states
+%%%% State Variable Relations and Validity Constraints - Rules constraining the range of valid states
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% If any of a robot is grasping an object then that object must share its location
@@ -856,8 +857,8 @@ holds(AL, unordered_tower(BASE), true, t) :- holds(AL, on(BLOCK_1), BLOCK_2, t),
                                              fluent(AL, defined, in_tower(BASE, BLOCK_2), true),
                                              fluent(AL, defined, tower_base(BASE), true),
                                              fluent(AL, inertial, on(BLOCK_1), BLOCK_2),     
-                                             BLOCK_1 = (block, N_1), number(N_1),
-                                             BLOCK_2 = (block, N_2), number(N_2),
+                                             BLOCK_1 = (block, N_1), block_number(N_1),
+                                             BLOCK_2 = (block, N_2), block_number(N_2),
                                              BLOCK_1 != BLOCK_2, N_1 > N_2,
                                              insta_of(AL, block, BLOCK_1),
                                              insta_of(AL, block, BLOCK_2),

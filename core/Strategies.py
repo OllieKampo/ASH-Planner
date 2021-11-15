@@ -17,6 +17,7 @@ _Strategies_logger.setLevel(logging.DEBUG)
 
 Number = Union[int, float]
 Bound = Union[Optional[Number], dict[int, Optional[Number]]]
+Horizon = Bound
 Bounds = dict[str, Bound]
 
 class Predictor:
@@ -67,36 +68,35 @@ class Blend(SubscriptableDataClass):
 @dataclass(frozen=True, order=True)
 class DivisionPoint:
     """
-    Represents a division point by its sub-goal stage index and its blend quantities.
+    Represents a division point by its sub-goal stage index.
     
     Represents a reactive division by its sub-goal stage index and the time step it was committed on.
     There can be at most one division per index, as multiple would have no affect.
     
-    A reactive division can be committed on any of the children of a sub-goal stage, and the solver can still continue planning from that step.
-    This is because the plan cannot possibly get shorter than the current search length, or a solution would have already been found.
-    
-    Fields
-    ------
-    `index : int` - The index of this reactive division.
-    The is the index of the sub-goal stage that was current when the division was commited.
-    The index of the current sub-goal (that which is next in sequence to be achieved) is at `index + 1`.
-    
-    `step : int` - The time step this reactive division was commited on.
+    A proactive division is applied on a matching child step, since they are applied on the achievement of sub-goal stages.
+    A reactive division can be committed on any child step of a sub-goal stage, but only applied the the previous sub-goal stage unless it is a matching child, and the solver can still continue planning from that step.
+    This is called a preemptive division, and is an admissible technique because the plan cannot possibly get shorter than the current search length, or a solution would have already been found.
     
     Fields
     ------
     `index : int` - The index of this division point.
     The earlier and later partial problems are inclusive and exclusive of this sub-goal stage index respectively.
+    If this division point was commited reactively, this is the sub-goal stage that was most recently achieved when it was commited.
     
-    `blend : int` - The blend quantities of this division point.
+    `blend : Blend = Blend()` - The blend quantities of this division point.
     
-    `inherited : bool` - Whether this division point was inherited from the previous abstraction level due to the online planning method.
+    `inherited : bool = False` - Whether this division point was inherited from the previous abstraction level due to the online planning method.
     
-    `reactive : int` -
+    `reactive : {int | None} = None` - Either None to indicate the division point was commited proactively, or an integer defining the time step the division index was achieved on.
+    This is equivalent to the plan length that was fixed by the division.
     
-    `interrupting : bool` -
+    `interrupting : bool = False` - A Boolean, True if the division is interrupting, False if it was continuous.
     
-    `preemptive : int` -
+    `preemptive : int = 0` - An integer, a positive non-zero value if this division point was committed preemptively defining how many search steps have been passed since the last sub-goal stage was achieved, zero otherwise.
+    
+    `committed_index : int = -1` - The sub-goal stage index that was current when this reactive division was committed.
+    
+    `committed_step : int = -1` - An integer defining the time step this reactive division was commited on.
     """
     index: int
     blend: Blend = field(compare=False, default_factory=Blend)
@@ -104,15 +104,19 @@ class DivisionPoint:
     reactive: Optional[int] = None
     interrupting: bool = False
     preemptive: int = 0
+    committed_index: int = -1
+    committed_step: int = -1
     
     def __post_init__(self) -> None:
-        if self.interrupting and self.reactive is None:
-            raise ValueError(f"Interrupting divisions must be reactive. Got; {self!r}.")
-        # if self.preemptive and not self.interrupting:
-        #     raise ValueError(f"Preemptive divisions must be interrupting. Got; {self!r}") ## TODO
+        if (self.reactive is None
+            and (self.interrupting or self.preemptive)):
+            raise ValueError(f"Interrupting or preemptive divisions must be reactive. Got; {self!r}.")
+        if self.reactive and self.committed_index < 0:
+            object.__setattr__(self, "committed_index", self.index)
+            object.__setattr__(self, "committed_step", self.reactive)
     
     def __str__(self) -> str:
-        return f"(Index = {self.index}, Blend = {self.blend}, Inherited = {self.inherited}, Type = {'procative' if self.proactive else 'reactive'}" + (f", Interrupting = {self.interrupting}, Preemeptive = {self.preemptive}" if self.reactive else "") + ")"
+        return f"(Index = {self.index}, Blend = {self.blend}, Inherited = {self.inherited}, Type = {'proactive' if self.proactive else 'reactive'}" + (f", Interrupting = {self.interrupting}, Preemptive = {self.preemptive}" if self.reactive else "") + ")"
     
     @property
     def proactive(self) -> bool:
@@ -165,8 +169,8 @@ class DivisionPoint:
         return self.index + self.blend.get_right(next_problem_size)
 
 class DivisionPointPair(NamedTuple):
-    left: DivisionPoint
-    right: DivisionPoint
+    left: Optional[DivisionPoint]
+    right: Optional[DivisionPoint]
 
 @dataclass(frozen=True, order=True)
 class SubGoalRange(_collections_abc.Collection):
@@ -313,7 +317,7 @@ class DivisionScenario(_collections_abc.Sequence):
     
     
     
-    def get_division_point_pair(self, problem_number: int) -> DivisionPointPair:
+    def get_division_point_pair(self, problem_number: int, fabricate_inherited: bool = False) -> DivisionPointPair:
         problem_range: range = self.problem_range
         
         ## Check the problem number is valid
@@ -321,16 +325,18 @@ class DivisionScenario(_collections_abc.Sequence):
             raise ValueError("The given problem number is not in the range of this division scenario. "
                              f"Got; problem number = {problem_number}, problem range = {self.problem_range}")
         
-        left_point: DivisionPoint = DivisionPoint(self.first_index, inherited=True)
-        right_point: DivisionPoint = DivisionPoint(self.last_index, inherited=True)
+        left_point: Optional[DivisionPoint] = None
+        right_point: Optional[DivisionPoint] = None
+        
+        if fabricate_inherited:
+            left_point = DivisionPoint(self.first_index, inherited=True)
+            right_point = DivisionPoint(self.last_index, inherited=True)
         
         division_points: list[DivisionPoint] = self.get_division_points()
-        
         if problem_number > min(problem_range):
-            left_point: DivisionPoint = division_points[problem_number - min(problem_range) - 1]
-        
+            left_point = division_points[problem_number - min(problem_range) - 1]
         if problem_number < max(problem_range):
-            right_point: DivisionPoint = division_points[problem_number - min(problem_range)]
+            right_point = division_points[problem_number - min(problem_range)]
         
         return DivisionPointPair(left_point, right_point)
     
@@ -372,59 +378,67 @@ class DivisionScenario(_collections_abc.Sequence):
     
     
     
-    def update_reactively(self, division_point: DivisionPoint, prevent_blending_over_reactive_divisions: bool = True, translate_blends: bool = True) -> None:
+    def update_reactively(self, new_point: DivisionPoint) -> None:
         """
         Update this division scenario with a reactive division point.
         The blend quantities of the scenario are updated such that the left blend of the left point does not cross the reactive division point.
         If the reactive division was interrupting and the point is inside the right blend of the right point of the requested problem, then the reactive division becomes the left point of the next problem and that next problem no longer has a blend (or the blend is updated and shifted onto the reactive division??).
         """
-        if division_point.reactive is None:
-            raise ValueError(f"Division point must be reactive. Got; {division_point!s}.")
+        if new_point.reactive is None:
+            raise ValueError(f"Division point must be reactive. Got; {new_point!s}.")
         
-        if division_point.blend != Blend():
-            raise ValueError(f"Cannot insert reactive divisions with non-zero blend quantities. Got; {division_point!s}.")
+        if new_point.blend != Blend():
+            raise ValueError(f"Cannot insert reactive divisions with non-zero blend quantities. Got; {new_point!s}.")
         
-        if division_point.index in (point.index for point in self.__division_points):
-            raise ValueError(f"Duplicate division point inserted. Got; {division_point!s} which matches with {self.__division_points[self.__division_points.index(division_point)]!s}.")
+        if new_point.index in (point.index for point in self.__division_points):
+            raise ValueError(f"Duplicate division point inserted. Got; {new_point!s} which matches with {self.__division_points[self.__division_points.index(new_point)]!s}.")
+        
+        # shifting_divisions: int = -1
         
         ## Iterate through the current list of division points until one is reached whose true division index is greater than the index of the new reactive division point;
-        ##      - Variable `index` is the index value of the division point in the list of points itself and is integral to the ordering of those points.
-        for index, point in enumerate(self.__division_points + [DivisionPoint(self.last_index, inherited=True)]):
-            if division_point.index < point.index:
-                if division_point.interrupting:
-                    ## Get the problem size between the existing points that fall either side the new one;
-                    ##      - Problem enumeration starts from 1 so we must add 1 to the list index value,
-                    ##      - To obtain the sub-goal stage index range we need to know the exact problem number so add the number of previously solved problems to the index value.
-                    problem_size: int = self.get_subgoals_indices_range(self.previously_solved_problems + index + 1, ignore_blend=True).problem_size
-                    next_problem_size: int = 0
-                    if self.previously_solved_problems + index + 2 in self.problem_range:
-                        next_problem_size: int = self.get_subgoals_indices_range(self.previously_solved_problems + index + 2, ignore_blend=True).problem_size
-                    
-                    ## Modify the left blend of the next point if it would cross over the reactive division;
-                    ##      - Blending over a reactive division would defeat the point of the reactive division?
-                    if prevent_blending_over_reactive_divisions and point.index_when_left_point(next_problem_size) < division_point.index_when_left_point():
-                        ## TODO blending over a reactive division could still be useful as it makes the sub-goals in the blend non-greedy still but makes the previous problem having been solved faster but the downside being that we might not have got quite as good plan quality overall.
-                        self.__division_points[index] = DivisionPoint(point.index, Blend((point.index - division_point.index) - 1, point.blend.right))
-                    
-                    ## If an interrupting division is inside the right blend of the previous point;
-                    ##      - Then the new division point becomes the left point of the next problem, so we skip forward a problem to avoid using the right point of the current problem as the left point of the next problem
-                    if index > 0 and (previous_point := self.__division_points[index - 1]).index_when_right_point(problem_size) > division_point.index:
-                            ## This reactive division is inside the right blend of the previous division point
-                            ## So search has already crossed pass the previous point
-                            ## Discard the previous proactive division to avoid creating
-                            self.__division_points.remove(previous_point)
-                            if translate_blends:
-                                _division_point = DivisionPoint(division_point.index, Blend(max(division_point.blend.left, point.blend.left), max(division_point.blend.right, point.blend.right)), reactive=division_point.reactive, interrupting=division_point.interrupting, preemptive=division_point.preemptive)
-                                self.__division_points.insert(index - 1, _division_point)
-                            else: self.__division_points.insert(index - 1, division_point)
-                    
-                    else: self.__division_points.insert(index, division_point)
-                
-                else: self.__division_points.insert(index, division_point)
-                
+        ##      - Variable `sequence_index` is the sequence index value of the division point in the list of points itself and is integral to the ordering of those points.
+        for sequence_index, point in enumerate(self.get_division_points(shifting_only=False, fabricate_inherited=True)):
+            # if point.shifting:
+            #     shifting_divisions += 1
+            
+            if new_point.index < point.index:
+                self.__division_points.insert(sequence_index, new_point)
                 return
+                
+                # if new_point.continuous:
+                #     self.__division_points.insert(sequence_index, new_point)
+                #     return
+                
+                # ## Get the problem size between the existing points that fall either side the new one;
+                # ##      - To obtain the sub-goal stage index range we need to know the exact problem number so add the number of previously solved problems to the index value.
+                # problem_size: int = self.get_subgoals_indices_range(self.previously_solved_problems + shifting_divisions, ignore_blend=True).problem_size
+                # next_problem_size: int = 0
+                # if (self.previously_solved_problems + shifting_divisions + 1) in self.problem_range:
+                #     next_problem_size: int = self.get_subgoals_indices_range(self.previously_solved_problems + shifting_divisions + 1, ignore_blend=True).problem_size
+                
+                # ## Modify the left blend of the next point if it would cross over the reactive division;
+                # ##      - Blending over a reactive division would defeat the point of the reactive division.
+                # if point.proactive and point.index_when_left_point(next_problem_size) <= new_point.index:
+                #     self.__division_points[sequence_index] = DivisionPoint(point.index, Blend((point.index - new_point.index) - 1, point.blend.right))
+                
+                # ## If an interrupting division is inside the right blend of the previous point;
+                # ##      - Then the new division point becomes the left point of the next problem, so we skip forward a problem to avoid using the right point of the current problem as the left point of the next problem
+                # if sequence_index > 1 and (previous_point := self.__division_points[sequence_index - 1]).index_when_right_point(problem_size) > new_point.index:
+                #         ## This reactive division is inside the right blend of the previous division point
+                #         ## So search has already crossed pass the previous point
+                #         ## Discard the previous proactive division to avoid creating
+                #         self.__division_points.remove(previous_point)
+                #         self.__division_points.insert(sequence_index - 1, new_point)
+                        
+                #         # if translate_blends:
+                #         #     _division_point = DivisionPoint(new_point.index, Blend(max(new_point.blend.left, point.blend.left), max(new_point.blend.right, point.blend.right)), reactive=new_point.reactive, interrupting=new_point.interrupting, preemptive=new_point.preemptive)
+                #         #     self.__division_points.insert(index - 1, _division_point)
+                
+                # else: self.__division_points.insert(sequence_index, new_point)
+                
+                # return
         
-        raise ValueError(f"Division point {division_point} is not in the range of scenario: {self}.")
+        raise ValueError(f"Division point {new_point} is not in the range of scenario: {self}.")
 
 
 
@@ -432,13 +446,13 @@ class DivisionScenario(_collections_abc.Sequence):
 class Reaction:
     divide: bool = False
     interrupt: bool = False
-    backwards_horizon: int = 0
+    backwards_horizon: Number = 0
     rationale: Optional[str] = None
     
     def __str__(self) -> str:
         return f"(Divide = {self.divide}, Interrupt = {self.interrupt}, Backwards Horizon = {self.backwards_horizon}, Rationale = {self.rationale})"
 
-ReactiveCallback = Callable[[int, range, int, int, bool, float, list[float], dict[int, list["Planner.Action"]]], Reaction]
+
 
 class DivisionStrategy(metaclass=ABCMeta):
     """
@@ -521,9 +535,9 @@ class DivisionStrategy(metaclass=ABCMeta):
         "Safely sets the blend quantities of this divisions strategy."
         
         def as_blend(value: Union[Number, Blend]) -> Blend:
-            if isinstance(value := blend_quantities[level], (int, float)):
+            if isinstance(value, (int, float)):
                 return Blend(value, value)
-            elif isinstance(value := blend_quantities[level], Blend):
+            elif isinstance(value, Blend):
                 return value
             else: raise ValueError(f"Blend quantities must be either; a float, integer, or pre-constructed Blend object. Got; {value} of type {type(value)}.")
         
@@ -615,11 +629,11 @@ class DivisionStrategy(metaclass=ABCMeta):
         
         The division scenario diagram looks like this;
         
-        
+        TODO
         
         Divide a figurative abstract plan of length 10 into 4 homogenous parts, this time with a 50% balanced blend.
         
-        
+        TODO
         """
         if partial_problems < 1 or partial_problems > plan_length:
             raise ValueError()
@@ -643,7 +657,7 @@ class DivisionStrategy(metaclass=ABCMeta):
         _Strategies_logger.debug(f"Decided: {number_small_problems=}, {number_large_problems=}, {small_group_size=}, {large_group_size=}")
         
         def get_size(division_number: int) -> int:
-            """Inner function for getting the size of individual partial problems."""
+            "Inner function for getting the size of individual partial problems."
             if division_number == 0:
                 return 0
             elif division_number <= number_small_problems:
@@ -780,7 +794,6 @@ class NaiveProactive(DivisionStrategy):
         
         return true_size_bound
     
-    @final
     @classmethod
     def validate_bounds(cls, bounds: Bounds) -> Optional[Bounds]:
         size_bounds = bounds["size_bound"]
@@ -788,6 +801,8 @@ class NaiveProactive(DivisionStrategy):
             size_bounds = list(size_bounds.values())
         else: size_bounds = [size_bounds]
         for size_bound in size_bounds:
+            if size_bound is None:
+                continue
             if not isinstance(size_bound, (int, float)):
                 raise TypeError(f"Naive proactive division strategies must have a integer or floating point size bound value. Got {size_bound} of type {type(size_bound)}.")
             if isinstance(size_bound, int) and size_bound <= 0:
@@ -798,7 +813,6 @@ class NaiveProactive(DivisionStrategy):
 
 
 
-@final
 class Hasty(NaiveProactive):
     """
     The hasty naive proactive homogenous division strategy.
@@ -829,7 +843,6 @@ class Hasty(NaiveProactive):
     def default_bounds(cls) -> dict[str, Number]:
         return {"size_bound" : 0.25}
 
-@final
 class Steady(NaiveProactive):
     """
     The steady naive proactive homogenous division strategy.
@@ -860,6 +873,42 @@ class Steady(NaiveProactive):
     def default_bounds(cls) -> dict[str, Number]:
         return {"size_bound" : 0.45}
 
+class Jumpy(NaiveProactive):
+    """
+    The jumpy naive proactive heterogenous division strategy.
+    Jumpy favours low execution latency and plan quality, by making one division only such that the size of the first partial problem is kept below a minimum size bound.
+    
+    Notes
+    -----
+    The default bound size for this strategy is `0.25`, this attempts to divide each abstract plan such that first partial problem is one quarter of the size of the complete problem, and the second is three-quarters of the size.
+    """
+    
+    def proact(self, abstract_plan: "Planner.MonolevelPlan", previously_solved_problems: int = 0) -> DivisionScenario:
+        _Strategies_logger.debug(f"Proactively dividing plan: {abstract_plan}.")
+        
+        ## Get the size bound
+        plan_length: int = len(abstract_plan)
+        true_size_bound: int = self.get_true_size_bound(abstract_plan.level, plan_length)
+        
+        return DivisionScenario(abstract_plan, [DivisionPoint(true_size_bound + abstract_plan.start_step)], previously_solved_problems)
+    
+    @classmethod
+    def default_bounds(cls) -> dict[str, Number]:
+        return {"size_bound" : 0.25}
+    
+    @classmethod
+    def validate_bounds(cls, bounds: Bounds) -> Optional[Bounds]:
+        size_bounds = bounds["size_bound"]
+        if isinstance(size_bounds, dict):
+            size_bounds = list(size_bounds.values())
+        else: size_bounds = [size_bounds]
+        for size_bound in size_bounds:
+            if size_bound is None:
+                continue
+            if size_bound > 0.5:
+                raise ValueError("Jumpy requires a size bound of 0.5 or less.")
+        return super().validate_bounds(bounds)
+
 
 
 class ReactiveBoundType(enum.Enum):
@@ -883,6 +932,8 @@ class ReactiveBoundType(enum.Enum):
     IncrementalPredictive = "incremental_time_bound"
     CumulativePredictive = "cumulative_time_bound"
 
+
+
 class Reactive(DivisionStrategy):
     """
     Base class for reactive division strategies.
@@ -892,17 +943,17 @@ class Reactive(DivisionStrategy):
     
     __slots__ = ("__last_division_index",   # dict[int, int]   || maps: level -> division point
                  "__last_division_step",    # dict[int, int]   || maps: level -> division step
-                 "__backwards_horizon",     # Number
+                 "__backwards_horizon",     # dict[int, Number]
                  "__moving_average",        # int
                  "__preemptive",            # bool
                  "__interrupting")          # bool
     
     def __init__(self,
-                 incremental_time_bound: Optional[Bound] = None,
-                 differential_time_bound: Optional[Bound] = None, 
-                 integral_time_bound: Optional[Bound] = None,
-                 cumulative_time_bound: Optional[Bound] = None,
-                 backwards_horizon: Number = 0,
+                 incremental_time_bound: Bound = None,
+                 differential_time_bound: Bound = None, 
+                 integral_time_bound: Bound = None,
+                 cumulative_time_bound: Bound = None,
+                 backwards_horizon: Horizon = 0,
                  moving_average: Optional[int] = None,
                  preemptive: bool = True,
                  interrupting: bool = False,
@@ -923,9 +974,13 @@ class Reactive(DivisionStrategy):
         assign(ReactiveBoundType.Cumulative.value, cumulative_time_bound)
         
         ## Optional parameters
+        self.__backwards_horizon: Union[Number, dict[int, Number]] = {}
         self.backwards_horizon = backwards_horizon
+        self.__moving_average: int = 0
         self.moving_average = moving_average
+        self.__preemptive: bool = True
         self.preemptive = preemptive
+        self.__interrupting: bool = False
         self.interrupting = interrupting
         
         ## Variables for storing when previous reactive division was made:
@@ -936,18 +991,33 @@ class Reactive(DivisionStrategy):
         super().__init__(bounds, knowledge=knowledge)
     
     @property
-    def backwards_horizon(self) -> Number:
+    def backwards_horizon(self) -> Horizon:
         return self.__backwards_horizon
     
     @backwards_horizon.setter
-    def backwards_horizon(self, value: Number) -> None:
-        if not isinstance(value, (int, float)):
-            raise TypeError(f"Backwards horizon must be an integer or floating point number. Got; {value} of type {type(value)}.")
-        if isinstance(value, int) and value < 0:
-            raise ValueError(f"An integer backwards horizon must be greater than or equal to zero. Got; {value}.")
-        if isinstance(value, float) and not (0.0 <= value <= 1.0):
-            raise ValueError(f"A floating point backwards horizon value must be in the range [0.0-1.0]. Got; {value}.")
-        self.__backwards_horizon: Number = value
+    def backwards_horizon(self, horizon: Horizon) -> None:
+        "Safely sets the backwards horizon of this divisions strategy."
+        
+        def as_horizon(value: Optional[Number]) -> Number:
+            if value is None:
+                return 0
+            if not isinstance(value, (int, float)):
+                raise TypeError(f"Backwards horizon must be an integer or floating point number. Got; {value} of type {type(value)}.")
+            if isinstance(value, int) and value < 0:
+                raise ValueError(f"An integer backwards horizon must be greater than or equal to zero. Got; {value}.")
+            if isinstance(value, float) and not (0.0 <= value <= 1.0):
+                raise ValueError(f"A floating point backwards horizon value must be in the range [0.0-1.0]. Got; {value}.")
+            return value
+        
+        if isinstance(horizon, dict):
+            for level in horizon:
+                self.__backwards_horizon[level] = as_horizon(horizon[level])
+        else: self.__backwards_horizon = as_horizon(horizon)
+    
+    def get_horizon(self, level: int = 0) -> Number:
+        if isinstance(self.__backwards_horizon, dict):
+            return self.__backwards_horizon.get(level, 0)
+        else: return self.__backwards_horizon
     
     @property
     def moving_average(self) -> Optional[int]:
@@ -962,7 +1032,7 @@ class Reactive(DivisionStrategy):
                 raise ValueError(f"Moving average must be an integer greater than zero. Got; {value} of type {type(value)}.")
         self.__moving_average: Optional[int] = value
     
-    def calculate_time(self, problem_level: int, start_step: int, bound_type: ReactiveBoundType, incremental_times: list[float]) -> float:
+    def calculate_time(self, problem_level: int, start_step: int, bound_type: ReactiveBoundType, incremental_times: list[float], valid_only: bool = True) -> float:
         """
         Calculate the current time value over a list of incremental times for any of the standard reactive bound types.
         
@@ -976,6 +1046,8 @@ class Reactive(DivisionStrategy):
         
         `incremental_times : list[float]` - A list of total incremental planning times, starting from the first.
         
+        `valid_onle : bool` - A Boolean, True to use only incremental times since the last division step in the calculation (the valid times), otherwise False to use all times greater than or equal to the start step.
+        
         Returns
         -------
         `float` - The calcuated time.
@@ -988,7 +1060,8 @@ class Reactive(DivisionStrategy):
             raise TypeError(f"Invalid bound type. Got; {bound_type} of type {type(bound_type)}.")
         
         ## The valid times are all the total incremental planning times since the last division step
-        valid_times: list[float] = incremental_times[max(self.get_last_division_step(problem_level), start_step) - start_step:]
+        valid_times: list[float] = incremental_times
+        if valid_only: valid_times = incremental_times[max(self.get_last_division_step(problem_level), start_step) - start_step:]
         
         if valid_times:
             ## The usable times are either;
@@ -1113,8 +1186,10 @@ class Reactive(DivisionStrategy):
 
 class Relentless(Reactive):
     """
+    Backwards horizon is only applicable for continuous reactive division.
+    If interrupting division is enabled, the backwards horizon will thus be ignored.
+    
     Uses either a cumulative time, incremental time, or search length bound to make either continuous or interrupting reactive problem divisions.
-    Does not make interrupting divisions preemptively.
     
     Why can't we divide proactively based on the search length?
     Because we don't know what the length of the refined plan will be.
@@ -1136,54 +1211,56 @@ class Relentless(Reactive):
     def __init__(self,
                  time_bound: Bound,
                  bound_type: ReactiveBoundType = ReactiveBoundType.Incremental,
-                 backwards_horizon: Number = 0,
+                 backwards_horizon: Horizon = 0,
                  moving_average: Optional[int] = None,
                  preemptive: bool = True,
                  interrupting: bool = False) -> None:
+        
         self.__bound_type: ReactiveBoundType = bound_type
         super().__init__(**{bound_type.value : time_bound},
-                         backwards_horizon=backwards_horizon,
+                         backwards_horizon=backwards_horizon if not interrupting else 0,
                          moving_average=moving_average,
-                         preemptive=preemptive and not interrupting, ## TODO Why?
+                         preemptive=preemptive,
                          interrupting=interrupting)
     
     def react(self, problem_level: int, problem_total_sgoals_range: SubGoalRange, problem_start_step: int, current_search_length: int, current_subgoal_index: int, matching_child: bool, incremental_times: list[float], observable_plan: Optional[dict[int, list["Planner.Action"]]]) -> Reaction:
-        reaction = Reaction()
         
-        ## The problem can be divied reactively if;
-        ##      - The strategu is preemptive or this is a matching child,
-        ##      - The current sub-goal index is not the first or the last division index.
+        backwards_horizon: Number = self.get_horizon(problem_level)
+        
+        ## The problem can be divided reactively iff;
+        ##      - The strategy is preemptive or this is a matching child,
+        ##      - The strategy is uses continuous reactive divion (and thus cannot use backwards horizon) or,
+        ##          - The backwards horizon is percentage based or,
+        ##              - The backwards horizon is size based and,
+        ##              - The number of achieved sub-goals stages since the last division is greater than the backwards horizon.
         can_divide: bool = ((self.preemptive or matching_child)
-                            and problem_total_sgoals_range.last_index != current_subgoal_index
-                            and max(problem_total_sgoals_range.first_index, self.get_last_division_index(problem_level)) != current_subgoal_index)
+                            and (self.interrupting
+                                 or isinstance(backwards_horizon, float)
+                                 or (current_subgoal_index - self.get_last_division_index(problem_level)) > backwards_horizon))
         
         ## Calculate the current time value and obtain the bound (if one exists)
         time: float = self.calculate_time(problem_level, problem_start_step, self.__bound_type, incremental_times)
-        time_bound: float = self.get_bound(self.__bound_type.value, problem_level, -1)
+        time_bound: Number = self.get_bound(self.__bound_type.value, problem_level, -1)
         
         ## If the bound exists and has been reached it is said to be triggered
-        triggered: bool = time_bound != -1 and time >= time_bound
-        _Strategies_logger.debug(f"Time calculation for [step = {current_search_length}, index = {current_subgoal_index}, matching = {matching_child}]: "
-                                 f"bound type = {self.__bound_type}, bound = {time_bound}, time = {time}, triggered = {triggered}")
-        
-        reaction = Reaction(divide=can_divide and triggered,
-                            interrupt=self.interrupting,
-                            backwards_horizon=self.backwards_horizon,
-                            rationale=f"{self.__bound_type.name!s} search time bound since last division {'reached' if triggered else 'not reached'}: bound = {time_bound}, time = {time}")
+        triggered: bool = time_bound != -1 and time >= time_bound and can_divide
+        _Strategies_logger.debug(f"Reactive calculation [step = {current_search_length}, index = {current_subgoal_index}, matching = {matching_child}]: "
+                                 f"bound type = {self.__bound_type}, bound = {time_bound}, time calculation = {time}, backwards horizon = {backwards_horizon}, preemptive = {self.preemptive}, triggered = {triggered}")
         
         ## Update the strategy if a division was made
-        if reaction.divide:
-            self._update(problem_level, current_subgoal_index, current_search_length)
+        if triggered: self._update(problem_level, current_subgoal_index, current_search_length)
         
-        return reaction
+        return Reaction(divide=triggered,
+                        interrupt=self.interrupting,
+                        backwards_horizon=backwards_horizon,
+                        rationale=f"{self.__bound_type.name!s} search time bound since last division {'reached' if triggered else 'not reached'}: bound = {time_bound}, time = {time}")
 
-@final
 class Impetuous(Reactive):
     def __init__(self,
                  cumulative_time_bound: Bound,
                  continuous_time_bound: Bound,
                  continuous_bound_type: ReactiveBoundType = ReactiveBoundType.Incremental,
-                 backwards_horizon: Number = 0,
+                 backwards_horizon: Horizon = 0,
                  moving_average: int = 5,
                  preemptive: bool = True) -> None:
         
@@ -1194,64 +1271,83 @@ class Impetuous(Reactive):
                          **{continuous_bound_type.value : continuous_time_bound},
                          backwards_horizon=backwards_horizon,
                          moving_average=moving_average,
-                         preemptive=preemptive)
+                         preemptive=preemptive,
+                         interrupting=True)
     
     def react(self, problem_level: int, problem_total_sgoals_range: SubGoalRange, problem_start_step: int, current_search_length: int, current_subgoal_index: int, matching_child: bool, incremental_times: list[float], observable_plan: Optional[dict[int, list["Planner.Action"]]]) -> Reaction:
-        reaction = Reaction()
         
-        ## The problem can be divied reactively if;
-        ##      - The strategu is preemptive or this is a matching child,
-        ##      - The current sub-goal index is not the first or the last division index.
+        backwards_horizon: Number = self.get_horizon(problem_level)
+        
+        ## The problem can be divided reactively iff;
+        ##      - The strategy is preemptive or this is a matching child,
+        ##      - The strategy is uses continuous reactive divion (and thus cannot use backwards horizon) or,
+        ##          - The backwards horizon is percentage based or,
+        ##              - The backwards horizon is size based and,
+        ##              - The number of achieved sub-goals stages since the last division is greater than the backwards horizon.
         can_divide: bool = ((self.preemptive or matching_child)
-                            and problem_total_sgoals_range.last_index != current_subgoal_index
-                            and max(problem_total_sgoals_range.first_index, self.get_last_division_index(problem_level)) != current_subgoal_index)
+                            and (self.interrupting
+                                 or isinstance(backwards_horizon, float)
+                                 or (current_subgoal_index - self.get_last_division_index(problem_level)) > backwards_horizon))
         
+        time: float
+        time_bound: Number
         interrupting_triggered: bool = False
         continuous_triggered: bool = False
+        bound_type: Optional[ReactiveBoundType] = None
         rationale: Optional[str] = None
         
         ## If the either the interrupting or continuous bounds exist and have been reached they are said to be triggered;
         ##      - Interrupting divisions take precedence over continuous divisions.
-        if can_divide:
-            if (interrupting_time_bound := self.get_bound(ReactiveBoundType.Cumulative.value, problem_level, -1)) != -1:
-                
-                time: float = self.calculate_time(problem_level, problem_start_step, ReactiveBoundType.Cumulative, incremental_times)
-                interrupting_triggered = time >= interrupting_time_bound
-                _Strategies_logger.debug(f"Time calculation for [step = {current_search_length}, index = {current_subgoal_index}, matching = {matching_child}]: "
-                                         f"bound type = {ReactiveBoundType.Cumulative}, bound = {interrupting_time_bound}, time = {time}, triggered = {interrupting_triggered}")
-                rationale = f"Cumulative interrupting search time bound since last division {'reached' if interrupting_triggered else 'not reached'}: bound = {interrupting_time_bound}, time = {time}"
+        if (time_bound := self.get_bound(ReactiveBoundType.Cumulative.value, problem_level, -1)) != -1:
             
-            elif (continuous_time_bound := self.get_bound(self.__continuous_bound_type.value, problem_level, -1)) != -1:
-                
-                time: float = self.calculate_time(problem_level, problem_start_step, self.__continuous_bound_type, incremental_times)
-                continuous_triggered = time >= continuous_time_bound
-                _Strategies_logger.debug(f"Time calculation for [step = {current_search_length}, index = {current_subgoal_index}, matching = {matching_child}]: "
-                                         f"bound type = {ReactiveBoundType.Cumulative}, bound = {interrupting_time_bound}, time = {time}, triggered = {interrupting_triggered}")
-                rationale = f"{self.__continuous_bound_type.name!s} continuous search time bound since last division {'reached' if continuous_triggered else 'not reached'}: bound = {continuous_time_bound}, time = {time}"
+            time: float = self.calculate_time(problem_level, problem_start_step, ReactiveBoundType.Cumulative, incremental_times, valid_only=False)
+            interrupting_triggered = time >= time_bound
+            bound_type = ReactiveBoundType.Cumulative
+            rationale = f"Cumulative interrupting search time bound since last division {'reached' if interrupting_triggered else 'not reached'}: bound = {time_bound}, time = {time}"
+            _Strategies_logger.debug("Interrupting reactive time calculation:\n"
+                                     f"bound type = {bound_type.name!s}, bound = {time_bound}, time calculation = {time}, tiggered = {interrupting_triggered}")
         
-        reaction = Reaction(can_divide and (interrupting_triggered or continuous_triggered),
-                            interrupt=interrupting_triggered,
-                            backwards_horizon=self.backwards_horizon,
-                            rationale=rationale)
+        if (not interrupting_triggered
+            and (time_bound := self.get_bound(self.__continuous_bound_type.value, problem_level, -1)) != -1):
+            
+            time: float = self.calculate_time(problem_level, problem_start_step, self.__continuous_bound_type, incremental_times)
+            continuous_triggered = time >= time_bound
+            bound_type = self.__continuous_bound_type
+            rationale = f"{self.__continuous_bound_type.name!s} continuous search time bound since last division {'reached' if continuous_triggered else 'not reached'}: bound = {time_bound}, time = {time}"
+            _Strategies_logger.debug("Continuous reactive time calculation:\n"
+                                     f"bound type = {bound_type.name!s}, bound = {time_bound}, time calculation = {time}, tiggered = {continuous_triggered}")
+        
+        triggered: bool = (can_divide
+                           and (interrupting_triggered
+                                or continuous_triggered))
+        _Strategies_logger.debug(f"Final reactive calculation [step = {current_search_length}, index = {current_subgoal_index}, matching = {matching_child}]: "
+                                 f"bound type = {bound_type}, bound = {time_bound}, time calculation = {time}, backwards horizon = {backwards_horizon}, preemptive = {self.preemptive}, triggered = {triggered}")
         
         ## Update the strategy if a division was made
-        if reaction.divide:
-            self._update(problem_level, current_subgoal_index, current_search_length)
+        if triggered: self._update(problem_level, current_subgoal_index, current_search_length)
         
-        return reaction
+        return Reaction(divide=triggered,
+                        interrupt=interrupting_triggered,
+                        backwards_horizon=backwards_horizon if not interrupting_triggered else 0,
+                        rationale=rationale)
 
 @final
 class Rapid(Relentless):
+    """
+    Adaptive strategies that commit divisions proactively, and want to use blending to avoid dependencies, can only commit continuous reactive divisions, otherwise it might break how the blends work.
+    """
     __slots__ = ("__proactive_basis")   # NaiveProactive
     
     def __init__(self,
                  proactive_basis: Type[NaiveProactive],
                  size_bound: Optional[Bound],
                  reactive_time_bound: Bound,
+                 proactive_blend: dict[int, Union[Number, Blend]] = {},
                  reactive_bound_type: ReactiveBoundType = ReactiveBoundType.Incremental,
-                 backwards_horizon: Number = 0,
+                 backwards_horizon: Horizon = 0,
                  moving_average: int = 1) -> None:
-        self.__proactive_basis: NaiveProactive = proactive_basis(size_bound)
+        
+        self.__proactive_basis: NaiveProactive = proactive_basis(size_bound, proactive_blend)
         super().__init__(time_bound=reactive_time_bound,
                          bound_type=reactive_bound_type,
                          backwards_horizon=backwards_horizon,
@@ -1262,6 +1358,22 @@ class Rapid(Relentless):
     def proact(self, abstract_plan: "Planner.MonolevelPlan", previously_solved_problems: int) -> DivisionScenario:
         return self.__proactive_basis.proact(abstract_plan, previously_solved_problems)
 
+class Cautious(Steady):
+    ## __dependency_predictor
+    pass
+
+class Reckless(DivisionStrategy):
+    ## __complexity_predictor
+    pass
+
+class Sensible(Reckless):
+    ## __dependency_predictor
+    pass
+
+class Audacious(Impetuous):
+    ## __dependency_predictor
+    pass
+
 @enum.unique
 class GetStrategy(enum.Enum):
     ## Basic
@@ -1270,6 +1382,7 @@ class GetStrategy(enum.Enum):
     ## Naive proactive
     hasty = Hasty
     steady = Steady
+    jumpy = Jumpy
     
     ## Naive Reactive
     relentless = Relentless
@@ -1279,9 +1392,9 @@ class GetStrategy(enum.Enum):
     rapid = Rapid
     
     ## Informed proactive
-    # cautious = Cautious
-    # reckless = Reckless
-    # sensible = Sensible
+    cautious = Cautious
+    reckless = Reckless
+    sensible = Sensible
     
     ## Informed adaptive
-    # audacious = Audacious
+    audacious = Audacious

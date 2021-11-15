@@ -42,8 +42,6 @@
 %%     |___________________|     |___________________|     |___________________|
 %%
 
-% Need to make the classical plans longer without making the abstract plan longer
-
 %% Cell connections between rooms
 is(1, connected((starting_room, 1), (hallway, 1))).
 is(1, connected((store_room, 1), (hallway, 0))).
@@ -148,8 +146,10 @@ holds(1, on((block, 6)), nothing, 0).
 
 %% The fluents pertinent to the goal state are the placement of blocks and the completeness of the towers
 goal_fluent(AL, complete(COLOUR)) :- insta_of(AL, colour, COLOUR), al(AL).
-goal_fluent(AL, on((block, 3))) :- al(AL).
-goal_fluent(AL, on((block, 6))) :- al(AL).
+goal_fluent(AL, unordered_tower(BASE)) :- insta_of(AL, block, BASE), al(AL).
+goal_fluent(AL, in_tower(BASE, BLOCK)) :- insta_of(AL, block, BASE), insta_of(AL, block, BLOCK), al(AL).
+goal_fluent(AL, tower_base(BASE)) :- insta_of(AL, block, BASE), al(AL).
+goal_fluent(AL, on(BLOCK)) :- insta_of(AL, block, BLOCK), al(AL).
 
 %% The goal is to put block 2 on the left hand side of the table in puzzle room 2 whilst leaving block 1 on the table in puzzle room 1
 final_goal(AL, complete(COLOUR), true, true) :- insta_of(AL, colour, COLOUR), al(AL).
@@ -179,8 +179,8 @@ entity(manipulator_limb, manipulator_limb_2).
 entity(manipulator_end, manipulator_end_2).
 
 %% There are six blocks
-number(1..6).
-entity(block, (block, N)) :- number(N).
+block_number(1..6).
+entity(block, (block, N)) :- block_number(N).
 
 %% There are four rooms
 entity(room, starting_room).

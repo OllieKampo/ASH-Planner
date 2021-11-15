@@ -3,13 +3,17 @@
     "acronym" : "BWP",
     "systems" : {
         "standard" : "BWP_system_laws_standard.lp",
+        "split" : "BWP_system_laws_split.lp",
+        "complex" : "BWP_system_laws_complex.lp",
+        "complex-split" : "BWP_system_laws_complex_split.lp",
         "tasking" : "BWP_system_laws_tasking.lp",
-        "complex" : "BWP_system_laws_complex.lp"
+        "complex-tasking" : "BWP_system_laws_complex_tasking.lp"
     },
     "worlds" : {
         "small" : "BWP_world_structure_puzzles_1.py",
-        "medium" : "BWP_world_structure_puzzles_3.py",
-        "large" : "BWP_world_structure_puzzles_5.py"
+        "large" : "BWP_world_structure_large_puzzles_1.py",
+        "small-extra-puzzles" : "BWP_world_structure_puzzles_3.py",
+        "large-extra-puzzles" : "BWP_world_structure_large_puzzles_3.py"
     },
     "problems" : {
         "easy" : "BWP_problem_basic.py",
