@@ -22,8 +22,8 @@
 import argparse
 import datetime
 import functools
-import itertools
 import logging
+import logging.handlers
 import os
 import sys
 from typing import Any, Optional, Sequence, Type, Union
@@ -242,8 +242,7 @@ def __main() -> int:
         return dict_or_number
     
     ## If problem space generation or dependency detection is enabled then attempt to load a schema
-    if (namespace.problem_space is not None
-        or namespace.detect_dependencies):
+    if namespace.problem_space is not None:
         
         # if not namespace.load_schema is not None:
         #     raise RuntimeError("Cannot generate problem spaces or detect dependencies without a refinement schema.")
@@ -304,6 +303,8 @@ def __main() -> int:
                 horizon: dict[int, Number] = {}
                 
                 level_range: range = planner.constrained_level_range(namespace.bottom_level, namespace.top_level)
+                top_level: int = max(level_range)
+                
                 for level in level_range:
                     bounds[level] = get_hierarchical_arg(namespace.division_strategy_bounds, level)
                     blend[level] = Strategies.Blend(get_hierarchical_arg(namespace.left_blend_quantities, level, 0),
@@ -323,44 +324,62 @@ def __main() -> int:
                         and blend[level].left > 0):
                         raise ValueError("It is not possible to left blend on a saved grounding without avoiding refining sgoals marked for blending.")
                 
-                ## Instantiate the strategy with its specific bounds
                 reactive_bound_type = Strategies.ReactiveBoundType(f"{namespace.bound_type}_time_bound")
                 moving_average: int = namespace.moving_average
                 preemptive: bool = namespace.preemptive_division
                 interrupting: bool = namespace.interrupting_division
+                independent_tasks: bool = namespace.treat_tasks_as_independent
+                order_tasks: bool = namespace.divide_tasks_on_final_goal_intermediate_achievement_ordering
                 
                 if issubclass(division_strategy_class, Strategies.Basic):
-                    division_strategy = division_strategy_class(problems=bounds, blend=blend)
+                    division_strategy = division_strategy_class(top_level=top_level,
+                                                                problems=bounds,
+                                                                blend=blend,
+                                                                independent_tasks=independent_tasks,
+                                                                order_tasks=order_tasks)
                 
                 if issubclass(division_strategy_class, Strategies.NaiveProactive):
-                    division_strategy = division_strategy_class(size_bound=bounds, blend=blend)
+                    division_strategy = division_strategy_class(top_level=top_level,
+                                                                size_bound=bounds,
+                                                                blend=blend,
+                                                                independent_tasks=independent_tasks,
+                                                                order_tasks=order_tasks)
                 
                 if division_strategy_class == Strategies.Relentless:
-                    division_strategy = division_strategy_class(time_bound=bounds,
+                    division_strategy = division_strategy_class(top_level=top_level,
+                                                                time_bound=bounds,
                                                                 bound_type=reactive_bound_type,
                                                                 backwards_horizon=horizon,
                                                                 moving_average=moving_average,
                                                                 preemptive=preemptive,
-                                                                interrupting=interrupting)
+                                                                interrupting=interrupting,
+                                                                independent_tasks=independent_tasks,
+                                                                order_tasks=order_tasks)
                 
                 if issubclass(division_strategy_class, Strategies.Impetuous):
                     if not isinstance(_bound := next(iter(bounds.values())), tuple) or len(_bound) != 2:
                         raise ValueError("The impetuous division strategy requires exactly two bounds per level.")
                     
-                    division_strategy = division_strategy_class(cumulative_time_bound={level : bound[0] if bound is not None else None for level, bound in bounds.items()},
+                    division_strategy = division_strategy_class(top_level=top_level,
+                                                                cumulative_time_bound={level : bound[0] if bound is not None else None for level, bound in bounds.items()},
                                                                 continuous_time_bound={level : bound[1] if bound is not None else None for level, bound in bounds.items()},
                                                                 continuous_bound_type=reactive_bound_type,
                                                                 backwards_horizon=horizon,
                                                                 moving_average=moving_average,
-                                                                preemptive=preemptive)
+                                                                preemptive=preemptive,
+                                                                independent_tasks=independent_tasks,
+                                                                order_tasks=order_tasks)
                 
                 if issubclass(division_strategy_class, Strategies.Rapid):
-                    division_strategy = division_strategy_class(proactive_basis,
+                    division_strategy = division_strategy_class(top_level=top_level,
+                                                                proactive_basis=proactive_basis,
                                                                 size_bound={level : bound[0] if bound is not None else None for level, bound in bounds.items()},
                                                                 reactive_time_bound={level : bound[1] if bound is not None else None for level, bound in bounds.items()},
                                                                 reactive_bound_type=reactive_bound_type,
                                                                 backwards_horizon=horizon,
-                                                                moving_average=moving_average)
+                                                                moving_average=moving_average,
+                                                                independent_tasks=independent_tasks,
+                                                                order_tasks=order_tasks)
         
         planning_function = functools.partial(planner.hierarchical_plan,
                                               namespace.bottom_level,
@@ -383,7 +402,6 @@ def __main() -> int:
                                               order_fgoals_achievement=namespace.final_goal_intermediate_achievement_ordering_preferences,
                                               
                                               detect_interleaving=namespace.detect_interleaving,
-                                              detect_dependencies=namespace.detect_dependencies,
                                               generate_search_space=False,
                                               generate_solution_space=False,
                                               
@@ -405,7 +423,7 @@ def __main() -> int:
     
     
     
-    if namespace.operation == "standard":
+    if namespace.operation == "test":
         planning_function()
         
         ## Get the resulting plans
@@ -422,7 +440,8 @@ def __main() -> int:
                 _Launcher_logger.error("Failed to save plan to file.", exc_info=1)
         
         ## Save the refinement schema as requested
-        if (schema_file := namespace.save_schema) is not None:
+        if (namespace.planning_mode == "hcr"
+            and (schema_file := namespace.save_schema) is not None):
             _Launcher_logger.info(f"Saving generated refinement schema to file: {schema_file}")
             try:
                 with open(schema_file, 'w') as file_writer:
@@ -442,13 +461,13 @@ def __main() -> int:
             
             ## Find the regression plots for each partial plan
             regression_lines: dict[int, dict[str, Any]] = {"total" : {}, "ground" : {}, "search" : {}}
-            for increment, partial_plan in hierarchical_plan.partial_plans[namespace.bottom_level].items():
+            for problem_number, partial_plan in enumerate(hierarchical_plan.get_plan_sequence(level)):
                 func, x_points, y_points, popt, pcov = partial_plan.regress_total_time
-                regression_lines["total"][increment] = {"func" : func, "x_points" : x_points, "y_points" : y_points, "popt" : popt, "pcov" : pcov}
+                regression_lines["total"][problem_number] = {"func" : func, "x_points" : x_points, "y_points" : y_points, "popt" : popt, "pcov" : pcov}
                 func, x_points, y_points, popt, pcov = partial_plan.regress_grounding_time
-                regression_lines["ground"][increment] = {"func" : func, "x_points" : x_points, "y_points" : y_points, "popt" : popt, "pcov" : pcov}
+                regression_lines["ground"][problem_number] = {"func" : func, "x_points" : x_points, "y_points" : y_points, "popt" : popt, "pcov" : pcov}
                 func, x_points, y_points, popt, pcov = partial_plan.regress_solving_time
-                regression_lines["search"][increment] = {"func" : func, "x_points" : x_points, "y_points" : y_points, "popt" : popt, "pcov" : pcov}
+                regression_lines["search"][problem_number] = {"func" : func, "x_points" : x_points, "y_points" : y_points, "popt" : popt, "pcov" : pcov}
             
             ## Generate four graphs;
             ##      - Planning statistics per abstraction level bar chart,
@@ -608,10 +627,10 @@ def __main() -> int:
                                            namespace.ash_output == "experiment")
         results: Experiment.Results = experiment.run_experiments()
         
-        # if namespace.excel_file is not None:
-        #     data.to_excel(namespace.excel_file)
-        # if namespace.data_file is not None:
-        #     data.to_dsv(namespace.data_file, sep=namespace.data_sep, endl=namespace.data_end)
+        if namespace.excel_file is not None:
+            results.to_excel(namespace.excel_file)
+        if namespace.data_file is not None:
+            results.to_dsv(namespace.data_file, sep=namespace.data_sep, endl=namespace.data_end)
         
         # if namespace.display_graph:
         #     xlabels = [str(n) for n in reversed(planner.domain.level_range)]
@@ -739,15 +758,15 @@ def __setup() -> argparse.Namespace:
     ## Output files
     parser.add_argument("-pf", "--plan_file", default=f"./solutions/plans/ASH_Plan_{output_file_append}.txt", type=str,
                         help="specify a custom file to save the generated plans to during standard operation, "
-                             f"by default ./plans/ASH_Plan_{output_file_append}.txt")
+                             f"by default ./solutions/plans/ASH_Plan_{output_file_append}.txt")
     parser.add_argument("-lf", "--log_file", default=f"./logs/ASH_Log_{output_file_append}.log", type=str,
                         help=f"specify a custom file to save the log file to, by default ./logs/ASH_Log_{output_file_append}.log")
-    parser.add_argument("-xf", "--excel_file", nargs="?", default=None, const=f"./results/ASH_Excel_{output_file_append}.xlsx", type=str,
+    parser.add_argument("-xf", "--excel_file", nargs="?", default=None, const=f"./experiments/results/ASH_Excel_{output_file_append}.xlsx", type=str,
                         help="output experimental results to an excel (.xlsx) file, optionally specify a file name, "
-                             f"as standard ./results/ASH_Excel_{output_file_append}.xlsx")
-    parser.add_argument("-df", "--data_file", nargs="?", default=None, const=f"./results/ASH_Data_{output_file_append}.dat", type=str,
+                             f"as standard ./experiments/results/ASH_Excel_{output_file_append}.xlsx")
+    parser.add_argument("-df", "--data_file", nargs="?", default=None, const=f"./experiments/results/ASH_Data_{output_file_append}.dat", type=str,
                         help="output experimental results to a Delimiter-Seperated Values (DSV) (.dat) file, "
-                             f"optionally specify a file name, as standard ./results/ASH_Data_{output_file_append}.dat")
+                             f"optionally specify a file name, as standard ./experiments/results/ASH_Data_{output_file_append}.dat")
     parser.add_argument("-df_ds", "--data_sep", default=" ", type=str,
                         help="string specifying the delimiter between fields (values) of the output data file, by default ' '")
     parser.add_argument("-df_de", "--data_end", default="\n", type=str,
@@ -780,8 +799,8 @@ def __setup() -> argparse.Namespace:
                         help="whether to display experimental results in a simple graph upon completion of all experimental runs")
     
     ## Experimentation options
-    parser.add_argument("-op", "--operation", choices=["standard", "experiment", "find-problem-inconsistencies"], default="standard", type=str,
-                        help="the operating mode of ASH; 'standard' (generate a single hierarchical refinement diagram and save the generated plans), "
+    parser.add_argument("-op", "--operation", choices=["test", "experiment", "find-problem-inconsistencies"], default="test", type=str,
+                        help="the operating mode of ASH; 'test' (generate a single hierarchical refinement diagram and save the generated plans), "
                              "'experiment' (run the planner several times, generating a fresh plan each time, and gathering aggregate experimental statistics), "
                              "'find-problem-inconsistencies' (only generate the initial states and final goals, then return), by default 'standard'")
     parser.add_argument("-er", "--experimental_runs", default=1, type=int,
@@ -812,41 +831,31 @@ def __setup() -> argparse.Namespace:
                              "if None then the planner decides (chooses True if concurrency is enabled else False), by default None, as standard True")
     parser.add_argument("-yield", "--sequential_yielding", **bool_options(default=True),
                         help="whether to sequentially yield sub-plans as they are found by the incremental solver, this is more expensive than one-shot "
-                             "(complete or divided) planning but allows refinement planning progress to be observed, by default False, as standard True")
+                             "(complete or divided) planning but allows refinement planning progress to be observed, by default False, as standard True (must be enabled to use reactive division strategies)")
     parser.add_argument("-detect_int", "--detect_interleaving", **bool_options(default=False),
                         help="whether to detect interleaving during sequential yielding, this is an expensive operation, by default False")
     parser.add_argument("-min_bound", "--minimum_search_length_bound", **bool_options(default=True),
-                        help="whether to use the minimum search length bound to reduce search time at low search lengths, by default True")
+                        help="whether to use the minimum search length bound to reduce search time at low search lengths during one-shot planning, by default True (disabled in sequential yield mode)")
     parser.add_argument("-obs", "--make_observable", **bool_options(default=False),
-                        help="whether to make the plan that minimally achieves the previous in sequence sub-goal stage observable in sequential yield planning, "
+                        help="whether to make the plan that minimally achieves the previous in sequence sub-goal stage observable in sequential yield mode, "
                              "this is an expensive operation and ASH currently only uses this for debugging purposes, by default False, as standard True")
     
     ## Problem space generation options
     parser.add_argument("-space", "--problem_space", choices=["None", "search", "solution"], default=None, type=optional_str,
                         help="the type of problem space to generate; None (disable problem space generation), 'search' (the number of potential plans that may lead to a solution), "
-                             "'solution' (the number of valid solutions), by default None. Note that in order to generate problem spaces a refinement schema must be loaded.")
-    # parser.add_argument("--problem_space_level", default=1, type=int,
-    #                     help="the level to generate the problem spaces at, by default 1 (the ground level)")
-    # parser.add_argument("-sea_space", "--generate_search_space", **bool_options(default=False),
-    #                     help="whether to generate the search space, this is generated step-wise and the goal-wise is extract automatically from the conformance mapping, by default False, as standard True")
-    # parser.add_argument("-sol_space", "--generate_solution_space", **bool_options(default=False),
-    #                     help="whether to generate the solution space, only one plan (the first) is refined in 'hcr' planning mode "
-    #                          "and extended if problem division is enabled, the solution space type controls whether to generate the space goal-wise or problem-wise, by default False, as standard True")
-    # parser.add_argument("-space_lim", "--problem_space_size_limit", nargs="?", default=0, const=1000, type=int,
-    #                     help="the limit on the size of the problem space to generate, by default 0 (no limit), as standard 1000 (usually takes approximately a minute to generate)")
-    # parser.add_argument("-sol_space_type", choices=["problem-wise", "goal-wise"], default="problem-wise", type=str,
-    #                     help="the type of solution space to generate, 'problem-wise' generates the space at the end of each problem, "
-    #                          "'goal-wise' generates it at the achievement of each sub-goal stage and is only avialable during sequential yield planning, by default 'problem-wise'")
+                             "'solution' (the number of valid solutions), by default None (In order to generate problem spaces a refinement schema must be loaded)") ## Not the true search space
+    parser.add_argument("--problem_space_level", default=1, type=int,
+                        help="the level to generate the problem spaces at, by default 1 (the ground level)")
     
     ## Hierarchical planning options
-    parser.add_argument("-plc", "--pause_on_level_change", **bool_options(default=False),
-                        help="whether to pause execution of the planner when the current planning level changes in hierarchical planning, by default False, as standard True")
-    parser.add_argument("-pic", "--pause_on_increment_change", **bool_options(default=False),
-                        help="whether to pause execution of the planner when the current planning increment changes in online planning, by default False, as standard True")
     parser.add_argument("-top", "--top_level", default=None, type=optional_int,
                         help="override the top level used in hierarchical planning, if not given or None then the hierarchical system law definition's top-level is used, by default None")
     parser.add_argument("-bot", "--bottom_level", default=1, type=int,
                         help="override the bottom level used in hierarchical planning, if not given then the bottom level is the ground level, by default 1 (the ground level)")
+    parser.add_argument("-plc", "--pause_on_level_change", **bool_options(default=False),
+                        help="whether to pause execution of the planner when the current planning level changes in hierarchical planning, by default False, as standard True")
+    parser.add_argument("-pic", "--pause_on_increment_change", **bool_options(default=False),
+                        help="whether to pause execution of the planner when the current planning increment changes in online planning, by default False, as standard True")
     
     ## Online planning options
     parser.add_argument("-method", "--online_method", choices=["ground-first", "complete-first", "hybrid"], default="ground-first", type=str,
@@ -854,17 +863,19 @@ def __setup() -> argparse.Namespace:
                              "as fast as possible, afterwards solve the lowest unsolved partial problem until the ground level is complete), 'complete-first' (solve all "
                              "partial problems at each level before moving to the next level, successively completing each level until the ground is reached), "
                              "or 'hybrid' (uses a mix of the prior, solve only the initial partial problems first, propagating directly down to the ground level as fast as possible, then successively complete each level), by default 'ground-first'")
-    parser.add_argument("-strat", "--division_strategy", choices=["none", "basic", "steady", "hasty", "jumpy", "relentless", "impetuous", "rapid-basic", "rapid-steady", "rapid-hasty", "cautious", "reckless", "sensible", "audacious"], default="none", type=str,
-                        help="the division strategy to use; 'none', 'basic', 'steady', 'hasty', 'cautious', 'reckless', 'sensible',  'impetuous', or 'audacious', by default 'none'")
+    parser.add_argument("-strat", "--division_strategy", choices=["none", "basic", "steady", "hasty", "jumpy", "relentless", "impetuous", "rapid-basic", "rapid-steady", "rapid-hasty", "rapid-jumpy", "cautious"], default="none", type=str,
+                        help="the division strategy to use; 'none', '(rapid-)basic', '(rapid-)steady', '(rapid-)hasty', '(rapid-)jumpy', 'relentless', 'impetuous', 'cautious', by default 'none'")
     parser.add_argument("-bound", "--division_strategy_bounds", nargs="+", default=None, action=StoreHierarchicalArguments, type=str, metavar="value | level1=value1 level_i=value_i [...] level_n=value_n",
                         help="the bound used on the division strategy, this a maximum or minimum bound on the size, complexity, or planning time of the partial "
                              "problems as defined by the nature of the strategy itself, given as either a tuple of values (used at all abstraction levels) "
                              "or a dictionary of level-tuple pairs to set different bounds for each level, if None then the strategy takes its specific default bound, by default None")
-    parser.add_argument("--bound_type", choices=["incremental", "differential", "integral", "cumulative"], default="incremental", type=str,
+    parser.add_argument("--bound_type", choices=["incremental", "differential", "integral", "cumulative"], default="incremental", type=str, ## TODO Predictive
                         help="the type of bound used by reactive or adaptive strategies for their modifiable bound; 'incremental' (the total incremental planning time (seconds/step), averaged over the moving range), "
                              "'differential' (the rate of change (increase) in the total incremental planning time (seconds/step/step), averaged over the moving range), 'integral' (the sum of the total incremental planning times (seconds) over the moving range), "
                              "'predictive' (the predicted total incremental planning time of the next search step (seconds/step)), or "
                              "'cumulative' (the sum of all total incremental planning times (seconds) since the last reactive division, essentially an alias for an integral bound type with no range bound), by default 'incremental'")
+    parser.add_argument("-save", "--save_grounding", **bool_options(default=False),
+                        help="whether to save the ASP program grounding between divided planning increments, by default False, as standard True")
     parser.add_argument("-horizon", "--backwards_horizon", nargs="+", default=0, action=StoreHierarchicalArguments, type=str, metavar="value | level1=value1 level_i=value_i [...] level_n=value_n",
                         help="the backwards horizon used when making continuous reactive divisions, continuous divisions cannot be commited until the horizon is reached, by default 0")
     parser.add_argument("-preempt", "--preemptive_division", **bool_options(default=False),
@@ -887,10 +898,14 @@ def __setup() -> argparse.Namespace:
                              "from dividing sub-goal stage inside the left blend of the right point of the current (partial) refinement planning problem, this can save overall planning time "
                              "by avoiding refining sub-goal stages that are guaranteed to be revised by blending at the higher abstraction levels but can reduce plan quality at the lower abstraction levels, "
                              "the more abstraction levels there are the more prevalent this trade-off becomes, by default False, as standard True")
-    parser.add_argument("-inde_tasks", "--treat_tasks_as_independent", **bool_options(default=True),
+    parser.add_argument("-inde_tasks", "--treat_tasks_as_independent", **bool_options(default=False),
                         help="overrides the division strategy used in tasking models to treat refining each individual task as an independent sub-problem at the next level, by default True")
-    parser.add_argument("-save", "--save_grounding", **bool_options(default=False),
-                        help="whether to save the ASP program grounding between divided planning increments, by default False, as standard True")
+    parser.add_argument("-order_tasks", "--divide_tasks_on_final_goal_intermediate_achievement_ordering", **bool_options(default=False),
+                        help="overrides the division strategy used in tasking models to make divisions only upon the intermediate achievement of a final-goal literal, by default True (requires final-goal intermediate ordering preferences)")
+    parser.add_argument("-div_init", "--divide_only_initial_problems", **bool_options(default=False),
+                        help="overrides the division strategy to only divide initial problems, and prevent dividing all non-initial problems, by default False, as standard True")
+    
+    ## Online optimisation options
     parser.add_argument("-preempt_pos_fgoals", "--positive_final_goal_preemptive_achievement_heuristic", **bool_options(default=None, const=True, add_none=True),
                         help="whether to enable the ASP program heuristic that prefers choosing actions whose effects preemptively achieve positive final"
                              "goals, when there is an arbitrary choice available in non-final partial problems, by default None, as standard True")
@@ -900,24 +915,50 @@ def __setup() -> argparse.Namespace:
     parser.add_argument("-order_fgoals", "--final_goal_intermediate_achievement_ordering_preferences", **bool_options(default=None, const=True, add_none=True),
                         help="whether to enable optimisation of ordering preferences over the achievement of final-goals for tasking models, "
                              "if None then the planner decides (chooses True if a planning problem has a tasking model, False otherwise), by default None, as standard True")
-    parser.add_argument("-detect_dep", "--detect_dependencies", **bool_options(default=False),
-                        help="whether to detect dependencies between partial-problems in online planning, this is an expensive operation and occurs after solving the hierarchical planning problem by online planning,"
-                             "this is done by complete planning at each level (using the fixed generated refinement schema) and comparing the generated plan qualities, by default False")
-    ## This does not tell us the impact of the conformance constraining sub-goal stages being affected by dependencies between partial problems that divided the previous level from which those sub-goal stages were produced.
     
-    ## Parse the arguments and return the namespace
-    namespace: argparse.Namespace = parser.parse_args()
+    ## Search for a configuration file in the argument list
+    options: Optional[list[str]] = None
+    for index, arg in enumerate(sys.argv):
+        if "--config" in arg:
+            options = []
+            
+            ## Split the options in the configuration file
+            config_file = arg.split("=")[1]
+            with open(config_file, "r") as file_reader:
+                in_desc: bool = False
+                for line in file_reader.readlines():
+                    if "description" in line.lower():
+                        in_desc = True
+                    if "options" in line.lower():
+                        in_desc = False
+                        continue
+                    if not in_desc:
+                        options.extend(line.split())
+            
+            options.extend(sys.argv[1 : index])
+            options.extend(sys.argv[index + 1 : len(sys.argv)])
+            break
+    
+    ## Parse the arguments and obtain the namespace
+    namespace: argparse.Namespace = parser.parse_args(options)
     
     ## Setup the logger
     if not namespace.disable_logging:
-        logging.basicConfig(handlers=[logging.FileHandler(f"./logs/ASH_Log_{output_file_append}.log", "w", "utf-8")],
+        ## Use a rotating
+        logging.basicConfig(handlers=[logging.handlers.RotatingFileHandler(f"./logs/ASH_Log_{output_file_append}.log", mode="w", maxBytes=(95 * (1024 ** 2)), backupCount=10, encoding="utf-8")],
                             format="[%(asctime)s] %(levelname)-4s :: %(name)-8s >> %(message)s\n",
                             datefmt="%d-%m-%Y_%H-%M-%S",
                             level=logging.DEBUG)
+        
+        ## Add the title and warranty conditions to the log file
         _Launcher_logger.debug(center_text(_ASH_TITLE, prefix_blank_line=True, framing_width=116, framing_char='#'))
         _Launcher_logger.debug(center_text(_ASH_WARRANTY, prefix_blank_line=True, framing_width=80))
         _Launcher_logger.debug(center_text(_ASH_CONDITIONS, prefix_blank_line=True, framing_width=80))
+        
+        ## Log the command line arguments for debugging purposes
         _Launcher_logger.debug("Command line arguments:\n" + "\n".join(repr(item) for item in sys.argv[1:]))
+        if options:
+            _Launcher_logger.debug("Configuration file arguments:\n" + "\n".join(repr(item) for item in options))
         _Launcher_logger.debug("Parsed command line argumenys:\n" + "\n".join(repr(item) for item in namespace.__dict__.items()))
         
         ## Setup the console stream

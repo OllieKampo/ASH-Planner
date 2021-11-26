@@ -1,9 +1,9 @@
 import enum
 import logging
 import math
-from abc import ABCMeta, abstractclassmethod, abstractmethod
+from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass, field, fields
-from typing import Any, Callable, Iterable, Iterator, NamedTuple, Optional, Type, Union, final
+from typing import Any, Iterable, Iterator, NamedTuple, Optional, Type, Union, final
 import statistics
 
 import _collections_abc
@@ -249,8 +249,8 @@ class DivisionScenario(_collections_abc.Sequence):
         return len(self.__division_points)
     
     def __str__(self) -> str:
-        return (f"Divided plan : {self.__abstract_plan!s}\n"
-                + f"Division points [total={len(self)}] : [{', '.join(map(str, self))}]")
+        return (f"Total Problems = {self.total_problems}, Problem range = {self.problem_range}, Size = {self.size}, Sub-goal stage range = {self.__abstract_plan.action_step_range}\n"
+                f"Division points [total={len(self)}] : [{', '.join(map(str, self))}]")
     
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.__abstract_plan!r}, {self.__division_points!r})"
@@ -287,17 +287,24 @@ class DivisionScenario(_collections_abc.Sequence):
     
     @property
     def problem_range(self) -> range:
+        "The partial problem number range templated by this scenario."
         return range(self.__previously_solved_problems + 1,
                      self.__previously_solved_problems + self.total_problems + 1)
     
     @property
     def first_index(self) -> int:
-        # Add one because actions are 'shifted' over to the right by one step
-        return self.__abstract_plan.start_step + 1
+        "The first sub-goal stage index of the (sub-)sequence of sub-goal stages from the (partial-)plan divided by this scenario."
+        return self.__abstract_plan.state_start_step + 1
     
     @property
     def last_index(self) -> int:
+        "The last sub-goal stage index of the (sub-)sequence of sub-goal stages from the (partial-)plan divided by this scenario."
         return self.__abstract_plan.end_step
+    
+    @property
+    def size(self) -> int:
+        "The total number of sub-goal stages in the (sub-)sequence of sub-goal stages from the (partial-)plan divided by this scenario."
+        return self.last_index - self.first_index
     
     
     
@@ -313,6 +320,7 @@ class DivisionScenario(_collections_abc.Sequence):
         
         if not fabricate_inherited:
             return division_points
+        
         return [DivisionPoint(self.first_index, inherited=True)] + division_points + [DivisionPoint(self.last_index, inherited=True)]
     
     
@@ -462,18 +470,18 @@ class DivisionStrategy(metaclass=ABCMeta):
     
     Proactive strategies can selectively choose to ignore the blend quantity if it deems the chance a division being inadmissible is sufficiently low.
     
-    A reactive or adaptive strategy uses its react function to decide where to put divisions during solving:
+    A reactive or adaptive strategy uses its react method to decide where to put divisions during solving:
         - reactive makes no division proactively and decides entirely based on the feedback function,
             - reactive also allows dynamic modification of the blend quantity based on the measured complexity of the combined sub-problems,
         - adaptive makes a set of divisions pro-actively and reactively adds additional divisions reactively if necessary.
     
     Public Fields
     -------------
-    `knowledge : Any` - Any object or primitive data the designer wishes to assign to the strategy, containing knowledge used to inform and make decisions.
+    `knowledge : Any` - Any object or primitive data the designer wishes to attach to the strategy, containing knowledge used to inform and make decisions.
     
     Properties
     ----------
-    `bounds : dict[str, {int | float}]` - The validated bounds given to this strategy.
+    `bounds : dict[str, {int | float}] (assignable)` - The validated bounds given to this strategy.
     Stored as a dictionary, whose keys are strings, and whose values are either integers of floating point numbers.
     
     `blend_quantity : int (assignable)` - An integer defining the blend quantity.
@@ -481,25 +489,55 @@ class DivisionStrategy(metaclass=ABCMeta):
     Each partial problem increases in size by double the blend quantity, except the first and last partial problems.
     The first only has a right blend, whereas the last only has a left blend.
     This is because the first and the last problems either sit against inherited division points, or are initial or final.
+    
+    Notes
+    -----
+    This class declares its fields via slots.
+    
+    The abstract version of the proact method deals with
     """
     
     __slots__ = ("knowledge",           # Any
                  "__bounds",            # dict[str, {Number | dict[int, Number]}]
-                 "__blend_quantities")  # {Blend | dict[int, Blend]}
+                 "__blend_quantities",  # {Blend | dict[int, Blend]}
+                 "__top_level",         # int
+                 "__inde_tasks",        # bool
+                 "__order_tasks")       # bool
     
-    def __init__(self, bounds: Bounds, blend: Union[Number, Blend, dict[int, Union[Number, Blend]]] = {}, knowledge: Any = None) -> None:
+    def __init__(self,
+                 top_level: int,
+                 bounds: Bounds,
+                 blend: Union[Number, Blend, dict[int, Union[Number, Blend]]] = {},
+                 knowledge: Any = None,
+                 independent_tasks: bool = False,
+                 order_tasks: bool = False
+                 ) -> None:
+        """
+        Abstract super constructor for division strategies.
+        
+        Parameters
+        ----------
+        
+        """
+        
+        self.__top_level = top_level
+        self.__inde_tasks = independent_tasks
+        self.__order_tasks = order_tasks
+        
         ## The strategy's bounds;
-        ##      - Mapping = bound_name: str (x ? level: int) -> bound_value: {int | float}
+        ##      - Maps = bound_name: str x ?(level: int) -> bound_value: {int | float}
         self.__bounds: Bounds = {}
         self.bounds = bounds
         
-        ## The blend quantities used
+        ## The blend quantities;
+        ##      - Maps = ?(level: int) -> blend_quantity: Blend
         self.__blend_quantities: Union[Blend, dict[int, Blend]] = {}
         self.blend_quantities = blend
         
-        ## An arbitrary object used to store any desired knowledge the user wishes to attach to this strategy
+        ## An arbitrary object used to store any desired knowledge the designer wishes to attach to this strategy
         self.knowledge: Any = knowledge
     
+    ####################
     ## Properties
     
     @property
@@ -554,6 +592,7 @@ class DivisionStrategy(metaclass=ABCMeta):
     def set_blend(self, level: int, left: Number, right: Number) -> Blend:
         self.__blend_quantities[level] = Blend(left, right)
     
+    ####################
     ## Bounds
     
     @classmethod
@@ -564,10 +603,43 @@ class DivisionStrategy(metaclass=ABCMeta):
     def default_bounds(cls) -> Bounds:
         return {}
     
+    ####################
     ## Decision making
     
     @abstractmethod
     def proact(self, abstract_plan: "Planner.MonolevelPlan", previously_solved_problems: int = 0) -> DivisionScenario:
+        """
+        Abstract base version of proactive division, must be overridden by inheriting classes.
+        
+        If the level is the specified top level
+        """
+        
+        ## If the plan's level is the top-level of the domain's hierarchy and was generated in the tasking model...
+        if (abstract_plan.level == self.__top_level
+            and abstract_plan.model_type == Planner.DomainModelType.Tasking):
+            
+            ## Treat tasks as independent by making every possible division;
+            ##      - Takes presidence over dividing based on the fgoal achievement order,
+            ##      - This is regardless of whether the fgoals where actually ordered or not.
+            if self.__inde_tasks:
+                problems: int = abstract_plan.plan_length
+                divisions: list[DivisionPoint] = self.make_homogenous_divisions(problems,
+                                                                                abstract_plan.plan_length,
+                                                                                abstract_plan.state_start_step,
+                                                                                self.get_blend(abstract_plan.level))
+                return DivisionScenario(abstract_plan, divisions, previously_solved_problems)
+            
+            ## Divides based on the actual achievement steps, regardless of what the preference order actually was, or if there was one at all.
+            elif self.__order_tasks:
+                
+                division_indices: list[int] = []
+                
+                for step in abstract_plan.fgoals_achieved_at:
+                    if 0 < step < abstract_plan.end_step:
+                        division_indices.append(step)
+                
+                return self.make_heterogenous_divisions(division_indices, abstract_plan.plan_length, abstract_plan.state_start_step, self.get_blend(abstract_plan.level))
+        
         return DivisionScenario(abstract_plan, [], previously_solved_problems)
     
     def react(self, problem_level: int, problem_total_sgoals_range: SubGoalRange, problem_start_step: int, current_search_length: int, current_subgoal_index: int, matching_child: bool, incremental_times: list[float], observable_plan: Optional[dict[int, list["Planner.Action"]]]) -> Reaction:
@@ -635,16 +707,16 @@ class DivisionStrategy(metaclass=ABCMeta):
         
         TODO
         """
-        if partial_problems < 1 or partial_problems > plan_length:
-            raise ValueError()
+        _Strategies_logger.debug(f"Making homogenous divisions: {partial_problems=}, {plan_length=}, {start_step=}, {blend=}")
         
         if plan_length < 1:
-            raise ValueError()
+            raise ValueError(f"Invalid plan length {plan_length}, must be greater than or equal to 1.")
         
         if start_step < 0:
-            raise ValueError()
+            raise ValueError(f"Invalid start step {start_step}, must be greater than or equal to 0.")
         
-        _Strategies_logger.debug(f"Making homogenous divisions: {partial_problems=}, {plan_length=}, {start_step=}, {blend=}")
+        if partial_problems < 1 or partial_problems > plan_length:
+            raise ValueError(f"Invalid number of partial problems {partial_problems}, must be greater than or equal to 1 and less than or equal to plan length ({plan_length}).")
         
         ## Determine the number of small and large problems
         number_small_problems: int = partial_problems - (plan_length % partial_problems)
@@ -685,6 +757,51 @@ class DivisionStrategy(metaclass=ABCMeta):
         _Strategies_logger.debug(f"Division points generated:\n{division_points}")
         
         return division_points
+    
+    @staticmethod
+    def make_heterogenous_divisions(division_points: Iterable[int], plan_length: int, start_step: int = 0, blend: Blend = Blend()) -> list[DivisionPoint]:
+        
+        if plan_length < 1:
+            raise ValueError()
+        
+        if start_step < 0:
+            raise ValueError()
+        
+        if any(plan_length <= division_point <= (start_step + 1) for division_point in division_points):
+            raise ValueError()
+        
+        _Strategies_logger.debug(f"Making heterogenous divisions: {division_points=}, {plan_length=}, {start_step=}, {blend=}")
+        
+        def get_size(division_number: int) -> int:
+            "Inner function for getting the size of individual partial problems."
+            if division_number == 0:
+                return 0
+            previous: int = start_step
+            if division_number > 1:
+                previous = division_points[division_number - 2]
+            return previous - division_points[division_number - 1]
+        
+        ## Loop variables
+        division_points: list[DivisionPoint] = []
+        current_index: int = start_step
+        
+        ## There are a number of divisions equal to one less than the number of partial problems
+        for division_number in range(1, len(division_points)):
+            ## Determine the sgoal range limits either side of the current division
+            prev_index: int = current_index
+            current_index += get_size(division_number)
+            next_index: int = current_index + get_size(division_number + 1)
+            
+            ## Determine the blend quantities either side of the current division
+            left_blend: int = current_index - max(current_index - blend.get_left(current_index - prev_index), prev_index)
+            right_blend: int = min(current_index + blend.get_right(next_index - current_index), next_index) - current_index
+            
+            ## Add the point division to the list
+            division_points.append(DivisionPoint(current_index, Blend(left_blend, right_blend)))
+        
+        _Strategies_logger.debug(f"Division points generated:\n{division_points}")
+        
+        return division_points
 
 
 
@@ -698,18 +815,40 @@ class Basic(DivisionStrategy):
     The minimum of either; the given number of partial problems and the number of sub-goal stages being divided.
     This strategy divides a sequenece of abstract sub-goal stages into a sequence of sub-sequences.
     """
-    def __init__(self, problems: Optional[Union[int, dict[int, int]]], blend: Union[Number, Blend, dict[int, Union[Number, Blend]]] = {}) -> None:
+    def __init__(self,
+                 top_level: int,
+                 problems: Optional[Union[int, dict[int, int]]],
+                 blend: Union[Number, Blend, dict[int, Union[Number, Blend]]] = {},
+                 independent_tasks: bool = False,
+                 order_tasks: bool = False
+                 ) -> None:
+        
         if (_problems := problems) is None:
             _problems = self.__class__.default_bounds()["problems"]
-        super().__init__(bounds={"problems" : _problems},
-                         blend=blend)
+        super().__init__(top_level=top_level,
+                         bounds={"problems" : _problems},
+                         blend=blend,
+                         independent_tasks=independent_tasks,
+                         order_tasks=order_tasks)
     
     def proact(self, abstract_plan: "Planner.MonolevelPlan", previously_solved_problems: int) -> DivisionScenario:
+        
+        ## Use any available tasking based division scenario
+        if (scenario := super().proact(abstract_plan)):
+            return scenario
+        
+        ## Obtain valid number of partial problems to generate;
+        ##      - Number of divisions is one greater than the number of problems.
         problems: int = self.get_bound("problems", abstract_plan.level, default=1)
         if problems > abstract_plan.plan_length:
             problems = abstract_plan.plan_length
         
-        return DivisionScenario(abstract_plan, self.make_homogenous_divisions(problems, abstract_plan.plan_length, abstract_plan.start_step, self.get_blend(abstract_plan.level)), previously_solved_problems)
+        ## Make a sequence of homogenous divisions to template the given number of equal size partial problems
+        divisions: list[DivisionPoint] = self.make_homogenous_divisions(problems,
+                                                                        abstract_plan.plan_length,
+                                                                        abstract_plan.state_start_step,
+                                                                        self.get_blend(abstract_plan.level))
+        return DivisionScenario(abstract_plan, divisions, previously_solved_problems)
     
     @classmethod
     def validate_bounds(cls, bounds: Bounds) -> Optional[Bounds]:
@@ -720,27 +859,41 @@ class Basic(DivisionStrategy):
         return {"problems" : 2}
     
     def total_increments_prediction(self, planning_domain: "Planner.PlanningDomain", online_method: "Planner.OnlineMethod") -> Optional[int]:
+        level_range: range = planning_domain.constrained_level_range(bottom_level=2)
+        
         if online_method == Planner.OnlineMethod.GroundFirst:
-            return int(math.prod(self.get_bound("problems", level, 1) for level in planning_domain.constrained_level_range(bottom_level=2)))
+            return int(math.prod(self.get_bound("problems", level, 1) for level in level_range))
         
         elif online_method == Planner.OnlineMethod.CompleteFirst:
-            return int(sum(self.get_bound("problems", level, 1) for level in planning_domain.constrained_level_range(bottom_level=2)))
+            return int(sum(self.get_bound("problems", level, 1) for level in level_range))
         
-        else: raise ValueError(f"Online method not recognised {online_method}.")
+        elif online_method == Planner.OnlineMethod.Hybrid:
+            return int(sum(self.get_bound("problems", level, 1) for level in level_range)) - (max(level_range) - 1)
+        
+        return None
 
 class NaiveProactive(DivisionStrategy):
-    def __init__(self, size_bound: Optional[Bound] = None, blend: dict[int, Union[Number, Blend]] = {}) -> None:
+    
+    def __init__(self,
+                 top_level: int,
+                 size_bound: Optional[Bound] = None,
+                 blend: dict[int, Union[Number, Blend]] = {},
+                 independent_tasks: bool = False,
+                 order_tasks: bool = False
+                 ) -> None:
+        
         if (_size_bound := size_bound) is None:
             _size_bound = self.__class__.default_bounds()["size_bound"]
-        super().__init__(bounds={"size_bound" : _size_bound},
+        super().__init__(top_level=top_level,
+                         bounds={"size_bound" : _size_bound},
                          blend=blend,
-                         knowledge=None)
+                         independent_tasks=independent_tasks,
+                         order_tasks=order_tasks)
     
     @final
     def react(self, problem_level: int, problem_total_sgoals_range: SubGoalRange, problem_start_step: int, current_search_length: int, current_subgoal_index: int, matching_child: bool, incremental_times: list[float], observable_plan: Optional[dict[int, list["Planner.Action"]]]) -> Reaction:
         return super().react(problem_level, problem_total_sgoals_range, problem_start_step, current_search_length, current_subgoal_index, matching_child, incremental_times, observable_plan)
     
-    @final
     def total_increments_prediction(self, planning_domain: "Planner.PlanningDomain", online_method: "Planner.OnlineMethod") -> Optional[int]:
         if online_method == Planner.OnlineMethod.GroundFirst:
             return int(math.prod(1/self.get_bound("size_bound", level, 1.0) for level in reversed(range(2, planning_domain.top_level + 1)) if isinstance(self.get_bound("size_bound", level, 1.0), float)))
@@ -748,7 +901,10 @@ class NaiveProactive(DivisionStrategy):
         elif online_method == Planner.OnlineMethod.CompleteFirst:
             return int(sum(1/self.get_bound("size_bound", level, 1.0) for level in range(2, planning_domain.top_level + 1) if isinstance(self.get_bound("size_bound", level, 1.0), float)))
         
-        else: raise ValueError(f"Online method not recognised {online_method}.")
+        elif online_method == Planner.OnlineMethod.Hybrid:
+            return None ## TODO
+        
+        return None
     
     @final
     def get_true_size_bound(self, level: int, plan_length: int) -> int:
@@ -789,8 +945,9 @@ class NaiveProactive(DivisionStrategy):
         ##      - The bound cannot be more than the plan length.
         true_size_bound: int
         if isinstance(size_bound, float):
-            true_size_bound = min(max(1, round(plan_length * size_bound)), plan_length)
+            true_size_bound = round(plan_length * size_bound)
         else: true_size_bound = size_bound
+        true_size_bound = min(plan_length, max(1, true_size_bound))
         
         return true_size_bound
     
@@ -826,6 +983,10 @@ class Hasty(NaiveProactive):
     def proact(self, abstract_plan: "Planner.MonolevelPlan", previously_solved_problems: int = 0) -> DivisionScenario:
         _Strategies_logger.debug(f"Proactively dividing plan: {abstract_plan}.")
         
+        ## Use any available tasking based division scenario
+        if (scenario := super().proact(abstract_plan)):
+            return scenario
+        
         ## Get the true size bound
         plan_length: int = abstract_plan.plan_length
         true_size_bound: int = self.get_true_size_bound(abstract_plan.level, plan_length)
@@ -837,7 +998,7 @@ class Hasty(NaiveProactive):
         
         _Strategies_logger.debug(f"{plan_length=}, {true_size_bound=}, {partial_problems=}")
         
-        return DivisionScenario(abstract_plan, self.make_homogenous_divisions(partial_problems, plan_length, abstract_plan.start_step, self.get_blend(abstract_plan.level)), previously_solved_problems)
+        return DivisionScenario(abstract_plan, self.make_homogenous_divisions(partial_problems, plan_length, abstract_plan.state_start_step, self.get_blend(abstract_plan.level)), previously_solved_problems)
     
     @classmethod
     def default_bounds(cls) -> dict[str, Number]:
@@ -856,6 +1017,10 @@ class Steady(NaiveProactive):
     def proact(self, abstract_plan: "Planner.MonolevelPlan", previously_solved_problems: int = 0) -> DivisionScenario:
         _Strategies_logger.debug(f"Proactively dividing plan: {abstract_plan}.")
         
+        ## Use any available tasking based division scenario
+        if (scenario := super().proact(abstract_plan)):
+            return scenario
+        
         ## Get the size bound
         plan_length: int = len(abstract_plan)
         true_size_bound: int = self.get_true_size_bound(abstract_plan.level, plan_length)
@@ -867,7 +1032,7 @@ class Steady(NaiveProactive):
         
         _Strategies_logger.debug(f"{plan_length=}, {true_size_bound=}, {partial_problems=}")
         
-        return DivisionScenario(abstract_plan, self.make_homogenous_divisions(partial_problems, plan_length, abstract_plan.start_step, self.get_blend(abstract_plan.level)), previously_solved_problems)
+        return DivisionScenario(abstract_plan, self.make_homogenous_divisions(partial_problems, plan_length, abstract_plan.state_start_step, self.get_blend(abstract_plan.level)), previously_solved_problems)
     
     @classmethod
     def default_bounds(cls) -> dict[str, Number]:
@@ -886,11 +1051,18 @@ class Jumpy(NaiveProactive):
     def proact(self, abstract_plan: "Planner.MonolevelPlan", previously_solved_problems: int = 0) -> DivisionScenario:
         _Strategies_logger.debug(f"Proactively dividing plan: {abstract_plan}.")
         
+        ## Use any available tasking based division scenario
+        if (scenario := super().proact(abstract_plan)):
+            return scenario
+        
         ## Get the size bound
         plan_length: int = len(abstract_plan)
         true_size_bound: int = self.get_true_size_bound(abstract_plan.level, plan_length)
         
-        return DivisionScenario(abstract_plan, [DivisionPoint(true_size_bound + abstract_plan.start_step)], previously_solved_problems)
+        return DivisionScenario(abstract_plan, [DivisionPoint(true_size_bound + abstract_plan.state_start_step)], previously_solved_problems)
+    
+    def total_increments_prediction(self, planning_domain: "Planner.PlanningDomain", online_method: "Planner.OnlineMethod") -> Optional[int]:
+        return math.prod(2 for level in range(2, planning_domain.top_level + 1) if self.get_bound("size_bound", level, -1) != 1)
     
     @classmethod
     def default_bounds(cls) -> dict[str, Number]:
@@ -949,6 +1121,7 @@ class Reactive(DivisionStrategy):
                  "__interrupting")          # bool
     
     def __init__(self,
+                 top_level: int,
                  incremental_time_bound: Bound = None,
                  differential_time_bound: Bound = None, 
                  integral_time_bound: Bound = None,
@@ -957,7 +1130,9 @@ class Reactive(DivisionStrategy):
                  moving_average: Optional[int] = None,
                  preemptive: bool = True,
                  interrupting: bool = False,
-                 knowledge: Any = None
+                 knowledge: Any = None,
+                 independent_tasks: bool = False,
+                 order_tasks: bool = False
                  ) -> None:
         
         ## Three standard types of reactive division strategy bounds
@@ -988,7 +1163,11 @@ class Reactive(DivisionStrategy):
         self.__last_division_index: dict[int, int] = {}
         self.__last_division_step: dict[int, int] = {}
         
-        super().__init__(bounds, knowledge=knowledge)
+        super().__init__(top_level=top_level,
+                         bounds=bounds,
+                         knowledge=knowledge,
+                         independent_tasks=independent_tasks,
+                         order_tasks=order_tasks)
     
     @property
     def backwards_horizon(self) -> Horizon:
@@ -1209,19 +1388,26 @@ class Relentless(Reactive):
     __slots__ = ("__bound_type")
     
     def __init__(self,
+                 top_level: int,
                  time_bound: Bound,
                  bound_type: ReactiveBoundType = ReactiveBoundType.Incremental,
                  backwards_horizon: Horizon = 0,
                  moving_average: Optional[int] = None,
                  preemptive: bool = True,
-                 interrupting: bool = False) -> None:
+                 interrupting: bool = False,
+                 independent_tasks: bool = False,
+                 order_tasks: bool = False
+                 ) -> None:
         
         self.__bound_type: ReactiveBoundType = bound_type
-        super().__init__(**{bound_type.value : time_bound},
+        super().__init__(top_level=top_level,
+                         **{bound_type.value : time_bound},
                          backwards_horizon=backwards_horizon if not interrupting else 0,
                          moving_average=moving_average,
                          preemptive=preemptive,
-                         interrupting=interrupting)
+                         interrupting=interrupting,
+                         independent_tasks=independent_tasks,
+                         order_tasks=order_tasks)
     
     def react(self, problem_level: int, problem_total_sgoals_range: SubGoalRange, problem_start_step: int, current_search_length: int, current_subgoal_index: int, matching_child: bool, incremental_times: list[float], observable_plan: Optional[dict[int, list["Planner.Action"]]]) -> Reaction:
         
@@ -1256,23 +1442,31 @@ class Relentless(Reactive):
                         rationale=f"{self.__bound_type.name!s} search time bound since last division {'reached' if triggered else 'not reached'}: bound = {time_bound}, time = {time}")
 
 class Impetuous(Reactive):
+    
     def __init__(self,
+                 top_level: int,
                  cumulative_time_bound: Bound,
                  continuous_time_bound: Bound,
                  continuous_bound_type: ReactiveBoundType = ReactiveBoundType.Incremental,
                  backwards_horizon: Horizon = 0,
                  moving_average: int = 5,
-                 preemptive: bool = True) -> None:
+                 preemptive: bool = True,
+                 independent_tasks: bool = False,
+                 order_tasks: bool = False
+                 ) -> None:
         
         if continuous_bound_type == ReactiveBoundType.Cumulative:
             raise ValueError("Cannot use a cumulative time bound as the continuous bound type.")
         self.__continuous_bound_type: ReactiveBoundType = continuous_bound_type
-        super().__init__(cumulative_time_bound=cumulative_time_bound,
+        super().__init__(top_level=top_level,
+                         cumulative_time_bound=cumulative_time_bound,
                          **{continuous_bound_type.value : continuous_time_bound},
                          backwards_horizon=backwards_horizon,
                          moving_average=moving_average,
                          preemptive=preemptive,
-                         interrupting=True)
+                         interrupting=True,
+                         independent_tasks=independent_tasks,
+                         order_tasks=order_tasks)
     
     def react(self, problem_level: int, problem_total_sgoals_range: SubGoalRange, problem_start_step: int, current_search_length: int, current_subgoal_index: int, matching_child: bool, incremental_times: list[float], observable_plan: Optional[dict[int, list["Planner.Action"]]]) -> Reaction:
         
@@ -1339,39 +1533,35 @@ class Rapid(Relentless):
     __slots__ = ("__proactive_basis")   # NaiveProactive
     
     def __init__(self,
+                 top_level: int,
                  proactive_basis: Type[NaiveProactive],
                  size_bound: Optional[Bound],
                  reactive_time_bound: Bound,
                  proactive_blend: dict[int, Union[Number, Blend]] = {},
                  reactive_bound_type: ReactiveBoundType = ReactiveBoundType.Incremental,
                  backwards_horizon: Horizon = 0,
-                 moving_average: int = 1) -> None:
+                 moving_average: int = 1,
+                 independent_tasks: bool = False,
+                 order_tasks: bool = False) -> None:
         
         self.__proactive_basis: NaiveProactive = proactive_basis(size_bound, proactive_blend)
-        super().__init__(time_bound=reactive_time_bound,
+        super().__init__(top_level=top_level,
+                         time_bound=reactive_time_bound,
                          bound_type=reactive_bound_type,
                          backwards_horizon=backwards_horizon,
                          moving_average=moving_average,
                          preemptive=True,
-                         interrupting=False)
+                         interrupting=False,
+                         independent_tasks=independent_tasks,
+                         order_tasks=order_tasks)
     
     def proact(self, abstract_plan: "Planner.MonolevelPlan", previously_solved_problems: int) -> DivisionScenario:
         return self.__proactive_basis.proact(abstract_plan, previously_solved_problems)
 
 class Cautious(Steady):
-    ## __dependency_predictor
-    pass
-
-class Reckless(DivisionStrategy):
-    ## __complexity_predictor
-    pass
-
-class Sensible(Reckless):
-    ## __dependency_predictor
     pass
 
 class Audacious(Impetuous):
-    ## __dependency_predictor
     pass
 
 @enum.unique
@@ -1393,8 +1583,6 @@ class GetStrategy(enum.Enum):
     
     ## Informed proactive
     cautious = Cautious
-    reckless = Reckless
-    sensible = Sensible
     
     ## Informed adaptive
     audacious = Audacious

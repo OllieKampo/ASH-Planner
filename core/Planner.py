@@ -26,7 +26,7 @@ from tqdm import tqdm
 from core.Strategies import DivisionPoint, DivisionPointPair, DivisionScenario, DivisionStrategy, Reaction, SubGoalRange
 import enum
 import logging
-from typing import Any, Callable, Iterable, Iterator, NamedTuple, Optional, Union, final
+from typing import Any, Callable, Final, Iterable, Iterator, NamedTuple, Optional, Union, final
 import statistics
 import json
 import _collections_abc
@@ -43,13 +43,29 @@ import time
 
 
 ## TODO List
+## Informed strategy - Cautious, just divides only before certain action types, to essentially split the refinements of different action types up, taking a different approach to splitting the levels of the hierarchy.
+##      - Should use the action types for something, try making a strategy that just divides up the action types? Works a bit like splitting the hierarchy for refining each action type seperately?
 ## Trailing plan stuff
 ## Interleaving detection
 ## Conformance mapping for backwards horizon?
 ## Fgoal achievement preference to monolevel plan class, and to proactive strategies?
-## Informed strategies?
-## Unify the defined fluents for the different encodings
+##      - Check this is being calculated correctly, and update display of monolevel plans for it,
+##      - Test independent tasks and order tasks division strategy overrides.
+## Check whether the more general encoding actually records higher solving times, or if this is just the model generation
+## Update overhead time when combining ASH statistics objects
+## Schema solving for interleaving detection and search space generation
+## Could add something that stops divisions being made on non-initial partial plans? TODO
+
+## Need a smaller domain for showing some dependencies and generating search spaces
 ## Make the really high level despoke tasking model
+## Add huge version with square rooms and spread out blocks
+## Add version with obstacles that talos must move around, and which have blocks on different sides of themto force longer locomotion plans
+## Add starting room door to the small problems, so that problem 1 also takes longer by classical planning
+
+## Graphs/Results gathering:
+##      - Partial plan deviation and balance,
+##      - Time per step/action,
+##      - Minimum required execution time per partial plan, tells us how long it'd have to take to execute that partial plan before the next one is available, without the robot having to pause execution between them.
 
 
 
@@ -76,9 +92,10 @@ class ASH_InvalidPlannerState(ASH_Error): pass
 class ASH_InternalError(ASH_Error): pass
 
 class ASH_InvalidInputError(ASH_Error):
-    def __init__(self, message: str, given: Any) -> None:
+    def __init__(self, message: str, given: Optional[Any] = None) -> None:
         _message: str = message
-        _message += f"Got; {given} of type {type(given)}."
+        if given is not None:
+            _message += f"Got; {given} of type {type(given)}."
         super().__init__(_message)
 
 def log_and_raise(exception_type: type[BaseException], *args: object, from_exception: Optional[BaseException] = None, logger: logging.Logger = _planner_logger) -> None:
@@ -426,18 +443,19 @@ class MonolevelPlan(_collections_abc.Mapping):
     
     planning_statistics: ASH_Statistics
     
-    conformance_mapping: Optional[ConformanceMapping] = None
+    conformance_mapping: {ConformanceMapping | None} = None
     
-    problem_divisions: Optional[list[DivisionPoint]] = None
+    problem_divisions: {list[DivisionPoint] | None} = None
     
     total_choices: int = 0
     
     preemptive_choices: int = 0
     
-    fgoal_ordering_score: Optional[int] = None
+    fgoal_ordering_correct: {bool | None} = None
     """
     ## Universal plan variables
     level: int
+    model_type: "DomainModelType"
     states: dict[int, list[Fluent]]
     actions: dict[int, list[Action]]
     produced_sgoals: dict[int, list[SubGoal]]
@@ -448,14 +466,13 @@ class MonolevelPlan(_collections_abc.Mapping):
     conformance_mapping: Optional[ConformanceMapping] = None
     problem_divisions: Optional[list[DivisionPoint]] = None
     
-    ## Final-goal preemptive achievment
+    ## Final-goal preemptive achievement
     total_choices: int = 0
     preemptive_choices: int = 0
     
-    ## Final-goal intermediate ordering
-    fgoal_ordering_preference: list[list[FinalGoal]] = None
-    fgoal_ordering_achieved: list[list[FinalGoal]] = None
-    fgoal_ordering_score: Optional[int] = None
+    ## Final-goal intermediate achievement ordering
+    fgoals_achieved_at: list[int] = field(default_factory=list)
+    fgoal_ordering_correct: Optional[bool] = None
     
     def __str__(self) -> str:
         return (f"Level = {self.level:>2d} ({self.problem_type}), Length = {self.plan_length:>3d}, Actions = {self.total_actions:>3d} (Com = {self.compression_factor:>2.2f}), Sgs = {self.total_produced_sgoals}, " # Plan quality
@@ -478,9 +495,22 @@ class MonolevelPlan(_collections_abc.Mapping):
         return len(self.actions)
     
     @property
-    def start_step(self) -> int:
+    def action_step_range(self) -> range:
+        return range(self.action_start_step, self.end_step + 1)
+    
+    @property
+    def state_step_range(self) -> range:
+        return range(self.state_start_step, self.end_step + 1)
+    
+    @property
+    def action_start_step(self) -> int:
         "The plan's start step, inclusive of states but exclusive of actions."
-        return min(self.states) ## TODO Change to actions
+        return min(self.actions)
+    
+    @property
+    def state_start_step(self) -> int:
+        "The plan's start step, inclusive of states but exclusive of actions."
+        return min(self.states)
     
     @property
     def end_step(self) -> int:
@@ -510,6 +540,10 @@ class MonolevelPlan(_collections_abc.Mapping):
         "The total number of sub-goals produced by this abstract plan."
         return sum(len(sgoals) for sgoals in self.produced_sgoals.values())
     
+    def calculate_plan_quality(self, optimal_length: int, optimal_actions: int) -> float:
+        "Calculate the quality of this plan relative to the plan length and action quantity of another."
+        return statistics.mean(optimal_length / self.plan_length, optimal_actions / self.total_actions)
+    
     ####################
     ## Plan properties
     
@@ -531,7 +565,7 @@ class MonolevelPlan(_collections_abc.Mapping):
     @property
     def is_initial(self) -> bool:
         "Whether the plan starts in the initial state."
-        return self.start_step == 0
+        return self.state_start_step == 0
     
     @property
     def is_complete(self) -> bool:
@@ -610,9 +644,17 @@ class MonolevelPlan(_collections_abc.Mapping):
         times: list[float] = [statistics.total_time for statistics in self.planning_statistics.incremental.values()]
         return self.__regress(steps, times)
     
-    @staticmethod
-    def __matches(action: Action, action_type: ActionType) -> bool:
-        return self.get_action_type(action) == action_type.value ## TODO
+    @classmethod
+    def __matches(cls, action: Action, action_type: ActionType) -> bool:
+        "Simple class method for determining the types of actions."
+        if action_type.value == ActionType.Locomotion:
+            return (str(action['A']).startswith("move"),
+                    str(action['A']).startswith("push"))
+        elif action_type.value == ActionType.Configuration:
+            return str(action['A']).startswith("configure")
+        elif action_type.value == ActionType.Manipulation:
+            return (not cls.__matches(action, ActionType.Locomotion)
+                    and not cls.__matches(action, ActionType.Configuration))
     
     def get_plan_expansion_factor(self, action_type: Optional[ActionType] = None) -> Expansion:
         """
@@ -756,11 +798,13 @@ class HierarchicalPlan(_collections_abc.Mapping, AbstractionHierarchy):
     
     Fields
     ------
-    `concatenated_plans : dict[int, MonolevelPlan]`
+    `concatenated_plans : dict[int, MonolevelPlan]` - A concatenated monolevel plan at each abstraction level.
+    If this is a hierarchical conformance refinement plan, these are the concatenations of the partial plans at the same level.
+    Otherwise, if this hierarchical plan contains only classical plans, these are classical complete plans.
     
-    `partial_plans : dict[int, dict[int, MonolevelPlan]]`
+    `partial_plans : dict[int, dict[int, MonolevelPlan]]` -
     
-    `problem_division_tree : dict[int, list[DivisionScenario]]`
+    `problem_division_tree : dict[int, list[DivisionScenario]]` -
     """
     concatenated_plans: dict[int, MonolevelPlan]                ## maps: abstraction level -> concatenated (complete) monolevel plan
     partial_plans: dict[int, dict[int, MonolevelPlan]]          ## maps: abstraction level x online increment -> (partial) monolevel plan
@@ -781,54 +825,112 @@ class HierarchicalPlan(_collections_abc.Mapping, AbstractionHierarchy):
     def __len__(self) -> int:
         return len(self.concatenated_plans)
     
+    def get_plan_sequence(self, level: int) -> list[MonolevelPlan]:
+        "Get the monolevel plan sequence at a given abstraction level in this hierarchical plan."
+        if self.is_hierarchical_refinement:
+            return list(self.partial_plans[level].values())
+        return [self.concatenated_plans[level]]
+    
     ######
     ## Make the hierarchical plan an abstraction hierarchy
     
     @property
+    def top_level(self) -> int:
+        "The top abstraction level of the hierarchical plan, always greater than or equal to the bottom level."
+        return max(self.concatenated_plans)
+    
+    @property
     def bottom_level(self) -> int:
+        "The bottom abstraction level of the hierarchical plan, always greater than or equal to 1 (the ground level)."
         return min(self.concatenated_plans)
     
     @property
-    def top_level(self) -> int:
-        return max(self.concatenated_plans)
+    def is_hierarchical_refinement(self) -> bool:
+        """
+        Whether this is a hierarchical refinement plan.
+        This is true iff it was generated by the hierarchical conformance refinement planning algorithm.
+        
+        A hierarchical refinement plan contains at each level both;
+            - a possibly complete concatenated conformance refinement monolevel plan,
+            - and a non-empty sequence of possibly partial conformance refinement monolevel plans,
+        Otherwise, it only contains complete classical plans, and no partial plans.
+        """
+        return bool(self.partial_plans)
     
     ######
     ## Hierarchical plan statistics
     
-    def get_latency_time(self, level: int) -> float:
-        "The latency time (yield time of the first partial plan) at a given level in this hierarchical plan."
-        yield_increment: int = list(self.partial_plans[level])[0]
-        return sum(self.partial_plans[_level][1].grand_totals.total_time
+    def get_minimum_execution_time(self, level: int, problem_number: int) -> float:
+        "The minimum required execution time for non-final partial plans, that would allow the robot to continue without ever pausing, based on the wait time until the next partial plan at the given level is yielded."
+        if problem_number == len(self.partial_plans[level]):
+            return 0.0
+        return self.get_wait_time(problem_number + 1)
+    
+    def get_hierarchical_problem_sequence(self) -> list[tuple[int, int, int]]:
+        "An ordered list of (sequence number - level - increment - problem number) four-tuples, defining the problem sequence ordering over the hierarchy, useful when constructing an online planning diagram."
+        problem_sequence: list[tuple[int, int, int]] = []
+        for iteration in range(1, max(self.partial_plans[self.bottom_level])):
+            for level in reversed(self.level_range):
+                for problem_number, inner_iteration in enumerate(self.partial_plans[level]):
+                    if inner_iteration == iteration:
+                        sequence_number: int = len(problem_sequence) + 1
+                        problem_sequence.append((sequence_number, level, iteration, problem_number))
+        return problem_sequence
+    
+    def get_yield_time(self, level: int, problem_number: int) -> float:
+        """
+        The yield time of the partial plan that solves a given problem number at a given level in this hierarchical plan.
+        If this hierarchical plan was not generated by the hierarchical conformance refinement planning algorithm,
+        then if the plan at the given level exists, it was generated as a independent classical plan, and its yield time is identical to completion time.
+        
+        
+        """
+        if not self.partial_plans:
+            return self.concatenated_plans[level].grand_totals.total_time
+        plan_sequence: list[int] = list(self.partial_plans[level])
+        yield_increment: int = plan_sequence[problem_number - 1]
+        return sum(self.partial_plans[_level][increment].grand_totals.total_time
                    for _level in reversed(self.constrained_level_range(bottom_level=level))
                    for increment in self.partial_plans[_level]
                    if increment <= yield_increment)
+    
+    def get_wait_time(self, level: int, problem_number: int) -> float:
+        """
+        The wait time of the partial plan that solves a given problem number at a given level in this hierarchical plan.
+        This is the time difference between yielding the previous partial plan at the given level, and yielding the given.
+        """
+        if problem_number == 1:
+            return self.get_yield_time(level, problem_number)
+        return self.get_yield_time(level, problem_number) - self.get_yield_time(level, problem_number - 1)
+    
+    def get_latency_time(self, level: int) -> float:
+        "The latency time (yield time of the first partial plan) at a given level in this hierarchical plan."
+        return self.get_yield_time(level, 1)
     
     def get_completion_time(self, level: int) -> float:
         "The completion time (sum of latency time and total planning time of all non-initial partial plans) at a given level in this hierarchical plan."
         return sum(self.concatenated_plans[_level].grand_totals.total_time
                    for _level in reversed(self.constrained_level_range(bottom_level=level)))
     
-    def get_average_yield_time(self, level: int) -> float:
-        "The average partial plan yield time at a given level in this hierarchical plan."
-        return statistics.mean(plan.grand_totals.total_time for plan in self.partial_plans[level].values())
+    def get_average_wait_time(self, level: int) -> float:
+        "The average partial plan wait time at a given level in this hierarchical plan."
+        return statistics.mean(self.get_wait_time(level, problem_number)
+                               for problem_number, increment_number
+                               in enumerate(self.partial_plans[level]))
     
     def get_overall_totals(self, level: int) -> ASP.Statistics:
         "The overall total timing/memory statistics of the concatenated complete monolevel plan at a given level in this hierarchical plan."
         return self.concatenated_plans[level].planning_statistics.grand_totals
     
     @property
-    def overall_total_time(self) -> float:
-        "The overall grand total time taken to complete all levels in the hierarchical plan."
-        return sum(plan.planning_statistics.grand_totals.total_time for plan in self.concatenated_plans.values())
+    def execution_latency_time(self) -> float:
+        "The execution latency time (ground level latency time) of this hierarchical plan."
+        return self.get_latency_time(1)
     
     @property
-    def execution_latency(self) -> float:
-        "The execution latency (ground level latency) of this hierarchical plan."
-        ground_yield_increment: int = list(self.partial_plans[self.bottom_level])[0]
-        return sum(self.partial_plans[level][1].grand_totals.total_time
-                   for level in reversed(self.level_range)
-                   for increment in self.partial_plans[level]
-                   if increment <= ground_yield_increment)
+    def absolution_time(self) -> float:
+        "The absolution time (ground level completion time) of this hierarchical plan (equivalent to overall grand total time taken to complete all levels)."
+        return sum(plan.planning_statistics.grand_totals.total_time for plan in self.concatenated_plans.values())
     
     @property
     def required_memory(self) -> float:
@@ -968,41 +1070,56 @@ def format_actions(actions: dict[int, list[Action]], current_sub_goals: dict[int
 
 
 
-## Constant tuples defining the program parts in domain files
-_DOMAIN_PROGRAM_PARTS: list[str] = ("class_hierarchy", "domain_sorts", "domain_rules(t)", "abstraction_mappings(t)", "static_state", "entities")
-_PROBLEM_PROGRAM_PARTS: list[str] = ("initial_state", "final_goals")
+## Constants defining the program parts in domain files
+_DOMAIN_PROGRAM_PARTS: Final[frozenset[str]] = {"domain_sorts", "action_effects(t)", "action_preconditions(t)", "variable_relations(t)", "abstraction_mappings(t)"}
+_PROBLEM_PROGRAM_PARTS: Final[frozenset[str]] = {"entities", "static_state", "initial_state", "goal_state"}
 
-REQUIRED_PROGRAM_PARTS: frozenset[str] = {"domain_sorts", "action_effects(t)", "action_preconditions(t)", "variable_relations(t)", "abstraction_mappings(t)"}
-OPTIONAL_PROGRAM_PARTS: frozenset[str] = {"entities", "static_state", "initial_state", "goal_state"}
+@enum.unique
+class DomainModelType(enum.Enum):
+    """
+    An enumeration defining the three possible abstract model types currently supported by ASH.
+    
+    Items
+    -----
+    `Tasking = "tasking"`
+    
+    `Condensed = "condensed"`
+    
+    `Reduced = "reduced"`
+    
+    `Ground = "ground"`
+    """
+    Tasking = "tasking"
+    Condensed = "condensed"
+    Reduced = "reduced"
+    Ground = "ground"
 
 class PlanningDomain(AbstractionHierarchy):
     """
     Represents a hierarchical planning domain definition used by ASH.
-    This is a two-tuple of:
-            - System laws = {classes, sorts = {fluents, actions, statics}, laws = {effects, preconditions, relations}, abstraction mappings}
-            - World Structure = {static state, entity declarations, ancestry relation declarations}
+    This is a two-tuple of: TODO
+        - Domain Definition = {classes, sorts = {fluents, actions, statics}, rules = {effects, preconditions, relations}, abstraction mappings}
+        - World Structure = {static state, entity declarations, ancestry relation declarations}
     
     Properties
     ----------
     `name : str` - A string defining an arbitrary name for this planning domain.
     The domain is given a name of the form '<name> #n' where n is an ordinal number.
 
-    `domain_files : list[str]`
-        - A list of strings defining the files from which this domain was loaded.
+    `domain_files : list[str]` - A list of strings defining the files from which this domain was loaded.
     
-    `optional_parts : list[str]`
-        - A list of strings defining names of optional program parts from `ASH.OPTIONAL_PROGRAM_PARTS` that this planning domain contains.
-          If the planning domain does not contain an optional part, it will need to be provided explicitly so solve a planning problem with this domain.
+    `optional_parts : list[str]` - A list of strings defining names of optional program parts from `ASH.OPTIONAL_PROGRAM_PARTS` that this planning domain contains.
+    If the planning domain does not contain an optional part, it will need to be provided explicitly so solve a planning problem with this domain.
     
-    `top_level : int`
-        - An integer defining the maximum abstraction level of this planning domain.
-          The abstraction range is [1-top_level].
+    `top_level : int` - An integer defining the maximum abstraction level of this planning domain.
+    The abstraction range is [1-top_level].
     """
+    
     __slots__ = ("__name",
                  "__domain_files",
                  "__has_optional_part",
                  "__top_level",
-                 "__tasking_model")
+                 "__model_types")
     
     __domain_counter: dict[str, int] = {}
     @staticmethod
@@ -1012,21 +1129,19 @@ class PlanningDomain(AbstractionHierarchy):
     
     def __init__(self, domain_files: list[str], name: Optional[str] = None):
         """
-        Instantiate a planning domain with an optional name from a list of domain files.\n
+        Instantiate a planning domain with an optional name from a list of domain files.
         
         Parameters
         ----------
-        `domain_files : list[str]`
-            - A list of strings defining ASP (.lp) damain files to load.\n
-        `name : {str, None} = None`
-            - A string defining an arbitrary name for this planning domain.
-              The string is converted to the form 'name #n' where n is an ordinal number.
-              If not given, or None, the program is given a name of the form 'Anon #n'.
+        `domain_files : list[str]` - A list of strings defining ASP (.lp) damain files to load.
+        
+        `name : {str | None} = None` - A string defining an arbitrary name for this planning domain.
+        The string is converted to the form 'name #n' where n is an ordinal number.
+        If not given, or None, the program is given a name of the form 'Anon #n'.
         
         Raises
         ------
-        `ValueError`
-            - If either a file in the list of domain files could not be read or is not an ASP (.lp) format.
+        `ValueError` - If either a file in the list of domain files could not be read or is not an ASP (.lp) format.
         """
         formatted_files: str = "Domain files = [{0}]".format(('\n' + (' ' * len('Domain files = ['))).join(map(str, domain_files)))
         _planner_logger.debug(f"Instantiating new planning domain:\nName = {name}\n{formatted_files}")
@@ -1035,8 +1150,8 @@ class PlanningDomain(AbstractionHierarchy):
             log_and_raise(ValueError, f"The given domain files contain a duplicate:\n{formatted_files}")
         
         self.__name: str = f"{name if name is not None else 'Anon'} #{PlanningDomain.__get_domain_number(str(name))}"
-        checked_required_parts: list[bool] = [False for i in range(len(REQUIRED_PROGRAM_PARTS))]
-        self.__has_optional_part: dict[str, bool] = {part : False for part in OPTIONAL_PROGRAM_PARTS}
+        checked_required_parts: list[bool] = [False for i in range(len(_DOMAIN_PROGRAM_PARTS))]
+        self.__has_optional_part: dict[str, bool] = {part : False for part in _PROBLEM_PROGRAM_PARTS}
         
         ## Load domain files
         for domain_file in domain_files:
@@ -1045,9 +1160,9 @@ class PlanningDomain(AbstractionHierarchy):
                     with open(domain_file, "r") as file_reader:
                         ## Check the domain files contain the correct program parts
                         file_: str = file_reader.read()
-                        for i, part in enumerate(REQUIRED_PROGRAM_PARTS):
+                        for i, part in enumerate(_DOMAIN_PROGRAM_PARTS):
                             checked_required_parts[i] = checked_required_parts[i] or (f"#program {part}." in file_)
-                        for part in OPTIONAL_PROGRAM_PARTS:
+                        for part in _PROBLEM_PROGRAM_PARTS:
                             self.__has_optional_part[part] = self.__has_optional_part[part] or (f"#program {part}." in file_)
                 except OSError as error:
                     log_and_raise(ValueError, f"Unable to create a planning domain. Cannot read the domain file {domain_file}.", from_exception=error)
@@ -1056,15 +1171,26 @@ class PlanningDomain(AbstractionHierarchy):
             log_and_raise(ValueError, f"Unable to create a planning domain. The domain files do not contain all of the required program parts.")
         self.__domain_files: list[str] = domain_files
         _planner_logger.debug(f"The domain files {repr(domain_files)} were loaded successfully, "
-                              f"contain all required program parts, and contain optional program parts: {self.__has_optional_part}.")
+                              f"contain all domain program parts, and contain problem program parts: {self.__has_optional_part}.")
         
         ## Find the maximum abstraction level
         program = ASP.LogicProgram.from_files(["./core/ASH.lp"] + domain_files, silent=True, warnings=False)
         answer: ASP.Answer = program.solve([ASP.Options.threads(1)],
-                                           base_parts=[ASP.BasePart(name="abstraction_levels", args=[0, "hierarchical"]),
+                                           base_parts=[ASP.BasePart(name="abstraction_levels",
+                                                                    args=[0, "hierarchical"]),
                                                        ASP.BasePart(name="domain_sorts")])
         self.__top_level: int = max([al.arguments[0].number for al in answer.fmodel.get_atoms("al", 1, True)])
-        self.__tasking_model: bool = len(answer.fmodel.get_atoms("tasking_model", 2, True)) >= 1
+        
+        model_types: list[dict] = answer.fmodel.query("model_type", ['L', 'T'],
+                                                      cast_to={'L' : lambda symbol: int(str(symbol)),
+                                                               'T' : lambda symbol: DomainModelType(str(symbol))})
+        self.__model_types: dict[int, DomainModelType] = {}
+        for level in self.level_range:
+            for model_type in model_types:
+                if model_type['L'] == level:
+                    self.__model_types[model_type['L']] = model_type['T']
+            if level not in self.__model_types:
+                raise ASH_InternalError(f"No model type found for level {level}.")
         
         _planner_logger.debug(f"{self} instantiated successfully")
     
@@ -1092,36 +1218,27 @@ class PlanningDomain(AbstractionHierarchy):
     
     @property
     def name(self) -> str:
-        """
-        `str` - A string defining the of the planning domain instance of the form 'name #n' where n is an integer.
-        """
+        "A string defining the name of the planning domain instance of the form 'name #n' where n is an integer."
         return self.__name
     
     @property
     def domain_files(self) -> list[str]:
-        """
-        `list[str]` - A list of strings defining the files from which this domain was loaded.
-        """
+        "A list of strings defining the file paths from which this domain was loaded."
         return self.__domain_files
-    
-    @property
-    def optional_parts(self) -> list[str]:
-        """
-        `list[str]` - A list of strings defining names of optional program parts from `ASH.OPTIONAL_PROGRAM_PARTS` that this planning domain contains.
-        If the planning domain does not contain an optional part, it will need to be provided explicitly so solve a planning problem with this domain.
-        """
-        return [part for part in self.__has_optional_part if self.__has_optional_part[part]]
-    
-    def has_optional_part(self, part: str) -> bool:
-        return self.__has_optional_part.get(part, False)
-    
-    @property
-    def has_tasking_model(self) -> bool:
-        return self.__tasking_model
     
     @property
     def top_level(self) -> int:
         return self.__top_level
+    
+    @property
+    def has_tasking_model(self) -> bool:
+        return DomainModelType.Tasking in self.__model_types.values()
+    
+    def get_model_type(self, level: int) -> DomainModelType:
+        "Get the domain model type at a given abstraction level in this hierarchical planning domain definition."
+        if level not in self.level_range:
+            raise ValueError(f"Abstraction level {level} is not in the range of {self}.")
+        return self.__model_types[level]
 
 
 
@@ -1169,9 +1286,12 @@ class OnlineMethod(enum.Enum):
     `GroundFirst = "ground-first"` -
     
     `CompleteFirst = "complete-first"` -
+    
+    `Hybrid = "hybrid"` -
     """
     GroundFirst = "ground-first"
     CompleteFirst = "complete-first"
+    Hybrid = "hybrid"
 
 @enum.unique
 class StateRepresentation(enum.Enum):
@@ -1311,6 +1431,7 @@ class MonolevelProblem:
     
     @property
     def problem_description(self) -> str:
+        "A formatted one line description of the monolevel problem specification."
         if self.conformance:
             conformance_description: str = f"{'complete' if self.complete_planning else 'partial'} conformance refinement ({self.conformance_type.value}) with sgoals range [{self.first_sgoals}-{self.last_sgoals}]"
         return " : ".join([f"Level [{self.level}]",
@@ -1612,6 +1733,8 @@ class HierarchicalPlanner(AbstractionHierarchy):
         self.__states = {}
         self.__actions = {}
         self.__complete_plan = {}
+        self.__statistics = {}
+        self.__partial_plans = {}
         
         ## Clear refinement diagram
         self.__sgoals = {}
@@ -1739,7 +1862,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
         if refined_plan:
             conformance_mapping = ConformanceMapping(constraining_sgoals, current_sgoals, achieved_sgoals)
         is_final: bool = self.__complete_plan.get(level, False) and (step_range.stop - 1) == total_plan_length
-        return MonolevelPlan(level, states, actions, produced_sgoals, is_final, self.__statistics[level], conformance_mapping)
+        return MonolevelPlan(level, self.__domain.get_model_type(level), states, actions, produced_sgoals, is_final, self.__statistics[level], conformance_mapping)
     
     def get_hierarchical_plan(self, bottom_level: int = 1, top_level: Optional[int] = None) -> HierarchicalPlan:
         """
@@ -1757,8 +1880,9 @@ class HierarchicalPlanner(AbstractionHierarchy):
         -------
         `HierarchicalPlan` - The resulting hierarchical plan containing for each level;
             - a concatenated monolevel plan (always initial and combined, possibly final/complete),
-            - a sequence of (possibly) partial monolevel plans,
-            - a sequence of division scenarios (representing a level of the problem division tree).
+            - iff the hierarchical plan was generated by the hierarchical planning algorithm,
+                - a sequence of (possibly) partial monolevel plans,
+                - a sequence of division scenarios (representing a level of the problem division tree).
         """
         concatenated_plans: dict[int, MonolevelPlan] = {}
         partial_plans: dict[int, list[MonolevelPlan]] = {}
@@ -1766,8 +1890,9 @@ class HierarchicalPlanner(AbstractionHierarchy):
         
         for level in self.constrained_level_range(bottom_level, top_level):
             concatenated_plans[level] = self.get_monolevel_plan(level)
-            partial_plans[level] = self.__partial_plans.get(level, {})
-            problem_division_tree[level] = self.__division_scenarios.get(level, [])
+            if self.__partial_plans:
+                partial_plans[level] = self.__partial_plans[level]
+                problem_division_tree[level] = self.__division_scenarios[level]
         
         return HierarchicalPlan(concatenated_plans, partial_plans, problem_division_tree)
     
@@ -2729,6 +2854,29 @@ class HierarchicalPlanner(AbstractionHierarchy):
                                             f"Sub-goal achievement steps: {self.__sgoals_achieved_at.get(level, {})}"
                                             for level in self.level_range))
         
+        fgoals_achieved_at: list[int] = []
+        fgoal_ordering_correct: Optional[bool] = None
+        if _order_fgoals_achievement:
+            desired_order = answer.fmodel.query("goal_order", ['L', 'F', 'V', 'B', 'O'],
+                                                sort_by='O', group_by='O', cast_to={'O' : int})
+            goals_satisfied = answer.fmodel.query("goal_satisfied", ['L', 'F', 'V', 'B', 'S'],
+                                                  sort_by='S', group_by='S', cast_to={'S' : int})
+            fgoals_achieved_at = list(goals_satisfied.keys())
+            
+            def check_order():
+                for step in goals_satisfied:
+                    for goal_satisfied in goals_satisfied[step]:
+                        for order in desired_order:
+                            for goal_order in desired_order[order]:
+                                if (goal_satisfied['F'] == goal_order['F']
+                                    and goal_satisfied['V'] == goal_order['V']):
+                                    if order < current_order:
+                                        return False
+                                    current_order = order
+                return True
+            
+            fgoal_ordering_correct = check_order()
+        
         ## Determine the number of preemptive choices taken according to preemptive achievement heuristics
         clingo_stats: dict = answer.statistics.incremental[answer.statistics.calls].clingo_stats
         total_choices: int = int(clingo_stats["accu"]["solving"]["solvers"]["choices"])
@@ -2736,6 +2884,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
         
         ## Construct the resulting monolevel plan
         monolevel_plan = MonolevelPlan(level=level,
+                                       model_type=self.__domain.get_model_type(level),
                                        states=states,
                                        actions=actions,
                                        produced_sgoals=sgoals,
@@ -2744,7 +2893,9 @@ class HierarchicalPlanner(AbstractionHierarchy):
                                        conformance_mapping=conformance_mapping,
                                        problem_divisions=solution.reactive_divisions,
                                        total_choices=total_choices,
-                                       preemptive_choices=preemptive_choices)
+                                       preemptive_choices=preemptive_choices,
+                                       fgoals_achieved_at=fgoals_achieved_at,
+                                       fgoal_ordering_correct=fgoal_ordering_correct)
         
         ## TODO decide on verbosities
         description: str = ("Search was interrupted by a reactive division and a smaller than requested partial problem was solved."
@@ -2765,7 +2916,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
         plan: str = "\n".join(format_actions(self.__actions[level], {step : self.__sgoals[level + 1][index] for step, index in self.__current_sgoals.get(level, {}).items()}))
         self.__logger.log(self.__log_level(Verbosity.Verbose), f"\n\n{header}\n\n" + plan)
         if self.__verbosity.value.level == Verbosity.Standard.value.level:
-            print(f"{header}\n\n" + "\n".join([f"{step:3<d}: [" + ", ".join(f"{action['R']} : {action['A']}" for action in actions) + "]"
+            print(f"{header}\n\n" + "\n".join([f"{step:<3d} => [ " + ", ".join(f"{action['R']}: {action['A']}" for action in actions) + " ]"
                                                for step, actions in self.__actions[level].items()]))
         
         ## Return the plan
@@ -2801,7 +2952,6 @@ class HierarchicalPlanner(AbstractionHierarchy):
                           
                           ## Performance analysis options
                           detect_interleaving: bool = False,
-                          detect_dependencies: bool = False,
                           generate_search_space: bool = False,
                           generate_solution_space: bool = False,
                           
@@ -2844,10 +2994,11 @@ class HierarchicalPlanner(AbstractionHierarchy):
             self.__logger.debug(f"Starting hierarchical planning at level {max(level_range)} "
                                 "which is not the top-level and no sub-goals exist at previous level.")
         
-        planning_increment_bar = tqdm(desc="Online planning increments", unit="increment",
+        total_increments_prediction: Optional[int] = None
+        if online: total_increments_prediction = division_strategy.total_increments_prediction(self.__domain, online_method)
+        planning_increment_bar = tqdm(desc="Online increments", unit="increment",
                                       disable=(self.__verbosity not in [Verbosity.Simple, Verbosity.Minimal]) or not online,
-                                      total=(division_strategy.total_increments_prediction(self.__domain, online_method) if online else None),
-                                      initial=0, leave=False, ncols=180, miniters=1, colour="green")
+                                      total=total_increments_prediction, initial=0, leave=False, ncols=180, miniters=1, colour="green")
         
         ## Loop that deals with the left-to-right online incremental progression over partial-problems;
         ##      - Continue incrementing until the ground-level is complete (there is only one incremental in offline mode).
@@ -2857,9 +3008,9 @@ class HierarchicalPlanner(AbstractionHierarchy):
                               "Current online planning diagram progression:\n"
                               + "\n".join(f"Level = {level} : "
                                           f"Solved problems = {problems.get(level, 0)} : "
-                                          f"Total constraining sgoals = {len(self.__sgoals.get(level + 1, {}))} : "
-                                          f"Achieved sgoals = {len(self.__sgoals_achieved_at.get(level, {}))} : "
-                                          f"Unachieved sgoals = {len(self.__sgoals.get(level + 1, {})) - len(self.__sgoals_achieved_at.get(level, {}))}"
+                                          f"Total constraining sub-goal stages = {len(self.__sgoals.get(level + 1, {}))} : "
+                                          f"Goals achieved = {len(self.__sgoals_achieved_at.get(level, {}))} : "
+                                          f"Goals unachieved = {len(self.__sgoals.get(level + 1, {})) - len(self.__sgoals_achieved_at.get(level, {}))}"
                                           for level in reversed(level_range)))
             
             ## A new online planning increment has started
@@ -2870,17 +3021,24 @@ class HierarchicalPlanner(AbstractionHierarchy):
             lowest_planning_level: int = self.get_valid_planning_level(False, min(level_range), max(level_range))
             highest_planning_level: int = self.get_valid_planning_level(True, min(level_range), max(level_range))
             self.__logger.log(self.__log_level(Verbosity.Verbose),
-                              f"Current valid planning level range: [{lowest_planning_level}-{highest_planning_level}]")
+                              f"Current valid planning level range = [{lowest_planning_level}-{highest_planning_level}].")
             
             ## Determine the level range for the current planning increment as defined by the given online planning method;
             ##      - Ground-first solves downwards from the lowest planning level to the ground level,
-            ##      - Complete-first solves only the highest planning level.
-            if online_method == OnlineMethod.GroundFirst:
+            ##      - Complete-first solves only the highest planning level,
+            ##      - Hybrid uses ground-first one the first increment only and the complete-first thereafter.
+            if (online_method == OnlineMethod.GroundFirst
+                or (online_method == OnlineMethod.Hybrid
+                    and increments == 1)):
                 current_level_range = range(min(level_range), lowest_planning_level + 1)
-            elif online_method == OnlineMethod.CompleteFirst:
+            elif (online_method == OnlineMethod.CompleteFirst
+                  or (online_method == OnlineMethod.Hybrid
+                      and increments > 1)):
                 current_level_range = range(highest_planning_level, highest_planning_level + 1)
+            else: raise ASH_InvalidInputError(f"Could not interpret given online method {online_method} of type {type(online_method)}.")
             self.__logger.log(self.__log_level(Verbosity.Verbose),
-                              f"Chosen level range for planning increment {increments} by method {online_method.value}: [{min(current_level_range)}-{max(current_level_range)}]")
+                              f"Chosen level range for online planning increment {increments} "
+                              f"by method {online_method.value} is [{min(current_level_range)}-{max(current_level_range)}].")
             
             ## Progress bar for tracking the hierarchical progression on the current planning increment
             planning_level_tracking_progress_bar = tqdm(desc="Hierarchical progression", unit="level",
@@ -2921,7 +3079,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
                             raise ASH_InternalError(f"No valid current division scenario for problem {problems[level]} at level {level}.")
                         
                         self.__logger.log(self.__log_level(Verbosity.Verbose),
-                                          f"Using division scenario from previous level {level + 1} to proactively divide planning at level {level} for problem {problems[level]}:\n{dividing_scenario}")
+                                          f"Using division scenario from previous level {level + 1} to proactively divide planning problem {problems[level]} at level {level}:\n{dividing_scenario}")
                         
                         if problems[level] not in dividing_scenario.problem_range:
                             raise ASH_InternalError(f"Invalid problem number for current division scenario: number = {problems[level]}, scenario range = {dividing_scenario.problem_range}.")
@@ -3045,8 +3203,12 @@ class HierarchicalPlanner(AbstractionHierarchy):
                     ## Proactively divide the abstract plan at the current level iff either;
                     ##      - Ground first planning is enabled (since the next level requires a new scenario since this one was the lowest unsolved problem so it is not possible for a scenario that divides it to exist),
                     ##      - Complete first planning is enabled and the level is complete (since we only move to the next level once the current level is complete, and we only ever generate one scenario per level, so this is the first and only time we generate a scenario).
-                    if (online_method == OnlineMethod.GroundFirst
-                        or (online_method == OnlineMethod.CompleteFirst
+                    if ((online_method == OnlineMethod.GroundFirst
+                         or (online_method == OnlineMethod.Hybrid
+                             and increments == 1))
+                        or ((online_method == OnlineMethod.CompleteFirst
+                             or (online_method == OnlineMethod.Hybrid
+                                 and increments > 1))
                             and self.__complete_plan[level])):
                         
                         ## The plan that is divided at the current level;
@@ -3063,17 +3225,20 @@ class HierarchicalPlanner(AbstractionHierarchy):
                             division_points: DivisionPointPair = dividing_scenario.get_division_point_pair(problems[level])
                             
                             ## If the right division point of the current partial problem is not the last in the dividing scenario;
+                            ##  - This essentially just avoids refining the sub-goal stages in the right-blend of the solution to the current monolevel problem,
                             ##      - If it is the last, then the sub-goal stage producing actions of the last sub-goal stage of this scenario, divides the entire plan that current exists at the previous level, or divides up to the achievement of the final-goal,
                             ##          - In this case, we have to divide the whole plan, and cannot use the last achievement step as the end step, as there may be a trailing plan, TODO
                             ##      - Do not divide (or refine) the part of this abstract plan that achieves sgoals in the right blend.
                             if (right_point := division_points.right) is not None:
                                 end_step = self.__sgoals_achieved_at[level][right_point.index]
                             
-                            ## To avoid sub-goal stages marked for blending;
+                            ## To avoid dividing/refining sub-goal stages marked for blending;
+                            ##  - This essentially further avoids refining the sub-goal stages in the left-blend of the solution to the monolevel problem,
                             ##      - Do not divide the plan at the current level that will be revised by the left blend of the next partial problem,
                             ##      - This avoids refining those sub-goal stages multiple times, since they will be revised by blending and must be refined again anyway,
                             ##          - Start from the step that the left blend point of the right division point of the current partial problem was achieved,
-                            ##          - All indices less than that point cannot be revised by blending so can only ever be refined once, avoiding refining them multiple times, but giving us smaller problems at the lower levels, which may make those plans greedy in the long run.
+                            ##          - All indices less than that point cannot be revised by blending so can only ever be refined once, avoiding refining them multiple times, but giving us smaller problems at the lower levels, which may make those plans greedy in the long run,
+                            ##  - This does avoid re-refining plans at the next level, that achieve sub-goal stages that descend from those in the left blend of the next problem at the current level, but also has a significant impact on the hierarchical progression and problem division process.
                             if avoid_refining_sgoals_marked_for_blending:
                                 if (right_point := division_points.right) is not None:
                                     problem_size: int = dividing_scenario.get_subgoals_indices_range(problems[level], ignore_blend=True).problem_size
@@ -3082,14 +3247,18 @@ class HierarchicalPlanner(AbstractionHierarchy):
                                     self.__logger.log(self.__log_level(Verbosity.Verbose),
                                                       f"Avoiding refining at level {level - 1} produced sgoals in range [{end_step + 1}-{monolevel_plan.end_step}] marked to be revised by problem blending at level {level}.")
                             
-                            ## Otherwise, re-refine any sub-goal stages revised by blending
+                            ## Otherwise, re-refine any sub-goal stages revised by blending;
+                            ##      - Start from the step that achieved the sub-goal stage immediately preceeding that of the left-blend index of the current monolevel problem.
                             else: start_step = self.__sgoals_achieved_at[level].get(first_sgoals - 1, 0)
                             
+                            ## If the entire monolevel plan that was just generated is not to be divided;
+                            ##      - Discard the sub-goals produced at this level that were produced from abstract actions
+                            ##        that achieved ascending sub-goal stages from the current monolevel refinement problem;
+                            ##          - That were inside the right-blend of the current problem,
+                            ##          - If avoiding refining sub-goal stages marked for blending;
+                            ##              - Will be revised by the left-blend of the next problem,
+                            ##      - This is necessary to ensure the valid planning levels are determined correctly.
                             if end_step is not None:
-                                ## Discard the sub-goals produced at this level that;
-                                ##      - Were inside the right-blend of the current problem,
-                                ##      - Will be revised by the left blend of the next problem,
-                                ##      - This is so that the valid planning levels are determined correctly.
                                 produced_sgoals: dict[int, list[SubGoal]] = {}
                                 sgoals_achieved_at: dict[int, int] = {}
                                 for step in self.__sgoals[level]:
@@ -3101,35 +3270,39 @@ class HierarchicalPlanner(AbstractionHierarchy):
                                 self.__sgoals[level] = produced_sgoals
                                 self.__sgoals_achieved_at[level] = sgoals_achieved_at
                         
-                        ## The abstract plan to be divided
+                        ## Extract the abstract plan to be divided
                         abstract_plan: MonolevelPlan = self.get_monolevel_plan(level, start_step=start_step, end_step=end_step)
                         self.__logger.log(self.__log_level(Verbosity.Verbose), f"Dividing abstract plan:\n{abstract_plan}")
                         
                         ## Generate the division scenario that divides this plan
-                        generated_scenario: DivisionScenario = division_strategy.proact(abstract_plan, previously_solved_problems=problems.get(level - 1, 0))
+                        previously_solved_problems: int = problems.get(level - 1, 0)
+                        if (scenarios := self.__division_scenarios.get(level, [])):
+                            previously_solved_problems = max(previously_solved_problems, max(scenarios[-1].problem_range))
+                        generated_scenario: DivisionScenario = division_strategy.proact(abstract_plan, previously_solved_problems)
                         self.__division_scenarios.setdefault(level, []).append(generated_scenario)
                         self.__logger.log(self.__log_level(Verbosity.Verbose), f"Division scenario generated:\n{generated_scenario}")
                 
                 ## The planning level is about to change...
+                self.__logger.log(self.__verbosity.value.log, f"Monolevel problem {problems[level]} at level {level} solved.")
                 planning_level_tracking_progress_bar.update(1)
-                
                 if pause_on_level_change and level != min(current_level_range):
                     planning_level_tracking_progress_bar.clear()
                     planning_increment_bar.clear()
-                    input(f"Planning paused before downwards level change :: Current range [{max(current_level_range)}-{min(current_level_range)}] :: Progression [{planning_level_tracking_progress_bar.n}/{len(current_level_range)}]")
+                    input("Planning paused before downwards level change"
+                          f" :: Progression > current level = {level}, next level = {level - 1}, current range = [{max(current_level_range)}-{min(current_level_range)}], current increment = {increments}")
                     sys.stdout.write("\033[A")
                     sys.stdout.flush()
                     planning_increment_bar.refresh()
                     planning_level_tracking_progress_bar.refresh()
             
-            ## The current online planning increment has finished
+            ## The current online planning increment has finished...
             self.__logger.log(self.__verbosity.value.log, f"Online planning increment {increments} finished.")
             planning_level_tracking_progress_bar.close()
             planning_increment_bar.update(1)
-            
             if pause_on_increment_change and online:
                 planning_increment_bar.clear()
-                input(f"Planning paused before online planning increment change :: Progression [{planning_increment_bar.n}]")
+                input("Planning paused before online planning increment change"
+                      f" :: Progression > finished increments = {increments}, predicted total = {total_increments_prediction}")
                 sys.stdout.write("\033[A")
                 sys.stdout.flush()
                 planning_increment_bar.refresh()
@@ -3137,23 +3310,16 @@ class HierarchicalPlanner(AbstractionHierarchy):
         else:
             planning_increment_bar.close()
         
-        ## Construct the hierarchical plan to return
+        ## Extract the resulting hierarchical plan
         hierarchical_plan = self.get_hierarchical_plan()
         
         ## Log the result of hierarchical planning
         self.__logger.log(self.__log_level(Verbosity.Simple),
                           "Hierarchical plan generated successfully :: Ground Plan Quality >> "
-                          f"Length = {hierarchical_plan[min(level_range)].plan_length}, Actions = {hierarchical_plan[max(level_range)].total_actions}")
-        
-        header: str = (center_text("Ground level plan", append_blank_line=True, framing_width=40, centering_width=60) +
-                       center_text(f"Steps = {hierarchical_plan[1].plan_length} :: Actions = {hierarchical_plan[1].total_actions}",
-                                   framing_width=28, frame_before=False, framing_char='-', centering_width=60))
-        plan: str = "\n".join([str(item) for item in hierarchical_plan[1].items()])
-        
+                          f"Length = {hierarchical_plan[min(level_range)].plan_length}, Actions = {hierarchical_plan[min(level_range)].total_actions}")
         self.__logger.log(self.__log_level(Verbosity.Standard),
-                          f"{header}\n\n{plan}\n\n"
                           "Hierarchical planning summary: "
-                          f"(Execution latency = {hierarchical_plan.execution_latency}, Overall total planning time = {hierarchical_plan.overall_total_time}, Average partial plan yield time = {hierarchical_plan.get_average_yield_time(1)})\n"
+                          f"(Execution latency = {hierarchical_plan.execution_latency_time}, Absolution time = {hierarchical_plan.absolution_time}, Average ground wait time = {hierarchical_plan.get_average_wait_time(1)})\n"
                           + center_text("\n".join(str(hierarchical_plan[level]) for level in reversed(level_range)),
                                         prefix_blank_line=True, vbar_left= "| ", vbar_right=" |",
                                         framing_width=180, centering_width=190, terminal_width=190))
@@ -3169,7 +3335,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
         
         ## Overwrite the constraining sub-goal stages and division scenario from the schema
         self.__sgoals[schema.level] = schema.constraining_sgoals
-        self.__division_scenarios[schema.level] = None ## TODO [DivisionScenario.from_points(schema.problem_divisions[1:-2])]
+        self.__division_scenarios[schema.level] = [DivisionScenario.from_points(schema.problem_divisions[1:-2])]
         
         try:
             ## Ensure that the problem is initialised as requested
@@ -3179,10 +3345,9 @@ class HierarchicalPlanner(AbstractionHierarchy):
                 else:
                     self.__logger.log(self.__log_level(Verbosity.Standard, level=logging.WARNING),
                                       "Refinement schema loaded with non-initialised problem.")
-        except:
-            self.__logger.log(self.__log_level(Verbosity.Verbose),
-                              "Refinement schema failed to load.")
-            raise
+        except ASH_NoSolutionError as error:
+            raise log_and_raise(ASH_InternalError, "Refinement schema failed to load.",
+                                from_exception=error, logger=self._planner_logger)
         
         self.__logger.log(self.__log_level(Verbosity.Verbose),
                           "Refinement schema loaded successfully.")

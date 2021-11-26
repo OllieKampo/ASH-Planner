@@ -39,12 +39,12 @@ class Results:
     "Encapsulates the results of experimental trails as a collection of hierarchical plans."
     
     __slots__ = ("__plans",
-                 "__dataframe",
+                 "__dataframes",
                  "__is_changed")
     
     def __init__(self) -> None:
         self.__plans: list[Planner.HierarchicalPlan] = []
-        self.__dataframe: Optional[pandas.DataFrame] = None
+        self.__dataframes: dict[str, pandas.DataFrame] = {}
         self.__is_changed: bool = False
     
     def __getitem__(self, index: int) -> Planner.HierarchicalPlan:
@@ -61,8 +61,14 @@ class Results:
         self.__is_changed = True
     
     @property
-    def averages(self) -> ASP.Statistics:
-        raise NotImplementedError
+    def mean(self) -> pandas.DataFrame:
+        dataframes = self.process()
+        return dataframes["CAT"].drop("RU", axis="columns").groupby("AL").mean().sort_index(axis="index", ascending=False).reset_index()
+    
+    @property
+    def std(self) -> pandas.DataFrame:
+        dataframes = self.process()
+        return dataframes["CAT"].drop("RU", axis="columns").groupby("AL").std().sort_index(axis="index", ascending=False).reset_index()
     
     def best_quality(self) -> Planner.HierarchicalPlan:
         best_plan: Planner.HierarchicalPlan
@@ -76,64 +82,123 @@ class Results:
                 best_actions = bottom_plan.total_actions
         return best_plan
     
-    def process(self) -> pandas.DataFrame:
+    def process(self) -> dict[str, pandas.DataFrame]:
         "Process the currently collected data and return them as a pandas dataframe."
-        if self.__dataframe is not None and not self.__is_changed:
-            return self.__dataframe
+        if self.__dataframes is not None and not self.__is_changed:
+            return self.__dataframes
         
         self.__is_changed = False
         
         max_: int = 100
         
         ## Collate the data into a dictionary
-        data_dict: dict[str, list[float]] = {"Run" : [], "Inc" : [], "AL" : [], "GT" : [], "ST" : [], "TT" : [], "L" : [], "A" : []}
+        data_dict: dict[str, dict[str, list[float]]] = {"CAT" : {"RU" : [], "AL" : [], "GT" : [], "ST" : [], "TT" : [], "LT" : [], "CT" : [], "RSS" : [], "VMS" : [], "LE" : [], "AC" : [], "PSG" : [], "CPE_L" : [], "CPE_A" : [], "SPD_L" : [], "SPD_A" : [], "SPB_L" : [], "SPB_A" : []},
+                                                        "PAR" : {"RU" : [], "AL" : [], "IT" : [], "GT" : [], "ST" : [], "TT" : [], "RSS" : [], "VMS" : [], "LE" : [], "AC" : [], "PSG" : []}}
         
-        # for run, datum in enumerate(self.data):
-        #     curr_step: dict[int, dict[int, int]] = {}
-        #     for iteration in datum.statistics:
-        #         curr_step[iteration] = {}
-        #         for level in datum.statistics[iteration]:
-        #             statistic: ASH_Statistic = datum.statistics[iteration][level]
-        #             data_dict["RU"].append(run)
-        #             data_dict["IT"].append(iteration)
-        #             data_dict["AL"].append(level)
-        #             data_dict["GT"].append(round(statistic.grounding_time, 6))
-        #             data_dict["ST"].append(round(statistic.solving_time, 6))
-        #             data_dict["TT"].append(round(statistic.total_time, 6))
-        #             data_dict["S"].append(statistic.steps)
-        #             data_dict["A"].append(statistic.actions)
+        for run, hierarchical_plan in enumerate(self.__plans):
+            for level in reversed(hierarchical_plan.level_range):
+                concatenated_plan: Planner.MonolevelPlan = hierarchical_plan.concatenated_plans[level]
+                grand_totals: Planner.ASH_Statistics = concatenated_plan.planning_statistics.grand_totals
+                data_dict["CAT"]["RU"].append(run)
+                data_dict["CAT"]["AL"].append(level)
+                
+                data_dict["CAT"]["GT"].append(grand_totals.grounding_time)
+                data_dict["CAT"]["ST"].append(grand_totals.solving_time)
+                # data_dict["CAT"]["OT"].append(grand_totals.overhead_time)
+                data_dict["CAT"]["TT"].append(grand_totals.total_time)
+                
+                data_dict["CAT"]["LT"].append(hierarchical_plan.get_latency_time(level))
+                data_dict["CAT"]["CT"].append(hierarchical_plan.get_completion_time(level))
+                data_dict["CAT"]["WT"].append(hierarchical_plan.get_average_wait_time(level))
+                
+                ## Required memory usage
+                data_dict["CAT"]["RSS"].append(grand_totals.memory.rss)
+                data_dict["CAT"]["VMS"].append(grand_totals.memory.vms)
+                
+                ## Concatenated plan quality
+                data_dict["CAT"]["LE"].append(concatenated_plan.plan_length)
+                data_dict["CAT"]["AC"].append(concatenated_plan.total_actions)
+                data_dict["CAT"]["PSG"].append(concatenated_plan.total_produced_sgoals)
+                
+                ## Sub-plan Expansion
+                factor: Planner.Expansion = concatenated_plan.get_plan_expansion_factor()
+                deviation: Planner.Expansion = concatenated_plan.get_expansion_deviation()
+                balance: Planner.Expansion = concatenated_plan.get_degree_of_balance()
+                data_dict["CAT"]["CPE_L"].append(factor.length)
+                data_dict["CAT"]["CPE_A"].append(factor.action)
+                data_dict["CAT"]["SPD_L"].append(deviation.length)
+                data_dict["CAT"]["SPD_A"].append(deviation.action)
+                data_dict["CAT"]["SPB_L"].append(balance.length)
+                data_dict["CAT"]["SPB_A"].append(balance.action)
+                
+                ## Division Scenarios
+                hierarchical_plan.problem_division_tree[level][0].get_total_divisions(False)
+                hierarchical_plan.problem_division_tree[level][0].size
+                data_dict["CAT"]["DS_T"]
+                data_dict["CAT"]["DS_MD"]
+                data_dict["CAT"]["DS_DD"]
+                data_dict["CAT"]["DS_BD"]
+                data_dict["CAT"]["DS_MIND"]
+                data_dict["CAT"]["DS_MEDD"]
+                data_dict["CAT"]["DS_MAXD"]
+                
+                ## Partial Problems
+                data_dict["CAT"]["PR_T"].append(len(hierarchical_plan.partial_plans[level]))
+                data_dict["CAT"]["PR_MS"]
+                data_dict["CAT"]["PR_DS"]
+                data_dict["CAT"]["PR_BS"]
+                data_dict["CAT"]["PR_MINS"]
+                data_dict["CAT"]["PR_MEDS"]
+                data_dict["CAT"]["PR_MAXS"]
+                
+                ## Partial Plans
+                data_dict["CAT"]["PP_ML"]
+                data_dict["CAT"]["PP_MA"]
+                data_dict["CAT"]["PP_DL"]
+                data_dict["CAT"]["PP_DA"]
+                data_dict["CAT"]["PP_BL"]
+                data_dict["CAT"]["PP_BA"]
+                data_dict["CAT"]["PP_MINL"]
+                data_dict["CAT"]["PP_MEDL"]
+                data_dict["CAT"]["PP_MAXL"]
+                
+                for iteration in hierarchical_plan.partial_plans[level]:
+                    partial_plan: Planner.MonolevelPlan = hierarchical_plan.partial_plans[level][iteration]
+                    grand_totals: Planner.ASH_Statistics = partial_plan.planning_statistics.grand_totals
+                    data_dict["PAR"]["RU"].append(run)
+                    data_dict["PAR"]["AL"].append(level)
+                    data_dict["PAR"]["IT"].append(iteration)
                     
-        #             for inner_iteration in datum.statistics:
-        #                 if inner_iteration > iteration:
-        #                     break
-        #                 if level in datum.statistics[inner_iteration]:
-        #                     inner_statistic: ASH_Statistic = datum.statistics[inner_iteration][level]
-        #                 else: continue
-        #                 if level not in curr_step[iteration]:
-        #                     curr_step[iteration][level] = 0
-        #                 for step in range(curr_step[iteration][level] + 1, max_ + 1):
-        #                     if step - curr_step[iteration][level] in inner_statistic.inc_stats:
-        #                         data_dict.setdefault(step, []).append(inner_statistic.inc_stats[step - curr_step[iteration][level]].total_time)
-        #                     elif inner_iteration == iteration:
-        #                         data_dict.setdefault(step, []).append(0.0)
-        #                     else:
-        #                         curr_step[iteration][level] = step - 1
-        #                         break
+                    data_dict["PAR"]["GT"].append(grand_totals.grounding_time)
+                    data_dict["PAR"]["ST"].append(grand_totals.solving_time)
+                    # data_dict["PAR"]["OT"].append(grand_totals.overhead_time)
+                    data_dict["PAR"]["TT"].append(grand_totals.total_time)
+                    
+                    data_dict["PAR"]["YT"].append(hierarchical_plan.get_yield_time(level, iteration))
+                    data_dict["PAR"]["WT"].append(hierarchical_plan.get_wait_time(level, iteration))
+                    
+                    data_dict["PAR"]["RSS"].append(grand_totals.memory.rss)
+                    data_dict["PAR"]["VMS"].append(grand_totals.memory.vms)
+                    
+                    data_dict["PAR"]["LE"].append(partial_plan.plan_length)
+                    data_dict["PAR"]["AC"].append(partial_plan.total_actions)
+                    data_dict["PAR"]["PSG"].append(partial_plan.total_produced_sgoals)
         
         ## Create a Pandas dataframe from the data dictionary
-        self.__dataframe = pandas.DataFrame(data_dict)
-        return self.__dataframe
+        self.__dataframes = {key : pandas.DataFrame(data_dict[key]) for key in data_dict}
+        return self.__dataframes
     
     def to_dsv(self, file: str, sep: str = " ", endl: str = "\n", index: bool = True) -> None:
         "Save the currently collected data to a Delimiter-Seperated Values (DSV) file."
-        dataframe = self.process()
-        dataframe.to_csv(file, sep=sep, line_terminator=endl, index=index)
+        dataframes = self.process()
+        dataframes["CAT"].to_csv(file, sep=sep, line_terminator=endl, index=index)
     
     def to_excel(self, file: str) -> None:
         "Save the currently collected data to an excel file."
-        dataframe = self.process()
+        dataframes = self.process()
         writer = pandas.ExcelWriter(file, engine="xlsxwriter") # pylint: disable=abstract-class-instantiated
-        dataframe.to_excel(writer, sheet_name="Sheet1")
+        dataframes["CAT"].to_excel(writer, sheet_name="Concatenated Plans")
+        dataframes["PAR"].to_excel(writer, sheet_name="Partial Plans")
         writer.save()
 
 class Experiment:
@@ -160,10 +225,18 @@ class Experiment:
         self.__enable_tqdm: bool = enable_tqdm
     
     def run_experiments(self) -> Results:
+        "Run the encapsulated experiments and return a result object containing obtained statistics."
         results: Results = self.__run_all()
-        dataframe: pandas.DataFrame = results.process()
-        # _EXP_logger.info("\n\n" + center_text("Experimental Results", framing_width=40, centering_width=60)
-        #                  + "\n\n" + dataframe.to_string(columns=["RU", "IT", "AL", "GT", "ST", "TT", "S", "A"], index=False))
+        dataframes = results.process()
+        _EXP_logger.info("\n\n" + center_text("Experimental Results", framing_width=40, centering_width=60)
+                         + "\n\n" + center_text("Level-wise Means", frame_after=False, framing_char='~', framing_width=30, centering_width=60)
+                         + "\n" + results.mean.to_string(index=False)
+                         + "\n\n" + center_text("Level-wise Standard Deviation", frame_after=False, framing_char='~', framing_width=30, centering_width=60)
+                         + "\n" + results.std.to_string(index=False)
+                         + "\n\n" + center_text("Concatenated Plans", frame_after=False, framing_char='~', framing_width=30, centering_width=60)
+                         + "\n" + dataframes["CAT"].to_string(index=False)
+                         + "\n\n" + center_text("Partial Plans", frame_after=False, framing_char='~', framing_width=30, centering_width=60)
+                         + "\n" + dataframes["PAR"].to_string(index=False))
         return results
     
     def __run_all(self) -> Results:

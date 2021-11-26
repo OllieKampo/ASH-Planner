@@ -600,12 +600,22 @@ class Model(_collections_abc.Set):
             groups.setdefault(key(item), []).append(item)
         return tuple(groups.items())
     
-    ## Remove grouping?
-    def get_atoms(self, atom_name: Union[str, Tuple[re.Pattern, "Model.ParseMode"]], arity: int, truth: Optional[bool] = None,
+    def get_atoms(
+                  self: "Model",
+                  atom_name: Union[str, Tuple[re.Pattern, "Model.ParseMode"]],
+                  arity: int,
+                  /,
+                  
+                  truth: Optional[bool] = None,
                   param_constrs: Mapping[int, Union[str, int, Tuple[re.Pattern, "Model.ParseMode"], Sequence[Union[str, int, Tuple[re.Pattern, "Model.ParseMode"]]]]] = {},
-                  sort_by: Optional[Union[int, Sequence[int]]] = None, group_by: Optional[Union[int, Sequence[int]]] = None,
+                  
+                  *,
+                  sort_by: Optional[Union[int, Sequence[int]]] = None,
+                  group_by: Optional[Union[int, Sequence[int]]] = None,
                   convert_keys: Optional[Union[Callable[[clingo.Symbol], Hashable], Mapping[int, Callable[[clingo.Symbol], Hashable]]]] = None,
-                  as_strings: bool = False) -> Union[list[ASP_Symbol], dict[Union[Hashable, tuple[Hashable]], list[ASP_Symbol]]]:
+                  as_strings: bool = False
+                  
+                  ) -> Union[list[ASP_Symbol], dict[Union[Hashable, tuple[Hashable]], list[ASP_Symbol]]]:
         """
         Extract atoms from the model of a given; name, arity, and classical truth value.
         
@@ -614,34 +624,34 @@ class Model(_collections_abc.Set):
         
         Parameters
         ----------
-        `atom_name : {str, Tuple[re.Pattern, ParseMode]}`
-            - Either a string or a two-tuple, whose first item is a compiled regular expression and whose second item is an entry from the Model.ParseMode enum specifying how to match the regular expression,
-              defining the name of the atoms to extract, only atoms whose name's match will be returned.
-              If a two-tuple, its first item is a regular expression and its second item is an entry from the `ParseMode` enum defining how to match the regular expression.
-        `arity : int`
-            - An integer defining the arity of the atoms to extract, only atoms whose number of arguments equals this value will be returned.
-        `truth : {bool, None}`
-            - Either a Boolean or None defining the classical truth of the atoms to extract, True to extract only positive atoms, False to extract only negative atoms, or None to extract all atoms regardless of their truth.
+        `atom_name : {str | (re.Pattern, ParseMode)}` - The name constraint of the atoms to extract.
+        If given as a string, the extracted atoms' names must match exactly.
+        If given as a two-tuple, the first item must be a compiled regular expression and second item an entry from the Model.ParseMode enum specifying how to match the regular expression, only atoms whose name's match will be returned.
+        
+        `arity : int` - The arity of the atoms to extract.
+        Only atoms whose number of arguments equals this value will be returned.
+        
+        `truth : {bool | None}` - The classical truth of the atoms to extract.
+        True to extract only positive atoms, False to extract only negative atoms, or None to extract all atoms regardless of their truth.
+        
+        `param_constrs : Mapping[int, {str | int | (re.Pattern, ParseMode)}] = {}` - TODO A mapping whose keys are integers defining parameter indices in the range [0-arity] and whose values are either strings or two-tuples.
+        If a two-tuple, its first item is a regular expression and its second item is an entry from the `ParseMode` enum defining how to match the regular expression.
+        The values define constraints for the arguments of the parameter of that key, only atoms whose arguments match all parameter constraints will be returned.
         
         Keyword Parameters
         ------------------
-        `param_constrs : Mapping[int, {str, Tuple[re.Pattern, ParseMode]}] = {}`
-            - A mapping whose keys are integers defining parameter indices in the range [0-arity] and whose values are either strings or two-tuples.
-              If a two-tuple, its first item is a regular expression and its second item is an entry from the `ParseMode` enum defining how to match the regular expression.
-              The values define constraints for the arguments of the parameter of that key, only atoms whose arguments match all parameter constraints will be returned.
-        `sort_by : Sequence[int] = []`
-            - A sequence of integers defining parameter indices in the range [0-arity] specifying the sorting priority of arguments of those parameters of the list of returned atoms.
-        `group_by : Sequence[int] = []`
-            - 
-        `convert_keys : Mapping[int, Any] = []`
-            - 
-        `as_strings : bool = False`
-            - A Boolean, True to return the extracted atoms as strings, otherwise False (the default) to return them as raw clingo symbols.
+        `sort_by : Sequence[int] = []` - The sorting priority of arguments for the parameters of the list of returned atoms.
+        A sequence of integers defining parameter indices in the range [0-arity] specifying.
+        
+        `group_by : Sequence[int] = []` - TODO
+        
+        `convert_keys : Mapping[int, Any] = []` - TODO
+        
+        `as_strings : bool = False` - A Boolean, True to return the extracted atoms as strings, otherwise False (the default) to return them as raw clingo symbols.
         
         Returns
         -------
-        `{list[str], list[clingo.Symbol]}`
-            - A list of either strings or Clingo symbols containing unique atoms from this model.\n
+        `{list[str] | list[clingo.Symbol]}` - A list of either strings or Clingo symbols containing unique atoms from this model.
         
         Example Usage
         -------------
@@ -736,10 +746,11 @@ class Model(_collections_abc.Set):
               
               sort_by: Optional[Union[str, Sequence[str]]] = None,
               group_by: Optional[Union[str, Sequence[str]]] = None,
-              cast_to: Optional[Union[Callable[[clingo.Symbol], Any], Mapping[str, Callable[[clingo.Symbol], Any]]]] = None,
+              cast_to: Optional[Union[Callable[[clingo.Symbol], Any], Sequence[Callable[[clingo.Symbol], Any]], Mapping[str, Union[Callable[[clingo.Symbol], Any], Sequence[Callable[[clingo.Symbol], Any]]]]]] = None,
               add_truth: Union[bool, Type[str], Type[bool]] = False,
               add_name: Union[bool, Type[str]] = False
-              ) -> Union[list[dict[str, ASP_Symbol]], dict[Union[str, tuple[str]], list[dict[str, ASP_Symbol]]]]:
+              
+              ) -> Union[list[dict[str, ASP_Symbol]], dict[Union[Any, tuple[Any]], list[dict[str, ASP_Symbol]]]]:
         """
         Extract atoms from the model of a given; name, arity, and classical truth value, and return their parameter-argument mappings.
         
@@ -849,10 +860,11 @@ class Model(_collections_abc.Set):
         arity: int = len(_atom_params)
         
         def get_name_checker(name_type: type) -> Callable[[clingo.Symbol], bool]:
+            "Creates a lambda function for checking an atom's name agaist the constraint given."
             if name_type == str:
                 return lambda symbol: symbol.name == _atom_name
             return lambda symbol: _atom_name[1].value[0](_atom_name[0], symbol.name) is not None
-        name_checker = get_name_checker(type(_atom_name))
+        name_checker: Callable[[clingo.Symbol], bool] = get_name_checker(type(_atom_name))
         
         constr_params: list[Tuple[str, int]] = []
         for param in param_constrs:
@@ -912,6 +924,7 @@ class Model(_collections_abc.Set):
                 atoms.append(atom)
         
         def validate_params(params: Optional[Union[str, Sequence[str]]]) -> Optional[tuple[str]]:
+            "Validates sorting and grouping parameters, discarding any that are not in the atom parameter list."
             if isinstance(params, str) and params in _atom_params:
                 return (params,)
             elif (isinstance(params, Sequence) and params
@@ -923,6 +936,7 @@ class Model(_collections_abc.Set):
         _group_by: Optional[tuple[str]] = validate_params(group_by)
         
         def keys_for(params: tuple[str]) -> itemgetter:
+            "Creates an item getter for getting keys for sorting and grouping atoms."
             return itemgetter(*[param for param in params])
         
         if _sort_by is not None:
