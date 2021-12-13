@@ -9,7 +9,6 @@ import statistics
 import _collections_abc
 
 import core.Planner as Planner
-from core.Helpers import SubscriptableDataClass
 
 ## Main module logger
 _Strategies_logger: logging.Logger = logging.getLogger(__name__)
@@ -30,7 +29,7 @@ class ProblemDependencyPredictor(Predictor):
     pass
 
 @dataclass(frozen=True)
-class Blend(SubscriptableDataClass):
+class Blend:
     left: Number = 0
     right: Number = 0
     
@@ -208,10 +207,7 @@ class DivisionScenario(_collections_abc.Sequence):
     
     `previously_solved_problems : int` - The number of partial problems that were solved before this scenario became applicable.
     
-    `divisions : int` - The number of divisions of the abstract plan made by this division scenario.
-    
-    `problems : int` - The number of partial planning problems defined by this division scenario.
-    This is equal to the number of divisions plus one.
+    `total_problems : int` - The number of partial problems templated by this division scenario, equivalent to one less than the number of divisions of the abstract plan made by the scenario.
     
     `problem_range : range` - The contiguous sub-sequence of partial problem numbers defined by this division scenario.
     """
@@ -249,11 +245,15 @@ class DivisionScenario(_collections_abc.Sequence):
         return len(self.__division_points)
     
     def __str__(self) -> str:
-        return (f"Total Problems = {self.total_problems}, Problem range = {self.problem_range}, Size = {self.size}, Sub-goal stage range = {self.__abstract_plan.action_step_range}\n"
+        return (f"Total Templated Partial Problems = {self.total_problems}, Problem Range = [{min(self.problem_range)}-{max(self.problem_range)}], "
+                f"Size = {self.size}, Sub-goal Stage Range = [{min(self.__abstract_plan.action_step_range)}-{max(self.__abstract_plan.action_step_range)}]\n"
                 f"Division points [total={len(self)}] : [{', '.join(map(str, self))}]")
     
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.__abstract_plan!r}, {self.__division_points!r})"
+    
+    ####################
+    ## Scenario properties
     
     @property
     def divided_abstract_plan(self) -> "Planner.MonolevelPlan":
@@ -263,6 +263,35 @@ class DivisionScenario(_collections_abc.Sequence):
     def previously_solved_problems(self) -> int:
         "The number of problems at the next level that were solve prior to generating this division scenario."
         return self.__previously_solved_problems
+    
+    @property
+    def total_problems(self) -> int:
+        "The total number of partial planning problems templated by this scenario."
+        return self.get_total_divisions() + 1
+    
+    @property
+    def problem_range(self) -> range:
+        "The partial problem number range templated by this scenario."
+        return range(self.__previously_solved_problems + 1,
+                     self.__previously_solved_problems + self.total_problems + 1)
+    
+    @property
+    def size(self) -> int:
+        "The total number of sub-goal stages in the (sub-)sequence of sub-goal stages from the (partial-)plan divided by this scenario."
+        return (self.last_index - self.first_index) + 1
+    
+    @property
+    def first_index(self) -> int:
+        "The first sub-goal stage index of the (sub-)sequence of sub-goal stages from the (partial-)plan divided by this scenario."
+        return self.__abstract_plan.state_start_step + 1
+    
+    @property
+    def last_index(self) -> int:
+        "The last sub-goal stage index of the (sub-)sequence of sub-goal stages from the (partial-)plan divided by this scenario."
+        return self.__abstract_plan.end_step
+    
+    ####################
+    ## Problem divisions
     
     def get_total_divisions(self, shifting_only: bool = True) -> int:
         """
@@ -280,50 +309,28 @@ class DivisionScenario(_collections_abc.Sequence):
         """
         return sum(1 for point in self if not shifting_only or point.shifting)
     
-    @property
-    def total_problems(self) -> int:
-        "The total number of partial planning problems templated by this scenario."
-        return self.get_total_divisions() + 1
-    
-    @property
-    def problem_range(self) -> range:
-        "The partial problem number range templated by this scenario."
-        return range(self.__previously_solved_problems + 1,
-                     self.__previously_solved_problems + self.total_problems + 1)
-    
-    @property
-    def first_index(self) -> int:
-        "The first sub-goal stage index of the (sub-)sequence of sub-goal stages from the (partial-)plan divided by this scenario."
-        return self.__abstract_plan.state_start_step + 1
-    
-    @property
-    def last_index(self) -> int:
-        "The last sub-goal stage index of the (sub-)sequence of sub-goal stages from the (partial-)plan divided by this scenario."
-        return self.__abstract_plan.end_step
-    
-    @property
-    def size(self) -> int:
-        "The total number of sub-goal stages in the (sub-)sequence of sub-goal stages from the (partial-)plan divided by this scenario."
-        return self.last_index - self.first_index
-    
-    
-    
     def get_division_points(self, shifting_only: bool = True, fabricate_inherited: bool = False) -> list[DivisionPoint]:
+        """
+        Get all the division points in this division scenario as an ordered list.
+        
+        Parameters
+        ----------
+        `shifting_only : bool = True` - True to include only problem shifting (proactive and interrupting reactive) divisions, False to also include non-shifting continuous reactive divisions.
+        
+        `fabricate_inherited : bool = False` - True to fabricate division points for the first and last boundary sub-goal stage indices of this scenario's sub-goal stage range.
+        """
         division_points: list[DivisionPoint] = []
         
         if shifting_only:
             for point in self.__division_points:
                 if point.shifting:
                     division_points.append(point)
-        else:
-            division_points = self.__division_points.copy()
+        else: division_points = self.__division_points.copy()
         
         if not fabricate_inherited:
             return division_points
         
         return [DivisionPoint(self.first_index, inherited=True)] + division_points + [DivisionPoint(self.last_index, inherited=True)]
-    
-    
     
     def get_division_point_pair(self, problem_number: int, fabricate_inherited: bool = False) -> DivisionPointPair:
         problem_range: range = self.problem_range
@@ -347,8 +354,6 @@ class DivisionScenario(_collections_abc.Sequence):
             right_point = division_points[problem_number - min(problem_range)]
         
         return DivisionPointPair(left_point, right_point)
-    
-    
     
     def get_subgoals_indices_range(self, problem_number: int, ignore_blend: bool = False) -> SubGoalRange:
         problem_range: range = self.problem_range
@@ -384,8 +389,6 @@ class DivisionScenario(_collections_abc.Sequence):
         
         return SubGoalRange(first_index, last_index)
     
-    
-    
     def update_reactively(self, new_point: DivisionPoint) -> None:
         """
         Update this division scenario with a reactive division point.
@@ -401,54 +404,15 @@ class DivisionScenario(_collections_abc.Sequence):
         if new_point.index in (point.index for point in self.__division_points):
             raise ValueError(f"Duplicate division point inserted. Got; {new_point!s} which matches with {self.__division_points[self.__division_points.index(new_point)]!s}.")
         
-        # shifting_divisions: int = -1
-        
         ## Iterate through the current list of division points until one is reached whose true division index is greater than the index of the new reactive division point;
         ##      - Variable `sequence_index` is the sequence index value of the division point in the list of points itself and is integral to the ordering of those points.
         for sequence_index, point in enumerate(self.get_division_points(shifting_only=False, fabricate_inherited=True)):
-            # if point.shifting:
-            #     shifting_divisions += 1
             
             if new_point.index < point.index:
                 self.__division_points.insert(sequence_index, new_point)
                 return
-                
-                # if new_point.continuous:
-                #     self.__division_points.insert(sequence_index, new_point)
-                #     return
-                
-                # ## Get the problem size between the existing points that fall either side the new one;
-                # ##      - To obtain the sub-goal stage index range we need to know the exact problem number so add the number of previously solved problems to the index value.
-                # problem_size: int = self.get_subgoals_indices_range(self.previously_solved_problems + shifting_divisions, ignore_blend=True).problem_size
-                # next_problem_size: int = 0
-                # if (self.previously_solved_problems + shifting_divisions + 1) in self.problem_range:
-                #     next_problem_size: int = self.get_subgoals_indices_range(self.previously_solved_problems + shifting_divisions + 1, ignore_blend=True).problem_size
-                
-                # ## Modify the left blend of the next point if it would cross over the reactive division;
-                # ##      - Blending over a reactive division would defeat the point of the reactive division.
-                # if point.proactive and point.index_when_left_point(next_problem_size) <= new_point.index:
-                #     self.__division_points[sequence_index] = DivisionPoint(point.index, Blend((point.index - new_point.index) - 1, point.blend.right))
-                
-                # ## If an interrupting division is inside the right blend of the previous point;
-                # ##      - Then the new division point becomes the left point of the next problem, so we skip forward a problem to avoid using the right point of the current problem as the left point of the next problem
-                # if sequence_index > 1 and (previous_point := self.__division_points[sequence_index - 1]).index_when_right_point(problem_size) > new_point.index:
-                #         ## This reactive division is inside the right blend of the previous division point
-                #         ## So search has already crossed pass the previous point
-                #         ## Discard the previous proactive division to avoid creating
-                #         self.__division_points.remove(previous_point)
-                #         self.__division_points.insert(sequence_index - 1, new_point)
-                        
-                #         # if translate_blends:
-                #         #     _division_point = DivisionPoint(new_point.index, Blend(max(new_point.blend.left, point.blend.left), max(new_point.blend.right, point.blend.right)), reactive=new_point.reactive, interrupting=new_point.interrupting, preemptive=new_point.preemptive)
-                #         #     self.__division_points.insert(index - 1, _division_point)
-                
-                # else: self.__division_points.insert(sequence_index, new_point)
-                
-                # return
         
         raise ValueError(f"Division point {new_point} is not in the range of scenario: {self}.")
-
-
 
 @dataclass(frozen=True)
 class Reaction:
@@ -459,8 +423,6 @@ class Reaction:
     
     def __str__(self) -> str:
         return f"(Divide = {self.divide}, Interrupt = {self.interrupt}, Backwards Horizon = {self.backwards_horizon}, Rationale = {self.rationale})"
-
-
 
 class DivisionStrategy(metaclass=ABCMeta):
     """
@@ -644,6 +606,9 @@ class DivisionStrategy(metaclass=ABCMeta):
     
     def react(self, problem_level: int, problem_total_sgoals_range: SubGoalRange, problem_start_step: int, current_search_length: int, current_subgoal_index: int, matching_child: bool, incremental_times: list[float], observable_plan: Optional[dict[int, list["Planner.Action"]]]) -> Reaction:
         return Reaction()
+    
+    def reset(self) -> None:
+        pass
     
     def total_increments_prediction(self, planning_domain: "Planner.PlanningDomain", online_method: "Planner.OnlineMethod") -> Optional[int]:
         return None
@@ -1085,6 +1050,8 @@ class Jumpy(NaiveProactive):
 
 class ReactiveBoundType(enum.Enum):
     """
+    `SearchLength = "search_length"` - The current search length.
+    
     `Incremental = "incremental_time_bound"` - The total incremental planning time (seconds/step), averaged over the moving range.
     
     `Differential = "differential_time_bound"` - The rate of change (increase) in the total incremental planning time (seconds/step/step), averaged over the moving range.
@@ -1097,12 +1064,13 @@ class ReactiveBoundType(enum.Enum):
     
     `CumulativePredictive = "predictive_time_bound"` - The sum of all total incremental planning times including the predicted total incremental planning time of the next search step (seconds) since the last reactive division.
     """
+    SearchLength = "search_length"
     Incremental = "incremental_time_bound"
     Differential = "differential_time_bound"
     Integral = "integral_time_bound"
     Cumulative = "cumulative_time_bound"
-    IncrementalPredictive = "incremental_time_bound"
-    CumulativePredictive = "cumulative_time_bound"
+    # IncrementalPredictive = "incremental_time_bound"
+    # CumulativePredictive = "cumulative_time_bound"
 
 
 
@@ -1122,6 +1090,7 @@ class Reactive(DivisionStrategy):
     
     def __init__(self,
                  top_level: int,
+                 search_length_bound: Bound = None,
                  incremental_time_bound: Bound = None,
                  differential_time_bound: Bound = None, 
                  integral_time_bound: Bound = None,
@@ -1138,15 +1107,16 @@ class Reactive(DivisionStrategy):
         ## Three standard types of reactive division strategy bounds
         bounds: Bounds = {}
         default_bounds: Bounds = self.__class__.default_bounds()
-        def assign(name: str, bound: Bound):
+        def assign(bound_type: ReactiveBoundType, bound: Bound):
             if bound is not None:
-                bounds[name] = bound
-            elif default_bound := default_bounds.get(name) is not None:
-                bounds[name] = default_bound
-        assign(ReactiveBoundType.Incremental.value, incremental_time_bound)
-        assign(ReactiveBoundType.Differential.value, differential_time_bound)
-        assign(ReactiveBoundType.Integral.value, integral_time_bound)
-        assign(ReactiveBoundType.Cumulative.value, cumulative_time_bound)
+                bounds[bound_type.value] = bound
+            elif default_bound := default_bounds.get(bound_type.value) is not None:
+                bounds[bound_type.value] = default_bound
+        assign(ReactiveBoundType.SearchLength, search_length_bound)
+        assign(ReactiveBoundType.Incremental, incremental_time_bound)
+        assign(ReactiveBoundType.Differential, differential_time_bound)
+        assign(ReactiveBoundType.Integral, integral_time_bound)
+        assign(ReactiveBoundType.Cumulative, cumulative_time_bound)
         
         ## Optional parameters
         self.__backwards_horizon: Union[Number, dict[int, Number]] = {}
@@ -1328,6 +1298,10 @@ class Reactive(DivisionStrategy):
         "The last reactive division index made by this strategy at a given abstraction level."
         return self.__last_division_step.get(level, 0)
     
+    def reset(self) -> None:
+        self.__last_division_index: dict[int, int] = {}
+        self.__last_division_step: dict[int, int] = {}
+    
     def _update(self, problem_level: int, subgoal_index: int, search_length: int) -> None:
         "Update this strategy's last division point and time."
         
@@ -1424,6 +1398,11 @@ class Relentless(Reactive):
                                  or isinstance(backwards_horizon, float)
                                  or (current_subgoal_index - self.get_last_division_index(problem_level)) > backwards_horizon))
         
+        # if self.__bound_type == ReactiveBoundType.SearchLength: TODO
+        #     search_length: int = self.calculate(problem_level, problem_start_step, current_search_length, self.__bound_type, incremental_times)
+        #     length_bound: int = self.get_bound(self.__bound_type.value, problem_level, -1)
+        #     triggered: bool = length_bound != -1 and search_length >= length_bound and can_divide
+        
         ## Calculate the current time value and obtain the bound (if one exists)
         time: float = self.calculate_time(problem_level, problem_start_step, self.__bound_type, incremental_times)
         time_bound: Number = self.get_bound(self.__bound_type.value, problem_level, -1)
@@ -1442,6 +1421,8 @@ class Relentless(Reactive):
                         rationale=f"{self.__bound_type.name!s} search time bound since last division {'reached' if triggered else 'not reached'}: bound = {time_bound}, time = {time}")
 
 class Impetuous(Reactive):
+    
+    __slots__ = ("__continuous_bound_type")
     
     def __init__(self,
                  top_level: int,

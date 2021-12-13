@@ -451,9 +451,6 @@ def __main() -> int:
         
         ## Graphify statistics as requested
         if namespace.display_graph:
-            # __display_graphs() TODO
-            
-            import math
             
             bar_width: float
             # def bar_width(bar: int, tbars: int, pad: float) -> float:
@@ -489,7 +486,7 @@ def __main() -> int:
             # problems, average_yield_times, par_deviation, par_balance = [], [], [], []
             
             for level in reversed(hierarchical_plan.level_range):
-                overall_totals = hierarchical_plan.get_overall_totals(level)
+                overall_totals = hierarchical_plan.get_grand_totals(level)
                 
                 grounding_times.append(overall_totals.grounding_time)
                 solving_times.append(overall_totals.solving_time)
@@ -744,14 +741,14 @@ def __setup() -> argparse.Namespace:
     ## Input files
     parser.add_argument("files", nargs="*", type=str,
                         help="a list of planning domain and problem files to load, at least one must be given")
-    parser.add_argument("--display_loader", type=str,
-                        help="display the contents of a ASH loader file")
-    parser.add_argument("-rules", "--domain_rules", type=str,
-                        help="the domain rules name from a ASH loader file")
-    parser.add_argument("-struct", "--domain_structure", type=str,
-                        help="the world structure name from a ASH loader file")
-    parser.add_argument("-problem", "--problem_specifics", type=str,
-                        help="the problem specification name from a ASH loader file")
+    # parser.add_argument("--display_loader", type=str,
+    #                     help="display the contents of a ASH loader file")
+    # parser.add_argument("-rules", "--domain_rules", type=str,
+    #                     help="the domain rules name from a ASH loader file")
+    # parser.add_argument("-struct", "--domain_structure", type=str,
+    #                     help="the world structure name from a ASH loader file")
+    # parser.add_argument("-problem", "--problem_specifics", type=str,
+    #                     help="the problem specification name from a ASH loader file")
     parser.add_argument("--load_schema", default=None, type=str,
                         help="specify a file to load a refinement schema from to generate problem spaces and check for dependencies between partial problems")
     
@@ -796,7 +793,7 @@ def __setup() -> argparse.Namespace:
     parser.add_argument("-dpos", "--disable_pause_on_start", action="store_true", default=False,
                         help="disable the pause for user input when the planner starts")
     parser.add_argument("-dg", "--display_graph", **bool_options(default=True),
-                        help="whether to display experimental results in a simple graph upon completion of all experimental runs")
+                        help="whether to display experimental results in a simple set of graphs upon completion of all experimental runs")
     
     ## Experimentation options
     parser.add_argument("-op", "--operation", choices=["test", "experiment", "find-problem-inconsistencies"], default="test", type=str,
@@ -902,8 +899,8 @@ def __setup() -> argparse.Namespace:
                         help="overrides the division strategy used in tasking models to treat refining each individual task as an independent sub-problem at the next level, by default True")
     parser.add_argument("-order_tasks", "--divide_tasks_on_final_goal_intermediate_achievement_ordering", **bool_options(default=False),
                         help="overrides the division strategy used in tasking models to make divisions only upon the intermediate achievement of a final-goal literal, by default True (requires final-goal intermediate ordering preferences)")
-    parser.add_argument("-div_init", "--divide_only_initial_problems", **bool_options(default=False),
-                        help="overrides the division strategy to only divide initial problems, and prevent dividing all non-initial problems, by default False, as standard True")
+    # parser.add_argument("-div_init", "--divide_only_initial_problems", **bool_options(default=False),
+    #                     help="overrides the division strategy to only divide initial problems, and prevent dividing all non-initial problems, by default False, as standard True")
     
     ## Online optimisation options
     parser.add_argument("-preempt_pos_fgoals", "--positive_final_goal_preemptive_achievement_heuristic", **bool_options(default=None, const=True, add_none=True),

@@ -105,16 +105,16 @@ super_class(surface, block).
 %% Class Type Overrides - override_class(CLS_1, CLS_2, CLS_3) deletes the CLS_3 type of CLS_1 when for components of type CLS_2 exist at AL >= plan_at
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% End-effectors can grasp objects
+%% Manipulator arms can grasp objects because they are composed of a end effector
 override_class(manipulator_arm, manipulator_end, grasper).
 
-%% Manipulator limbs are extensible
+%% Manipulator arms are extensible because they are composed of a manipulator limb
 override_class(manipulator_arm, manipulator_limb, extensible).
 
-%% The cells of rooms are places
+%% A room is composed from a set of cells
 override_class(room, cell, location).
 
-%% The sides of a table are surfaces
+%% A table has multiple sides that compose its surface
 override_class(table, side, surface).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

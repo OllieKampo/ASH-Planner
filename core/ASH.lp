@@ -76,10 +76,10 @@ overridden(AL - 1, CLS, EN_1) :- overridden_by(AL - 1, CLS, EN_1, EN_2),
                                  insta_of(AL, CLS, EN_1), insta_of(AL - 1, CLS, EN_2),
                                  class(_, CLS), al(AL), al(AL - 1).
 
-%% The class type CLS_3 of an entity EN_1 at abstraction level AL is overridden by an entity EN_2 of the same type that is discovered at abstraction level AL - 1 if:
+%% The class type CLS_3 of an entity EN_1 at abstraction level AL is overridden by an entity EN_2 of the same type that is discovered at abstraction level AL - 1 if;
 %%      - There is a type override such that instances of class CLS_2 override the class type CLS_3 of instances of class CLS_1,
 %%      - Entities EN_1 and EN_2 are instances of class CLS_1 and CLS_2 at abstraction levels AL and AL - 1 respectively,
-%%      - Entities EN_1 and EN_2 are both instances of class CLS_3 at abstraction levels AL and AL - 1 respectively.
+%%      - Entities EN_1 and EN_2 are both instances of class CLS_3 at abstraction levels AL and AL - 1 respectively,
 %%      - Entity EN_2 is a descendant of entity EN_1 at abstraction level AL - 1.
 overridden_by(AL - 1, CLS_3, EN_1, EN_2) :- insta_of(AL, CLS_1, EN_1), insta_of(AL - 1, CLS_2, EN_2),
                                             insta_of(AL, CLS_3, EN_1), insta_of(AL - 1, CLS_3, EN_2),
@@ -170,7 +170,7 @@ holds(AL, F, false, step) :- not holds(AL, F, true, step), fluent(AL, defined, F
 occurs(AL, ROBOT, step) :- occurs(AL, ROBOT, A, step), action(AL, _, _, ROBOT, A), pl(AL), step > start.
 occurs(AL, step) :- occurs(AL, ROBOT, step), insta_of(AL, robot, ROBOT), pl(AL), step > start.
 
-%% Activity constraint - Prevent the robots from being idle whilst the plan is incomplete
+%% Activity constraint - Prevent the robots from being idle whilst the plan is incomplete;
 %%      - Plan exactly one action on each step in sequential planning,
 %%      - Plan at least one action on each step in concurrent planning.
 :- not { occurs(AL, R, A, step) : action(AL, _, _, ROBOT, A) } = 1, pl(AL), step > start, concurrency = false.
@@ -267,7 +267,7 @@ incomplete_plan(step) :- final_goal(AL, F, V, B), not goal_satisfied(AL, F, V, B
 %%%% Rules for generating sub-goals from the current planning level
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Effects of actions planned at the current abstraction level are passed as sub-goals to the next level
+%% Effects of actions planned at the current abstraction level are passed as sub-goals to the next level;
 %%      - Although the sub-goal producing action is encoded in the sub-goal itself,
 %%        this is for transparency and ease of parsing the answer sets and is thus
 %%        considered an implementation detail only, it is strictly not necessary in the theory.
@@ -281,34 +281,56 @@ sub_goal(AL, ROBOT, A, F, V, step) :- occurs(AL, ROBOT, A, step), effect(AL, ROB
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% Optimisation Module
-%**% #program optimisation_module(step, start, minimise_actions, preempt_pos_fgoals, preempt_neg_fgoals, order_fgoals_achievement).
+%**% #program optimisation_module(step, start, minimise_actions, order_fgoals, preempt_pos_fgoals, preempt_neg_fgoals, preempt_mode).
+%%%%
 %%%% Parameters
 %%%% ----------
 %%%%    step: int - A natural number defining the current planning horizon.
 %%%%    start: int - A natural number defining the step to begin planning from.
-%%%%    minimise_actions: bool - A Boolean, True to enable minimisation of the total number of actions in a plan, False to disable.
-%%%%    preemptive_pos_fgoals: bool - A Boolean, True to
-%%%%    preemptive_neg_fgoals: bool - A Boolean, True to
-%%%%    pref_order_fgoals: bool - A Boolean, True to
+%%%%    minimise_actions: bool - A Boolean, True to enable minimisation of the total quantity of actions in a plan, False to disable.
+%%%%    order_fgoals: bool - A Boolean, True to enable enforce the task critical final-goal literal intermediate ordering preferences as a minimisation problem, False to disable.
+%%%%    preempt_pos_fgoals: bool - A Boolean, True to enable the search heuristic that prefers pre-mptively achieving positive final-goal literals, False to disable.
+%%%%    preempt_neg_fgoals: bool - A Boolean, True to enable the search heuristic that prefers pre-emptively achieving negative final-goal literals, False to disable.
+%%%%    preempt_mode: {heuristic, optimise} - A string defining the type of statements used to enforce pre-emptive achievement of final-goal literals.
+%%%%                                          Heuristic uses domain heuristic rules which affect solving throughout all search steps.
+%%%%                                          Optimise uses weak constraint rules which maximise pre-emptive achievement of final-goals in the end state only.
+%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Minimise quanity of actions (level 2):
-%%      - Eliminate any unnecessary actions from the plan by minimising the total number of actions in the minimal length plan.
+%% Eliminate any unnecessary actions from the plan by minimising the total quantity of actions in the minimal length plan.
 :~ occurs(AL, ROBOT, A, step), action(AL, _, _, ROBOT, A), pl(AL), minimise_actions = true. [1 @ 2, ROBOT, A, step]
 
-%% Final goal preemptive achievement heuristics:
+%% Final-goal intermediate achievement ordering preferences;
+%%      - Solve the perference order problem as a minimisation problem,
+%%      - TODO
+% :~ not goal_satisfied(AL, F, V, B, step), goal_order(AL, F, V, B, ORDER), final_goal(AL, F, V, B),
+%    fluent(AL, _, F, V), pl(AL), boolean(B), max_order(M), order_fgoals = true. [(((M + 1) - ORDER) * step) @ 4, AL, F, V, B]
+:~ goal_satisfied(AL, F, V, B, step), goal_order(AL, F, V, B, ORDER), final_goal(AL, F, V, B),
+   fluent(AL, _, F, V), pl(AL), boolean(B), max_order(M), order_fgoals = true. [(((M + 1) - ORDER) * (-step)) @ 4, AL, F, V, B]
+max_order(M) :- M = #max { ORDER : goal_order(AL, F, V, B, ORDER) }, final_goal(AL, F, V, B),
+                fluent(AL, _, F, V), pl(AL), boolean(B), order_fgoals = true.
+
+%% Final goal preemptive achievement heuristics;
 %%      - Heuristics are better when deciding on individual (arbitrary) choices (they only work for choice rules but are more efficient that optimisation statements and don't produce all answer sets),
 %%      - Since they are essentially preferences and priority levels over deciding the truth of atoms in choice rules, such at the occurs predicate atoms.
-#heuristic occurs(AL, ROBOT, A, step) : action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V), fluent(AL, inertial, F, V), final_goal(AL, F, V, true), pl(AL), step > start, preempt_pos_fgoals = true. [10 @ 1, true]
-#heuristic occurs(AL, ROBOT, A, step) : action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V, step), fluent(AL, inertial, F, V), final_goal(AL, F, V, true), pl(AL), step > start, preempt_pos_fgoals = true. [10 @ 1, true]
-#heuristic occurs(AL, ROBOT, A, step) : action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V), fluent(AL, inertial, F, V), final_goal(AL, F, V, false), pl(AL), step > start, preempt_neg_fgoals = true. [10 @ 0, false]
-#heuristic occurs(AL, ROBOT, A, step) : action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V, step), fluent(AL, inertial, F, V), final_goal(AL, F, V, false), pl(AL), step > start, preempt_neg_fgoals = true. [10 @ 0, false]
+#heuristic occurs(AL, ROBOT, A, step) : action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V), final_goal(AL, F, V, true), fluent(AL, inertial, F, V), pl(AL),
+                                        step > start, preempt_pos_fgoals = true, preempt_mode = heuristic. [10 @ 1, true]
+#heuristic occurs(AL, ROBOT, A, step) : action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V, step), final_goal(AL, F, V, true),
+                                        fluent(AL, inertial, F, V), pl(AL), step > start, preempt_pos_fgoals = true, preempt_mode = heuristic. [10 @ 1, true]
+#heuristic occurs(AL, ROBOT, A, step) : action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V), final_goal(AL, F, V, false),
+                                        fluent(AL, inertial, F, V), pl(AL), step > start, preempt_neg_fgoals = true, preempt_mode = heuristic. [10 @ 0, false]
+#heuristic occurs(AL, ROBOT, A, step) : action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V, step), final_goal(AL, F, V, false),
+                                        fluent(AL, inertial, F, V), pl(AL), step > start, preempt_neg_fgoals = true, preempt_mode = heuristic. [10 @ 0, false]
 
-%% Final goal achievement ordering preferences:
-%%      - The chosen ordering over the intermediate achievement of intermediate fgoals are then effectively encoded into the sgoals and maintained by the order over achievement of sgoals, resultantly it only makes sense to have an ordering preference over the achievement of fgoals at the top-level
-:~ goal_satisfied(AL, F, V, B, step), goal_order(AL, F, V, B, ORDER), final_goal(AL, F, V, B), fluent(AL, _, F, V), pl(AL), boolean(B), max_order(M). [(((M + 1) - ORDER) * (-step)) @ 4, AL, F, V, B]
-max_order(M) :- M = #max { ORDER : goal_order(AL, F, V, B, ORDER) }, final_goal(AL, F, V, B), fluent(AL, _, F, V), pl(AL), boolean(B).
+:~ occurs(AL, ROBOT, A, step), action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V), final_goal(AL, F, V, true),
+   fluent(AL, inertial, F, V), pl(AL), step > start, preempt_pos_fgoals = true, preempt_mode = optimise. [-1 @ 0, AL, ROBOT, A, F, V, step]
+:~ occurs(AL, ROBOT, A, step), action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V, step), final_goal(AL, F, V, true),
+   fluent(AL, inertial, F, V), pl(AL), step > start, preempt_pos_fgoals = true, preempt_mode = optimise. [-1 @ 0, AL, ROBOT, A, F, V, step]
+:~ occurs(AL, ROBOT, A, step), action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V), final_goal(AL, F, V, false),
+   fluent(AL, inertial, F, V), pl(AL), step > start, preempt_neg_fgoals = true, preempt_mode = optimise. [1 @ 0, AL, ROBOT, A, F, V, step]
+:~ occurs(AL, ROBOT, A, step), action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V, step), final_goal(AL, F, V, false),
+   fluent(AL, inertial, F, V), pl(AL), step > start, preempt_neg_fgoals = true, preempt_mode = optimise. [1 @ 0, AL, ROBOT, A, F, V, step]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -338,18 +360,23 @@ max_order(M) :- M = #max { ORDER : goal_order(AL, F, V, B, ORDER) }, final_goal(
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%% Conformance Module - Ensure plans achieve all sub-goals from actions planned at the previous level in the correct order
+%%%% Conformance Module - Enforce conformance constraints by ensuring plans achieve all sub-goals from actions planned at the previous level in the correct order
 %**% #program conformance_module(step, start, first, last, type, yield).
-%%%%    achievement: {simultaneous, sequential} - A string defining the achievement type of subgoal stages.
-%%%%    We are likely to see a greater restriction on the search space with simultaneous, but it is also not always possible to achieve subgoals in the same stage simultaneously, since the loss or generalisation of enabling constraints and
-%%%%    state constraints (state constraints can be lost in tasking models) in the abstract model from which the sub-goals they were produced may mean that there is no original level state that maps to an abstract state in which all the abstract effects that form them hold simultaneously
-%%%%    as the reintroduction or specialisation of those enabling and state constraints might make it no longer a reachable valid state pair.
-%%%%    It thus may occur that no valid subgoal states that can achieve the effects of a set of concurrently planned actions.
-%%%%    Sequential conformance is more flexible and relaxes this constraint significantly, and avoids this problem, at the cost of a weaker conformance constraint, and potentially less restriction on the search space.
+%%%%
+%%%% Parameters
+%%%% ----------
+%%%%    step: int - A natural number defining the current planning horizon.
+%%%%    start: int - A natural number defining the step to begin planning from.
+%%%%    first: int - A natural number defining the first inclusive in sequence sub-goal stage index of the current conformance refinement planning problem.
+%%%%    last: int - A natural number defining the last inclusive in sequence sub-goal stage index of the current conformance refinement planning problem.
+%%%%    type: {simultaneous, sequential} - A string defining the sub-goal stage achievement type of subgoal stages.
+%%%%    yield: bool - A Boolean, True to enable sequential yield planning mode, False to use standard planning mode.
+%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% External atom defining the current last in sequence sub-goal stage being enforced by the conformance constraint and the step it was first commited at during sequential yield progression through the goal seuence
+%% External atom defining the current last in sequence sub-goal stage being enforced by the conformance constraint
+%% and the step it was first commited at during sequential yield planning progression through the goal sequence.
 #external current_last_sgoals(I, step) : sgoals_index(I), yield = true.
 
 %% Include sub-goal stages as such;
@@ -360,13 +387,15 @@ include_sgoals(I, step) :- sgoals_index(I), yield = false.
 
 %% Define the available sub-goal stage index range;
 %%      - The first index is always given (regardless of saved groundings),
-%%      - The last is given explicitly and fixed iff this program grounding will not be saved,
-%%      - The last is given by an external context function (allowing it to be modified) if this program grounding will be saved and resumed to continue its refinement goal progression.
+%%      - The last is given;
+%%          - Explicitly and fixed iff this program grounding will not be saved,
+%%          - By a dynamic external context function (allowing it to be modified) if this program
+%%            grounding will be saved and resumed to continue its refinement goal progression.
 sgoals_index(first..last) :- last != none.
 sgoals_index(first..L) :- last = none, L = @get_total_last_sgoals(PL), pl(PL).
 
 %% The current sub-goal stage is initially that with whose sequence index is equal to the first included index
-current_sub_goal(AL + 1, ROBOT, A, F, V, first, start + 1) :- sub_goal(AL + 1, ROBOT, A, F, V, first), %% TODO
+current_sub_goal(AL + 1, ROBOT, A, F, V, first, start + 1) :- sub_goal(AL + 1, ROBOT, A, F, V, first),
                                                               action(AL + 1, _, _, ROBOT, A), fluent(AL + 1, inertial, F, V),
                                                               pl(AL).
 
@@ -414,16 +443,7 @@ sgoals_ach_at(AL + 1, I_SG, step) :- current_sub_goal_index(AL + 1, I_SG, step),
                                      not unachieved_sgoals(AL + 1, I_SG, step),
                                      pl(AL).
 
-%% These don't get updated because we would have to go back a step in the incrementation;
-%%      - Although the new modules are added with start step = start_step, they are only grounded first at step start_step + 1,
-%%      - incrementing starts at step start + 1 since actions lead current sub-goals by one step,
-%%      - but the first sub-goal must be current at step start (which is the achievement step of the last sub-goal stage of the previous partial problem),
-%%      - So although we get current sub-goals add to a saved grouning, they neither;
-%%          - Appear as a sub-goal index,
-%%          - Or set the plan as incomplete.
-current_sub_goal_index(AL + 1, FI, SS) :- restart_from(FI, SS), pl(AL).
-
-%% The current sub-goal sequence index is equal to the index value of the current sub-goals
+%% The current sub-goal stage sequence index is equal to the index value of the current sub-goals
 current_sub_goal_index(AL + 1, I_SG, step) :- sub_goal(AL + 1, ROBOT, A, F, V, I_SG),
                                               current_sub_goal(AL + 1, ROBOT, A, F, V, I_SG, step),
                                               action(AL + 1, _, _, ROBOT, A), fluent(AL + 1, inertial, F, V),
@@ -441,6 +461,8 @@ incomplete_plan(step) :- sub_goal(AL + 1, ROBOT, A, F, V, I_SG),
                          action(AL + 1, _, _, ROBOT, A), fluent(AL + 1, inertial, F, V),
                          pl(AL).
 
+%% Search heuristic that prefers planning actions that achieve a sub-goal literal in the current sub-goal stage;
+%%      - This works only for sub-goal stages containing literals that are indentical to the state literals at the current planning level.
 #heuristic occurs(AL, ROBOT, A, step) : action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V), fluent(AL, inertial, F, V), current_sub_goal(AL + 1, ROBOT, A, F, V, _, step - 1), pl(AL), step > start, preempt_pos_fgoals = true. [10 @ 2, true]
 #heuristic occurs(AL, ROBOT, A, step) : action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V, step), fluent(AL, inertial, F, V), current_sub_goal(AL + 1, ROBOT, A, F, V, _, step - 1), pl(AL), step > start, preempt_pos_fgoals = true. [10 @ 2, true]
 

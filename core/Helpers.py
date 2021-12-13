@@ -1,9 +1,31 @@
-from abc import ABCMeta, abstractproperty
-import dataclasses
-from typing import Any, Generic, ItemsView, Iterator, Optional, TypeVar, Union, final
-import _collections_abc
 import itertools
 import textwrap
+from abc import ABCMeta, abstractproperty
+from typing import Generic, ItemsView, Iterator, Optional, TypeVar, final
+
+import _collections_abc
+
+
+def center_text(text: str, prefix_blank_line: bool = False, append_blank_line: bool = False,
+                framing_width: int = 0, frame_before: bool = True, frame_after: bool = True, framing_char: str = '=',
+                vbar_left: str = '', vbar_right: str = '', centering_width: int = 120, terminal_width: int = 160) -> str:
+    """
+    Function for generating centered text for printing to the console.
+    
+    Parameters
+    ----------
+    
+    """
+    centered_text: str = ""
+    free_space: int = framing_width - (len(vbar_left) + len(vbar_right))
+    line_iter = itertools.chain(*[textwrap.wrap(f"{vbar_left + (' ' * ((free_space - len(part)) // 2)):>s}{part}{(' ' * ((free_space - len(part)) // 2)) + vbar_right:<s}",
+                                                width=terminal_width, replace_whitespace=False, drop_whitespace=False) for part in text.split("\n")])
+    if prefix_blank_line: centered_text += "\n"
+    if framing_width != 0 and frame_before: centered_text += f"{(framing_char * framing_width).center(centering_width)}\n"
+    for line in line_iter: centered_text += f"{(line.center(centering_width))}\n"
+    if framing_width != 0 and frame_after: centered_text += f"{(framing_char * framing_width).center(centering_width)}"
+    if append_blank_line: centered_text += "\n"
+    return centered_text
 
 class AbstractionHierarchy(metaclass=ABCMeta):
     """
@@ -66,18 +88,18 @@ class AbstractionHierarchy(metaclass=ABCMeta):
     
     @property
     def bottom_level(self) -> int:
-        """An integer defining the top level of the abstraction hierarchy."""
+        "An integer defining the bottom level of the abstraction hierarchy, by default 1 if not overrided."
         return 1
     
     @abstractproperty
     def top_level(self) -> int:
-        """An integer defining the top level of the abstraction hierarchy."""
+        "An integer defining the top level of the abstraction hierarchy."
         raise NotImplementedError("Abstraction hierarchies must have a top-level.")
     
     @final
     @property
     def level_range(self) -> range:
-        """A contiguous range over all levels in the abstraction hierarchy, the range is `[1-top_level]`."""
+        "A contiguous range over all levels in the abstraction hierarchy, the range is `[bottom_level-top_level]`."
         return range(self.bottom_level, self.top_level + 1)
     
     @final
@@ -97,6 +119,10 @@ class AbstractionHierarchy(metaclass=ABCMeta):
         Returns
         -------
         `range` - The constrained contiguous level range.
+        
+        Raises
+        ------
+        `TypeError` - Iff either the top or bottom level constraint is not None and not an integer.
         """
         ## Validate inputs
         if bottom_level is not None and not isinstance(bottom_level, int):
@@ -129,8 +155,6 @@ class AbstractionHierarchy(metaclass=ABCMeta):
         """
         return level in self.level_range
 
-
-
 KT = TypeVar("KT")
 VT = TypeVar("VT")
 
@@ -143,15 +167,20 @@ class ReversableDict(_collections_abc.MutableMapping, Generic[KT, VT]):
     -------------
     
     >>> from core.Helpers import ReversableDict
-    >>> dict_: ReversableDict[int, int] = ReversableDict({1 : 2, 3 : 2})
-    >>> dict_[1]
-    2
-    >>> dict_(2)
-    [1, 3]
+    >>> dict_: ReversableDict[str, int] = ReversableDict({"A" : 2, "B" : 3, "C" : 2})
     
-    >>> del dict_[1]
+    Check what 'A' maps to (as in a standard dictionary).
+    >>> dict_["A"]
+    2
+    
+    Check what keys map to 2 (a reverse operation to a standard dictionary).
     >>> dict_(2)
-    [3]
+    ["A", "C"]
+    
+    Objects are immutable, and updates are handled correctly on both the standard and reverse mappings.
+    >>> del dict_["A"]
+    >>> dict_(2)
+    ["C"]
     """
     __slots__ = ("__dict", "__reversed_dict")
     
@@ -193,46 +222,15 @@ class ReversableDict(_collections_abc.MutableMapping, Generic[KT, VT]):
         return len(self.__dict)
     
     def reversed_items(self) -> ItemsView[VT, list[KT]]:
+        """
+        Get a reversed dictionary items view:
+            - Whose keys are the values of the standard dictionary,
+            - And whose values are lists of keys from the standard dictionary which map to the respective values.
+        """
         return self.__reversed_dict.items()
     
     def reversed_get(self, value: VT, default: Optional[list[KT]] = None) -> Optional[list[KT]]:
+        "Get a list of dictionary keys that map to a given value, default is returned of the value is not in the dictionary."
         if value not in self.__reversed_dict:
             return default
         return self(value)
-
-
-
-class SubscriptableDataClass(_collections_abc.Sequence):
-    """Makes a dataclass subscriptable by allowing fields to be accessed by index."""
-    
-    def __init__(self) -> None:
-        super().__init__()
-        if not dataclasses.is_dataclass(self):
-            raise TypeError(f"Classes inheriting from {self.__class__} must be dataclasses.")
-    
-    def __getitem__(self, index: Union[int, slice]) -> Union[Any, list[Any]]:
-        if isinstance(index, slice):
-            return [self[i] for i in range(*index.indices(len(self)))]
-        return getattr(self, dataclasses.fields(self)[index].name)
-    
-    def __len__(self) -> int:
-        return len(dataclasses.fields(self))
-
-
-
-def center_text(text: str, prefix_blank_line: bool = False, append_blank_line: bool = False,
-                     framing_width: int = 0, frame_before: bool = True, frame_after: bool = True, framing_char: str = '=',
-                     vbar_left: str = '', vbar_right: str = '', centering_width: int = 120, terminal_width: int = 160) -> str:
-    """
-    Function for printing centered messages from the ASH launcher to the console.
-    """
-    centered_text: str = ""
-    free_space: int = framing_width - (len(vbar_left) + len(vbar_right))
-    line_iter = itertools.chain(*[textwrap.wrap(f"{vbar_left + (' ' * ((free_space - len(part)) // 2)):>s}{part}{(' ' * ((free_space - len(part)) // 2)) + vbar_right:<s}",
-                                                width=terminal_width, replace_whitespace=False, drop_whitespace=False) for part in text.split("\n")])
-    if prefix_blank_line: centered_text += "\n"
-    if framing_width != 0 and frame_before: centered_text += f"{(framing_char * framing_width).center(centering_width)}\n"
-    for line in line_iter: centered_text += f"{(line.center(centering_width))}\n"
-    if framing_width != 0 and frame_after: centered_text += f"{(framing_char * framing_width).center(centering_width)}"
-    if append_blank_line: centered_text += "\n"
-    return centered_text

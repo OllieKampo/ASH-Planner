@@ -1,0 +1,1834 @@
+{
+    "1": {
+        "1": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((starting_room,1))"
+                }
+            ],
+            "current_sgoals_index": "1",
+            "achieved_sgoals_index": "2"
+        },
+        "2": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((hallway,1))"
+                }
+            ],
+            "current_sgoals_index": "1",
+            "achieved_sgoals_index": "2"
+        },
+        "3": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((hallway,0))"
+                }
+            ],
+            "current_sgoals_index": "2",
+            "achieved_sgoals_index": "4"
+        },
+        "4": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_limb_2,extended)"
+                }
+            ],
+            "current_sgoals_index": "2",
+            "achieved_sgoals_index": "4"
+        },
+        "5": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_end_2,aligned_with(store_room_door_handle_outer))"
+                }
+            ],
+            "current_sgoals_index": "3",
+            "achieved_sgoals_index": "6"
+        },
+        "6": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_end_2,store_room_door_handle_outer)"
+                }
+            ],
+            "current_sgoals_index": "3",
+            "achieved_sgoals_index": "6"
+        },
+        "7": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "actuate(manipulator_end_2,store_room_door)"
+                }
+            ],
+            "current_sgoals_index": "4",
+            "achieved_sgoals_index": "7"
+        },
+        "8": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_end_2,store_room_door_handle_outer)"
+                }
+            ],
+            "current_sgoals_index": "5",
+            "achieved_sgoals_index": "8"
+        },
+        "9": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_limb_2,retracted)"
+                }
+            ],
+            "current_sgoals_index": "6",
+            "achieved_sgoals_index": "14"
+        },
+        "10": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((hallway,1))"
+                }
+            ],
+            "current_sgoals_index": "6",
+            "achieved_sgoals_index": "14"
+        },
+        "11": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((hallway,2))"
+                }
+            ],
+            "current_sgoals_index": "6",
+            "achieved_sgoals_index": "14"
+        },
+        "12": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_limb_2,extended)"
+                }
+            ],
+            "current_sgoals_index": "6",
+            "achieved_sgoals_index": "14"
+        },
+        "13": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_end_2,aligned_with(puzzle_room_door_handle_outer))"
+                }
+            ],
+            "current_sgoals_index": "6",
+            "achieved_sgoals_index": "14"
+        },
+        "14": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_end_2,puzzle_room_door_handle_outer)"
+                }
+            ],
+            "current_sgoals_index": "6",
+            "achieved_sgoals_index": "14"
+        },
+        "15": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "actuate(manipulator_end_2,puzzle_room_door)"
+                }
+            ],
+            "current_sgoals_index": "7",
+            "achieved_sgoals_index": "15"
+        },
+        "16": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_end_2,puzzle_room_door_handle_outer)"
+                }
+            ],
+            "current_sgoals_index": "8",
+            "achieved_sgoals_index": "16"
+        },
+        "17": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_limb_2,retracted)"
+                }
+            ],
+            "current_sgoals_index": "9",
+            "achieved_sgoals_index": "17"
+        },
+        "18": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((hallway,1))"
+                }
+            ],
+            "current_sgoals_index": "10",
+            "achieved_sgoals_index": "20"
+        },
+        "19": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((hallway,0))"
+                }
+            ],
+            "current_sgoals_index": "10",
+            "achieved_sgoals_index": "20"
+        },
+        "20": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((store_room,1))"
+                }
+            ],
+            "current_sgoals_index": "10",
+            "achieved_sgoals_index": "20"
+        },
+        "21": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_limb_1,extended)"
+                }
+            ],
+            "current_sgoals_index": "11",
+            "achieved_sgoals_index": "21"
+        },
+        "22": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_limb_2,extended)"
+                }
+            ],
+            "current_sgoals_index": "12",
+            "achieved_sgoals_index": "22"
+        },
+        "23": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_limb_1,retracted)"
+                }
+            ],
+            "current_sgoals_index": "13",
+            "achieved_sgoals_index": "30"
+        },
+        "24": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_limb_2,retracted)"
+                }
+            ],
+            "current_sgoals_index": "13",
+            "achieved_sgoals_index": "30"
+        },
+        "25": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((store_room,0))"
+                }
+            ],
+            "current_sgoals_index": "13",
+            "achieved_sgoals_index": "30"
+        },
+        "26": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_limb_1,extended)"
+                }
+            ],
+            "current_sgoals_index": "13",
+            "achieved_sgoals_index": "30"
+        },
+        "27": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_end_1,aligned_with((block,6)))"
+                }
+            ],
+            "current_sgoals_index": "13",
+            "achieved_sgoals_index": "30"
+        },
+        "28": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_limb_2,extended)"
+                }
+            ],
+            "current_sgoals_index": "13",
+            "achieved_sgoals_index": "30"
+        },
+        "29": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_end_2,aligned_with((block,4)))"
+                }
+            ],
+            "current_sgoals_index": "13",
+            "achieved_sgoals_index": "30"
+        },
+        "30": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_end_1,(block,6))"
+                }
+            ],
+            "current_sgoals_index": "13",
+            "achieved_sgoals_index": "30"
+        },
+        "31": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_limb_1,retracted)"
+                }
+            ],
+            "current_sgoals_index": "14",
+            "achieved_sgoals_index": "32"
+        },
+        "32": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_end_2,(block,4))"
+                }
+            ],
+            "current_sgoals_index": "14",
+            "achieved_sgoals_index": "32"
+        },
+        "33": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_limb_2,retracted)"
+                }
+            ],
+            "current_sgoals_index": "15",
+            "achieved_sgoals_index": "33"
+        },
+        "34": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((store_room,1))"
+                }
+            ],
+            "current_sgoals_index": "16",
+            "achieved_sgoals_index": "34"
+        },
+        "35": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((hallway,0))"
+                }
+            ],
+            "current_sgoals_index": "17",
+            "achieved_sgoals_index": "35"
+        },
+        "36": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((hallway,1))"
+                }
+            ],
+            "current_sgoals_index": "18",
+            "achieved_sgoals_index": "38"
+        },
+        "37": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((hallway,2))"
+                }
+            ],
+            "current_sgoals_index": "18",
+            "achieved_sgoals_index": "38"
+        },
+        "38": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((puzzle_room,0))"
+                }
+            ],
+            "current_sgoals_index": "18",
+            "achieved_sgoals_index": "38"
+        },
+        "39": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((puzzle_room,1))"
+                }
+            ],
+            "current_sgoals_index": "19",
+            "achieved_sgoals_index": "40"
+        },
+        "40": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_limb_1,extended)"
+                }
+            ],
+            "current_sgoals_index": "19",
+            "achieved_sgoals_index": "40"
+        },
+        "41": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_end_1,(block,6),puzzle_room_table_right)"
+                }
+            ],
+            "current_sgoals_index": "20",
+            "achieved_sgoals_index": "41"
+        },
+        "42": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_end_1,(block,6))"
+                }
+            ],
+            "current_sgoals_index": "21",
+            "achieved_sgoals_index": "42"
+        },
+        "43": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_end_1,aligned_with((block,3)))"
+                }
+            ],
+            "current_sgoals_index": "22",
+            "achieved_sgoals_index": "44"
+        },
+        "44": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_end_1,(block,3))"
+                }
+            ],
+            "current_sgoals_index": "22",
+            "achieved_sgoals_index": "44"
+        },
+        "45": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_end_1,(block,3),puzzle_room_table_left)"
+                }
+            ],
+            "current_sgoals_index": "23",
+            "achieved_sgoals_index": "45"
+        },
+        "46": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_end_1,(block,3))"
+                }
+            ],
+            "current_sgoals_index": "24",
+            "achieved_sgoals_index": "46"
+        },
+        "47": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_end_1,aligned_with((block,2)))"
+                }
+            ],
+            "current_sgoals_index": "25",
+            "achieved_sgoals_index": "48"
+        },
+        "48": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_end_1,(block,2))"
+                }
+            ],
+            "current_sgoals_index": "25",
+            "achieved_sgoals_index": "48"
+        },
+        "49": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_end_1,(block,2),(block,3))"
+                }
+            ],
+            "current_sgoals_index": "26",
+            "achieved_sgoals_index": "49"
+        },
+        "50": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_end_1,(block,2))"
+                }
+            ],
+            "current_sgoals_index": "27",
+            "achieved_sgoals_index": "50"
+        },
+        "51": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_limb_1,retracted)"
+                }
+            ],
+            "current_sgoals_index": "28",
+            "achieved_sgoals_index": "51"
+        },
+        "52": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((puzzle_room,0))"
+                }
+            ],
+            "current_sgoals_index": "29",
+            "achieved_sgoals_index": "53"
+        },
+        "53": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((hallway,2))"
+                }
+            ],
+            "current_sgoals_index": "29",
+            "achieved_sgoals_index": "53"
+        },
+        "54": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((hallway,1))"
+                }
+            ],
+            "current_sgoals_index": "30",
+            "achieved_sgoals_index": "56"
+        },
+        "55": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((hallway,0))"
+                }
+            ],
+            "current_sgoals_index": "30",
+            "achieved_sgoals_index": "56"
+        },
+        "56": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((store_room,1))"
+                }
+            ],
+            "current_sgoals_index": "30",
+            "achieved_sgoals_index": "56"
+        },
+        "57": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((store_room,0))"
+                }
+            ],
+            "current_sgoals_index": "31",
+            "achieved_sgoals_index": "58"
+        },
+        "58": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_limb_1,extended)"
+                }
+            ],
+            "current_sgoals_index": "31",
+            "achieved_sgoals_index": "58"
+        },
+        "59": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_end_1,aligned_with((block,5)))"
+                }
+            ],
+            "current_sgoals_index": "32",
+            "achieved_sgoals_index": "60"
+        },
+        "60": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_end_1,(block,5))"
+                }
+            ],
+            "current_sgoals_index": "32",
+            "achieved_sgoals_index": "60"
+        },
+        "61": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_limb_1,retracted)"
+                }
+            ],
+            "current_sgoals_index": "33",
+            "achieved_sgoals_index": "61"
+        },
+        "62": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((store_room,1))"
+                }
+            ],
+            "current_sgoals_index": "34",
+            "achieved_sgoals_index": "63"
+        },
+        "63": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((hallway,0))"
+                }
+            ],
+            "current_sgoals_index": "34",
+            "achieved_sgoals_index": "63"
+        },
+        "64": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((hallway,1))"
+                }
+            ],
+            "current_sgoals_index": "35",
+            "achieved_sgoals_index": "66"
+        },
+        "65": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((hallway,2))"
+                }
+            ],
+            "current_sgoals_index": "35",
+            "achieved_sgoals_index": "66"
+        },
+        "66": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((puzzle_room,0))"
+                }
+            ],
+            "current_sgoals_index": "35",
+            "achieved_sgoals_index": "66"
+        },
+        "67": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((puzzle_room,1))"
+                }
+            ],
+            "current_sgoals_index": "36",
+            "achieved_sgoals_index": "68"
+        },
+        "68": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_limb_1,extended)"
+                }
+            ],
+            "current_sgoals_index": "36",
+            "achieved_sgoals_index": "68"
+        },
+        "69": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_end_1,(block,5),(block,6))"
+                }
+            ],
+            "current_sgoals_index": "37",
+            "achieved_sgoals_index": "69"
+        },
+        "70": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_end_1,(block,5))"
+                }
+            ],
+            "current_sgoals_index": "38",
+            "achieved_sgoals_index": "70"
+        },
+        "71": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_limb_2,extended)"
+                }
+            ],
+            "current_sgoals_index": "39",
+            "achieved_sgoals_index": "71"
+        },
+        "72": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_end_1,aligned_with((block,1)))"
+                }
+            ],
+            "current_sgoals_index": "40",
+            "achieved_sgoals_index": "73"
+        },
+        "73": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_end_2,(block,4),(block,5))"
+                }
+            ],
+            "current_sgoals_index": "40",
+            "achieved_sgoals_index": "73"
+        },
+        "74": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_end_1,(block,1))"
+                }
+            ],
+            "current_sgoals_index": "41",
+            "achieved_sgoals_index": "74"
+        },
+        "75": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_end_1,(block,1),(block,2))"
+                }
+            ],
+            "current_sgoals_index": "42",
+            "achieved_sgoals_index": "75"
+        }
+    },
+    "2": {
+        "1": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move(hallway)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "move(hallway)",
+                    "F": "in(talos)",
+                    "V": "hallway"
+                }
+            ],
+            "current_sgoals_index": "1",
+            "achieved_sgoals_index": "10"
+        },
+        "2": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_2,extended)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_2,extended)",
+                    "F": "configuration(manipulator_arm_2)",
+                    "V": "extended"
+                }
+            ],
+            "current_sgoals_index": "1",
+            "achieved_sgoals_index": "10"
+        },
+        "3": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_2,store_room_door_handle_outer)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_2,store_room_door_handle_outer)",
+                    "F": "grasping(manipulator_arm_2)",
+                    "V": "store_room_door_handle_outer"
+                }
+            ],
+            "current_sgoals_index": "1",
+            "achieved_sgoals_index": "10"
+        },
+        "4": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "actuate(manipulator_arm_2,store_room_door)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "actuate(manipulator_arm_2,store_room_door)",
+                    "F": "configuration(store_room_door)",
+                    "V": "open"
+                }
+            ],
+            "current_sgoals_index": "1",
+            "achieved_sgoals_index": "10"
+        },
+        "5": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_arm_2,store_room_door_handle_outer)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_arm_2,store_room_door_handle_outer)",
+                    "F": "grasping(manipulator_arm_2)",
+                    "V": "nothing"
+                }
+            ],
+            "current_sgoals_index": "1",
+            "achieved_sgoals_index": "10"
+        },
+        "6": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_2,puzzle_room_door_handle_outer)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_2,puzzle_room_door_handle_outer)",
+                    "F": "grasping(manipulator_arm_2)",
+                    "V": "puzzle_room_door_handle_outer"
+                }
+            ],
+            "current_sgoals_index": "1",
+            "achieved_sgoals_index": "10"
+        },
+        "7": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "actuate(manipulator_arm_2,puzzle_room_door)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "actuate(manipulator_arm_2,puzzle_room_door)",
+                    "F": "configuration(puzzle_room_door)",
+                    "V": "open"
+                }
+            ],
+            "current_sgoals_index": "1",
+            "achieved_sgoals_index": "10"
+        },
+        "8": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_arm_2,puzzle_room_door_handle_outer)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_arm_2,puzzle_room_door_handle_outer)",
+                    "F": "grasping(manipulator_arm_2)",
+                    "V": "nothing"
+                }
+            ],
+            "current_sgoals_index": "1",
+            "achieved_sgoals_index": "10"
+        },
+        "9": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_2,retracted)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_2,retracted)",
+                    "F": "configuration(manipulator_arm_2)",
+                    "V": "retracted"
+                }
+            ],
+            "current_sgoals_index": "1",
+            "achieved_sgoals_index": "10"
+        },
+        "10": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move(store_room)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "move(store_room)",
+                    "F": "in(talos)",
+                    "V": "store_room"
+                }
+            ],
+            "current_sgoals_index": "1",
+            "achieved_sgoals_index": "10"
+        },
+        "11": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_1,extended)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_1,extended)",
+                    "F": "configuration(manipulator_arm_1)",
+                    "V": "extended"
+                }
+            ],
+            "current_sgoals_index": "2",
+            "achieved_sgoals_index": "13"
+        },
+        "12": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_2,extended)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_2,extended)",
+                    "F": "configuration(manipulator_arm_2)",
+                    "V": "extended"
+                }
+            ],
+            "current_sgoals_index": "2",
+            "achieved_sgoals_index": "13"
+        },
+        "13": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_1,(block,6))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_1,(block,6))",
+                    "F": "grasping(manipulator_arm_1)",
+                    "V": "(block,6)"
+                }
+            ],
+            "current_sgoals_index": "2",
+            "achieved_sgoals_index": "13"
+        },
+        "14": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_2,(block,4))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_2,(block,4))",
+                    "F": "grasping(manipulator_arm_2)",
+                    "V": "(block,4)"
+                }
+            ],
+            "current_sgoals_index": "3",
+            "achieved_sgoals_index": "14"
+        },
+        "15": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_2,retracted)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_2,retracted)",
+                    "F": "configuration(manipulator_arm_2)",
+                    "V": "retracted"
+                }
+            ],
+            "current_sgoals_index": "4",
+            "achieved_sgoals_index": "18"
+        },
+        "16": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_1,retracted)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_1,retracted)",
+                    "F": "configuration(manipulator_arm_1)",
+                    "V": "retracted"
+                }
+            ],
+            "current_sgoals_index": "4",
+            "achieved_sgoals_index": "18"
+        },
+        "17": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move(hallway)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "move(hallway)",
+                    "F": "in(talos)",
+                    "V": "hallway"
+                }
+            ],
+            "current_sgoals_index": "4",
+            "achieved_sgoals_index": "18"
+        },
+        "18": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move(puzzle_room)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "move(puzzle_room)",
+                    "F": "in(talos)",
+                    "V": "puzzle_room"
+                }
+            ],
+            "current_sgoals_index": "4",
+            "achieved_sgoals_index": "18"
+        },
+        "19": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_1,extended)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_1,extended)",
+                    "F": "configuration(manipulator_arm_1)",
+                    "V": "extended"
+                }
+            ],
+            "current_sgoals_index": "5",
+            "achieved_sgoals_index": "20"
+        },
+        "20": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_1,(block,6),puzzle_room_table)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_1,(block,6),puzzle_room_table)",
+                    "F": "on((block,6))",
+                    "V": "puzzle_room_table"
+                }
+            ],
+            "current_sgoals_index": "5",
+            "achieved_sgoals_index": "20"
+        },
+        "21": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_arm_1,(block,6))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_arm_1,(block,6))",
+                    "F": "grasping(manipulator_arm_1)",
+                    "V": "nothing"
+                }
+            ],
+            "current_sgoals_index": "6",
+            "achieved_sgoals_index": "21"
+        },
+        "22": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_1,(block,3))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_1,(block,3))",
+                    "F": "grasping(manipulator_arm_1)",
+                    "V": "(block,3)"
+                }
+            ],
+            "current_sgoals_index": "7",
+            "achieved_sgoals_index": "22"
+        },
+        "23": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_1,(block,3),puzzle_room_table)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_1,(block,3),puzzle_room_table)",
+                    "F": "on((block,3))",
+                    "V": "puzzle_room_table"
+                }
+            ],
+            "current_sgoals_index": "8",
+            "achieved_sgoals_index": "23"
+        },
+        "24": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_arm_1,(block,3))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_arm_1,(block,3))",
+                    "F": "grasping(manipulator_arm_1)",
+                    "V": "nothing"
+                }
+            ],
+            "current_sgoals_index": "9",
+            "achieved_sgoals_index": "24"
+        },
+        "25": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_1,(block,2))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_1,(block,2))",
+                    "F": "grasping(manipulator_arm_1)",
+                    "V": "(block,2)"
+                }
+            ],
+            "current_sgoals_index": "10",
+            "achieved_sgoals_index": "25"
+        },
+        "26": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_1,(block,2),(block,3))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_1,(block,2),(block,3))",
+                    "F": "on((block,2))",
+                    "V": "(block,3)"
+                }
+            ],
+            "current_sgoals_index": "11",
+            "achieved_sgoals_index": "26"
+        },
+        "27": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_arm_1,(block,2))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_arm_1,(block,2))",
+                    "F": "grasping(manipulator_arm_1)",
+                    "V": "nothing"
+                }
+            ],
+            "current_sgoals_index": "12",
+            "achieved_sgoals_index": "27"
+        },
+        "28": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_1,retracted)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_1,retracted)",
+                    "F": "configuration(manipulator_arm_1)",
+                    "V": "retracted"
+                }
+            ],
+            "current_sgoals_index": "13",
+            "achieved_sgoals_index": "30"
+        },
+        "29": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move(hallway)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "move(hallway)",
+                    "F": "in(talos)",
+                    "V": "hallway"
+                }
+            ],
+            "current_sgoals_index": "13",
+            "achieved_sgoals_index": "30"
+        },
+        "30": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move(store_room)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "move(store_room)",
+                    "F": "in(talos)",
+                    "V": "store_room"
+                }
+            ],
+            "current_sgoals_index": "13",
+            "achieved_sgoals_index": "30"
+        },
+        "31": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_1,extended)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_1,extended)",
+                    "F": "configuration(manipulator_arm_1)",
+                    "V": "extended"
+                }
+            ],
+            "current_sgoals_index": "14",
+            "achieved_sgoals_index": "32"
+        },
+        "32": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_1,(block,5))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_1,(block,5))",
+                    "F": "grasping(manipulator_arm_1)",
+                    "V": "(block,5)"
+                }
+            ],
+            "current_sgoals_index": "14",
+            "achieved_sgoals_index": "32"
+        },
+        "33": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_1,retracted)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_1,retracted)",
+                    "F": "configuration(manipulator_arm_1)",
+                    "V": "retracted"
+                }
+            ],
+            "current_sgoals_index": "15",
+            "achieved_sgoals_index": "35"
+        },
+        "34": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move(hallway)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "move(hallway)",
+                    "F": "in(talos)",
+                    "V": "hallway"
+                }
+            ],
+            "current_sgoals_index": "15",
+            "achieved_sgoals_index": "35"
+        },
+        "35": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move(puzzle_room)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "move(puzzle_room)",
+                    "F": "in(talos)",
+                    "V": "puzzle_room"
+                }
+            ],
+            "current_sgoals_index": "15",
+            "achieved_sgoals_index": "35"
+        },
+        "36": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_1,extended)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_1,extended)",
+                    "F": "configuration(manipulator_arm_1)",
+                    "V": "extended"
+                }
+            ],
+            "current_sgoals_index": "16",
+            "achieved_sgoals_index": "37"
+        },
+        "37": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_1,(block,5),(block,6))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_1,(block,5),(block,6))",
+                    "F": "on((block,5))",
+                    "V": "(block,6)"
+                }
+            ],
+            "current_sgoals_index": "16",
+            "achieved_sgoals_index": "37"
+        },
+        "38": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_arm_1,(block,5))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_arm_1,(block,5))",
+                    "F": "grasping(manipulator_arm_1)",
+                    "V": "nothing"
+                }
+            ],
+            "current_sgoals_index": "17",
+            "achieved_sgoals_index": "38"
+        },
+        "39": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_2,extended)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "configure(manipulator_arm_2,extended)",
+                    "F": "configuration(manipulator_arm_2)",
+                    "V": "extended"
+                }
+            ],
+            "current_sgoals_index": "18",
+            "achieved_sgoals_index": "40"
+        },
+        "40": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_2,(block,4),(block,5))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_2,(block,4),(block,5))",
+                    "F": "on((block,4))",
+                    "V": "(block,5)"
+                }
+            ],
+            "current_sgoals_index": "18",
+            "achieved_sgoals_index": "40"
+        },
+        "41": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_1,(block,1))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_1,(block,1))",
+                    "F": "grasping(manipulator_arm_1)",
+                    "V": "(block,1)"
+                }
+            ],
+            "current_sgoals_index": "19",
+            "achieved_sgoals_index": "41"
+        },
+        "42": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_1,(block,1),(block,2))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_1,(block,1),(block,2))",
+                    "F": "on((block,1))",
+                    "V": "(block,2)"
+                }
+            ],
+            "current_sgoals_index": "20",
+            "achieved_sgoals_index": "42"
+        }
+    },
+    "3": {
+        "1": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move(store_room)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "move(store_room)",
+                    "F": "in(talos)",
+                    "V": "store_room"
+                }
+            ]
+        },
+        "2": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_1,(block,6))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_1,(block,6))",
+                    "F": "grasping(manipulator_arm_1)",
+                    "V": "(block,6)"
+                }
+            ]
+        },
+        "3": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_2,(block,4))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_2,(block,4))",
+                    "F": "grasping(manipulator_arm_2)",
+                    "V": "(block,4)"
+                }
+            ]
+        },
+        "4": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move(puzzle_room)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "move(puzzle_room)",
+                    "F": "in(talos)",
+                    "V": "puzzle_room"
+                }
+            ]
+        },
+        "5": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_1,(block,6),puzzle_room_table)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_1,(block,6),puzzle_room_table)",
+                    "F": "on((block,6))",
+                    "V": "puzzle_room_table"
+                }
+            ]
+        },
+        "6": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_arm_1,(block,6))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_arm_1,(block,6))",
+                    "F": "grasping(manipulator_arm_1)",
+                    "V": "nothing"
+                }
+            ]
+        },
+        "7": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_1,(block,3))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_1,(block,3))",
+                    "F": "grasping(manipulator_arm_1)",
+                    "V": "(block,3)"
+                }
+            ]
+        },
+        "8": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_1,(block,3),puzzle_room_table)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_1,(block,3),puzzle_room_table)",
+                    "F": "on((block,3))",
+                    "V": "puzzle_room_table"
+                }
+            ]
+        },
+        "9": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_arm_1,(block,3))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_arm_1,(block,3))",
+                    "F": "grasping(manipulator_arm_1)",
+                    "V": "nothing"
+                }
+            ]
+        },
+        "10": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_1,(block,2))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_1,(block,2))",
+                    "F": "grasping(manipulator_arm_1)",
+                    "V": "(block,2)"
+                }
+            ]
+        },
+        "11": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_1,(block,2),(block,3))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_1,(block,2),(block,3))",
+                    "F": "on((block,2))",
+                    "V": "(block,3)"
+                }
+            ]
+        },
+        "12": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_arm_1,(block,2))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_arm_1,(block,2))",
+                    "F": "grasping(manipulator_arm_1)",
+                    "V": "nothing"
+                }
+            ]
+        },
+        "13": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move(store_room)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "move(store_room)",
+                    "F": "in(talos)",
+                    "V": "store_room"
+                }
+            ]
+        },
+        "14": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_1,(block,5))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_1,(block,5))",
+                    "F": "grasping(manipulator_arm_1)",
+                    "V": "(block,5)"
+                }
+            ]
+        },
+        "15": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move(puzzle_room)"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "move(puzzle_room)",
+                    "F": "in(talos)",
+                    "V": "puzzle_room"
+                }
+            ]
+        },
+        "16": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_1,(block,5),(block,6))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_1,(block,5),(block,6))",
+                    "F": "on((block,5))",
+                    "V": "(block,6)"
+                }
+            ]
+        },
+        "17": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_arm_1,(block,5))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "release(manipulator_arm_1,(block,5))",
+                    "F": "grasping(manipulator_arm_1)",
+                    "V": "nothing"
+                }
+            ]
+        },
+        "18": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_2,(block,4),(block,5))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_2,(block,4),(block,5))",
+                    "F": "on((block,4))",
+                    "V": "(block,5)"
+                }
+            ]
+        },
+        "19": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_1,(block,1))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "grasp(manipulator_arm_1,(block,1))",
+                    "F": "grasping(manipulator_arm_1)",
+                    "V": "(block,1)"
+                }
+            ]
+        },
+        "20": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_1,(block,1),(block,2))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "put(manipulator_arm_1,(block,1),(block,2))",
+                    "F": "on((block,1))",
+                    "V": "(block,2)"
+                }
+            ]
+        }
+    }
+}

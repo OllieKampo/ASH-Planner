@@ -114,16 +114,16 @@ super_class(surface, block).
 %% Class Type Overrides - override_class(CLS_1, CLS_2, CLS_3) deletes the CLS_3 type of CLS_1 when for components of type CLS_2 exist at AL >= plan_at
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% End-effectors can grasp objects
+%% Manipulator arms can grasp objects because they are composed of a end effector
 override_class(manipulator_arm, manipulator_end, grasper).
 
-%% Manipulator limbs are extensible
+%% Manipulator arms are extensible because they are composed of a manipulator limb
 override_class(manipulator_arm, manipulator_limb, extensible).
 
-%% The cells of rooms are places
+%% A room is composed from a set of cells
 override_class(room, cell, location).
 
-%% The sides of a table are surfaces
+%% A table has multiple sides that compose its surface
 override_class(table, side, surface).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -224,21 +224,25 @@ fluent(AL_1, inertial, transporting(ROBO, OBJ), B) :- insta_of(AL_2, armed_robot
 %% Defined Fluents
 
 %% A block that is on a table is the base of a tower
-fluent(AL, defined, tower_base(BASE), B) :- insta_of(AL, block, BASE),
-                                            sl(AL), boolean(B).
+fluent(AL, defined, tower_base(BASE, TABLE), B) :- insta_of(AL, block, BASE),
+                                                   insta_of(AL, table, TABLE),
+                                                   sl(AL), boolean(B).
 
 %% A block that is the base of a tower or placed upon another block that is in a tower also in the same tower
 fluent(AL, defined, in_tower(BASE, BLOCK), B) :- insta_of(AL, block, BASE),
                                                  insta_of(AL, block, BLOCK),
+                                                 insta_of(AL, table, TABLE),
                                                  sl(AL), boolean(B).
 
 %% A tower that is not stacked in descending order from top to bottom is unordered
-fluent(AL, defined, unordered_tower(BASE), B) :- insta_of(AL, block, BASE),
-                                                 sl(AL), boolean(B).
+fluent(AL, defined, unordered_tower(BASE, TABLE), B) :- insta_of(AL, block, BASE),
+                                                        insta_of(AL, table, TABLE),
+                                                        sl(AL), boolean(B).
 
 %% A tower is complete if all the blocks that form it are the same colour and they are stacked in descending order from top to bottom
-fluent(AL, defined, complete(COLOUR), B) :- insta_of(AL, colour, COLOUR),
-                                            sl(AL), boolean(B).
+fluent(AL, defined, complete_tower(COLOUR, TABLE), B) :- insta_of(AL, colour, COLOUR),
+                                                         insta_of(AL, table, TABLE),
+                                                         sl(AL), boolean(B).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% Actions - Define the available actions here
@@ -992,32 +996,33 @@ precond(AL, ROBO, place_upon(OBJ_1, OBJ_2), on(OBJ_2), nothing, false) :- OBJ_1 
 %% Fluent Definitions - Rules defining the truth of defined fluents
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% A block is the base of a tower if it is either:
-%%      - On a table
-%%      - On a descenant surface of a table
-holds(AL, tower_base(BASE), true, t) :- holds(AL, on(BASE), TABLE, t),
-                                        fluent(AL, defined, tower_base(BASE), true),
+%% A block is the base of a tower if it is either;
+%%      - On a table,
+%%      - On a descenant surface of a table.
+holds(AL, tower_base(BASE, TABLE), true, t) :- holds(AL, on(BASE), TABLE, t),
+                                        fluent(AL, defined, tower_base(BASE, TABLE), true),
                                         fluent(AL, inertial, on(BASE), TABLE),
                                         insta_of(AL, block, BASE),
                                         insta_of(AL, table, TABLE),
                                         sl(AL).
 
-holds(AL, tower_base(BASE), true, t) :- holds(AL, on(BASE), SURFACE, t),
-                                        fluent(AL, defined, tower_base(BASE), true),
+holds(AL, tower_base(BASE, TABLE), true, t) :- holds(AL, on(BASE), SURFACE, t),
+                                        fluent(AL, defined, tower_base(BASE, TABLE), true),
                                         fluent(AL, inertial, on(BASE), SURFACE),
                                         desce_of(AL, TABLE, SURFACE),
                                         insta_of(AL, block, BASE),
-                                        insta_of(AL, surface, SURFACE),
                                         insta_of(AL, table, TABLE),
+                                        insta_of(AL, surface, SURFACE),
                                         sl(AL).
 
-%% A block is in a tower if it is either:
-%%      - The base of the tower
-%%      - On a block that is in the tower
-holds(AL, in_tower(BASE, BASE), true, t) :- holds(AL, tower_base(BASE), true, t),
+%% A block is in a tower if it is either;
+%%      - The base of the tower,
+%%      - On a block that is in the tower.
+holds(AL, in_tower(BASE, BASE), true, t) :- holds(AL, tower_base(BASE, TABLE), true, t),
                                             fluent(AL, defined, in_tower(BASE, BASE), true),
-                                            fluent(AL, defined, tower_base(BASE), true),
+                                            fluent(AL, defined, tower_base(BASE, TABLE), true),
                                             insta_of(AL, block, BASE),
+                                            insta_of(AL, table, TABLE),
                                             sl(AL).
 
 holds(AL, in_tower(BLOCK_1, BLOCK_2), true, t) :- holds(AL, on(BLOCK_2), BLOCK_3, t),
@@ -1032,41 +1037,42 @@ holds(AL, in_tower(BLOCK_1, BLOCK_2), true, t) :- holds(AL, on(BLOCK_2), BLOCK_3
                                                   sl(AL).
 
 %% A tower that is not stacked in descending order from top to bottom is unordered
-holds(AL, unordered_tower(BASE), true, t) :- holds(AL, on(BLOCK_1), BLOCK_2, t),
-                                             holds(AL, in_tower(BASE, BLOCK_1), true, t),
-                                             holds(AL, in_tower(BASE, BLOCK_2), true, t),
-                                             holds(AL, tower_base(BASE), true, t),
-                                             fluent(AL, defined, unordered_tower(BASE), true),
-                                             fluent(AL, defined, in_tower(BASE, BLOCK_1), true),
-                                             fluent(AL, defined, in_tower(BASE, BLOCK_2), true),
-                                             fluent(AL, defined, tower_base(BASE), true),
-                                             fluent(AL, inertial, on(BLOCK_1), BLOCK_2),     
-                                             BLOCK_1 = (block, N_1), block_number(N_1),
-                                             BLOCK_2 = (block, N_2), block_number(N_2),
-                                             BLOCK_1 != BLOCK_2, N_1 > N_2,
-                                             insta_of(AL, block, BLOCK_1),
-                                             insta_of(AL, block, BLOCK_2),
-                                             insta_of(AL, block, BASE),
-                                             sl(AL).
+holds(AL, unordered_tower(BASE, TABLE), true, t) :- holds(AL, on(BLOCK_1), BLOCK_2, t),
+                                                    holds(AL, in_tower(BASE, BLOCK_1), true, t),
+                                                    holds(AL, in_tower(BASE, BLOCK_2), true, t),
+                                                    holds(AL, tower_base(BASE, TABLE), true, t),
+                                                    fluent(AL, defined, unordered_tower(BASE, TABLE), true),
+                                                    fluent(AL, defined, in_tower(BASE, BLOCK_1), true),
+                                                    fluent(AL, defined, in_tower(BASE, BLOCK_2), true),
+                                                    fluent(AL, defined, tower_base(BASE, TABLE), true),
+                                                    fluent(AL, inertial, on(BLOCK_1), BLOCK_2),
+                                                    BLOCK_1 = (block, N_1), block_number(N_1),
+                                                    BLOCK_2 = (block, N_2), block_number(N_2),
+                                                    BLOCK_1 != BLOCK_2, N_1 > N_2,
+                                                    insta_of(AL, block, BLOCK_1),
+                                                    insta_of(AL, block, BLOCK_2),
+                                                    insta_of(AL, block, BASE),
+                                                    insta_of(AL, table, TABLE),
+                                                    sl(AL).
 
 %% A tower is complete if it contains of the blocks of a particular colour and they are stacked in descending order from top to bottom
-holds(AL, complete(COLOUR), true, t) :- N = #count { BLOCK : holds(AL, in_tower(BASE, BLOCK), true, t),
-                                                             is(AL, colour_of(BLOCK, COLOUR)),
-                                                             fluent(AL, defined, in_tower(BASE, BLOCK), true),
-                                                             static(AL, colour_of(BLOCK, COLOUR)),
-                                                             insta_of(AL, block, BLOCK) },
-                                        N = #count { BLOCK : is(AL, colour_of(BLOCK, COLOUR)),
-                                                             static(AL, colour_of(BLOCK, COLOUR)),
-                                                             insta_of(AL, block, BLOCK) },
-                                        holds(AL, unordered_tower(BASE), false, t),
-                                        holds(AL, tower_base(BASE), true, t),
-                                        fluent(AL, defined, unordered_tower(BASE), true),
-                                        fluent(AL, defined, tower_base(BASE), true),
-                                        is(AL, colour_of(BASE, COLOUR)),
-                                        static(AL, colour_of(BASE, COLOUR)),
-                                        insta_of(AL, colour, COLOUR),
-                                        insta_of(AL, block, BASE),
-                                        sl(AL).
+holds(AL, complete_tower(COLOUR, TABLE), true, t) :- N = #count { BLOCK : holds(AL, in_tower(BASE, BLOCK), true, t),
+                                                                          is(AL, colour_of(BLOCK, COLOUR)),
+                                                                          fluent(AL, defined, in_tower(BASE, BLOCK), true),
+                                                                          static(AL, colour_of(BLOCK, COLOUR)),
+                                                                          insta_of(AL, block, BLOCK) },
+                                                     blocks_per_tower(N),
+                                                     holds(AL, unordered_tower(BASE, TABLE), false, t),
+                                                     holds(AL, tower_base(BASE, TABLE), true, t),
+                                                     fluent(AL, defined, complete_tower(COLOUR, TABLE), true),
+                                                     fluent(AL, defined, unordered_tower(BASE, TABLE), true),
+                                                     fluent(AL, defined, tower_base(BASE, TABLE), true),
+                                                     is(AL, colour_of(BASE, COLOUR)),
+                                                     static(AL, colour_of(BASE, COLOUR)),
+                                                     insta_of(AL, colour, COLOUR),
+                                                     insta_of(AL, block, BASE),
+                                                     insta_of(AL, table, TABLE),
+                                                     sl(AL).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Static Abstraction Mappings - The mappings between the static state represention at adjacent abstraction levels are defined here

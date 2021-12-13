@@ -19,39 +19,64 @@
 ###########################################################################
 ###########################################################################
 
-from abc import abstractclassmethod
-from collections import UserDict
+
+
 import contextlib
 import enum
-from functools import cached_property
 import functools
-from itertools import chain
 import logging
 import os
 import re
 import time
-from dataclasses import dataclass, field
+from abc import abstractclassmethod
+from collections import UserDict
+from dataclasses import dataclass, field, fields, is_dataclass
+from functools import cached_property
 from operator import itemgetter
-from typing import (Any, Callable, Generator, Hashable, Iterable, Mapping,
-                    NamedTuple, Optional, Pattern, Sequence, Tuple, Type, TypeVar, Union, Iterator)
+from typing import (Any, Callable, Generator, Hashable, Iterable, Iterator,
+                    Mapping, NamedTuple, Optional, Pattern, Sequence, Tuple,
+                    Type, TypeVar, Union)
 
 import _collections_abc
 import clingo
 import clingo.ast
-from clingo.solving import SolveHandle
 import psutil
+from clingo.solving import SolveHandle
 from tqdm import tqdm
-from core.Helpers import SubscriptableDataClass
 
 ## ASP Parser module logger
 _ASP_logger: logging.Logger = logging.getLogger(__name__)
 _ASP_logger.setLevel(logging.DEBUG)
 
-#   █████  ███    ██ ███████ ██     ██ ███████ ██████      ███████ ███████ ████████ ███████ 
-#  ██   ██ ████   ██ ██      ██     ██ ██      ██   ██     ██      ██         ██    ██      
-#  ███████ ██ ██  ██ ███████ ██  █  ██ █████   ██████      ███████ █████      ██    ███████ 
-#  ██   ██ ██  ██ ██      ██ ██ ███ ██ ██      ██   ██          ██ ██         ██         ██ 
-#  ██   ██ ██   ████ ███████  ███ ███  ███████ ██   ██     ███████ ███████    ██    ███████
+class SubscriptableDataClass(_collections_abc.Sequence):
+    "Makes a dataclass subscriptable by allowing fields to be accessed by index."
+    
+    def __init__(self) -> None:
+        super().__init__()
+        if not is_dataclass(self):
+            raise TypeError(f"Classes inheriting from {self.__class__} must be dataclasses.")
+    
+    def __getitem__(self, index: Union[int, slice]) -> Union[Any, list[Any]]:
+        if isinstance(index, slice):
+            return [self[i] for i in range(*index.indices(len(self)))]
+        return getattr(self, fields(self)[index].name)
+    
+    def __len__(self) -> int:
+        return len(fields(self))
+
+
+
+#############################################################################################################################################
+#############################################################################################################################################
+#########################   █████  ███    ██ ███████ ██     ██ ███████ ██████      ███████ ███████ ████████ ███████ #########################
+#########################  ██   ██ ████   ██ ██      ██     ██ ██      ██   ██     ██      ██         ██    ██      #########################
+#########################  ███████ ██ ██  ██ ███████ ██  █  ██ █████   ██████      ███████ █████      ██    ███████ #########################
+#########################  ██   ██ ██  ██ ██      ██ ██ ███ ██ ██      ██   ██          ██ ██         ██         ██ #########################
+#########################  ██   ██ ██   ████ ███████  ███ ███  ███████ ██   ██     ███████ ███████    ██    ███████ #########################
+#############################################################################################################################################
+#############################################################################################################################################
+
+
 
 ## ASP symbol type
 ASP_Symbol: type = Union[str, clingo.Symbol]
@@ -299,8 +324,6 @@ class Statistics:
                              f"Total = {self.total_time:.6f}s",
                              f"Memory = {self.memory!s}"]))
 
-CT = TypeVar("CT", bound="IncrementalStatistics")
-
 @dataclass(frozen=True)
 class IncrementalStatistics(Statistics):
     """
@@ -334,7 +357,7 @@ class IncrementalStatistics(Statistics):
         "The number of solver calls made to find a solution to the logic program."
         return len(self.incremental)
     
-    @cached_property
+    @property
     def grand_totals(self) -> Statistics:
         "The grand total times and maximum memory usage, the sum of the base and all incremental times."
         return Statistics(self.grounding_time + self.cumulative.grounding_time,
@@ -342,35 +365,43 @@ class IncrementalStatistics(Statistics):
                           memory=Memory(max(self.memory.rss, self.cumulative.memory.rss),
                                         max(self.memory.vms, self.cumulative.memory.vms)))
     
-    @cached_property
+    @property
     def incremental_stats_str(self) -> str:
         "Format the incremental statistics into a multiple line string."
         return "\n".join([f"{step} : {stats}" for step, stats in self.incremental.items()])
     
     def combine_with(self, other: "IncrementalStatistics", shift_increments: int = 0) -> "IncrementalStatistics":
-        cumulative_grounding: float = 0.0
-        cumulative_solving: float = 0.0
-        incremental: dict[int, Statistics] = {}
+        "Combine this incremental statistics object with another. Incremental statistics are combined on a increment-wise basis."
         
-        for stat in [self, other]:
-            for increment in stat.incremental:
+        ## Form a merged sequence of incremental statistics
+        incremental: dict[int, Statistics] = {}
+        stat_list: list[IncrementalStatistics] = [self, other]
+        for incremental_stat in stat_list:
+            for increment in incremental_stat.incremental:
+                current_stat: Statistics = incremental_stat.incremental[increment]
+                
                 _increment: int = increment
-                if stat is other:
+                if incremental_stat is other:
                     _increment = increment + shift_increments
-                if (cur_stat := incremental.get(increment, None)) is not None:
-                    incremental[_increment] = Statistics(cur_stat.grounding_time + stat.incremental[increment].grounding_time,
-                                                         cur_stat.solving_time + stat.incremental[increment].solving_time,
-                                                         memory=max(cur_stat.memory, stat.incremental[increment].memory))
-                else: incremental[_increment] = Statistics(stat.incremental[increment].grounding_time,
-                                                           stat.incremental[increment].solving_time,
-                                                           memory=stat.incremental[increment].memory)
-                cumulative_grounding += stat.incremental[increment].grounding_time
-                cumulative_solving += stat.incremental[increment].solving_time
+                
+                if (existing_stat := incremental.get(increment, None)) is not None:
+                    incremental[_increment] = Statistics(existing_stat.grounding_time + current_stat.grounding_time,
+                                                         existing_stat.solving_time + current_stat.solving_time,
+                                                         memory=max(existing_stat.memory, current_stat.memory))
+                else: incremental[_increment] = current_stat
+        
+        ## Calculate cumulative totals
+        cumulative_grounding: float = self.cumulative.grounding_time + other.cumulative.grounding_time
+        cumulative_solving: float = self.cumulative.solving_time + other.cumulative.solving_time
+        cumulative_memory = Memory(max(self.cumulative.memory.rss, other.cumulative.memory.rss),
+                                   max(self.cumulative.memory.vms, other.cumulative.memory.vms))
+        cumulative = Statistics(cumulative_grounding, cumulative_solving, memory=cumulative_memory)
         
         return IncrementalStatistics(self.grounding_time,
                                      self.solving_time,
-                                     memory=self.memory,
-                                     cumulative=Statistics(cumulative_grounding, cumulative_solving),
+                                     self.total_time,
+                                     self.memory,
+                                     cumulative=cumulative,
                                      incremental=incremental)
 
 ParameterConstraint = Union[str, int, tuple[Pattern, "Model.ParseMode"], Callable[[clingo.Symbol], bool]]
@@ -1083,7 +1114,7 @@ class Answer(NamedTuple):
     
     @property
     def fmodel(self) -> Model:
-        """Get the final model in the answer, or an empty model (containing no atoms), if no models exist (i.e. the result was unsatisfiable)."""
+        "Get the final model in the answer, or an empty model (containing no atoms), if no models exist (i.e. the result was unsatisfiable)."
         fmodel: Optional[Model] = None
         if self.base_models:
             fmodel = self.base_models[-1]
@@ -1096,7 +1127,7 @@ class Answer(NamedTuple):
     
     @staticmethod
     def dummy_answer() -> "Answer":
-        """Constructs an empty answer. Useful as a default 'dummy' argument."""
+        "Constructs an empty answer. Useful as a default 'dummy' argument."
         return Answer(Result(False, False), Statistics(0.0, 0.0), Model([]))
 
 
@@ -1110,6 +1141,8 @@ class Answer(NamedTuple):
 ################  ██      ██   ██  ██████   ██████  ██   ██ ██   ██ ██      ██     ██      ██   ██ ██   ██    ██    ███████  ################
 #############################################################################################################################################
 #############################################################################################################################################
+
+
 
 @dataclass(frozen=True)
 class IncRange(SubscriptableDataClass):
