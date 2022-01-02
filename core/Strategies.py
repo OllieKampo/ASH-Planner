@@ -330,7 +330,7 @@ class DivisionScenario(_collections_abc.Sequence):
         if not fabricate_inherited:
             return division_points
         
-        return [DivisionPoint(self.first_index, inherited=True)] + division_points + [DivisionPoint(self.last_index, inherited=True)]
+        return [DivisionPoint(self.first_index - 1, inherited=True)] + division_points + [DivisionPoint(self.last_index, inherited=True)]
     
     def get_division_point_pair(self, problem_number: int, fabricate_inherited: bool = False) -> DivisionPointPair:
         problem_range: range = self.problem_range
@@ -344,7 +344,7 @@ class DivisionScenario(_collections_abc.Sequence):
         right_point: Optional[DivisionPoint] = None
         
         if fabricate_inherited:
-            left_point = DivisionPoint(self.first_index, inherited=True)
+            left_point = DivisionPoint(self.first_index - 1, inherited=True)
             right_point = DivisionPoint(self.last_index, inherited=True)
         
         division_points: list[DivisionPoint] = self.get_division_points()
@@ -1064,7 +1064,7 @@ class ReactiveBoundType(enum.Enum):
     
     `CumulativePredictive = "predictive_time_bound"` - The sum of all total incremental planning times including the predicted total incremental planning time of the next search step (seconds) since the last reactive division.
     """
-    SearchLength = "search_length"
+    SearchLength = "search_length_bound"
     Incremental = "incremental_time_bound"
     Differential = "differential_time_bound"
     Integral = "integral_time_bound"
@@ -1181,7 +1181,7 @@ class Reactive(DivisionStrategy):
                 raise ValueError(f"Moving average must be an integer greater than zero. Got; {value} of type {type(value)}.")
         self.__moving_average: Optional[int] = value
     
-    def calculate_time(self, problem_level: int, start_step: int, bound_type: ReactiveBoundType, incremental_times: list[float], valid_only: bool = True) -> float:
+    def calculate(self, problem_level: int, start_step: int, search_length: int, bound_type: ReactiveBoundType, incremental_times: list[float], valid_only: bool = True) -> float:
         """
         Calculate the current time value over a list of incremental times for any of the standard reactive bound types.
         
@@ -1190,6 +1190,8 @@ class Reactive(DivisionStrategy):
         `problem_level : int` - The abstraction level of the current planning problem.
         
         `start_step : int` - The start step of the current planning problem.
+        
+        `search_length : int` - 
         
         `bound_type : ReactiveBoundType` - The reactive bound type to calculate the time for (see ReactiveBoundType).
         
@@ -1208,9 +1210,14 @@ class Reactive(DivisionStrategy):
         if not isinstance(bound_type, ReactiveBoundType):
             raise TypeError(f"Invalid bound type. Got; {bound_type} of type {type(bound_type)}.")
         
+        true_last_division_step: int = max(self.get_last_division_step(problem_level), start_step)
+        
+        if bound_type == ReactiveBoundType.SearchLength:
+            return search_length - true_last_division_step
+        
         ## The valid times are all the total incremental planning times since the last division step
         valid_times: list[float] = incremental_times
-        if valid_only: valid_times = incremental_times[max(self.get_last_division_step(problem_level), start_step) - start_step:]
+        if valid_only: valid_times = incremental_times[true_last_division_step - start_step:]
         
         if valid_times:
             ## The usable times are either;
@@ -1247,23 +1254,23 @@ class Reactive(DivisionStrategy):
             if bound_type == ReactiveBoundType.Differential:
                 return statistics.mean(gradients)
             
-            ## At least two gradients are needed to calculate the rate of change
-            if len(gradients) < 2: return 0.0
+            # ## At least two gradients are needed to calculate the rate of change
+            # if len(gradients) < 2: return 0.0
             
-            ## The rate of change is the average increase in gradient per search step
-            rate_of_change: float = statistics.mean(gradients[-(index + 1)] - gradients[-(index + 2)] for index in range(len(gradients) - 1))
+            # ## The rate of change is the average increase in gradient per search step
+            # rate_of_change: float = statistics.mean(gradients[-(index + 1)] - gradients[-(index + 2)] for index in range(len(gradients) - 1))
             
-            ## The predictive forms a basic naive prediction of what;
-            ##      - The incremental planning time at the next step will be or,
-            ##      - The cumulative planning times inclusive of the next step will be.
-            ##      - This is the sum of;
-            ##          - The incremental or cumulative time respectively,
-            ##          - The gradient between the previous two steps,
-            ##          - The average rate of change of the gradient over the moving range.
-            if bound_type == ReactiveBoundType.IncrementalPredictive:
-                return usable_times[-1] + gradients[-1] + rate_of_change
-            elif bound_type == ReactiveBoundType.CumulativePredictive:
-                return sum(valid_times) + gradients[-1] + rate_of_change
+            # ## The predictive forms a basic naive prediction of what;
+            # ##      - The incremental planning time at the next step will be or,
+            # ##      - The cumulative planning times inclusive of the next step will be.
+            # ##      - This is the sum of;
+            # ##          - The incremental or cumulative time respectively,
+            # ##          - The gradient between the previous two steps,
+            # ##          - The average rate of change of the gradient over the moving range.
+            # if bound_type == ReactiveBoundType.IncrementalPredictive:
+            #     return usable_times[-1] + gradients[-1] + rate_of_change
+            # elif bound_type == ReactiveBoundType.CumulativePredictive:
+            #     return sum(valid_times) + gradients[-1] + rate_of_change
         
         return 0.0
     
@@ -1398,19 +1405,14 @@ class Relentless(Reactive):
                                  or isinstance(backwards_horizon, float)
                                  or (current_subgoal_index - self.get_last_division_index(problem_level)) > backwards_horizon))
         
-        # if self.__bound_type == ReactiveBoundType.SearchLength: TODO
-        #     search_length: int = self.calculate(problem_level, problem_start_step, current_search_length, self.__bound_type, incremental_times)
-        #     length_bound: int = self.get_bound(self.__bound_type.value, problem_level, -1)
-        #     triggered: bool = length_bound != -1 and search_length >= length_bound and can_divide
-        
-        ## Calculate the current time value and obtain the bound (if one exists)
-        time: float = self.calculate_time(problem_level, problem_start_step, self.__bound_type, incremental_times)
-        time_bound: Number = self.get_bound(self.__bound_type.value, problem_level, -1)
+        ## Calculate the current reactive value and obtain the bound (if one exists)
+        value: Number = self.calculate(problem_level, problem_start_step, current_search_length, self.__bound_type, incremental_times)
+        bound: Number = self.get_bound(self.__bound_type.value, problem_level, -1)
         
         ## If the bound exists and has been reached it is said to be triggered
-        triggered: bool = time_bound != -1 and time >= time_bound and can_divide
+        triggered: bool = bound != -1 and value >= bound and can_divide
         _Strategies_logger.debug(f"Reactive calculation [step = {current_search_length}, index = {current_subgoal_index}, matching = {matching_child}]: "
-                                 f"bound type = {self.__bound_type}, bound = {time_bound}, time calculation = {time}, backwards horizon = {backwards_horizon}, preemptive = {self.preemptive}, triggered = {triggered}")
+                                 f"bound type = {self.__bound_type}, bound = {bound}, value = {value}, backwards horizon = {backwards_horizon}, preemptive = {self.preemptive}, triggered = {triggered}")
         
         ## Update the strategy if a division was made
         if triggered: self._update(problem_level, current_subgoal_index, current_search_length)
@@ -1418,7 +1420,7 @@ class Relentless(Reactive):
         return Reaction(divide=triggered,
                         interrupt=self.interrupting,
                         backwards_horizon=backwards_horizon,
-                        rationale=f"{self.__bound_type.name!s} search time bound since last division {'reached' if triggered else 'not reached'}: bound = {time_bound}, time = {time}")
+                        rationale=f"{self.__bound_type.name!s} search time bound since last division {'reached' if triggered else 'not reached'}: bound = {bound}, value = {value}")
 
 class Impetuous(Reactive):
     
@@ -1464,8 +1466,8 @@ class Impetuous(Reactive):
                                  or isinstance(backwards_horizon, float)
                                  or (current_subgoal_index - self.get_last_division_index(problem_level)) > backwards_horizon))
         
-        time: float
-        time_bound: Number
+        value: Number
+        bound: Number
         interrupting_triggered: bool = False
         continuous_triggered: bool = False
         bound_type: Optional[ReactiveBoundType] = None
@@ -1473,30 +1475,30 @@ class Impetuous(Reactive):
         
         ## If the either the interrupting or continuous bounds exist and have been reached they are said to be triggered;
         ##      - Interrupting divisions take precedence over continuous divisions.
-        if (time_bound := self.get_bound(ReactiveBoundType.Cumulative.value, problem_level, -1)) != -1:
+        if (bound := self.get_bound(ReactiveBoundType.Cumulative.value, problem_level, -1)) != -1:
             
-            time: float = self.calculate_time(problem_level, problem_start_step, ReactiveBoundType.Cumulative, incremental_times, valid_only=False)
-            interrupting_triggered = time >= time_bound
+            value = self.calculate(problem_level, problem_start_step, current_search_length, ReactiveBoundType.Cumulative, incremental_times, valid_only=False)
+            interrupting_triggered = value >= bound
             bound_type = ReactiveBoundType.Cumulative
-            rationale = f"Cumulative interrupting search time bound since last division {'reached' if interrupting_triggered else 'not reached'}: bound = {time_bound}, time = {time}"
+            rationale = f"Cumulative interrupting bound since last division {'reached' if interrupting_triggered else 'not reached'}: bound = {bound}, value = {value}"
             _Strategies_logger.debug("Interrupting reactive time calculation:\n"
-                                     f"bound type = {bound_type.name!s}, bound = {time_bound}, time calculation = {time}, tiggered = {interrupting_triggered}")
+                                     f"bound type = {bound_type.name!s}, bound = {bound}, value = {value}, tiggered = {interrupting_triggered}")
         
         if (not interrupting_triggered
-            and (time_bound := self.get_bound(self.__continuous_bound_type.value, problem_level, -1)) != -1):
+            and (bound := self.get_bound(self.__continuous_bound_type.value, problem_level, -1)) != -1):
             
-            time: float = self.calculate_time(problem_level, problem_start_step, self.__continuous_bound_type, incremental_times)
-            continuous_triggered = time >= time_bound
+            value = self.calculate(problem_level, problem_start_step, current_search_length, self.__continuous_bound_type, incremental_times)
+            continuous_triggered = value >= bound
             bound_type = self.__continuous_bound_type
-            rationale = f"{self.__continuous_bound_type.name!s} continuous search time bound since last division {'reached' if continuous_triggered else 'not reached'}: bound = {time_bound}, time = {time}"
+            rationale = f"{self.__continuous_bound_type.name!s} continuous time bound since last division {'reached' if continuous_triggered else 'not reached'}: bound = {bound}, value = {value}"
             _Strategies_logger.debug("Continuous reactive time calculation:\n"
-                                     f"bound type = {bound_type.name!s}, bound = {time_bound}, time calculation = {time}, tiggered = {continuous_triggered}")
+                                     f"bound type = {bound_type.name!s}, bound = {bound}, value = {value}, tiggered = {continuous_triggered}")
         
         triggered: bool = (can_divide
                            and (interrupting_triggered
                                 or continuous_triggered))
         _Strategies_logger.debug(f"Final reactive calculation [step = {current_search_length}, index = {current_subgoal_index}, matching = {matching_child}]: "
-                                 f"bound type = {bound_type}, bound = {time_bound}, time calculation = {time}, backwards horizon = {backwards_horizon}, preemptive = {self.preemptive}, triggered = {triggered}")
+                                 f"bound type = {bound_type}, bound = {bound}, value = {value}, backwards horizon = {backwards_horizon}, preemptive = {self.preemptive}, triggered = {triggered}")
         
         ## Update the strategy if a division was made
         if triggered: self._update(problem_level, current_subgoal_index, current_search_length)

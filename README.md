@@ -83,6 +83,12 @@ plan: ASH.Planning.Plans.HierarchicalPlan = planner.generate_hierarchical_plan(s
 plan.pretty_print()
 ```
 
+## Disclaimer
+
+Should features of the planner are incomplete or untested.
+Unfortunately, some features were cut from the thesis due to time constraints.
+These were removed from the implementation, but some supporting code still remains.
+
 ## Structure
 
 [ASH Components Dependency Diagram]

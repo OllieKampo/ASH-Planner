@@ -195,7 +195,7 @@ fluent(AL_1, inertial, on(OBJ), SURFACE) :- OBJ != SURFACE,
 fluent(AL_1, inertial, grasping(DESC), OBJ) :- insta_of(AL_1, graspable, OBJ),
                                                insta_of(AL_2, grasper, DESC),
                                                AL_1 < TL, AL_2 < TL,
-                                               model_type(TL, tasking),
+                                               model_type(TL, tasking_simple),
                                                sl(AL_1), sl(AL_2),
                                                AL_2 >= AL_1.
 
@@ -215,14 +215,18 @@ fluent(AL_1, inertial, configuration(D), STATE) :- state_of(AL_1, D, STATE),
 %% In the redefined model robots can be transporting objects
 fluent(AL_1, inertial, transporting(ROBO, OBJ), B) :- insta_of(AL_2, armed_robot, ROBO),
                                                       insta_of(AL_1, graspable, OBJ), OBJ != nothing,
-                                                      AL_1 >= TL, model_type(TL, tasking),
+                                                      AL_1 >= TL, model_type(TL, tasking_simple),
                                                       sl(AL_2), sl(AL_1),
                                                       AL_2 >= AL_1,
                                                       boolean(B).
 
-fluent(AL_1, inertial, blocks_ready(problem_number), B)
+fluent(AL_1, inertial, blocks_ready(TABLE), B) :- insta_of(AL, table, TABLE),
+                                                  AL_1 >= TL, model_type(TL, tasking_specific),
+                                                  sl(AL_1), boolean(B).
 
-fluent(AL_1, inertial, solved(problem_number), B)
+fluent(AL_1, inertial, solved(TABLE), B) :- insta_of(AL, table, TABLE),
+                                            AL_1 >= TL, model_type(TL, tasking_specific),
+                                            sl(AL_1), boolean(B).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Defined Fluents
@@ -266,21 +270,21 @@ action(AL, concurrent, manipulation, ROBO, grasp(DESC, OBJ)) :- desce_of(AL, ROB
                                                                 insta_of(AL, armed_robot, ROBO),
                                                                 insta_of(AL, grasper, DESC),
                                                                 insta_of(AL, graspable, OBJ), OBJ != nothing,
-                                                                AL < TL, model_type(TL, tasking), sl(AL).
+                                                                AL < TL, model_type(TL, tasking_simple), sl(AL).
 
 %% Robots can release objects from their graspers
 action(AL, concurrent, manipulation, ROBO, release(DESC, OBJ)) :- desce_of(AL, ROBO, DESC),
                                                                   insta_of(AL, armed_robot, ROBO),
                                                                   insta_of(AL, grasper, DESC),
                                                                   insta_of(AL, graspable, OBJ), OBJ != nothing,
-                                                                  AL < TL, model_type(TL, tasking), sl(AL).
+                                                                  AL < TL, model_type(TL, tasking_simple), sl(AL).
 
 %% Robots can set the configuration state of their configurable components
 action(AL, concurrent, configuration, ROBO, configure(DESC, STATE)) :- desce_of(AL, ROBO, DESC),
                                                                        insta_of(AL, armed_robot, ROBO),
                                                                        insta_of(AL, configurable, DESC),
                                                                        state_of(AL, DESC, STATE),
-                                                                       AL < TL, model_type(TL, tasking), AL < reduc, sl(AL).
+                                                                       AL < TL, model_type(TL, tasking_simple), AL < reduc, sl(AL).
 
 %% Robots can put objects on surfaces
 action(AL, concurrent, manipulation, ROBO, put(DESC, OBJ, SURFACE)) :- OBJ != SURFACE, SURFACE != nothing,
@@ -289,40 +293,44 @@ action(AL, concurrent, manipulation, ROBO, put(DESC, OBJ, SURFACE)) :- OBJ != SU
                                                                        insta_of(AL, grasper, DESC),
                                                                        insta_of(AL, placeable, OBJ),
                                                                        insta_of(AL, surface, SURFACE),
-                                                                       AL < TL, model_type(TL, tasking), sl(AL).
+                                                                       AL < TL, model_type(TL, tasking_simple), sl(AL).
 
 %% Robots can lift objects off of surfaces
 action(AL, concurrent, manipulation, ROBO, lift(DESC, OBJ)) :- desce_of(AL, ROBO, DESC),
                                                                insta_of(AL, armed_robot, ROBO),
                                                                insta_of(AL, grasper, DESC),
                                                                insta_of(AL, placeable, OBJ),
-                                                               AL < TL, model_type(TL, tasking), sl(AL).
+                                                               AL < TL, model_type(TL, tasking_simple), sl(AL).
 
 %% Robots can actuate doors
 action(AL, concurrent, manipulation, ROBO, actuate(DESC, D)) :- insta_of(AL, armed_robot, ROBO),
                                                                 insta_of(AL, grasper, DESC),
                                                                 insta_of(AL, door, D),
-                                                                AL < TL, model_type(TL, tasking), AL < reduc, sl(AL).
+                                                                AL < TL, model_type(TL, tasking_simple), AL < reduc, sl(AL).
 
 %% In the redefined model robots can collect objects
 action(AL, concurrent, manipulation, ROBO, collect(OBJ)) :- insta_of(AL, armed_robot, ROBO),
                                               insta_of(AL, graspable, OBJ), OBJ != nothing,
-                                              AL >= TL, model_type(TL, tasking), sl(AL).
+                                              AL >= TL, model_type(TL, tasking_simple), sl(AL).
 
 %% In the redefined model robots can deposit objects
 action(AL, concurrent, manipulation, ROBO, deposit(OBJ)) :- insta_of(AL, armed_robot, ROBO),
                                               insta_of(AL, graspable, OBJ), OBJ != nothing,
-                                              AL >= TL, model_type(TL, tasking), sl(AL).
+                                              AL >= TL, model_type(TL, tasking_simple), sl(AL).
 
 %% In the redefined model robots can pick up and put down objects with a single action
 action(AL, concurrent, manipulation, ROBO, place_upon(OBJ, SURFACE)) :- insta_of(AL, armed_robot, ROBO),
                                                           insta_of(AL, placeable, OBJ),
                                                           insta_of(AL, surface, SURFACE),
-                                                          AL >= TL, model_type(TL, tasking), sl(AL).
+                                                          AL >= TL, model_type(TL, tasking_simple), sl(AL).
 
-action(AL, sequential, locomotion, ROBO, transport_blocks(problem_number))
+action(AL, sequential, locomotion, ROBO, transport_blocks(TABLE)) :- insta_of(AL, table, TABLE),
+                                                                     AL_1 >= TL, model_type(TL, tasking_specific),
+                                                                     sl(AL_1), boolean(B).
 
-action(AL, sequential, manipulation, ROBO, build_towers(problem_number))
+action(AL, sequential, manipulation, ROBO, build_towers(TABLE)) :- insta_of(AL, table, TABLE),
+                                                                   AL_1 >= TL, model_type(TL, tasking_specific),
+                                                                   sl(AL_1), boolean(B).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -429,21 +437,21 @@ effect(AL, ROBO, collect(OBJ), transporting(ROBO, OBJ), true) :- action(AL, _, _
                                                                  fluent(AL, inertial, transporting(ROBO, OBJ), true),
                                                                  insta_of(AL, armed_robot, ROBO),
                                                                  insta_of(AL, graspable, OBJ),
-                                                                 AL >= TL, model_type(TL, tasking), pl(AL).
+                                                                 AL >= TL, model_type(TL, tasking_simple), pl(AL).
 
 %% In the redefined model, when a robot collects an object the object is on nothing
 effect(AL, ROBO, collect(OBJ), on(OBJ), nothing) :- action(AL, _, _, ROBO, collect(OBJ)),
                                                     fluent(AL, inertial, on(OBJ), nothing),
                                                     insta_of(AL, armed_robot, ROBO),
                                                     insta_of(AL, graspable, OBJ),
-                                                    AL >= TL, model_type(TL, tasking), pl(AL).
+                                                    AL >= TL, model_type(TL, tasking_simple), pl(AL).
 
 %% In the redefined model, when a robot deposits an object it is no longer transporting that object
 effect(AL, ROBO, deposit(OBJ), transporting(ROBO, OBJ), false) :- action(AL, _, _, ROBO, deposit(OBJ)),
                                                                   fluent(AL, inertial, transporting(ROBO, OBJ), false),
                                                                   insta_of(RL, armed_robot, ROBO),
                                                                   insta_of(RL, graspable, OBJ),
-                                                                  AL >= TL, model_type(TL, tasking), pl(AL).
+                                                                  AL >= TL, model_type(TL, tasking_simple), pl(AL).
 
 %% In the redefined model, when a robot places an object upon a surface the object is on that surface
 effect(AL, ROBO, place_upon(OBJ, SURFACE), on(OBJ), SURFACE) :- action(AL, _, _, ROBO, place_upon(OBJ, SURFACE)),
@@ -452,7 +460,7 @@ effect(AL, ROBO, place_upon(OBJ, SURFACE), on(OBJ), SURFACE) :- action(AL, _, _,
                                                                 insta_of(AL, armed_robot, ROBO),
                                                                 insta_of(AL, placeable, OBJ),
                                                                 insta_of(AL, surface, SURFACE),
-                                                                AL >= TL, model_type(TL, tasking), pl(AL).
+                                                                AL >= TL, model_type(TL, tasking_simple), pl(AL).
 
 %% In the redefined model, when a robot places an object upon a surface
 effect(AL, ROBO, place_upon(OBJ, SURFACE), transporting(ROBO, OBJ), false) :- action(AL, _, _, ROBO, place_upon(OBJ, SURFACE)),
@@ -461,7 +469,7 @@ effect(AL, ROBO, place_upon(OBJ, SURFACE), transporting(ROBO, OBJ), false) :- ac
                                                                               insta_of(AL, armed_robot, ROBO),
                                                                               insta_of(AL, placeable, OBJ),
                                                                               insta_of(AL, surface, SURFACE),
-                                                                              AL >= TL, model_type(TL, tasking), pl(AL).
+                                                                              AL >= TL, model_type(TL, tasking_simple), pl(AL).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Agent Action Preconditions - Conditions that must hold to plan certain actions
@@ -804,7 +812,7 @@ precond(AL, ROBO, collect(OBJ), in(OBJ), L, true, t) :- holds(AL, in(ROBO), L, t
                                                         insta_of(AL, armed_robot, ROBO),
                                                         insta_of(AL, graspable, OBJ),
                                                         insta_of(AL, location, L),
-                                                        AL >= TL, model_type(TL, tasking), pl(AL).
+                                                        AL >= TL, model_type(TL, tasking_simple), pl(AL).
 
 precond(AL, ROBO, collect(OBJ), in(ROBO), L, true, t) :- holds(AL, in(OBJ), L, t - 1), OBJ != nothing,
                                                          action(AL, _, _, ROBO, collect(OBJ)),
@@ -813,7 +821,7 @@ precond(AL, ROBO, collect(OBJ), in(ROBO), L, true, t) :- holds(AL, in(OBJ), L, t
                                                          insta_of(AL, armed_robot, ROBO),
                                                          insta_of(AL, graspable, OBJ),
                                                          insta_of(AL, location, L),
-                                                         AL >= TL, model_type(TL, tasking), pl(AL).
+                                                         AL >= TL, model_type(TL, tasking_simple), pl(AL).
 
 %% An armed robot cannot collect an object that has another object on top of it
 precond(AL, ROBO, collect(OBJ_1), on(OBJ_2), OBJ_1, false) :- OBJ_1 != OBJ_2,
@@ -824,7 +832,7 @@ precond(AL, ROBO, collect(OBJ_1), on(OBJ_2), OBJ_1, false) :- OBJ_1 != OBJ_2,
                                                               insta_of(AL, surface, OBJ_1),
                                                               insta_of(AL, surface, SURFACE),
                                                               insta_of(AL, placeable, OBJ_2),
-                                                              AL >= TL, model_type(TL, tasking), pl(AL).
+                                                              AL >= TL, model_type(TL, tasking_simple), pl(AL).
 
 %% An armed robot can only deposit an object when it is transporting that object
 precond(AL, ROBO, deposit(OBJ), transporting(ROBO, OBJ), true, true) :- OBJ != nothing,
@@ -832,7 +840,7 @@ precond(AL, ROBO, deposit(OBJ), transporting(ROBO, OBJ), true, true) :- OBJ != n
                                                                         fluent(AL, inertial, transporting(ROBO, OBJ), true),
                                                                         insta_of(AL, armed_robot, ROBO),
                                                                         insta_of(AL, graspable, OBJ),
-                                                                        AL >= TL, model_type(TL, tasking), pl(AL).
+                                                                        AL >= TL, model_type(TL, tasking_simple), pl(AL).
 
 %% An armed robot can only place an object upon a surface when it is in the same location as both the object and the surface
 precond(AL, ROBO, place_upon(OBJ, SURFACE), in(SURFACE), L, true, t) :- holds(AL, in(ROBO), L, t - 1),
@@ -845,7 +853,7 @@ precond(AL, ROBO, place_upon(OBJ, SURFACE), in(SURFACE), L, true, t) :- holds(AL
                                                                         insta_of(AL, placeable, OBJ),
                                                                         insta_of(AL, surface, SURFACE),
                                                                         insta_of(AL, location, L),
-                                                                        AL >= TL, model_type(TL, tasking), pl(AL).
+                                                                        AL >= TL, model_type(TL, tasking_simple), pl(AL).
 
 precond(AL, ROBO, place_upon(OBJ, SURFACE), in(OBJ), L, true, t) :- holds(AL, in(ROBO), L, t - 1),
                                                                     holds(AL, in(SURFACE), L, t - 1),
@@ -857,7 +865,7 @@ precond(AL, ROBO, place_upon(OBJ, SURFACE), in(OBJ), L, true, t) :- holds(AL, in
                                                                     insta_of(AL, placeable, OBJ),
                                                                     insta_of(AL, surface, SURFACE),
                                                                     insta_of(AL, location, L),
-                                                                    AL >= TL, model_type(TL, tasking), pl(AL).
+                                                                    AL >= TL, model_type(TL, tasking_simple), pl(AL).
 
 precond(AL, ROBO, place_upon(OBJ, SURFACE), in(ROBO), L, true, t) :- holds(AL, in(SURFACE), L, t - 1),
                                                                      holds(AL, in(OBJ), L, t - 1),
@@ -869,7 +877,7 @@ precond(AL, ROBO, place_upon(OBJ, SURFACE), in(ROBO), L, true, t) :- holds(AL, i
                                                                      insta_of(AL, placeable, OBJ),
                                                                      insta_of(AL, surface, SURFACE),
                                                                      insta_of(AL, location, L),
-                                                                     AL >= TL, model_type(TL, tasking), pl(AL).
+                                                                     AL >= TL, model_type(TL, tasking_simple), pl(AL).
 
 %% An armed robot cannot place an object upon a surface if there is another object on top of it
 precond(AL, ROBO, place_upon(OBJ_1, SURFACE), on(OBJ_2), OBJ_1, false) :- OBJ_1 != OBJ_2,
@@ -880,7 +888,7 @@ precond(AL, ROBO, place_upon(OBJ_1, SURFACE), on(OBJ_2), OBJ_1, false) :- OBJ_1 
                                                                           insta_of(AL, surface, OBJ_1),
                                                                           insta_of(AL, surface, SURFACE),
                                                                           insta_of(AL, placeable, OBJ_2),
-                                                                          AL >= TL, model_type(TL, tasking), pl(AL).
+                                                                          AL >= TL, model_type(TL, tasking_simple), pl(AL).
 
 %% An armed robot cannot place an object upon another object that is on nothing
 precond(AL, ROBO, place_upon(OBJ_1, OBJ_2), on(OBJ_2), nothing, false) :- OBJ_1 != OBJ_2,
@@ -890,7 +898,7 @@ precond(AL, ROBO, place_upon(OBJ_1, OBJ_2), on(OBJ_2), nothing, false) :- OBJ_1 
                                                                           insta_of(AL, placeable, OBJ_1),
                                                                           insta_of(AL, placeable, OBJ_2),
                                                                           insta_of(AL, surface, OBJ_2),
-                                                                          AL >= TL, model_type(TL, tasking), pl(AL).
+                                                                          AL >= TL, model_type(TL, tasking_simple), pl(AL).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %**% #program variable_relations(t).
@@ -998,7 +1006,7 @@ precond(AL, ROBO, place_upon(OBJ_1, OBJ_2), on(OBJ_2), nothing, false) :- OBJ_1 
 %                       al(AL_2), AL_1 >= AL_2 },
 %    N > M, block_number(N), block_number(M),
 %    insta_of(AL_1, robot, ROBO),
-%    AL_1 >= TL, model_type(TL, tasking), sl(AL_1).
+%    AL_1 >= TL, model_type(TL, tasking_simple), sl(AL_1).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Fluent Definitions - Rules defining the truth of defined fluents
@@ -1322,7 +1330,7 @@ holds(AL_1, transporting(ROBO, OBJ), true, t) :- holds(AL_2, grasping(COMP), OBJ
                                                  insta_of(AL_2, graspable, OBJ), OBJ != nothing,
                                                  insta_of(AL_3, grasper, COMP),
                                                  insta_of(AL_4, robot, ROBO),
-                                                 AL_1 >= TL, model_type(TL, tasking),
+                                                 AL_1 >= TL, model_type(TL, tasking_simple),
                                                  sl(AL_1), sl(AL_2), AL_1 >= AL_2,
                                                  sl(AL_3), AL_3 >= AL_2,
                                                  sl(AL_4), AL_4 >= AL_1.
@@ -1338,7 +1346,7 @@ holds(AL_1, transporting(ROBO, OBJ), false, t) :- 0 = #count { COMP : holds(AL_2
                                                   insta_of(AL_1, graspable, OBJ),
                                                   insta_of(AL_2, graspable, OBJ), OBJ != nothing,
                                                   insta_of(AL_4, robot, ROBO),
-                                                  AL_1 >= TL, model_type(TL, tasking),
+                                                  AL_1 >= TL, model_type(TL, tasking_simple),
                                                   sl(AL_1), sl(AL_2), AL_1 >= AL_2,
                                                   sl(AL_4), AL_4 >= AL_1.
 

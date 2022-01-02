@@ -96,7 +96,7 @@ state_of(AL, EN, S) :- state(AL, CLS, S), insta_of(AL, CLS, EN), al(AL).
 %% An entity is a child of another at a given abstraction level if there is a ancestry relation between them
 child_of(AL, EN, DESCE) :- ancestry_relation(EN, DESCE), insta_of(AL, _, EN), insta_of(AL, _, DESCE), al(AL).
 
-%% An entity is a descendant of another if either:
+%% An entity is a descendant of another if either;
 %%      - The entity is the child of the other entity,
 %%      - By transitivity, if the entity is a descendant of some different entity which is itself a descendant of the other entity.
 desce_of(AL, EN, DESCE) :- child_of(AL, EN, DESCE), insta_of(AL, _, EN), insta_of(AL, _, DESCE), al(AL).
@@ -328,9 +328,9 @@ max_order(M) :- M = #max { ORDER : goal_order(AL, F, V, B, ORDER) }, final_goal(
 :~ occurs(AL, ROBOT, A, step), action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V, step), final_goal(AL, F, V, true),
    fluent(AL, inertial, F, V), pl(AL), step > start, preempt_pos_fgoals = true, preempt_mode = optimise. [-1 @ 0, AL, ROBOT, A, F, V, step]
 :~ occurs(AL, ROBOT, A, step), action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V), final_goal(AL, F, V, false),
-   fluent(AL, inertial, F, V), pl(AL), step > start, preempt_neg_fgoals = true, preempt_mode = optimise. [1 @ 0, AL, ROBOT, A, F, V, step]
+   fluent(AL, inertial, F, V), pl(AL), step > start, preempt_neg_fgoals = true, preempt_mode = optimise. [1 @ -1, AL, ROBOT, A, F, V, step]
 :~ occurs(AL, ROBOT, A, step), action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V, step), final_goal(AL, F, V, false),
-   fluent(AL, inertial, F, V), pl(AL), step > start, preempt_neg_fgoals = true, preempt_mode = optimise. [1 @ 0, AL, ROBOT, A, F, V, step]
+   fluent(AL, inertial, F, V), pl(AL), step > start, preempt_neg_fgoals = true, preempt_mode = optimise. [1 @ -1, AL, ROBOT, A, F, V, step]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -349,14 +349,14 @@ max_order(M) :- M = #max { ORDER : goal_order(AL, F, V, B, ORDER) }, final_goal(
 % :~ gen_search_space_at(step), current_sub_goal(AL + 1, ROBOT, A, F, V, I_SG, step - 1), sub_goal(AL + 1, ROBOT, A, F, V, I_SG), action(AL + 1, _, _, ROBOT, A), fluent(AL + 1, inertial, F, V), pl(AL). [1 @ 1, AL, ROBOT, A, F, V, I_SG, step]
 % :~ gen_search_space_at(step), current_sub_goal_index(AL + 1, I, step - 1), sgoals_index(I), pl(AL). [-I @ 1, AL, I, step]
 
-%% Keep incrementing until a complete plan is found
+%% Solution checking constraint - The problem is satisfiable only iff all currently included goals are achieved
 #external query(step).
 #external gen_search_space_at(step). %% must only ever be true on the last step, so must be released after each step.
-:- incomplete_plan(step), not gen_search_space_at(step), query(step).
+:- step > minimum_search_length_bound, incomplete_plan(step), not gen_search_space_at(step), query(step).
 
 %% Make the program unsatisfiable up to the minimum search length bound
 #const minimum_search_length_bound = -1.
-:- step <= minimum_search_length_bound, query(step).
+% :- step <= minimum_search_length_bound, query(step).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

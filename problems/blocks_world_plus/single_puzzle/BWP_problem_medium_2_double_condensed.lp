@@ -197,18 +197,21 @@ entity(room, puzzle_room).
 entity(room, hallway).
 
 %% All the rooms have two cells except the hallway which has three
-n(0..9).
-size(starting_room, 5, 2).
+n(0..12).
+size(starting_room, 8, 2).
 size(store_room, 8, 2).
-size(hallway, 9, 2).
+size(hallway, 12, 2).
 size(puzzle_room, 8, 2).
 
-%% One zone for each pair of X cells
+%% Zones with two cell widths
 zone_width(2).
-X_1 = (N_1 + 1) * 2 -> X_2 = N_2 * 2 : N_2 = N_1 + 1
-entity(zone, (ROOM, N)) :- entity(room, ROOM), size(ROOM, N_MAX, _), N < N_MAX, n(N).
+entity(zone, (ROOM, N)) :- entity(room, ROOM), size(ROOM, N_MAX, _), N < (N_MAX / W), zone_width(W), n(N).
+zone_x((ROOM, N), (N * W) + P) :- P >= 0, P < W, zone_width(W), entity(zone, (ROOM, N)), n(P), n(N).
+entity(cell, ((ROOM, N), X, Y)) :- zone_x((ROOM, N), X), entity(room, ROOM), entity(zone, (ROOM, N)), size(ROOM, X_MAX, Y_MAX), X < X_MAX, Y < Y_MAX, n(N), n(X), n(Y).
 
-entity(cell, ((ROOM, N), N, Y)) :- entity(room, ROOM), entity(zone, (ROOM, N)), size(ROOM, X_MAX, Y_MAX), N < X_MAX, Y < Y_MAX, n(N), n(X), n(Y).
+% One zone for each pair of X cells - Barely reduces expansion factors
+% entity(zone, (ROOM, N)) :- entity(room, ROOM), size(ROOM, N_MAX, _), N < N_MAX, n(N).
+% entity(cell, ((ROOM, N), N, Y)) :- entity(room, ROOM), entity(zone, (ROOM, N)), size(ROOM, X_MAX, Y_MAX), N < X_MAX, Y < Y_MAX, n(N), n(X), n(Y).
 
 %% The is one door between the hallway and the puzzle room
 entity(door, store_room_door).

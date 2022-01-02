@@ -322,7 +322,9 @@ class Statistics:
                 + ", ".join([f"Grounding = {self.grounding_time:.6f}s",
                              f"Solving = {self.solving_time:.6f}s",
                              f"Total = {self.total_time:.6f}s",
-                             f"Memory = {self.memory!s}"]))
+                             f"Memory = {self.memory!s}"]
+                            + ([f"Step range = [{min(self.step_range)}-{max(self.step_range)}]"]
+                               if self.step_range is not None else [])))
 
 @dataclass(frozen=True)
 class IncrementalStatistics(Statistics):
@@ -374,33 +376,34 @@ class IncrementalStatistics(Statistics):
         "Combine this incremental statistics object with another. Incremental statistics are combined on a increment-wise basis."
         
         ## Form a merged sequence of incremental statistics
-        incremental: dict[int, Statistics] = {}
-        stat_list: list[IncrementalStatistics] = [self, other]
-        for incremental_stat in stat_list:
-            for increment in incremental_stat.incremental:
-                current_stat: Statistics = incremental_stat.incremental[increment]
-                
-                _increment: int = increment
-                if incremental_stat is other:
-                    _increment = increment + shift_increments
-                
-                if (existing_stat := incremental.get(increment, None)) is not None:
-                    incremental[_increment] = Statistics(existing_stat.grounding_time + current_stat.grounding_time,
-                                                         existing_stat.solving_time + current_stat.solving_time,
-                                                         memory=max(existing_stat.memory, current_stat.memory))
-                else: incremental[_increment] = current_stat
+        incremental: dict[int, Statistics] = self.incremental
+        
+        for increment, current_stat in other.incremental.items():
+            _increment: int = increment + shift_increments
+            
+            if (existing_stat := incremental.get(increment, None)) is not None:
+                incremental[_increment] = Statistics(existing_stat.grounding_time + current_stat.grounding_time,
+                                                     existing_stat.solving_time + current_stat.solving_time,
+                                                     memory=max(existing_stat.memory, current_stat.memory),
+                                                     step_range=range(min(existing_stat.step_range.start, current_stat.step_range.start),
+                                                                      max(existing_stat.step_range.stop, current_stat.step_range.stop)))
+            else: incremental[_increment] = current_stat
         
         ## Calculate cumulative totals
         cumulative_grounding: float = self.cumulative.grounding_time + other.cumulative.grounding_time
         cumulative_solving: float = self.cumulative.solving_time + other.cumulative.solving_time
         cumulative_memory = Memory(max(self.cumulative.memory.rss, other.cumulative.memory.rss),
                                    max(self.cumulative.memory.vms, other.cumulative.memory.vms))
-        cumulative = Statistics(cumulative_grounding, cumulative_solving, memory=cumulative_memory)
+        cumulative_step_range = range(min(self.cumulative.step_range.start, other.cumulative.step_range.start),
+                                      max(self.cumulative.step_range.stop, other.cumulative.step_range.stop))
+        cumulative = Statistics(cumulative_grounding, cumulative_solving,
+                                memory=cumulative_memory, step_range=cumulative_step_range)
         
         return IncrementalStatistics(self.grounding_time,
                                      self.solving_time,
                                      self.total_time,
                                      self.memory,
+                                     self.step_range,
                                      cumulative=cumulative,
                                      incremental=incremental)
 
@@ -2698,7 +2701,7 @@ class LogicProgram:
                                 postfix={"st/inc" : str(self.incrementor.step_increase),
                                          "Memory (Mb)" : str(int(process.memory_info().rss / (1024 ** 2))),
                                          "CPU (%)" : str(int(process.cpu_percent()))},
-                                initial=self.__incrementor.step_start if start_increment == 1 else self.__bounds.previous_step,
+                                initial=(self.__bounds.previous_step + 1),
                                 total=self.__incrementor.step_end_max if self.__incrementor.step_end_max is not None else None,
                                 leave=False, ncols=180, miniters=1, colour="cyan")
         
@@ -2728,13 +2731,6 @@ class LogicProgram:
                 self.__logger.debug(f"Beginning incremental call [{self.__bounds.increment}]:\n"
                                     + "\n".join([f"Running step bounds   | Previous = {self.__bounds.previous_step:>6d} : Current = {self.__bounds.current_step:>6d}",
                                                  f"Incrementor step ends | Minimum  = {get_step(self.__incrementor.step_end_min)} : Maximum = {get_step(self.__incrementor.step_end_max)}"]))
-                
-                ## Update the CLI progress bar
-                if self.__tqdm:
-                    progress_bar.update(self.__bounds.current_step - self.__bounds.previous_step)
-                    progress_bar.set_postfix({"st/inc" : str(self.incrementor.step_increase),
-                                              "Memory (Mb)" : str(int(process.memory_info().rss / (1024 ** 2))),
-                                              "CPU (%)" : str(process.cpu_percent())})
                 
                 ## Obtain the step range for the current increment
                 ##      - Add one to bound because the previous step has already been solved so needs to be exclusive and the current has not so needs to be inclusive
@@ -2798,6 +2794,13 @@ class LogicProgram:
                                                  f"Used memory = {memory!s}, Total system virtual memory = {total_system_virtual_memory}Mb"]))
                 if result == SolveResult.Satisfiable:
                     self.__logger.debug(f"Incremental solving has found an answer set:\n{self.get_answer()}")
+                
+                ## Update the CLI progress bar
+                if self.__tqdm:
+                    progress_bar.update(self.__bounds.current_step - self.__bounds.previous_step)
+                    progress_bar.set_postfix({"st/inc" : str(self.incrementor.step_increase),
+                                              "Memory (Mb)" : str(int(process.memory_info().rss / (1024 ** 2))),
+                                              "CPU (%)" : str(process.cpu_percent())})
                 
                 ## Cleanup the logic program ready for the next iteration
                 self.__control.cleanup()

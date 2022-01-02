@@ -22,7 +22,7 @@
 import logging
 import statistics
 import time
-from typing import Any, Callable, Iterator, NamedTuple
+from typing import Any, Callable, Iterator, NamedTuple, Optional
 
 import pandas
 import tqdm
@@ -31,7 +31,7 @@ from ASP_Parser import Statistics
 
 import core.Planner as Planner
 from core.Helpers import center_text
-from core.Strategies import DivisionPoint, DivisionScenario
+from core.Strategies import DivisionPoint, DivisionScenario, SubGoalRange
 
 ## Experiment module logger
 _EXP_logger: logging.Logger = logging.getLogger(__name__)
@@ -71,24 +71,44 @@ class Results:
         self.__is_changed = True
     
     @property
-    def mean(self) -> pandas.DataFrame:
+    def cat_level_wise_means(self) -> pandas.DataFrame:
         dataframes = self.process()
         return dataframes["CAT"].drop("RU", axis="columns").groupby("AL").mean().sort_index(axis="index", ascending=False).reset_index()
     
     @property
-    def std(self) -> pandas.DataFrame:
+    def cat_level_wise_stdev(self) -> pandas.DataFrame:
         dataframes = self.process()
         return dataframes["CAT"].drop("RU", axis="columns").groupby("AL").std().sort_index(axis="index", ascending=False).reset_index()
     
     @property
-    def step_wise_averages(self) -> pandas.DataFrame:
+    def par_level_wise_means(self) -> pandas.DataFrame:
         dataframes = self.process()
-        return dataframes["STEP_CAT"].drop("RU", axis="columns").groupby(["AL", "SL"]).mean().sort_index(axis="index", ascending=False).reset_index()
+        return dataframes["PAR"].drop(["RU", "IT"], axis="columns").groupby("AL").mean().sort_index(axis="index", ascending=False).reset_index()
     
     @property
-    def step_wise_std(self) -> pandas.DataFrame:
+    def par_level_wise_stdev(self) -> pandas.DataFrame:
         dataframes = self.process()
-        return dataframes["STEP_CAT"].drop("RU", axis="columns").groupby(["AL", "SL"]).std().sort_index(axis="index", ascending=False).reset_index()
+        return dataframes["PAR"].drop(["RU", "IT"], axis="columns").groupby("AL").std().sort_index(axis="index", ascending=False).reset_index()
+    
+    @property
+    def step_wise_means(self) -> pandas.DataFrame:
+        dataframes = self.process()
+        return dataframes["STEP_CAT"].drop("RU", axis="columns").groupby(["AL", "SL"]).mean().sort_index(axis="index", ascending=True).reset_index()
+    
+    @property
+    def step_wise_stdev(self) -> pandas.DataFrame:
+        dataframes = self.process()
+        return dataframes["STEP_CAT"].drop("RU", axis="columns").groupby(["AL", "SL"]).std().sort_index(axis="index", ascending=True).reset_index()
+    
+    @property
+    def index_wise_means(self) -> pandas.DataFrame:
+        dataframes = self.process()
+        return dataframes["INDEX_CAT"].drop("RU", axis="columns").groupby(["AL", "INDEX"]).mean().sort_index(axis="index", ascending=True).reset_index()
+    
+    @property
+    def index_wise_stdev(self) -> pandas.DataFrame:
+        dataframes = self.process()
+        return dataframes["INDEX_CAT"].drop("RU", axis="columns").groupby(["AL", "INDEX"]).std().sort_index(axis="index", ascending=True).reset_index()
     
     def best_quality(self) -> Planner.HierarchicalPlan:
         best_plan: Planner.HierarchicalPlan
@@ -111,57 +131,130 @@ class Results:
         ## Collate the data into a dictionary
         data_dict: dict[str, dict[str, list[float]]] = {}
         
-        data_dict["PROBLEM_SEQUENCE"] = {"RU" : [], "SN" : [], "AL" : [], "IT" : [], "PN" : [], "SIZE" : []} ## TODO Account for blends in size?
+        data_dict["GLOBALS"] = {"RU" : [], "EX_T" : [], "HA_T" : [], "AW_T" : [], "AME_T" : [], "AME_T_PA" : [], "BL_LE" : [], "BL_AC" : []}
         
-        data_dict["DIVISION_SCENARIOS"] = {"RU" : [], "AL" : [], "SN" : [], "PLANS_CONCAT" : [], "SIZE" : []}
+        data_dict["PROBLEM_SEQUENCE"] = {"RU" : [], "SN" : [], "AL" : [], "IT" : [], "PN" : [],
+                                         "START_S" : [], "IS_INITIAL" : [], "IS_FINAL" : [],
+                                         "SIZE" : [],  "SGLITS_T" : [],
+                                         "FIRST_I" : [], "LAST_I" : []}
+                                        #  "L_BLEND" : [], "R_BLEND" : []
         
-        data_dict["GLOBALS"] = {} ## TODO Absolution time, average wait time, average minimum execution time, average miniumum execution time per action
+        data_dict["SCENARIOS"] = {"RU" : [], "AL" : [], "SN" : [],
+                                  "SIZE" : [], "SGLITS_T" : [],
+                                  "FIRST_I" : [], "LAST_I" : [],
+                                  "DIVS" : [], "SPREAD" : []}
+        
+        data_dict["DIVISIONS"] = {"RU" : [], "AL" : [], "DN" : [],
+                                  "APP_INDEX" : [], "COM_INDEX" : [], "COM_STEP" : [], "L_BLEND" : [], "R_BLEND" : [],
+                                  "IS_INHERITED" : [], "IS_PROACTIVE" : [], "IS_INTERRUPT" : [], "PREEMPTIVE" : []}
         
         data_dict["CAT"] = {"RU" : [], "AL" : [],
-                            "GT" : [], "ST" : [], "OT" : [], "TT" : [], "LT" : [], "CT" : [], "WT" : [],
+                            "GT" : [], "ST" : [], "OT" : [], "TT" : [],
+                            "LT" : [], "CT" : [], "WT" : [],
                             "RSS" : [], "VMS" : [],
                             "LE" : [], "AC" : [], "CF" : [], "PSG" : [],
+                            "SIZE" : [], "SGLITS_T" : [],
+                            "HAS_TRAILING" : [], "TOT_CHOICES" : [], "PRE_CHOICES" : [], "FGOALS_ORDER" : [],
                             "CP_EF_L" : [], "CP_EF_A" : [], "SP_ED_L" : [], "SP_ED_A" : [], "SP_EB_L" : [], "SP_EB_A" : [],
                             "SP_MIN_L" : [], "SP_MIN_A" : [], "SP_LOWER_L" : [], "SP_LOWER_A" : [], "SP_MED_L" : [], "SP_MED_A" : [], "SP_UPPER_L" : [], "SP_UPPER_A" : [], "SP_MAX_L" : [], "SP_MAX_A" : [],
-                            "DS_T" : [], "DS_TD_MEAN" : [], "DS_TD_STD" : [], "DS_TD_CD" : [], "DS_TD_MIN" : [], "DS_TD_LOWER" : [], "DS_TD_MED" : [], "DS_TD_UPPER" : [], "DS_TD_MAX" : [],
-                            "DS_TS_MEAN" : [], "DS_TS_STD" : [], "DS_TS_CD" : [], "DS_TS_MIN" : [], "DS_TS_LOWER" : [], "DS_TS_MED" : [], "DS_TS_UPPER" : [], "DS_TS_MAX" : []}
+                            "T_INTER_SP" : [], "P_INTER_SP" : [], "T_INTER_Q" : [], "P_INTER_Q" : [],
+                            "M_CHILD_SPREAD" : [], "DIV_INDEX_SPREAD" : [], "DIV_STEP_SPREAD" : [],
+                            "DIVS_T" : [], "DS_T" : [], "DS_TD_MEAN" : [], "DS_TD_STD" : [], "DS_TD_CD" : [],
+                            "DS_TD_MIN" : [], "DS_TD_LOWER" : [], "DS_TD_MED" : [], "DS_TD_UPPER" : [], "DS_TD_MAX" : [],
+                            "DS_TS_MEAN" : [], "DS_TS_STD" : [], "DS_TS_CD" : [],
+                            "DS_TS_MIN" : [], "DS_TS_LOWER" : [], "DS_TS_MED" : [], "DS_TS_UPPER" : [], "DS_TS_MAX" : [],
+                            "PR_T" : [], "PR_TS_MEAN" : [], "PR_TS_STD" : [], "PR_TS_CD" : [],
+                            "PR_TS_MIN" : [], "PR_TS_LOWER" : [], "PR_TS_MED" : [], "PR_TS_UPPER" : [], "PR_TS_MAX" : [],
+                            "PP_LE_MEAN" : [], "PP_AC_MEAN" : [], "PP_LE_STD" : [], "PP_AC_STD" : [], "PP_LE_CD" : [], "PP_AC_CD" : [], 
+                            "PP_LE_MIN" : [], "PP_AC_MIN" : [], "PP_LE_LOWER" : [], "PP_AC_LOWER" : [], "PP_LE_MED" : [], "PP_AC_MED" : [], "PP_LE_UPPER" : [], "PP_AC_UPPER" : [], "PP_LE_MAX" : [], "PP_AC_MAX" : []}
         
-        data_dict["PAR"] = {"RU" : [], "AL" : [], "IT" : [],
-                            "GT" : [], "ST" : [], "OT" : [], "TT" : [], "YT" : [], "WT" : [],
+        data_dict["PAR"] = {"RU" : [], "AL" : [], "IT" : [], "PN" : [],
+                            "GT" : [], "ST" : [], "OT" : [], "TT" : [],
+                            "YT" : [], "WT" : [], "ET" : [],
                             "RSS" : [], "VMS" : [],
-                            "LE" : [], "AC" : [], "PSG" : []}
+                            "LE" : [], "AC" : [], "CF" : [], "PSG" : [],
+                            "START_S" : [], "END_S" : [],
+                            "SIZE" : [], "SGLITS_T" : [],
+                            "FIRST_I" : [], "LAST_I" : [],
+                            "TOT_CHOICES" : [], "PRE_CHOICES" : []}
         
         data_dict["STEP_CAT"] = {"RU" : [], "AL" : [], "SL" : [],
                                  "S_GT" : [], "S_ST" : [], "S_TT" : [],
                                  "C_GT" : [], "C_ST" : [], "C_TT" : [],
                                  "T_RSS" : [], "T_VMS" : [], "M_RSS" : [], "M_VMS" : [],
-                                 "C_TACHSGOALS" : [], "S_SGOALI" : [], "IS_MATCHING" : [],
+                                 "C_TACHSGOALS" : [], "S_SGOALI" : [], "IS_MATCHING" : [], "IS_TRAILING" : [],
                                  "C_CP_EF_L" : [], "C_CP_EF_A" : [], "C_SP_ED_L" : [], "C_SP_ED_A" : [], "C_SP_EB_L" : [], "C_SP_EB_A" : [],
-                                 "IS_DIV_APP" : [], "IS_INHERITED" : [], "IS_PROACTIVE" : [], "IS_INTERRUPT" : [], "PREEMPTIVE" : [], "IS_DIV_COM" : [], "DIV_COM_APP_AT" : []}
-                            #  "IS_LOCO" : [], "IS_MANI" : [], "IS_CONF" : []
+                                 "IS_DIV_APP" : [], "IS_INHERITED" : [], "IS_PROACTIVE" : [], "IS_INTERRUPT" : [], "PREEMPTIVE" : [], "IS_DIV_COM" : [], "DIV_COM_APP_AT" : [],
+                                 "IS_LOCO" : [], "IS_MANI" : [], "IS_CONF" : []}
         
-        data_dict["INDEX_WISE"] = {"INDEX" : [], "NUM_SGOALS" : [],
-                                   "SP_L" : [], "SP_A" : [],
-                                   "INTER_Q" : [], "INTER_S" : [],
-                                   "MAJORITY_TYPE" : []}
-                                #    "SP_RE_GT" : [],
-                                #    "SP_RE_ST" : [],
-                                #    "SP_RE_TT" : []
+        data_dict["INDEX_CAT"] = {"RU" : [], "AL" : [], "INDEX" : [],
+                                  "NUM_SGOALS" : [], "ACH_AT" : [], "YLD_AT" : [],
+                                  "IS_DIV" : [], "IS_INHERITED" : [], "IS_PROACTIVE" : [], "IS_INTERRUPT" : [], "PREEMPTIVE" : [],
+                                  "SP_RE_GT" : [], "SP_RE_ST" : [], "SP_RE_TT" : [],
+                                  "SP_L" : [], "SP_A" : [], "INTER_Q" : [],
+                                  "IS_LOCO" : [], "IS_MANI" : [], "IS_CONF" : []}
         
         for run, hierarchical_plan in enumerate(self.__plans):
+            data_dict["GLOBALS"]["RU"].append(run)
+            data_dict["GLOBALS"]["EX_T"].append(hierarchical_plan.execution_latency_time)
+            data_dict["GLOBALS"]["HA_T"].append(hierarchical_plan.absolution_time)
+            data_dict["GLOBALS"]["AW_T"].append(hierarchical_plan.get_average_wait_time(hierarchical_plan.bottom_level))
+            
+            data_dict["GLOBALS"]["AME_T"].append(hierarchical_plan.get_average_minimum_execution_time(hierarchical_plan.bottom_level))
+            data_dict["GLOBALS"]["AME_T_PA"].append(hierarchical_plan.get_average_minimum_execution_time(hierarchical_plan.bottom_level, per_action=True))
+            
+            data_dict["GLOBALS"]["BL_LE"].append(hierarchical_plan[hierarchical_plan.bottom_level].plan_length)
+            data_dict["GLOBALS"]["BL_AC"].append(hierarchical_plan[hierarchical_plan.bottom_level].total_actions)
+            
             for sequence_number, level, increment, problem_number in hierarchical_plan.get_hierarchical_problem_sequence():
                 data_dict["PROBLEM_SEQUENCE"]["RU"].append(run)
                 data_dict["PROBLEM_SEQUENCE"]["SN"].append(sequence_number)
                 data_dict["PROBLEM_SEQUENCE"]["AL"].append(level)
                 data_dict["PROBLEM_SEQUENCE"]["IT"].append(increment)
                 data_dict["PROBLEM_SEQUENCE"]["PN"].append(problem_number)
+                
                 solution: Planner.MonolevelPlan = hierarchical_plan.partial_plans[level][increment]
+                data_dict["PROBLEM_SEQUENCE"]["START_S"].append(solution.action_start_step)
+                data_dict["PROBLEM_SEQUENCE"]["IS_INITIAL"].append(solution.is_initial)
+                data_dict["PROBLEM_SEQUENCE"]["IS_FINAL"].append(solution.is_final)
+                
                 problem_size: int = 1
+                sgoal_literals_total: int = 0
+                sgoals_range = SubGoalRange(1, 1)
+                # l_blend = 0; r_blend = 0
                 if solution.is_refined:
                     problem_size = solution.conformance_mapping.problem_size
+                    sgoal_literals_total = solution.conformance_mapping.total_constraining_sgoals
+                    sgoals_range = solution.conformance_mapping.constraining_sgoals_range
+                    # r_blend = hierarchical_plan.get_division_points(level + 1)[sequence_number - 1].blend.left
+                    # r_blend = hierarchical_plan.get_division_points(level + 1)[sequence_number].blend.right
+                
                 data_dict["PROBLEM_SEQUENCE"]["SIZE"].append(problem_size)
+                data_dict["PROBLEM_SEQUENCE"]["SGLITS_T"].append(sgoal_literals_total)
+                data_dict["PROBLEM_SEQUENCE"]["FIRST_I"].append(sgoals_range.first_index)
+                data_dict["PROBLEM_SEQUENCE"]["LAST_I"].append(sgoals_range.last_index)
+                # data_dict["PROBLEM_SEQUENCE"]["L_BLEND"].append(l_blend)
+                # data_dict["PROBLEM_SEQUENCE"]["R_BLEND"].append(r_blend)
             
             for level in reversed(hierarchical_plan.level_range):
+                
+                ## Division Points
+                for division_number, division_point in enumerate(hierarchical_plan.get_division_points(level + 1)):
+                    data_dict["DIVISIONS"]["RU"].append(run)
+                    data_dict["DIVISIONS"]["AL"].append(level)
+                    data_dict["DIVISIONS"]["DN"].append(division_number)
+                    
+                    data_dict["DIVISIONS"]["APP_INDEX"].append(division_point.index)
+                    data_dict["DIVISIONS"]["COM_INDEX"].append(division_point.committed_index)
+                    data_dict["DIVISIONS"]["COM_STEP"].append(division_point.committed_step)
+                    data_dict["DIVISIONS"]["L_BLEND"].append(division_point.blend.left)
+                    data_dict["DIVISIONS"]["R_BLEND"].append(division_point.blend.right)
+                    
+                    data_dict["DIVISIONS"]["IS_INHERITED"].append(division_point.inherited)
+                    data_dict["DIVISIONS"]["IS_PROACTIVE"].append(division_point.proactive)
+                    data_dict["DIVISIONS"]["IS_INTERRUPT"].append(division_point.interrupting)
+                    data_dict["DIVISIONS"]["PREEMPTIVE"].append(division_point.preemptive)
+                
                 concatenated_plan: Planner.MonolevelPlan = hierarchical_plan.concatenated_plans[level]
                 concatenated_totals: Planner.ASH_Statistics = concatenated_plan.planning_statistics.grand_totals
                 data_dict["CAT"]["RU"].append(run)
@@ -175,6 +268,7 @@ class Results:
                 
                 ## Hierarchical timing statistics
                 data_dict["CAT"]["LT"].append(hierarchical_plan.get_latency_time(level))
+                ## Threshold quality with 5s execution latency TODO
                 data_dict["CAT"]["CT"].append(hierarchical_plan.get_completion_time(level))
                 data_dict["CAT"]["WT"].append(hierarchical_plan.get_average_wait_time(level))
                 
@@ -187,6 +281,25 @@ class Results:
                 data_dict["CAT"]["AC"].append(concatenated_plan.total_actions)
                 data_dict["CAT"]["CF"].append(concatenated_plan.compression_factor)
                 data_dict["CAT"]["PSG"].append(concatenated_plan.total_produced_sgoals)
+                
+                ## Conformance constraints
+                problem_size: int = 1
+                total_sub_goal_literals: int = 0
+                if concatenated_plan.is_refined:
+                    problem_size = concatenated_plan.conformance_mapping.problem_size
+                    total_sub_goal_literals = concatenated_plan.conformance_mapping.total_constraining_sgoals
+                data_dict["CAT"]["SIZE"].append(problem_size)
+                data_dict["CAT"]["SGLITS_T"].append(total_sub_goal_literals)
+                
+                ## Trailing plans
+                data_dict["CAT"]["HAS_TRAILING"].append(concatenated_plan.has_trailing_plan)
+                
+                ## Final-goal preemptive achievement
+                data_dict["CAT"]["TOT_CHOICES"].append(concatenated_plan.total_choices)
+                data_dict["CAT"]["PRE_CHOICES"].append(concatenated_plan.preemptive_choices)
+                
+                ## Final-goal intermediate ordering preferences
+                data_dict["CAT"]["FGOALS_ORDER"].append(concatenated_plan.fgoal_ordering_correct)
                 
                 ## Sub-plan Expansion
                 factor: Planner.Expansion = concatenated_plan.get_plan_expansion_factor()
@@ -219,10 +332,57 @@ class Results:
                 data_dict["CAT"]["SP_MAX_L"].append(length_expansion.max)
                 data_dict["CAT"]["SP_MAX_A"].append(action_expansion.max)
                 
+                ## Interleaving
+                interleaving: tuple[tuple[int, float], tuple[int, float]] = ((0, 0.0), (0, 0.0))
+                if concatenated_plan.is_refined:
+                    interleaving = concatenated_plan.interleaving
+                data_dict["CAT"]["T_INTER_SP"].append(interleaving[0][0])
+                data_dict["CAT"]["P_INTER_SP"].append(interleaving[0][1])
+                data_dict["CAT"]["T_INTER_Q"].append(interleaving[1][0])
+                data_dict["CAT"]["P_INTER_Q"].append(interleaving[1][1])
+                
+                ## Sub-plan (refinement tree) balancing, partial plan balancing, and division spread
+                rmse_mchild: float = 0.0
+                rmse_div_indices: float = 0.0
+                rmse_div_steps: float = 0.0
+                
+                if concatenated_plan.is_refined:
+                    perfect_mchild_spacing: float = concatenated_plan.plan_length / problem_size
+                    perfect_mchild_spread: list[float] = [perfect_mchild_spacing * index for index in concatenated_plan.conformance_mapping.constraining_sgoals_range]
+                    mchilds: list[int] = list(concatenated_plan.conformance_mapping.sgoals_achieved_at.values())
+                    
+                    total_divisions: int = len(hierarchical_plan.get_division_points(level + 1))
+                    total_problems: int = (total_divisions - 2) + 1
+                    
+                    perfect_div_index_spacing: float = concatenated_plan.conformance_mapping.total_constraining_sgoals / total_problems
+                    perfect_div_index_spread: list[float] = [perfect_div_index_spacing * index for index in range(0, total_divisions)]
+                    div_indices: list[int] = [point.index for point in hierarchical_plan.get_division_points(level + 1)]
+                    
+                    perfect_div_step_spacing: float = concatenated_plan.plan_length / total_problems
+                    perfect_div_step_spread: list[float] = [perfect_div_step_spacing * index for index in range(0, total_divisions)]
+                    div_steps: list[int] = [concatenated_plan.conformance_mapping.sgoals_achieved_at.get(point.index, 0) for point in hierarchical_plan.get_division_points(level + 1)]
+                    
+                    def rmse(actual: list[int], perfect: list[float]) -> float:
+                        if len(actual) != len(perfect): raise ValueError("Actual and perfect point spread lists must have equal length.")
+                        return (sum(abs(obs - float(pred)) ** 2 for obs, pred in zip(actual, perfect)) / len(actual)) ** (0.5)
+                    
+                    rmse_mchild = rmse(mchilds, perfect_mchild_spread)
+                    rmse_div_indices = rmse(div_indices, perfect_div_index_spread)
+                    rmse_div_steps = rmse(div_steps, perfect_div_step_spread)
+                    _EXP_logger.debug(f"Refinement spread at {run=}, {level=}: {rmse_mchild=}, {rmse_div_indices=}, {rmse_div_steps=}")
+                
+                ## The spread is the root mean squared error between;
+                ##      - The final achieved matching child steps (representing the observed data),
+                ##      - The theoretical perfectly balanced spread of matching child steps (representing the predicted data).
+                ## The facet is that the perfect spacing is usually not achievable since the spacing will usually lie between steps since the plan length is usually not perfect
+                data_dict["CAT"]["M_CHILD_SPREAD"].append(rmse_mchild)
+                data_dict["CAT"]["DIV_INDEX_SPREAD"].append(rmse_div_indices)
+                data_dict["CAT"]["DIV_STEP_SPREAD"].append(rmse_div_steps)
+                
                 ## Division Scenarios
                 division_tree_level: list[DivisionScenario] = hierarchical_plan.problem_division_tree.get(level, [])
-                total_divisions: int = len(division_tree_level)
-                data_dict["CAT"]["DS_T"].append(total_divisions)
+                total_scenarios: int = len(division_tree_level)
+                data_dict["CAT"]["DS_T"].append(total_scenarios)
                 
                 divisions_per_scenario: list[int] = [scenario.get_total_divisions(False) for scenario in division_tree_level]
                 mean_divisions: float = 0.0
@@ -236,7 +396,10 @@ class Results:
                 bal_size: float = 0.0
                 quantiles_sizes = Quantiles()
                 
-                if total_divisions != 0:
+                total_divisions: int = sum(divisions_per_scenario)
+                data_dict["CAT"]["DIVS_T"].append(total_divisions)
+                
+                if total_scenarios != 0:
                     mean_divisions = statistics.mean(divisions_per_scenario)
                     if len(divisions_per_scenario) >= 2:
                         stdev_divisions = statistics.stdev(divisions_per_scenario)
@@ -251,6 +414,7 @@ class Results:
                     bal_size = stdev_size / mean_size
                     quantiles_sizes = Quantiles(*numpy.quantile(sizes_per_scenario, [0.0, 0.25, 0.5, 0.75, 1.0]))
                 
+                ## Scenario divisions
                 data_dict["CAT"]["DS_TD_MEAN"].append(mean_divisions)
                 data_dict["CAT"]["DS_TD_STD"].append(stdev_divisions)
                 data_dict["CAT"]["DS_TD_CD"].append(bal_divisions)
@@ -260,6 +424,7 @@ class Results:
                 data_dict["CAT"]["DS_TD_UPPER"].append(quantiles_divisions.upper)
                 data_dict["CAT"]["DS_TD_MAX"].append(quantiles_divisions.max)
                 
+                ## Scenario sizes
                 data_dict["CAT"]["DS_TS_MEAN"].append(mean_size)
                 data_dict["CAT"]["DS_TS_STD"].append(stdev_size)
                 data_dict["CAT"]["DS_TS_CD"].append(bal_size)
@@ -269,25 +434,84 @@ class Results:
                 data_dict["CAT"]["DS_TS_UPPER"].append(quantiles_sizes.upper)
                 data_dict["CAT"]["DS_TS_MAX"].append(quantiles_sizes.max)
                 
-                ## Partial Problems
-                # data_dict["CAT"]["PR_T"].append(len(hierarchical_plan.partial_plans[level]))
-                # data_dict["CAT"]["PR_MS"]
-                # data_dict["CAT"]["PR_DS"]
-                # data_dict["CAT"]["PR_BS"]
-                # data_dict["CAT"]["PR_MINS"]
-                # data_dict["CAT"]["PR_MEDS"]
-                # data_dict["CAT"]["PR_MAXS"]
+                ## Partial Problems Size Balancing
+                partial_plans: dict[int, Planner.MonolevelPlan] = hierarchical_plan.partial_plans.get(level, {})
+                total_problems: int = len(partial_plans)
                 
-                # ## Partial Plans TODO Add as a property calculated from PAR
-                # data_dict["CAT"]["PP_ML"]
-                # data_dict["CAT"]["PP_MA"]
-                # data_dict["CAT"]["PP_DL"]
-                # data_dict["CAT"]["PP_DA"]
-                # data_dict["CAT"]["PP_BL"]
-                # data_dict["CAT"]["PP_BA"]
-                # data_dict["CAT"]["PP_MINL"]
-                # data_dict["CAT"]["PP_MEDL"]
-                # data_dict["CAT"]["PP_MAXL"]
+                ## Classical problems have size 1 (since they only include the final-goal),
+                ## for refinement problems the final-goal takes the same index as the final-sub-goal stage (the stage produced from the final-goal achieving abstract action),
+                ## this also relates to the representation of the last refinement tree abopting trailing plans.
+                sizes_per_problem: list[int] = []
+                if concatenated_plan.is_refined:
+                    sizes_per_problem = [partial_plan.conformance_mapping.problem_size for partial_plan in partial_plans.values()]
+                mean_problem_size: float = 1.0
+                stdev_problem_size: float = 0.0
+                bal_problem_size: float = 0.0
+                quantiles_problem_size = Quantiles()
+                
+                if concatenated_plan.is_refined:
+                    mean_problem_size = statistics.mean(sizes_per_problem)
+                    if len(sizes_per_problem) >= 2:
+                        stdev_problem_size = statistics.stdev(sizes_per_problem)
+                    else: stdev_problem_size = 0.0
+                    bal_problem_size = stdev_problem_size / mean_problem_size
+                    quantiles_problem_size = Quantiles(*numpy.quantile(sizes_per_problem, [0.0, 0.25, 0.5, 0.75, 1.0]))
+                
+                data_dict["CAT"]["PR_T"].append(total_problems)
+                data_dict["CAT"]["PR_TS_MEAN"].append(mean_problem_size)
+                data_dict["CAT"]["PR_TS_STD"].append(stdev_problem_size)
+                data_dict["CAT"]["PR_TS_CD"].append(bal_problem_size)
+                data_dict["CAT"]["PR_TS_MIN"].append(quantiles_problem_size.min)
+                data_dict["CAT"]["PR_TS_LOWER"].append(quantiles_problem_size.lower)
+                data_dict["CAT"]["PR_TS_MED"].append(quantiles_problem_size.med)
+                data_dict["CAT"]["PR_TS_UPPER"].append(quantiles_problem_size.upper)
+                data_dict["CAT"]["PR_TS_MAX"].append(quantiles_problem_size.max)
+                
+                ## Partial Plan Length Balancing
+                length_per_plan: list[int] = []
+                actions_per_plan: list[int] = []
+                if concatenated_plan.is_refined:
+                    length_per_plan = [partial_plan.plan_length for partial_plan in partial_plans.values()]
+                    actions_per_plan = [partial_plan.total_actions for partial_plan in partial_plans.values()]
+                mean_plan_length: float = 1.0
+                mean_total_actions: float = 1.0
+                stdev_plan_length: float = 0.0
+                stdev_total_actions: float = 0.0
+                bal_plan_length: float = 0.0
+                bal_total_actions: float = 0.0
+                quantiles_plan_length = Quantiles()
+                quantiles_total_actions = Quantiles()
+                
+                if concatenated_plan.is_refined:
+                    mean_plan_length = statistics.mean(length_per_plan)
+                    mean_total_actions = statistics.mean(actions_per_plan)
+                    if len(length_per_plan) >= 2:
+                        stdev_plan_length = statistics.stdev(length_per_plan)
+                        stdev_total_actions = statistics.stdev(actions_per_plan)
+                    else:
+                        stdev_plan_length = 0.0
+                        stdev_total_actions = 0.0
+                    bal_plan_length = stdev_plan_length / mean_plan_length
+                    bal_plan_length = stdev_total_actions / mean_total_actions
+                    quantiles_plan_length = Quantiles(*numpy.quantile(length_per_plan, [0.0, 0.25, 0.5, 0.75, 1.0]))
+                    quantiles_plan_length = Quantiles(*numpy.quantile(actions_per_plan, [0.0, 0.25, 0.5, 0.75, 1.0]))
+                
+                data_dict["CAT"]["PP_LE_MEAN"].append(mean_plan_length)
+                data_dict["CAT"]["PP_AC_MEAN"].append(mean_total_actions)
+                data_dict["CAT"]["PP_LE_STD"].append(stdev_plan_length)
+                data_dict["CAT"]["PP_AC_STD"].append(stdev_total_actions)
+                data_dict["CAT"]["PP_LE_CD"].append(bal_plan_length)
+                data_dict["CAT"]["PP_AC_CD"].append(bal_total_actions)
+                data_dict["CAT"]["PP_LE_MIN"].append(quantiles_plan_length.min)
+                data_dict["CAT"]["PP_AC_MIN"].append(quantiles_total_actions.min)
+                data_dict["CAT"]["PP_LE_LOWER"].append(quantiles_plan_length.lower)
+                data_dict["CAT"]["PP_AC_LOWER"].append(quantiles_total_actions.lower)
+                data_dict["CAT"]["PP_LE_MED"].append(quantiles_plan_length.med)
+                data_dict["CAT"]["PP_AC_MED"].append(quantiles_total_actions.med)
+                data_dict["CAT"]["PP_LE_UPPER"].append(quantiles_plan_length.upper)
+                data_dict["CAT"]["PP_AC_UPPER"].append(quantiles_total_actions.upper)
+                data_dict["CAT"]["PP_LE_MAX"].append(quantiles_plan_length.max)
+                data_dict["CAT"]["PP_AC_MAX"].append(quantiles_total_actions.max)
                 
                 ## Step-wise
                 grounding_time_sum: float = 0.0
@@ -295,38 +519,50 @@ class Results:
                 total_time_sum: float = 0.0
                 rss_max: float = 0.0
                 vms_max: float = 0.0
-                for step, stats in concatenated_plan.planning_statistics.incremental.items():
+                
+                for step in concatenated_plan:
+                    
+                    current_stat: Statistics = Statistics(0.0, 0.0)
+                    for stat in concatenated_plan.planning_statistics.incremental.values():
+                        if max(stat.step_range) == step:
+                            current_stat = stat
+                    
                     data_dict["STEP_CAT"]["RU"].append(run)
                     data_dict["STEP_CAT"]["AL"].append(level)
                     data_dict["STEP_CAT"]["SL"].append(step)
                     
-                    ## Accumlating plan costs
-                    data_dict["STEP_CAT"]["S_GT"].append(stats.grounding_time)
-                    data_dict["STEP_CAT"]["S_ST"].append(stats.solving_time)
-                    data_dict["STEP_CAT"]["S_TT"].append(stats.total_time)
-                    data_dict["STEP_CAT"]["C_GT"].append(grounding_time_sum := grounding_time_sum + stats.grounding_time)
-                    data_dict["STEP_CAT"]["C_ST"].append(solving_time_sum := solving_time_sum + stats.solving_time)
-                    data_dict["STEP_CAT"]["C_TT"].append(total_time_sum := total_time_sum + stats.total_time)
+                    ## Incremental and accumlating planning times
+                    data_dict["STEP_CAT"]["S_GT"].append(current_stat.grounding_time)
+                    data_dict["STEP_CAT"]["S_ST"].append(current_stat.solving_time)
+                    data_dict["STEP_CAT"]["S_TT"].append(current_stat.total_time)
+                    data_dict["STEP_CAT"]["C_GT"].append(grounding_time_sum := grounding_time_sum + current_stat.grounding_time)
+                    data_dict["STEP_CAT"]["C_ST"].append(solving_time_sum := solving_time_sum + current_stat.solving_time)
+                    data_dict["STEP_CAT"]["C_TT"].append(total_time_sum := total_time_sum + current_stat.total_time)
                     
-                    data_dict["STEP_CAT"]["T_RSS"].append(stats.memory.rss)
-                    data_dict["STEP_CAT"]["T_VMS"].append(stats.memory.vms)
-                    data_dict["STEP_CAT"]["M_RSS"].append(rss_max := max(rss_max, stats.memory.rss))
-                    data_dict["STEP_CAT"]["M_VMS"].append(vms_max := max(vms_max, stats.memory.vms))
+                    ## Incremental and maximal memory
+                    data_dict["STEP_CAT"]["T_RSS"].append(current_stat.memory.rss)
+                    data_dict["STEP_CAT"]["T_VMS"].append(current_stat.memory.vms)
+                    data_dict["STEP_CAT"]["M_RSS"].append(rss_max := max(rss_max, current_stat.memory.rss))
+                    data_dict["STEP_CAT"]["M_VMS"].append(vms_max := max(vms_max, current_stat.memory.vms))
                     
                     ## Conformance mapping
                     current_sgoals_index: int = 1
                     is_matching_child: bool = False
+                    is_trailing_plan: bool = False
                     if concatenated_plan.is_refined:
-                        current_sgoals_index = concatenated_plan.conformance_mapping.current_sgoals[step]
+                        current_sgoals_index = concatenated_plan.conformance_mapping.current_sgoals.get(step, -1)
                         is_matching_child = step in concatenated_plan.conformance_mapping.sgoals_achieved_at.values()
-                    data_dict["STEP_CAT"]["C_TACHSGOALS"] = current_sgoals_index - 1
-                    data_dict["STEP_CAT"]["S_SGOALI"] = current_sgoals_index
-                    data_dict["STEP_CAT"]["IS_MATCHING"] = is_matching_child
+                        is_trailing_plan = current_sgoals_index == -1
+                    data_dict["STEP_CAT"]["C_TACHSGOALS"].append(current_sgoals_index if is_matching_child else current_sgoals_index - 1)
+                    data_dict["STEP_CAT"]["S_SGOALI"].append(current_sgoals_index)
+                    data_dict["STEP_CAT"]["IS_MATCHING"].append(is_matching_child)
+                    data_dict["STEP_CAT"]["IS_TRAILING"].append(is_trailing_plan)
                     
                     ## Accumulating expansion factor
-                    step_factor: Planner.Expansion = concatenated_plan.get_expansion_factor(range(1, current_sgoals_index + 1))
-                    step_deviation: Planner.Expansion = concatenated_plan.get_expansion_deviation(range(1, current_sgoals_index + 1))
-                    step_balance: Planner.Expansion = concatenated_plan.get_degree_of_balance(range(1, current_sgoals_index + 1))
+                    index_range = range(1, current_sgoals_index + 1)
+                    step_factor: Planner.Expansion = concatenated_plan.get_expansion_factor(index_range, accu_step=step)
+                    step_deviation: Planner.Expansion = concatenated_plan.get_expansion_deviation(index_range, accu_step=step)
+                    step_balance: Planner.Expansion = concatenated_plan.get_degree_of_balance(index_range, accu_step=step)
                     data_dict["STEP_CAT"]["C_CP_EF_L"].append(step_factor.length)
                     data_dict["STEP_CAT"]["C_CP_EF_A"].append(step_factor.action)
                     data_dict["STEP_CAT"]["C_SP_ED_L"].append(step_deviation.length)
@@ -337,7 +573,7 @@ class Results:
                     ## Problem divisions
                     division_points: list[DivisionPoint] = []
                     if concatenated_plan.is_refined:
-                        hierarchical_plan.get_division_points(level + 1)
+                        division_points = hierarchical_plan.get_division_points(level + 1)
                     reached_point: DivisionPoint = None
                     committed_point: DivisionPoint = None
                     for point in division_points:
@@ -345,37 +581,129 @@ class Results:
                             reached_point = point
                         if step == point.committed_step:
                             committed_point = point
-                    data_dict["STEP_CAT"]["IS_DIV_APP"].append(reached_point is not None)
+                    data_dict["STEP_CAT"]["IS_DIV_APP"].append(reached_point is not None) ## TODO Add the sequence number of the division point
                     data_dict["STEP_CAT"]["IS_INHERITED"].append(reached_point is not None and reached_point.inherited)
                     data_dict["STEP_CAT"]["IS_PROACTIVE"].append(reached_point is not None and reached_point.proactive)
                     data_dict["STEP_CAT"]["IS_INTERRUPT"].append(reached_point is not None and reached_point.interrupting)
                     data_dict["STEP_CAT"]["PREEMPTIVE"].append(reached_point is not None and reached_point.preemptive)
                     data_dict["STEP_CAT"]["IS_DIV_COM"].append(committed_point is not None)
-                    data_dict["STEP_CAT"]["DIV_COM_APP_AT"].append(committed_point is not None and committed_point.index)
+                    data_dict["STEP_CAT"]["DIV_COM_APP_AT"].append(committed_point.index if committed_point is not None else -1)
+                    
+                    ## Sub-plan majority action type
+                    sub_plan_type: Planner.ActionType = concatenated_plan.get_action_type(step)
+                    data_dict["STEP_CAT"]["IS_LOCO"].append(sub_plan_type == Planner.ActionType.Locomotion)
+                    data_dict["STEP_CAT"]["IS_MANI"].append(sub_plan_type == Planner.ActionType.Manipulation)
+                    data_dict["STEP_CAT"]["IS_CONF"].append(sub_plan_type == Planner.ActionType.Configuration)
                 
-                for iteration in hierarchical_plan.partial_plans[level]:
-                    partial_plan: Planner.MonolevelPlan = hierarchical_plan.partial_plans[level][iteration]
-                    partial_totals: Planner.ASH_Statistics = partial_plan.planning_statistics.grand_totals
-                    data_dict["PAR"]["RU"].append(run)
-                    data_dict["PAR"]["AL"].append(level)
-                    data_dict["PAR"]["IT"].append(iteration)
+                ## Index-wise
+                if concatenated_plan.is_refined:
+                    conformance_mapping: Planner.ConformanceMapping = concatenated_plan.conformance_mapping
+                    constraining_sgoals: dict[int, list[Planner.SubGoal]] = conformance_mapping.constraining_sgoals
                     
-                    data_dict["PAR"]["GT"].append(partial_totals.grounding_time)
-                    data_dict["PAR"]["ST"].append(partial_totals.solving_time)
-                    data_dict["PAR"]["OT"].append(partial_totals.overhead_time)
-                    data_dict["PAR"]["TT"].append(partial_totals.total_time)
-                    
-                    data_dict["PAR"]["YT"].append(hierarchical_plan.get_yield_time(level, iteration))
-                    data_dict["PAR"]["WT"].append(hierarchical_plan.get_wait_time(level, iteration))
-                    
-                    data_dict["PAR"]["RSS"].append(partial_totals.memory.rss)
-                    data_dict["PAR"]["VMS"].append(partial_totals.memory.vms)
-                    
-                    data_dict["PAR"]["LE"].append(partial_plan.plan_length)
-                    data_dict["PAR"]["AC"].append(partial_plan.total_actions)
-                    data_dict["PAR"]["PSG"].append(partial_plan.total_produced_sgoals)
+                    for index in constraining_sgoals:
+                        data_dict["INDEX_CAT"]["RU"].append(run)
+                        data_dict["INDEX_CAT"]["AL"].append(level)
+                        data_dict["INDEX_CAT"]["INDEX"].append(index)
+                        
+                        ## Number of sub-goal literals in the stage
+                        data_dict["INDEX_CAT"]["NUM_SGOALS"].append(len(constraining_sgoals[index]))
+                        
+                        ## Final and sequential yield achievement step of the stage
+                        data_dict["INDEX_CAT"]["ACH_AT"].append(conformance_mapping.sgoals_achieved_at[index])
+                        yield_step: int = -1
+                        if (yield_steps := conformance_mapping.sequential_yield_steps) is not None:
+                            yield_step = yield_steps[index]
+                        data_dict["INDEX_CAT"]["YLD_AT"].append(yield_step)
+                        
+                        ## Problem divisions
+                        division_points: list[DivisionPoint] = []
+                        if concatenated_plan.is_refined:
+                            division_points = hierarchical_plan.get_division_points(level + 1)
+                        
+                        division_point: Optional[DivisionPoint] = None
+                        for point in division_points:
+                            if point.index == index:
+                                division_point = point
+                        data_dict["INDEX_CAT"]["IS_DIV"].append(division_point is not None)
+                        data_dict["INDEX_CAT"]["IS_INHERITED"].append(division_point is not None and division_point.inherited)
+                        data_dict["INDEX_CAT"]["IS_PROACTIVE"].append(division_point is not None and division_point.proactive)
+                        data_dict["INDEX_CAT"]["IS_INTERRUPT"].append(division_point is not None and division_point.interrupting)
+                        data_dict["INDEX_CAT"]["PREEMPTIVE"].append(division_point is not None and division_point.preemptive)
+                        
+                        ## Sub-plan wise planning times
+                        inc_stats: dict[int, Statistics] = concatenated_plan.planning_statistics.incremental
+                        data_dict["INDEX_CAT"]["SP_RE_GT"].append(sum(inc_stats[step].grounding_time) for step in conformance_mapping.current_sgoals(index))
+                        data_dict["INDEX_CAT"]["SP_RE_ST"].append(sum(inc_stats[step].solving_time) for step in conformance_mapping.current_sgoals(index))
+                        data_dict["INDEX_CAT"]["SP_RE_TT"].append(sum(inc_stats[step].total_time) for step in conformance_mapping.current_sgoals(index))
+                        
+                        ## Refined sub-plan quality
+                        index_factor: Planner.Expansion = concatenated_plan.get_expansion_factor(index)
+                        data_dict["INDEX_CAT"]["SP_L"].append(index_factor.length)
+                        data_dict["INDEX_CAT"]["SP_A"].append(index_factor.action)
+                        
+                        ## Sub-plan interleaving quantity
+                        data_dict["INDEX_CAT"]["INTER_Q"].append(concatenated_plan.interleaving_quantity(index))
+                        
+                        ## Sub-plan majority action type
+                        sub_plan_type: Planner.ActionType = concatenated_plan.get_sub_plan_type(index)
+                        data_dict["INDEX_CAT"]["IS_LOCO"].append(sub_plan_type == Planner.ActionType.Locomotion)
+                        data_dict["INDEX_CAT"]["IS_MANI"].append(sub_plan_type == Planner.ActionType.Manipulation)
+                        data_dict["INDEX_CAT"]["IS_CONF"].append(sub_plan_type == Planner.ActionType.Configuration)
+                
+                ## Partial-Plans
+                if hierarchical_plan.is_hierarchical_refinement:
+                    for problem_number, iteration in enumerate(hierarchical_plan.partial_plans[level], start=1):
+                        partial_plan: Planner.MonolevelPlan = hierarchical_plan.partial_plans[level][iteration]
+                        partial_totals: Planner.ASH_Statistics = partial_plan.planning_statistics.grand_totals
+                        data_dict["PAR"]["RU"].append(run)
+                        data_dict["PAR"]["AL"].append(level)
+                        data_dict["PAR"]["IT"].append(iteration)
+                        data_dict["PAR"]["PN"].append(problem_number)
+                        
+                        ## Raw timing statistics
+                        data_dict["PAR"]["GT"].append(partial_totals.grounding_time)
+                        data_dict["PAR"]["ST"].append(partial_totals.solving_time)
+                        data_dict["PAR"]["OT"].append(partial_totals.overhead_time)
+                        data_dict["PAR"]["TT"].append(partial_totals.total_time)
+                        
+                        ## Online hierarchical planning statistics
+                        data_dict["PAR"]["YT"].append(hierarchical_plan.get_yield_time(level, iteration))
+                        data_dict["PAR"]["WT"].append(hierarchical_plan.get_wait_time(level, iteration))
+                        data_dict["PAR"]["ET"].append(hierarchical_plan.get_minimum_execution_time(level, iteration))
+                        
+                        ## Required memory usage
+                        data_dict["PAR"]["RSS"].append(partial_totals.memory.rss)
+                        data_dict["PAR"]["VMS"].append(partial_totals.memory.vms)
+                        
+                        ## Partal plan quality
+                        data_dict["PAR"]["LE"].append(partial_plan.plan_length)
+                        data_dict["PAR"]["AC"].append(partial_plan.total_actions)
+                        data_dict["PAR"]["CF"].append(partial_plan.compression_factor)
+                        data_dict["PAR"]["PSG"].append(partial_plan.total_produced_sgoals)
+                        data_dict["PAR"]["START_S"].append(partial_plan.action_start_step)
+                        data_dict["PAR"]["END_S"].append(partial_plan.end_step)
+                        
+                        ## Conformance constraints
+                        problem_size: int = 0
+                        sgoal_literals_total: int = 0
+                        sgoals_range = SubGoalRange(1, 1)
+                        if partial_plan.is_refined:
+                            problem_size = partial_plan.conformance_mapping.problem_size
+                            sgoal_literals_total = partial_plan.conformance_mapping.total_constraining_sgoals
+                            sgoals_range = partial_plan.conformance_mapping.constraining_sgoals_range
+                        data_dict["PAR"]["SIZE"].append(problem_size)
+                        data_dict["PAR"]["SGLITS_T"].append(sgoal_literals_total)
+                        data_dict["PAR"]["FIRST_I"].append(sgoals_range.first_index)
+                        data_dict["PAR"]["LAST_I"].append(sgoals_range.last_index)
+                        
+                        ## Final-goal preemptive achievement
+                        data_dict["PAR"]["TOT_CHOICES"].append(partial_plan.total_choices)
+                        data_dict["PAR"]["PRE_CHOICES"].append(partial_plan.preemptive_choices)
         
         ## Create a Pandas dataframe from the data dictionary
+        for key in data_dict:
+            for _key in data_dict[key]:
+                print(f"{_key}: {len(data_dict[key][_key])}")
         self.__dataframes = {key : pandas.DataFrame(data_dict[key]) for key in data_dict}
         return self.__dataframes
     
@@ -389,17 +717,35 @@ class Results:
         dataframes = self.process()
         writer = pandas.ExcelWriter(file, engine="xlsxwriter") # pylint: disable=abstract-class-instantiated
         
-        dataframes["PROBLEM_SEQUENCE"].to_excel(writer, sheet_name="Problem Sequence")
-        # dataframes["DIVISION_SCENARIOS"].to_excel(writer, sheet_name="Division Scenarios")
+        dataframes["GLOBALS"].to_excel(writer, sheet_name="Globals")
         
-        dataframes["CAT"].to_excel(writer, sheet_name="Concat Plans")
-        self.mean.to_excel(writer, sheet_name="Concat Level-Wise Aggregates", startrow=1)
-        self.std.to_excel(writer, sheet_name="Concat Level-Wise Aggregates", startrow=(self.__plans[-1].top_level + 3))
+        dataframes["PROBLEM_SEQUENCE"].to_excel(writer, sheet_name="Problem Sequence")
+        
+        # dataframes["SCENARIOS"].to_excel(writer, sheet_name="Division Scenarios")
+        
+        dataframes["DIVISIONS"].to_excel(writer, sheet_name="Division Points")
+        
+        dataframes["CAT"].to_excel(writer, sheet_name="Cat Plans")
+        self.cat_level_wise_means.to_excel(writer, sheet_name="Cat Level-Wise Aggregates", startrow=1)
+        self.cat_level_wise_stdev.to_excel(writer, sheet_name="Cat Level-Wise Aggregates", startrow=(self.__plans[-1].top_level + 4))
+        worksheet = writer.sheets["Cat Level-Wise Aggregates"]
+        worksheet.write(0, 0, "Means")
+        worksheet.write(self.__plans[-1].top_level + 3, 0, "Standard Deviation")
+        
         dataframes["PAR"].to_excel(writer, sheet_name="Partial Plans")
+        self.par_level_wise_means.to_excel(writer, sheet_name="Par Level-Wise Aggregates", startrow=1)
+        self.par_level_wise_stdev.to_excel(writer, sheet_name="Par Level-Wise Aggregates", startrow=(self.__plans[-1].top_level + 4))
+        worksheet = writer.sheets["Par Level-Wise Aggregates"]
+        worksheet.write(0, 0, "Means")
+        worksheet.write(self.__plans[-1].top_level + 3, 0, "Standard Deviation")
         
         dataframes["STEP_CAT"].to_excel(writer, sheet_name="Concat Step-wise")
-        self.step_wise_averages.to_excel(writer, sheet_name="Concat Step-wise Mean") # (2 + len(dataframes["STEP_CAT"]))
-        self.step_wise_std.to_excel(writer, sheet_name="Concat Step-wise Stdev") # (2 + (len(dataframes["STEP_CAT"]) * 2))
+        self.step_wise_means.to_excel(writer, sheet_name="Concat Step-wise Mean") # (2 + len(dataframes["STEP_CAT"]))
+        self.step_wise_stdev.to_excel(writer, sheet_name="Concat Step-wise Stdev") # (2 + (len(dataframes["STEP_CAT"]) * 2))
+        
+        dataframes["INDEX_CAT"].to_excel(writer, sheet_name="Concat Index-wise")
+        self.index_wise_means.to_excel(writer, sheet_name="Concat Index-wise Mean") # (2 + len(dataframes["STEP_CAT"]))
+        self.index_wise_stdev.to_excel(writer, sheet_name="Concat Index-wise Stdev") # (2 + (len(dataframes["STEP_CAT"]) * 2))
         
         writer.save()
 
@@ -408,6 +754,8 @@ class Experiment:
     
     __slots__ = ("__planner",
                  "__planning_function",
+                 "__bottom_level",
+                 "__top_level",
                  "__initial_runs",
                  "__experimental_runs",
                  "__enable_tqdm")
@@ -415,6 +763,8 @@ class Experiment:
     def __init__(self,
                  planner: Planner.HierarchicalPlanner,
                  planning_function: Callable[[], Any],
+                 bottom_level: int,
+                 top_level: int,
                  initial_runs: int,
                  experimental_runs: int,
                  enable_tqdm: bool
@@ -422,6 +772,8 @@ class Experiment:
         
         self.__planner: Planner.HierarchicalPlanner = planner
         self.__planning_function: Callable[[], Any] = planning_function
+        self.__bottom_level: int = bottom_level
+        self.__top_level: int = top_level
         self.__initial_runs: int = initial_runs
         self.__experimental_runs: int = experimental_runs
         self.__enable_tqdm: bool = enable_tqdm
@@ -430,14 +782,14 @@ class Experiment:
         "Run the encapsulated experiments and return a result object containing obtained statistics."
         results: Results = self.__run_all()
         dataframes = results.process()
-        columns: list[str] = ["RU", "AL", "GT", "ST", "TT", "LT", "CT", "WT", "RSS", "VMS", "LE", "AC", "CF", "PSG"]
+        columns: list[str] = ["RU", "AL", "GT", "ST", "OT", "TT", "LT", "CT", "WT", "RSS", "VMS", "LE", "AC", "CF", "PSG"]
         _EXP_logger.info("\n\n" + center_text("Experimental Results", framing_width=40, centering_width=60)
                          + "\n\n" + center_text("Concatenated Plans", frame_after=False, framing_char='~', framing_width=30, centering_width=60)
                          + "\n" + dataframes["CAT"].to_string(index=False, columns=columns)
                          + "\n\n" + center_text("Level-wise Means", frame_after=False, framing_char='~', framing_width=30, centering_width=60)
-                         + "\n" + results.mean.to_string(index=False, columns=columns[1:])
+                         + "\n" + results.cat_level_wise_means.to_string(index=False, columns=columns[1:])
                          + "\n\n" + center_text("Level-wise Standard Deviation", frame_after=False, framing_char='~', framing_width=30, centering_width=60)
-                         + "\n" + results.std.to_string(index=False, columns=columns[1:])
+                         + "\n" + results.cat_level_wise_stdev.to_string(index=False, columns=columns[1:])
                          + "\n\n" + center_text("Partial Plans", frame_after=False, framing_char='~', framing_width=30, centering_width=60)
                          + "\n" + dataframes["PAR"].to_string(index=False))
         return results
@@ -485,7 +837,8 @@ class Experiment:
         
         ## Generate one plan for run
         self.__planning_function()
-        hierarchical_plan: Planner.HierarchicalPlan = self.__planner.get_hierarchical_plan()
+        hierarchical_plan: Planner.HierarchicalPlan = self.__planner.get_hierarchical_plan(bottom_level=self.__bottom_level,
+                                                                                           top_level=self.__top_level)
         
         ## Ensure that the planner is purged after reach run
         self.__planner.purge_solutions()

@@ -26,11 +26,12 @@ import logging
 import logging.handlers
 import os
 import sys
-from typing import Any, Optional, Sequence, Type, Union
+from typing import Any, Iterable, Optional, Sequence, Type, Union
 import time
 import json
 import numpy
 from matplotlib import pyplot
+from pandas.core.frame import DataFrame
 
 import core.Planner as Planner
 import core.Strategies as Strategies
@@ -181,6 +182,8 @@ Branching factor and search space are not the same;
     - solution space is the number of actual solutions (the search space to a final goal state (state that satisfies the final goal)).
 """
 
+
+
 def get_hierarchical_arg(dict_or_number: Union[Number, dict[int, Number]], level: int, default: Optional[Number] = None) -> Optional[Number]:
     """Get the value of a hierarchical argument at a given abstraction level."""
     if isinstance(dict_or_number, dict):
@@ -189,8 +192,10 @@ def get_hierarchical_arg(dict_or_number: Union[Number, dict[int, Number]], level
         else: return default
     return dict_or_number
 
+
+
 def __main() -> int:
-    """Main method which creates a console session and returns 0 if the console returns cleanly."""
+    "Main method which creates a console session, runs the planner, and returns 0 if the console returns cleanly."
     
     ## Run initial setup and get CLI arguments
     namespace: argparse.Namespace = __setup()
@@ -209,6 +214,8 @@ def __main() -> int:
     if not namespace.disable_pause_on_start:
         input("Press any key to begin...")
     
+    
+    
     ## Find the verbosity mode;
     ##      - Results is a special mode where output from the planner is disabled and only experimental results are shown
     if namespace.ash_output != "experiment":
@@ -219,10 +226,20 @@ def __main() -> int:
     planner = Planner.HierarchicalPlanner(namespace.files, name="Main", threads=namespace.threads,
                                           verbosity=verbosity, silence_clingo=not namespace.clingo_output)
     
+    ## Determine valid abstaction level range
+    level_range: range = planner.constrained_level_range(bottom_level=namespace.bottom_level,
+                                                         top_level=(namespace.bottom_level
+                                                                    if namespace.planning_mode == "mcl" else
+                                                                    namespace.top_level))
+    bottom_level: int = min(level_range)
+    top_level: int = max(level_range)
+    
     ## Initialise the planning problem
     find_inconsistencies: bool = namespace.operation == "find-problem-inconsistencies"
-    inconsistencies = planner.initialise_problem(find_inconsistencies)
+    planner.initialise_problem(find_inconsistencies)
     if find_inconsistencies: return 0
+    
+    
     
     conformance_type: Optional[Planner.ConformanceType] = None
     division_strategy: Optional[Strategies.DivisionStrategy] = None
@@ -270,8 +287,8 @@ def __main() -> int:
                                               generate_search_space=namespace.problem_space == "search",
                                               generate_solution_space=namespace.problem_space == "solution",
                                             
-                                              time_limit=get_hierarchical_arg(namespace.planning_time_limit, namespace.bottom_level),
-                                              length_limit=get_hierarchical_arg(namespace.search_length_limit, namespace.bottom_level))
+                                              time_limit=get_hierarchical_arg(namespace.planning_time_limit, bottom_level),
+                                              length_limit=get_hierarchical_arg(namespace.search_length_limit, bottom_level))
     
     ## Planning mode is hierarchical (conformance refinement or classical)
     elif namespace.planning_mode in ["hcr", "hcl"]:
@@ -302,9 +319,6 @@ def __main() -> int:
                 blend: dict[int, Strategies.Blend] = {}
                 horizon: dict[int, Number] = {}
                 
-                level_range: range = planner.constrained_level_range(namespace.bottom_level, namespace.top_level)
-                top_level: int = max(level_range)
-                
                 for level in level_range:
                     bounds[level] = get_hierarchical_arg(namespace.division_strategy_bounds, level)
                     blend[level] = Strategies.Blend(get_hierarchical_arg(namespace.left_blend_quantities, level, 0),
@@ -324,7 +338,7 @@ def __main() -> int:
                         and blend[level].left > 0):
                         raise ValueError("It is not possible to left blend on a saved grounding without avoiding refining sgoals marked for blending.")
                 
-                reactive_bound_type = Strategies.ReactiveBoundType(f"{namespace.bound_type}_time_bound")
+                reactive_bound_type = Strategies.ReactiveBoundType(f"{namespace.bound_type}_bound")
                 moving_average: int = namespace.moving_average
                 preemptive: bool = namespace.preemptive_division
                 interrupting: bool = namespace.interrupting_division
@@ -382,8 +396,8 @@ def __main() -> int:
                                                                 order_tasks=order_tasks)
         
         planning_function = functools.partial(planner.hierarchical_plan,
-                                              namespace.bottom_level,
-                                              namespace.top_level,
+                                              bottom_level,
+                                              top_level,
                                               namespace.enable_concurrency,
                                               refinement_planning,
                                               
@@ -397,9 +411,10 @@ def __main() -> int:
                                               make_observable=namespace.make_observable,
                                               
                                               minimise_actions=namespace.minimise_actions,
-                                              preempt_pos_fgoals=namespace.positive_final_goal_preemptive_achievement_heuristic,
-                                              preempt_neg_fgoals=namespace.negative_final_goal_preemptive_achievement_heuristic,
                                               order_fgoals_achievement=namespace.final_goal_intermediate_achievement_ordering_preferences,
+                                              preempt_pos_fgoals=namespace.positive_final_goal_preemptive_achievement,
+                                              preempt_neg_fgoals=namespace.negative_final_goal_preemptive_achievement,
+                                              preempt_mode=Planner.PreemptMode(namespace.final_goal_preemptive_achievement_mode),
                                               
                                               detect_interleaving=namespace.detect_interleaving,
                                               generate_search_space=False,
@@ -414,12 +429,12 @@ def __main() -> int:
     ## Planning mode is monolevel classical
     else:
         planning_function = functools.partial(planner.monolevel_plan,
-                                              namespace.bottom_level,
+                                              bottom_level,
                                               namespace.enable_concurrency,
                                               False,
                                               minimise_actions=namespace.minimise_actions,
-                                              time_limit=get_hierarchical_arg(namespace.planning_time_limit, namespace.bottom_level),
-                                              length_limit=get_hierarchical_arg(namespace.search_length_limit, namespace.bottom_level))
+                                              time_limit=get_hierarchical_arg(namespace.planning_time_limit, bottom_level),
+                                              length_limit=get_hierarchical_arg(namespace.search_length_limit, bottom_level))
     
     
     
@@ -427,12 +442,16 @@ def __main() -> int:
         planning_function()
         
         ## Get the resulting plans
-        hierarchical_plan: Planner.HierarchicalPlan = planner.get_hierarchical_plan(bottom_level=namespace.bottom_level,
-                                                                                    top_level=namespace.bottom_level if namespace.planning_mode == "mcl" else namespace.top_level)
+        hierarchical_plan: Planner.HierarchicalPlan = planner.get_hierarchical_plan(bottom_level=bottom_level,
+                                                                                    top_level=top_level)
         
         ## Save the plans as requested
         if (plan_file := namespace.plan_file) is not None:
+            
+            if namespace.config_file_naming:
+                plan_file = plan_file.split(".txt")[0] + f"_{config_file_name}" + ".txt"
             _Launcher_logger.info(f"Saving generated plan to file: {plan_file}")
+            
             try:
                 with open(plan_file, 'w') as file_writer:
                     file_writer.write(json.dumps(hierarchical_plan.serialisable_dict, indent=4))
@@ -442,7 +461,11 @@ def __main() -> int:
         ## Save the refinement schema as requested
         if (namespace.planning_mode == "hcr"
             and (schema_file := namespace.save_schema) is not None):
+            
+            if namespace.config_file_naming:
+                schema_file = schema_file.split(".txt")[0] + f"_{config_file_name}" + ".txt"
             _Launcher_logger.info(f"Saving generated refinement schema to file: {schema_file}")
+            
             try:
                 with open(schema_file, 'w') as file_writer:
                     file_writer.write(json.dumps(hierarchical_plan.get_refinement_schema(namespace.schema_level).serialisable_dict, indent=4))
@@ -458,7 +481,7 @@ def __main() -> int:
             
             ## Find the regression plots for each partial plan
             regression_lines: dict[int, dict[str, Any]] = {"total" : {}, "ground" : {}, "search" : {}}
-            for problem_number, partial_plan in enumerate(hierarchical_plan.get_plan_sequence(level)):
+            for problem_number, partial_plan in enumerate(hierarchical_plan.get_plan_sequence(bottom_level)):
                 func, x_points, y_points, popt, pcov = partial_plan.regress_total_time
                 regression_lines["total"][problem_number] = {"func" : func, "x_points" : x_points, "y_points" : y_points, "popt" : popt, "pcov" : pcov}
                 func, x_points, y_points, popt, pcov = partial_plan.regress_grounding_time
@@ -573,9 +596,9 @@ def __main() -> int:
             # #   - highlight proactively chosen division points in yellow,
             # #   - highlight reactively chosen division points in orange,
             # #   - highlight inherited divisions in red (the start and end of each division scenario).
-            # division_points: list[Strategies.DivisionPoint] = hierarchical_plan.get_division_points(namespace.bottom_level + 1)
+            # division_points: list[Strategies.DivisionPoint] = hierarchical_plan.get_division_points(bottom_level + 1)
             
-            # bottom_level_plan: Planner.MonolevelPlan = hierarchical_plan[namespace.bottom_level]
+            # bottom_level_plan: Planner.MonolevelPlan = hierarchical_plan[bottom_level]
             
             # ## TODO add sequential yield steps
             # for time_type in regression_lines:
@@ -617,38 +640,193 @@ def __main() -> int:
         
     else:
         ## Run the experiments
-        experiment = Experiment.Experiment(planner,
-                                           planning_function,
-                                           namespace.initial_runs,
-                                           namespace.experimental_runs,
-                                           namespace.ash_output == "experiment")
+        experiment = Experiment.Experiment(planner=planner,
+                                           planning_function=planning_function,
+                                           bottom_level=bottom_level,
+                                           top_level=top_level,
+                                           initial_runs=namespace.initial_runs,
+                                           experimental_runs=namespace.experimental_runs,
+                                           enable_tqdm=namespace.ash_output == "experiment")
         results: Experiment.Results = experiment.run_experiments()
+        dataframes: dict[str, DataFrame] = results.process()
         
-        if namespace.excel_file is not None:
-            results.to_excel(namespace.excel_file)
-        if namespace.data_file is not None:
-            results.to_dsv(namespace.data_file, sep=namespace.data_sep, endl=namespace.data_end)
+        ## Save the results as requseted
+        if (excel_file := namespace.excel_file) is not None:
+            if namespace.config_file_naming:
+                excel_file = excel_file.split(".xlsx")[0] + f"_{config_file_name}" + ".xlsx"
+            _Launcher_logger.info(f"Saving results to excel file: {excel_file}")
+            results.to_excel(excel_file)
         
-        # if namespace.display_graph:
-        #     xlabels = [str(n) for n in reversed(planner.domain.level_range)]
-        #     x = numpy.arange(len(xlabels))
-        #     bar_width = 0.30
+        if (data_file := namespace.data_file) is not None:
+            if namespace.config_file_naming:
+                data_file = data_file.split(".dat")[0] + f"_{config_file_name}" + ".dat"
+            _Launcher_logger.info(f"Saving results to data file: {data_file}")
+            results.to_dsv(data_file, sep=namespace.data_sep, endl=namespace.data_end)
+        
+        ## Display a summary of results in simple graphs
+        if namespace.display_graph:
+            means: DataFrame = results.cat_level_wise_means
+            std: DataFrame = results.cat_level_wise_stdev
+            step_wise_means: DataFrame = results.step_wise_means
+            step_wise_std: DataFrame = results.step_wise_stdev
+            index_wise_means: DataFrame = results.index_wise_means
+            index_wise_std: DataFrame = results.index_wise_stdev
             
-        #     figure: matplotlib.figure.Figure
-        #     figure, axis = matplotlib.pyplot.subplots()
-        #     rects1 = axis.bar(x - bar_width, data.averages.grounding_time, bar_width, label="Average Grounding Time (s)")
-        #     rects2 = axis.bar(x, data.averages.solving_time, bar_width, label="Average Solving Time (s)")
-        #     rects3 = axis.bar(x + bar_width, data.averages.total_time, bar_width, label="Average Total Time (s)")
+            figure, axes = pyplot.subplots(3, 3)
             
-        #     axis.set_ylabel("Time (s)")
-        #     axis.set_title(f"Average computation times per abstraction level :: {'Conformance Refinement' if namespace.planning_mode == 'hcr' else 'Classical'}")
-        #     axis.set_xticks(x)
-        #     axis.set_xticklabels(xlabels)
-        #     axis.legend()
+            levels: list[int] = means["AL"].to_list()
+            al_range = numpy.arange(len(levels))
+            al_labels: list[str] = [str(al) for al in levels]
             
-        #     matplotlib.pyplot.show()
-    
-    
+            bars: int = 1
+            padding: float = 0.10
+            bar_width: float = (1.0 / bars) - (padding / bars)
+            
+            def set_bars(bars: int) -> None:
+                bars = bars
+                nonlocal bar_width
+                bar_width = (1.0 / bars) - (padding / bars)
+            
+            ## Level-wise timing statistics
+            set_bars(5)
+            axes[0, 0].bar(al_range - (bar_width * 2), means["GT"], bar_width, label="Mean Grounding Time")
+            axes[0, 0].bar(al_range - bar_width, means["ST"], bar_width, label="Mean Solving")
+            axes[0, 0].bar(al_range, means["TT"], bar_width, label="Mean Total")
+            axes[0, 0].bar(al_range + bar_width, means["LT"], bar_width, label="Mean Latency")
+            axes[0, 0].bar(al_range + (bar_width * 2), means["CT"], bar_width, label="Mean Completion")
+            axes[0, 0].set_title("Mean Grand Total Computation Times per Abstraction Level")
+            axes[0, 0].set_ylabel("Time (s)")
+            axes[0, 0].set_xlabel("Abstraction Level")
+            axes[0, 0].set_xticks(al_range)
+            axes[0, 0].set_xticklabels(al_labels)
+            axes[0, 0].legend()
+            
+            ## Level-wise memory statistics
+            set_bars(2)
+            axes[0, 1].bar(al_range - (bar_width / 2), means["VMS"], bar_width, label="VMS")
+            axes[0, 1].bar(al_range + (bar_width / 2), means["RSS"], bar_width, label="RSS")
+            axes[0, 1].set_title("Required Memory per Abstraction Level")
+            axes[0, 1].set_ylabel("Total Memory (MBs)")
+            axes[0, 1].set_xlabel("Abstraction Level")
+            axes[0, 1].set_xticks(al_range)
+            axes[0, 1].set_xticklabels(al_labels)
+            axes[0, 1].legend()
+            
+            ## Level-wise quality statistics
+            set_bars(2)
+            axes[0, 2].bar(al_range - (bar_width / 2), means["LE"], bar_width, label="Length")
+            axes[0, 2].bar(al_range + (bar_width / 2), means["AC"], bar_width, label="Actions")
+            axes[0, 2].set_title("Concatenated Plan Quality per Abstraction Level")
+            axes[0, 2].set_ylabel("Total")
+            axes[0, 2].set_xlabel("Abstraction Level")
+            axes[0, 2].set_xticks(al_range)
+            axes[0, 2].set_xticklabels(al_labels)
+            axes[0, 2].legend()
+            
+            ## Bottom-level step-wise timing statistics
+            bottom_means: DataFrame = step_wise_means[step_wise_means["AL"].isin([bottom_level])].sort_index()
+            bottom_std: DataFrame = step_wise_std[step_wise_std["AL"].isin([bottom_level])].sort_index()
+            bottom_index_wise_means: DataFrame = index_wise_means[index_wise_means["AL"].isin([bottom_level])].sort_index()
+            steps: list[int] = bottom_means["SL"].to_list()
+            max_time: float = max(bottom_means["S_TT"] + bottom_std["S_TT"])
+            axes[1, 0].plot(steps, bottom_means["S_GT"], "g", label="Mean Step-Wise Grounding")
+            axes[1, 0].plot(steps, bottom_means["S_ST"], "b", label="Mean Step-Wise Solving")
+            axes[1, 0].plot(steps, bottom_means["S_TT"], "r", label="Mean Step-Wise Total")
+            axes[1, 0].bar(index_wise_means["YLD_AT"], max_time, width=0.20, color="magenta", label="Mean Yield Steps")
+            axes[1, 0].bar(bottom_means["SL"], [max_time if fuzzy_truth > 0.25 else 0 for fuzzy_truth in bottom_means["IS_DIV_APP"]], width=1.0,
+                           color=['#' + f"{round(int('FFFFFF', base=16) * (1.0 - fuzzy_truth)):06x}" for fuzzy_truth in bottom_means["IS_DIV_APP"]], label="Problem Divisions")
+            if namespace.experimental_runs > 1:
+                axes[1, 0].plot(steps, bottom_means["S_GT"] + bottom_std["S_GT"], "--g")
+                axes[1, 0].plot(steps, bottom_means["S_ST"] + bottom_std["S_ST"], "--b")
+                axes[1, 0].plot(steps, bottom_means["S_TT"] + bottom_std["S_TT"], "--r")
+                axes[1, 0].plot(steps, bottom_means["S_GT"] - bottom_std["S_GT"], "--g")
+                axes[1, 0].plot(steps, bottom_means["S_ST"] - bottom_std["S_ST"], "--b")
+                axes[1, 0].plot(steps, bottom_means["S_TT"] - bottom_std["S_TT"], "--r")
+            axes[1, 0].set_title("Bottom-Level Search Times")
+            axes[1, 0].set_ylabel("Time (s)")
+            axes[1, 0].set_xlabel("Search Length")
+            axes[1, 0].legend()
+            
+            ## Bottom-level step-wise memory statistics
+            max_memory: float = max(bottom_means["T_VMS"] + bottom_std["T_VMS"])
+            axes[1, 1].plot(steps, bottom_means["T_VMS"], "g", label="Mean Step-Wise VMS")
+            axes[1, 1].plot(steps, bottom_means["T_RSS"], "b", label="Mean Step-Wise RSS")
+            axes[1, 1].bar(bottom_means["SL"], [max_memory if fuzzy_truth > 0.25 else 0 for fuzzy_truth in bottom_means["IS_DIV_APP"]], width=0.20,
+                           color=['#' + f"{round(int('FFFFFF', base=16) * (1.0 - fuzzy_truth)):06x}" for fuzzy_truth in bottom_means["IS_DIV_APP"]], label="Problem Divisions")
+            if namespace.experimental_runs > 1:
+                axes[1, 1].plot(steps, bottom_means["T_VMS"] + bottom_std["T_VMS"], "--g")
+                axes[1, 1].plot(steps, bottom_means["T_RSS"] + bottom_std["T_RSS"], "--b")
+                axes[1, 1].plot(steps, bottom_means["T_VMS"] - bottom_std["T_VMS"], "--g")
+                axes[1, 1].plot(steps, bottom_means["T_RSS"] - bottom_std["T_RSS"], "--b")
+            axes[1, 1].set_title("Bottom-Level Memory Usage")
+            axes[1, 1].set_ylabel("Total Memory (MBs)")
+            axes[1, 1].set_xlabel("Search Length")
+            axes[1, 1].legend()
+            
+            ## Index-wise sub-plan length
+            set_bars(2)
+            axes[1, 2].bar(numpy.array(bottom_index_wise_means["INDEX"]) - (bar_width / 2), bottom_index_wise_means["SP_L"], width=bar_width, color="cyan", label="Mean Sub-Plan Lengths")
+            axes[1, 2].bar(numpy.array(bottom_index_wise_means["INDEX"]) + (bar_width / 2), bottom_index_wise_means["INTER_Q"], width=bar_width, color="magenta", label="Mean Interleaving Quantity")
+            axes[1, 2].set_title("Bottom-Level Sub-Plan Lengths")
+            axes[1, 2].set_ylabel("Length")
+            axes[1, 2].set_xlabel("Sub-goal Stage Index")
+            axes[1, 2].legend()
+            
+            ## Achieved sub-goal stages against search length
+            axes[2, 0].plot(steps, bottom_means["C_TACHSGOALS"], "g", label="Achieved Sub-goal Stages")
+            axes[2, 0].bar(index_wise_means["ACH_AT"], max(bottom_means["C_TACHSGOALS"]), width=0.20, color="cyan", label="Mean Achievement Steps")
+            if namespace.experimental_runs > 1:
+                axes[2, 0].plot(steps, bottom_means["C_TACHSGOALS"] + bottom_std["C_TACHSGOALS"], "--g")
+                axes[2, 0].plot(steps, bottom_means["C_TACHSGOALS"] - bottom_std["C_TACHSGOALS"], "--g")
+            axes[2, 0].set_title("Bottom-Level Sub-Goal Achievement")
+            axes[2, 0].set_ylabel("Total")
+            axes[2, 0].set_xlabel("Plan Length")
+            axes[2, 0].legend()
+            
+            ## Plan expansion against search length
+            axes[2, 1].plot(steps, bottom_means["C_CP_EF_L"], "g", label="Length Factor")
+            axes[2, 1].plot(steps, bottom_means["C_CP_EF_A"], "y", label="Action Factor")
+            axes[2, 1].plot(steps, bottom_means["C_SP_ED_L"], "b", label="Length Deviation")
+            axes[2, 1].plot(steps, bottom_means["C_SP_ED_A"], "c", label="Action Deviation")
+            axes[2, 1].plot(steps, bottom_means["C_SP_EB_L"], "r", label="Length Balance")
+            axes[2, 1].plot(steps, bottom_means["C_SP_EB_A"], "m", label="Action Blance")
+            if namespace.experimental_runs > 1:
+                axes[2, 1].plot(steps, bottom_means["C_CP_EF_L"] + bottom_std["C_CP_EF_L"], "--g")
+                axes[2, 1].plot(steps, bottom_means["C_CP_EF_L"] - bottom_std["C_CP_EF_L"], "--g")
+                axes[2, 1].plot(steps, bottom_means["C_CP_EF_A"] + bottom_std["C_CP_EF_A"], "--y")
+                axes[2, 1].plot(steps, bottom_means["C_CP_EF_A"] - bottom_std["C_CP_EF_A"], "--y")
+                
+                axes[2, 1].plot(steps, bottom_means["C_SP_ED_L"] + bottom_std["C_SP_ED_L"], "--b")
+                axes[2, 1].plot(steps, bottom_means["C_SP_ED_L"] - bottom_std["C_SP_ED_L"], "--b")
+                axes[2, 1].plot(steps, bottom_means["C_SP_ED_A"] + bottom_std["C_SP_ED_A"], "--c")
+                axes[2, 1].plot(steps, bottom_means["C_SP_ED_A"] - bottom_std["C_SP_ED_A"], "--c")
+                
+                axes[2, 1].plot(steps, bottom_means["C_SP_EB_L"] + bottom_std["C_SP_EB_L"], "--r")
+                axes[2, 1].plot(steps, bottom_means["C_SP_EB_L"] - bottom_std["C_SP_EB_L"], "--r")
+                axes[2, 1].plot(steps, bottom_means["C_SP_EB_A"] + bottom_std["C_SP_EB_A"], "--m")
+                axes[2, 1].plot(steps, bottom_means["C_SP_EB_A"] - bottom_std["C_SP_EB_A"], "--m")
+            axes[2, 1].set_title("Bottom-Level Refinement Expansion")
+            axes[2, 1].set_ylabel("Accumulating Expansion")
+            axes[2, 1].set_xlabel("Plan Length")
+            axes[2, 1].legend()
+            
+            ## Partial-problem balancing
+            set_bars(7)
+            axes[2, 2].bar(al_range - (bar_width * 3.0), means["PR_T"], bar_width, label="Total Problems")
+            axes[2, 2].bar(al_range - (bar_width * 2.0), means["PR_TS_MEAN"], bar_width, label="Mean Size")
+            axes[2, 2].bar(al_range - (bar_width * 1.0), means["PR_TS_STD"], bar_width, label="Stdev Size")
+            axes[2, 2].bar(al_range, means["PP_LE_MEAN"], bar_width, label="Mean Refinement Length")
+            axes[2, 2].bar(al_range + (bar_width * 1.0), means["PP_LE_STD"], bar_width, label="Stdev Refinement Length")
+            axes[2, 2].bar(al_range + (bar_width * 2.0), means["DIV_INDEX_SPREAD"], bar_width, label="Divisions Index Spread")
+            axes[2, 2].bar(al_range + (bar_width * 3.0), means["DIV_STEP_SPREAD"], bar_width, label="Divisions Step Spread")
+            axes[2, 2].set_title("Problem Balance")
+            axes[2, 2].set_ylabel("Total")
+            axes[2, 2].set_xlabel("Abstraction Level")
+            axes[2, 2].set_xticks(al_range)
+            axes[2, 2].set_xticklabels(al_labels)
+            axes[2, 2].legend()
+            
+            pyplot.show()
     
     ## Return a clean exit
     return 0
@@ -741,27 +919,21 @@ def __setup() -> argparse.Namespace:
     ## Input files
     parser.add_argument("files", nargs="*", type=str,
                         help="a list of planning domain and problem files to load, at least one must be given")
-    # parser.add_argument("--display_loader", type=str,
-    #                     help="display the contents of a ASH loader file")
-    # parser.add_argument("-rules", "--domain_rules", type=str,
-    #                     help="the domain rules name from a ASH loader file")
-    # parser.add_argument("-struct", "--domain_structure", type=str,
-    #                     help="the world structure name from a ASH loader file")
-    # parser.add_argument("-problem", "--problem_specifics", type=str,
-    #                     help="the problem specification name from a ASH loader file")
     parser.add_argument("--load_schema", default=None, type=str,
                         help="specify a file to load a refinement schema from to generate problem spaces and check for dependencies between partial problems")
     
     ## Output files
+    parser.add_argument("-cfn", "--config_file_naming", action="store_true",
+                        help="name output files based on the configuration file name, format ./")
     parser.add_argument("-pf", "--plan_file", default=f"./solutions/plans/ASH_Plan_{output_file_append}.txt", type=str,
                         help="specify a custom file to save the generated plans to during standard operation, "
                              f"by default ./solutions/plans/ASH_Plan_{output_file_append}.txt")
     parser.add_argument("-lf", "--log_file", default=f"./logs/ASH_Log_{output_file_append}.log", type=str,
                         help=f"specify a custom file to save the log file to, by default ./logs/ASH_Log_{output_file_append}.log")
-    parser.add_argument("-xf", "--excel_file", nargs="?", default=None, const=f"./experiments/results/ASH_Excel_{output_file_append}.xlsx", type=str,
+    parser.add_argument("-xf", "--excel_file", nargs="?", default=None, const=f"./experiments/results/ASH_Excel_{output_file_append}.xlsx", type=optional_str,
                         help="output experimental results to an excel (.xlsx) file, optionally specify a file name, "
                              f"as standard ./experiments/results/ASH_Excel_{output_file_append}.xlsx")
-    parser.add_argument("-df", "--data_file", nargs="?", default=None, const=f"./experiments/results/ASH_Data_{output_file_append}.dat", type=str,
+    parser.add_argument("-df", "--data_file", nargs="?", default=None, const=f"./experiments/results/ASH_Data_{output_file_append}.dat", type=optional_str,
                         help="output experimental results to a Delimiter-Seperated Values (DSV) (.dat) file, "
                              f"optionally specify a file name, as standard ./experiments/results/ASH_Data_{output_file_append}.dat")
     parser.add_argument("-df_ds", "--data_sep", default=" ", type=str,
@@ -804,8 +976,8 @@ def __setup() -> argparse.Namespace:
                         help="integer specifying number of experimental runs, by default 1")
     parser.add_argument("-ir", "--initial_runs", nargs="?", default=0, const=1, type=int,
                         help="integer specifying number of initial 'dry' runs before experimental results are recorded, by default 0, as standard 1")
-    parser.add_argument("--pause_on_run_completion", **bool_options(default=False),
-                        help="whether to pause execution of the benchmarking system after completion of each experimental run, by default False, as standard True")
+    # parser.add_argument("--pause_on_run_completion", **bool_options(default=False),
+    #                     help="whether to pause execution of the benchmarking system after completion of each experimental run, by default False, as standard True")
     
     ## ASP solver options
     parser.add_argument("-th", "--threads", default=os.cpu_count(), type=int,
@@ -860,17 +1032,16 @@ def __setup() -> argparse.Namespace:
                              "as fast as possible, afterwards solve the lowest unsolved partial problem until the ground level is complete), 'complete-first' (solve all "
                              "partial problems at each level before moving to the next level, successively completing each level until the ground is reached), "
                              "or 'hybrid' (uses a mix of the prior, solve only the initial partial problems first, propagating directly down to the ground level as fast as possible, then successively complete each level), by default 'ground-first'")
-    parser.add_argument("-strat", "--division_strategy", choices=["none", "basic", "steady", "hasty", "jumpy", "relentless", "impetuous", "rapid-basic", "rapid-steady", "rapid-hasty", "rapid-jumpy", "cautious"], default="none", type=str,
-                        help="the division strategy to use; 'none', '(rapid-)basic', '(rapid-)steady', '(rapid-)hasty', '(rapid-)jumpy', 'relentless', 'impetuous', 'cautious', by default 'none'")
+    parser.add_argument("-strat", "--division_strategy", choices=["none", "basic", "steady", "hasty", "jumpy", "relentless", "impetuous", "rapid-basic", "rapid-steady", "rapid-hasty", "rapid-jumpy"], default="none", type=str,
+                        help="the division strategy to use; 'none', '(rapid-)basic', '(rapid-)steady', '(rapid-)hasty', '(rapid-)jumpy', 'relentless', 'impetuous', by default 'none'")
     parser.add_argument("-bound", "--division_strategy_bounds", nargs="+", default=None, action=StoreHierarchicalArguments, type=str, metavar="value | level1=value1 level_i=value_i [...] level_n=value_n",
                         help="the bound used on the division strategy, this a maximum or minimum bound on the size, complexity, or planning time of the partial "
                              "problems as defined by the nature of the strategy itself, given as either a tuple of values (used at all abstraction levels) "
                              "or a dictionary of level-tuple pairs to set different bounds for each level, if None then the strategy takes its specific default bound, by default None")
-    parser.add_argument("--bound_type", choices=["incremental", "differential", "integral", "cumulative"], default="incremental", type=str, ## TODO Predictive
-                        help="the type of bound used by reactive or adaptive strategies for their modifiable bound; 'incremental' (the total incremental planning time (seconds/step), averaged over the moving range), "
-                             "'differential' (the rate of change (increase) in the total incremental planning time (seconds/step/step), averaged over the moving range), 'integral' (the sum of the total incremental planning times (seconds) over the moving range), "
-                             "'predictive' (the predicted total incremental planning time of the next search step (seconds/step)), or "
-                             "'cumulative' (the sum of all total incremental planning times (seconds) since the last reactive division, essentially an alias for an integral bound type with no range bound), by default 'incremental'")
+    parser.add_argument("--bound_type", choices=["search_length", "incremental_time", "differential_time", "integral_time", "cumulative_time"], default="incremental_time", type=str,
+                        help="the type of bound used by reactive or adaptive strategies for their modifiable bound; 'search_length' (the current planning search length), 'incremental_time' (the total incremental planning time (seconds/step), averaged over the moving range), "
+                             "'differential_time' (the rate of change (increase) in the total incremental planning time (seconds/step/step), averaged over the moving range), 'integral_time' (the sum of the total incremental planning times (seconds) over the moving range), "
+                             "'cumulative_time' (the sum of all total incremental planning times (seconds) since the last reactive division, essentially an alias for an integral bound type with no range bound), by default 'incremental'")
     parser.add_argument("-save", "--save_grounding", **bool_options(default=False),
                         help="whether to save the ASP program grounding between divided planning increments, by default False, as standard True")
     parser.add_argument("-horizon", "--backwards_horizon", nargs="+", default=0, action=StoreHierarchicalArguments, type=str, metavar="value | level1=value1 level_i=value_i [...] level_n=value_n",
@@ -899,22 +1070,24 @@ def __setup() -> argparse.Namespace:
                         help="overrides the division strategy used in tasking models to treat refining each individual task as an independent sub-problem at the next level, by default True")
     parser.add_argument("-order_tasks", "--divide_tasks_on_final_goal_intermediate_achievement_ordering", **bool_options(default=False),
                         help="overrides the division strategy used in tasking models to make divisions only upon the intermediate achievement of a final-goal literal, by default True (requires final-goal intermediate ordering preferences)")
-    # parser.add_argument("-div_init", "--divide_only_initial_problems", **bool_options(default=False),
-    #                     help="overrides the division strategy to only divide initial problems, and prevent dividing all non-initial problems, by default False, as standard True")
     
     ## Online optimisation options
-    parser.add_argument("-preempt_pos_fgoals", "--positive_final_goal_preemptive_achievement_heuristic", **bool_options(default=None, const=True, add_none=True),
-                        help="whether to enable the ASP program heuristic that prefers choosing actions whose effects preemptively achieve positive final"
-                             "goals, when there is an arbitrary choice available in non-final partial problems, by default None, as standard True")
-    parser.add_argument("-preempt_neg_fgoals", "--negative_final_goal_preemptive_achievement_heuristic", **bool_options(default=None, const=True, add_none=True),
-                        help="whether to enable the ASP program heuristic that prefers choosing actions whose effects preemptively achieve negative final"
-                             "goals, when there is an arbitrary choice available in non-final partial problems, by default None, as standard True")
     parser.add_argument("-order_fgoals", "--final_goal_intermediate_achievement_ordering_preferences", **bool_options(default=None, const=True, add_none=True),
-                        help="whether to enable optimisation of ordering preferences over the achievement of final-goals for tasking models, "
+                        help="whether to enable optimisation of ordering preferences over the intermediate achievement of task-critical final-goal literals in tasking models, "
                              "if None then the planner decides (chooses True if a planning problem has a tasking model, False otherwise), by default None, as standard True")
+    parser.add_argument("-preempt_pos_fgoals", "--positive_final_goal_preemptive_achievement", **bool_options(default=None, const=True, add_none=True),
+                        help="whether to enable positive final-goal preemptive achievement, this prefers choosing actions whose effects preemptively achieve positive final-"
+                             "goal literals, when there is an arbitrary choice available in non-final partial problems, by default None, as standard True")
+    parser.add_argument("-preempt_neg_fgoals", "--negative_final_goal_preemptive_achievement", **bool_options(default=None, const=True, add_none=True),
+                        help="whether to enable negative final-goal preemptive achievement, this prefers choosing actions whose effects preemptively achieve negative final-"
+                             "goal literals, when there is an arbitrary choice available in non-final partial problems, by default None, as standard True")
+    parser.add_argument("-preempt_mode", "--final_goal_preemptive_achievement_mode", choices=["heuristic", "optimise"], default="heuristic", type=str,
+                        help="The final-goal preemptive achievement enforcement mode; 'heuristic' (preemptive achievement is applied as a domain heuristic to the ASP solver, affecting solving at all search steps in the planning progression),"
+                             "'optimise' (preemptive achievement is applied as a model optimisation process, affecting the generation of optimal answer sets at the end of search), by default 'heuristic'")
     
     ## Search for a configuration file in the argument list
     options: Optional[list[str]] = None
+    config_file: Optional[str] = None
     for index, arg in enumerate(sys.argv):
         if "--config" in arg:
             options = []
@@ -939,10 +1112,25 @@ def __setup() -> argparse.Namespace:
     ## Parse the arguments and obtain the namespace
     namespace: argparse.Namespace = parser.parse_args(options)
     
+    ## Record the name of the configuration file in the global scope
+    if namespace.config_file_naming:
+        global config_file_name
+        config_file_name = ""
+        if config_file is not None:
+            config_file_name = config_file.split(".config")[0].split("\\")[-1]
+    
     ## Setup the logger
     if not namespace.disable_logging:
-        ## Use a rotating
-        logging.basicConfig(handlers=[logging.handlers.RotatingFileHandler(f"./logs/ASH_Log_{output_file_append}.log", mode="w", maxBytes=(95 * (1024 ** 2)), backupCount=10, encoding="utf-8")],
+        
+        ## Determine log file name
+        log_file_name: str = namespace.log_file
+        if namespace.config_file_naming:
+            log_file_name = log_file_name.split(".log")[0] + f"_{config_file_name}" + ".log"
+        
+        ## Use a rotating log file hangler that starts a new file when the current reaches 95 MBs in size
+        logging.basicConfig(handlers=[logging.handlers.RotatingFileHandler(log_file_name, mode="w",
+                                                                           maxBytes=(95 * (1024 ** 2)),
+                                                                           backupCount=10, encoding="utf-8")],
                             format="[%(asctime)s] %(levelname)-4s :: %(name)-8s >> %(message)s\n",
                             datefmt="%d-%m-%Y_%H-%M-%S",
                             level=logging.DEBUG)
@@ -955,8 +1143,11 @@ def __setup() -> argparse.Namespace:
         ## Log the command line arguments for debugging purposes
         _Launcher_logger.debug("Command line arguments:\n" + "\n".join(repr(item) for item in sys.argv[1:]))
         if options:
+            _Launcher_logger.debug(f"Configuration file loaded: {config_file}")
             _Launcher_logger.debug("Configuration file arguments:\n" + "\n".join(repr(item) for item in options))
-        _Launcher_logger.debug("Parsed command line argumenys:\n" + "\n".join(repr(item) for item in namespace.__dict__.items()))
+        _Launcher_logger.debug("Parsed command line arguments:\n" + "\n".join(repr(item) for item in namespace.__dict__.items()))
+        if namespace.config_file_naming:
+            _Launcher_logger.debug(f"Configuration file output file naming enabled: {config_file_name}")
         
         ## Setup the console stream
         console_handler = logging.StreamHandler()
