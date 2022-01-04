@@ -22,12 +22,11 @@
 from dataclasses import dataclass, field, fields
 from functools import cached_property
 import numpy
-from pandas.core import api
 from tqdm import tqdm
 from core.Strategies import DivisionPoint, DivisionPointPair, DivisionScenario, DivisionStrategy, Reaction, SubGoalRange
 import enum
 import logging
-from typing import Any, Callable, Final, Iterable, Iterator, Literal, NamedTuple, Optional, Type, Union, final
+from typing import Any, Callable, Final, Iterable, Iterator, Literal, NamedTuple, Optional, Union, final
 import statistics
 import json
 import _collections_abc
@@ -45,11 +44,9 @@ import time
 ## Fgoal achievement preference to monolevel plan class, and to proactive strategies?
 ##      - Check this is being calculated correctly, and update display of monolevel plans for it,
 ##      - Test independent tasks and order tasks division strategy overrides.
-
 ## Add huge version with square rooms and spread out blocks
 ## Add version with obstacles that talos must move around, and which have blocks on different sides of themto force longer locomotion plans
 ## Add starting room door to the small problems, so that problem 1 also takes longer by classical planning
-
 ## Minimum required execution time per partial plan, tells us how long it'd have to take to execute that partial plan before the next one is available, without the robot having to pause execution between them.
 
 ## Module logger
@@ -60,18 +57,10 @@ _planner_logger.setLevel(logging.DEBUG)
 Number = Union[int, float]
 HierarchicalNumber = Union[Number, dict[int, Number]]
 
-
-
-# Exception Handling
-
-
-
+## Custom exception handling
 class ASH_Error(Exception): pass
-
 class ASH_NoSolutionError(ASH_Error): pass
-
 class ASH_InvalidPlannerState(ASH_Error): pass
-
 class ASH_InternalError(ASH_Error): pass
 
 class ASH_InvalidInputError(ASH_Error):
@@ -81,12 +70,12 @@ class ASH_InvalidInputError(ASH_Error):
             _message += f"Got; {given} of type {type(given)}."
         super().__init__(_message)
 
-def log_and_raise(exception_type: type[BaseException], *args: object, from_exception: Optional[BaseException] = None, logger: logging.Logger = _planner_logger) -> None:
-    "Function to log a warning (at debug level) and raise an exception from a message."
+def log_and_raise(exception_type: type[BaseException],
+                  *args: object, from_exception: Optional[BaseException] = None,
+                  logger: logging.Logger = _planner_logger) -> None:
+    "Commit a log (at debug level) and then raise an exception from a sequence of arbitrary arguments."
     logger.debug(*args, exc_info=True)
     raise exception_type(*args) from from_exception
-
-
 
 #############################################################################################################################################
 #############################################################################################################################################
@@ -98,7 +87,22 @@ def log_and_raise(exception_type: type[BaseException], *args: object, from_excep
 #############################################################################################################################################
 #############################################################################################################################################
 
-
+@enum.unique
+class ActionType(enum.Enum):
+    """
+    Enum class encapulating possible action types.
+    
+    Items
+    -----
+    `Locomotion = "locomotion"` - A locomotion action is one that changes the robot's location, and possibly the location of entities currently being grasped or transported by the robot.
+    
+    `Manipulation = "manipulation"` - A manipulation action is one that allows the robot to move, place, or grasp an entity.
+    
+    `Configuration = "configuration"` - A configuration action is one that changes the robot's own physical state, or the physical state of its component parts, without changing the wider system state.
+    """
+    Locomotion = "locomotion"
+    Manipulation = "manipulation"
+    Configuration = "configuration"
 
 class Fluent(ASP.Atom):
     """
@@ -171,8 +175,7 @@ class Action(ASP.Atom):
     @property
     def type(self) -> "ActionType":
         "The action's type; locomotion, configuration, or manipulation."
-        if (str(self['A']).startswith("move")
-            or str(self['A']).startswith("push")):
+        if str(self['A']).startswith("move"):
             return ActionType.Locomotion
         elif str(self['A']).startswith("configure"):
             return ActionType.Configuration
@@ -248,23 +251,6 @@ class FinalGoal(ASP.Atom):
         return "final_goal"
 
 
-
-@enum.unique
-class ActionType(enum.Enum):
-    """
-    Enum class encapulating possible action types.
-    
-    Items
-    -----
-    `Locomotion = "locomotion"` - A locomotion action is one that changes the robot's location, and possibly the location of entities currently being grasped or transported by the robot.
-    
-    `Manipulation = "manipulation"` - A manipulation action is one that allows the robot to move, place, or grasp an entity.
-    
-    `Configuration = "configuration"` - A configuration action is one that changes the robot's own physical state, or the physical state of its component parts, without changing the wider system state.
-    """
-    Locomotion = "locomotion"
-    Manipulation = "manipulation"
-    Configuration = "configuration"
 
 @dataclass(frozen=True)
 class ASH_Statistics(ASP.Statistics):
@@ -755,7 +741,7 @@ class MonolevelPlan(_collections_abc.Mapping):
             steps: list[int] = self.conformance_mapping.current_sgoals(indices)
             if (max(self.conformance_mapping.constraining_sgoals_range) == indices
                 and self.has_trailing_plan):
-                steps.extend([step for step in range(max(steps, self.end_step))])
+                steps.extend([step for step in range(max(steps), self.end_step)])
             
             if action_type is None:
                 return Expansion(len([step for step in self.conformance_mapping.current_sgoals(indices) if accu_step is None or step <= accu_step]),

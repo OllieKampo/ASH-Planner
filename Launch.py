@@ -1117,7 +1117,11 @@ def __setup() -> argparse.Namespace:
         global config_file_name
         config_file_name = ""
         if config_file is not None:
-            config_file_name = config_file.split(".config")[0].split("\\")[-1]
+            if "\\" in config_file:
+                config_file_name = config_file.split(".config")[0].split("\\")[-1]
+            elif "/" in config_file:
+                config_file_name = config_file.split(".config")[0].split("/")[-1]
+            else: config_file_name = config_file.split(".config")[0]
     
     ## Setup the logger
     if not namespace.disable_logging:

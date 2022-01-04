@@ -45,6 +45,10 @@ class Quantiles(NamedTuple):
     upper: float = 0.0
     max: float = 0.0
 
+def rmse(actual: list[int], perfect: list[float]) -> float:
+    if len(actual) != len(perfect): raise ValueError("Actual and perfect point spread lists must have equal length.")
+    return (sum(abs(obs - float(pred)) ** 2 for obs, pred in zip(actual, perfect)) / len(actual)) ** (0.5)
+
 class Results:
     "Encapsulates the results of experimental trails as a collection of hierarchical plans."
     
@@ -191,7 +195,7 @@ class Results:
                                   "NUM_SGOALS" : [], "ACH_AT" : [], "YLD_AT" : [],
                                   "IS_DIV" : [], "IS_INHERITED" : [], "IS_PROACTIVE" : [], "IS_INTERRUPT" : [], "PREEMPTIVE" : [],
                                   "SP_RE_GT" : [], "SP_RE_ST" : [], "SP_RE_TT" : [],
-                                  "SP_L" : [], "SP_A" : [], "INTER_Q" : [],
+                                  "SP_L" : [], "SP_A" : [], "SP_START_S" : [], "SP_END_S" : [], "INTER_Q" : [],
                                   "IS_LOCO" : [], "IS_MANI" : [], "IS_CONF" : []}
         
         for run, hierarchical_plan in enumerate(self.__plans):
@@ -299,7 +303,7 @@ class Results:
                 data_dict["CAT"]["PRE_CHOICES"].append(concatenated_plan.preemptive_choices)
                 
                 ## Final-goal intermediate ordering preferences
-                data_dict["CAT"]["FGOALS_ORDER"].append(concatenated_plan.fgoal_ordering_correct)
+                data_dict["CAT"]["FGOALS_ORDER"].append(bool(concatenated_plan.fgoal_ordering_correct))
                 
                 ## Sub-plan Expansion
                 factor: Planner.Expansion = concatenated_plan.get_plan_expansion_factor()
@@ -350,25 +354,22 @@ class Results:
                     perfect_mchild_spacing: float = concatenated_plan.plan_length / problem_size
                     perfect_mchild_spread: list[float] = [perfect_mchild_spacing * index for index in concatenated_plan.conformance_mapping.constraining_sgoals_range]
                     mchilds: list[int] = list(concatenated_plan.conformance_mapping.sgoals_achieved_at.values())
+                    rmse_mchild = rmse(mchilds, perfect_mchild_spread)
                     
                     total_divisions: int = len(hierarchical_plan.get_division_points(level + 1))
                     total_problems: int = (total_divisions - 2) + 1
                     
-                    perfect_div_index_spacing: float = concatenated_plan.conformance_mapping.total_constraining_sgoals / total_problems
-                    perfect_div_index_spread: list[float] = [perfect_div_index_spacing * index for index in range(0, total_divisions)]
-                    div_indices: list[int] = [point.index for point in hierarchical_plan.get_division_points(level + 1)]
+                    if total_problems > 1:
+                        perfect_div_index_spacing: float = concatenated_plan.conformance_mapping.total_constraining_sgoals / total_problems
+                        perfect_div_index_spread: list[float] = [perfect_div_index_spacing * index for index in range(0, total_divisions)]
+                        div_indices: list[int] = [point.index for point in hierarchical_plan.get_division_points(level + 1)]
+                        rmse_div_indices = rmse(div_indices, perfect_div_index_spread)
+                        
+                        perfect_div_step_spacing: float = concatenated_plan.plan_length / total_problems
+                        perfect_div_step_spread: list[float] = [perfect_div_step_spacing * index for index in range(0, total_divisions)]
+                        div_steps: list[int] = [concatenated_plan.conformance_mapping.sgoals_achieved_at.get(point.index, 0) for point in hierarchical_plan.get_division_points(level + 1)]
+                        rmse_div_steps = rmse(div_steps, perfect_div_step_spread)
                     
-                    perfect_div_step_spacing: float = concatenated_plan.plan_length / total_problems
-                    perfect_div_step_spread: list[float] = [perfect_div_step_spacing * index for index in range(0, total_divisions)]
-                    div_steps: list[int] = [concatenated_plan.conformance_mapping.sgoals_achieved_at.get(point.index, 0) for point in hierarchical_plan.get_division_points(level + 1)]
-                    
-                    def rmse(actual: list[int], perfect: list[float]) -> float:
-                        if len(actual) != len(perfect): raise ValueError("Actual and perfect point spread lists must have equal length.")
-                        return (sum(abs(obs - float(pred)) ** 2 for obs, pred in zip(actual, perfect)) / len(actual)) ** (0.5)
-                    
-                    rmse_mchild = rmse(mchilds, perfect_mchild_spread)
-                    rmse_div_indices = rmse(div_indices, perfect_div_index_spread)
-                    rmse_div_steps = rmse(div_steps, perfect_div_step_spread)
                     _EXP_logger.debug(f"Refinement spread at {run=}, {level=}: {rmse_mchild=}, {rmse_div_indices=}, {rmse_div_steps=}")
                 
                 ## The spread is the root mean squared error between;
@@ -585,7 +586,7 @@ class Results:
                     data_dict["STEP_CAT"]["IS_INHERITED"].append(reached_point is not None and reached_point.inherited)
                     data_dict["STEP_CAT"]["IS_PROACTIVE"].append(reached_point is not None and reached_point.proactive)
                     data_dict["STEP_CAT"]["IS_INTERRUPT"].append(reached_point is not None and reached_point.interrupting)
-                    data_dict["STEP_CAT"]["PREEMPTIVE"].append(reached_point is not None and reached_point.preemptive)
+                    data_dict["STEP_CAT"]["PREEMPTIVE"].append(reached_point is not None and reached_point.preemptive != 0)
                     data_dict["STEP_CAT"]["IS_DIV_COM"].append(committed_point is not None)
                     data_dict["STEP_CAT"]["DIV_COM_APP_AT"].append(committed_point.index if committed_point is not None else -1)
                     
@@ -628,16 +629,20 @@ class Results:
                         data_dict["INDEX_CAT"]["IS_INHERITED"].append(division_point is not None and division_point.inherited)
                         data_dict["INDEX_CAT"]["IS_PROACTIVE"].append(division_point is not None and division_point.proactive)
                         data_dict["INDEX_CAT"]["IS_INTERRUPT"].append(division_point is not None and division_point.interrupting)
-                        data_dict["INDEX_CAT"]["PREEMPTIVE"].append(division_point is not None and division_point.preemptive)
+                        data_dict["INDEX_CAT"]["PREEMPTIVE"].append(division_point is not None and division_point.preemptive != 0)
                         
                         ## Sub-plan wise planning times
                         inc_stats: dict[int, Statistics] = concatenated_plan.planning_statistics.incremental
-                        data_dict["INDEX_CAT"]["SP_RE_GT"].append(sum(inc_stats[step].grounding_time) for step in conformance_mapping.current_sgoals(index))
-                        data_dict["INDEX_CAT"]["SP_RE_ST"].append(sum(inc_stats[step].solving_time) for step in conformance_mapping.current_sgoals(index))
-                        data_dict["INDEX_CAT"]["SP_RE_TT"].append(sum(inc_stats[step].total_time) for step in conformance_mapping.current_sgoals(index))
+                        sub_plan_steps: list[int] = conformance_mapping.current_sgoals(index)
+                        inc_stats = {step : inc_stats.get(step, Statistics(0.0, 0.0)) for step in sub_plan_steps}
+                        data_dict["INDEX_CAT"]["SP_RE_GT"].append(sum(stat.grounding_time for stat in inc_stats.values()))
+                        data_dict["INDEX_CAT"]["SP_RE_ST"].append(sum(stat.solving_time for stat in inc_stats.values()))
+                        data_dict["INDEX_CAT"]["SP_RE_TT"].append(sum(stat.total_time for stat in inc_stats.values()))
                         
                         ## Refined sub-plan quality
                         index_factor: Planner.Expansion = concatenated_plan.get_expansion_factor(index)
+                        data_dict["INDEX_CAT"]["SP_START_S"].append(min(sub_plan_steps))
+                        data_dict["INDEX_CAT"]["SP_END_S"].append(max(sub_plan_steps))
                         data_dict["INDEX_CAT"]["SP_L"].append(index_factor.length)
                         data_dict["INDEX_CAT"]["SP_A"].append(index_factor.action)
                         
@@ -701,9 +706,9 @@ class Results:
                         data_dict["PAR"]["PRE_CHOICES"].append(partial_plan.preemptive_choices)
         
         ## Create a Pandas dataframe from the data dictionary
-        for key in data_dict:
-            for _key in data_dict[key]:
-                print(f"{_key}: {len(data_dict[key][_key])}")
+        # for key in data_dict:
+        #     for _key in data_dict[key]:
+        #         print(f"{_key}: {len(data_dict[key][_key])}")
         self.__dataframes = {key : pandas.DataFrame(data_dict[key]) for key in data_dict}
         return self.__dataframes
     
