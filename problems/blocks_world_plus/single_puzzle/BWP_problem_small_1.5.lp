@@ -21,7 +21,7 @@
 
 %% The position of blocks 2 and 3 are swapped, such that block 3 starts on the right side of the table.
 %% The goal requires block 3 to end up on the left side of the table, so it must thus be moved to solve the ground level problem.
-%% However, it does not have to be moved to solve the abstract problem, since the sides of the table are abstracted away, and it siply being somewhere on the table is sufficient to solve the problem.
+%% However, it does not have to be moved to solve the abstract problem, since the sides of the table are abstracted away, and it simply being somewhere on the table is sufficient to solve the problem.
 %% As a result, the minimal abstract plan will never include an action that moves block 3, and so the produced sub-goal stage sequence will not encode knowledge that will be useful during ground level planning to guide early partial problems towards moving block 3 on the left side of the table before stacking the other blocks atop of it.
 %% Thusly, it is not possible to eliminate the unconsidered goal problem in this case, as there is no arbitrary choice involved, since the block is never moved.
 %% Preemptive achievement preferences rely on this arbitrary choice, by biasing planning towards selecting actions amoungst the arbitrary choices that preemptively achieve final-goal literals.

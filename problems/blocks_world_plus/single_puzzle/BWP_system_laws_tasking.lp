@@ -981,6 +981,20 @@ precond(AL, ROBO, place_upon(OBJ_1, OBJ_2), on(OBJ_2), nothing, false) :- OBJ_1 
    insta_of(AL, block, BLOCK_3),
    sl(AL).
 
+%% A robot cannot grasp an object with two graspers simultaneously
+:- holds(AL, grasping(DESC_1), OBJ, t),
+   holds(AL, grasping(DESC_2), OBJ, t),
+   fluent(AL, inertial, grasping(DESC_1), OBJ),
+   fluent(AL, inertial, grasping(DESC_2), OBJ),
+   DESC_1 != DESC_2,
+   desce_of(AL, ROBO, DESC_1),
+   desce_of(AL, ROBO, DESC_2),
+   insta_of(AL, robot, ROBO),
+   insta_of(AL, grasper, DESC_1),
+   insta_of(AL, grasper, DESC_2),
+   insta_of(AL, graspable, OBJ), OBJ != nothing,
+   sl(AL).
+
 %% A robot cannot transport more objects than it has manipulator arms
 % :- N = #count { OBJ : holds(AL_1, transporting(ROBO, OBJ), true, t),
 %                       fluent(AL_1, inertial, transporting(ROBO, OBJ), true),
