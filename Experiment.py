@@ -554,6 +554,8 @@ class Results:
                         current_sgoals_index = concatenated_plan.conformance_mapping.current_sgoals.get(step, -1)
                         is_matching_child = step in concatenated_plan.conformance_mapping.sgoals_achieved_at.values()
                         is_trailing_plan = current_sgoals_index == -1
+                    if is_trailing_plan:
+                        current_sgoals_index = concatenated_plan.conformance_mapping.constraining_sgoals_range.last_index
                     data_dict["STEP_CAT"]["C_TACHSGOALS"].append(current_sgoals_index if is_matching_child else current_sgoals_index - 1)
                     data_dict["STEP_CAT"]["S_SGOALI"].append(current_sgoals_index)
                     data_dict["STEP_CAT"]["IS_MATCHING"].append(is_matching_child)
