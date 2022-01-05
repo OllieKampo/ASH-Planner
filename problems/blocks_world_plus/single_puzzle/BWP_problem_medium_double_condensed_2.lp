@@ -48,22 +48,22 @@
 %%
 
 %% Cell connections between rooms
-is(1, connected(((starting_room, 4), 4, 1), ((hallway, 4), 4, 0))).
-is(1, connected(((store_room, 7), 7, 1), ((hallway, 0), 0, 1))).
-is(1, connected(((hallway, 8), 8, 1), ((puzzle_room, 0), 0, 1))).
+is(1, connected(((starting_room, 3), 7, 1), ((hallway, 3), 7, 0))).
+is(1, connected(((store_room, 3), 7, 1), ((hallway, 0), 0, 1))).
+is(1, connected(((hallway, 5), 11, 1), ((puzzle_room, 0), 0, 1))).
 
 %% Door connection between the hallway and the puzzle room
-% is(1, connected_by_door(starting_room_door, (starting_room, 4, 1), (hallway, 4, 0))).
-is(1, connected_by_door(store_room_door, ((store_room, 7), 7, 1), ((hallway, 0), 0, 1))).
-is(1, connected_by_door(puzzle_room_door, ((hallway, 8), 8, 1), ((puzzle_room, 0), 0, 1))).
+% is(1, connected_by_door(starting_room_door, ((starting_room, 3), 7, 1), ((hallway, 3), 7, 0))).
+is(1, connected_by_door(store_room_door, ((store_room, 3), 7, 1), ((hallway, 0), 0, 1))).
+is(1, connected_by_door(puzzle_room_door, ((hallway, 3), 7, 1), ((puzzle_room, 0), 0, 1))).
 
 %% The door's handles are located on either side of it
-is(1, in(starting_room_door_handle_inner, ((starting_room, 4), 4, 1))).
-is(1, in(starting_room_door_handle_outer, ((hallway, 0), 0, 1))).
-is(1, in(store_room_door_handle_inner, ((store_room, 7), 7, 1))).
+is(1, in(starting_room_door_handle_inner, ((starting_room, 3), 7, 1))).
+is(1, in(starting_room_door_handle_outer, ((hallway, 3), 7, 0))).
+is(1, in(store_room_door_handle_inner, ((store_room, 3), 7, 1))).
 is(1, in(store_room_door_handle_outer, ((hallway, 0), 0, 1))).
 is(1, in(puzzle_room_door_handle_inner, ((puzzle_room, 0), 0, 1))).
-is(1, in(puzzle_room_door_handle_outer, ((hallway, 8), 8, 1))).
+is(1, in(puzzle_room_door_handle_outer, ((hallway, 3), 7, 1))).
 
 %% Block colouring
 is(AL, colour_of((BLOCK, N), red)) :- static(AL, colour_of((BLOCK, N), red)),
@@ -78,8 +78,8 @@ is(AL, colour_of((BLOCK, N), blue)) :- static(AL, colour_of((BLOCK, N), blue)),
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Adjacent cells are connected
-is(1, connected(((R, X_1), X_1, Y), ((R, X_2), X_2, Y))) :- insta_of(1, cell, ((R, X_1), X_1, Y)),
-                                                            insta_of(1, cell, ((R, X_2), X_2, Y)),
+is(1, connected(((R, N_1), X_1, Y), ((R, N_2), X_2, Y))) :- insta_of(1, cell, ((R, N_1), X_1, Y)),
+                                                            insta_of(1, cell, ((R, N_2), X_2, Y)),
                                                             X_2 = X_1 + 1.
 is(1, connected((A, X, Y_1), (A, X, Y_2))) :- insta_of(1, cell, (A, X, Y_1)),
                                               insta_of(1, cell, (A, X, Y_2)),
@@ -129,7 +129,7 @@ holds(1, configuration(DOOR), closed, 0) :- fluent(AL, inertial, configuration(D
                                             sl(AL).
 
 %% The puzzle room table is in the puzzle room
-holds(1, in(puzzle_room_table), ((puzzle_room, 7), 7, 0), 0).
+holds(1, in(puzzle_room_table), ((puzzle_room, 3), 7, 0), 0).
 
 %% The first four blocks are stacked on the puzzle room table
 holds(1, on((block, 1)), puzzle_room_table_left, 0).
