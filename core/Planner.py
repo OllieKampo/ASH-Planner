@@ -1520,10 +1520,9 @@ class MonolevelProblem:
         "A formatted multi-line description of the monolevel problem specification."
         if self.conformance:
             conformance_description: str = f"{'complete' if self.complete_planning else 'partial'} conformance refinement ({self.conformance_type.value}) with sgoals range [{self.first_sgoals}-{self.last_sgoals}]"
-        return "\n".join([f"Level = {self.level}",
-                          f"Concurrency = {'enabled' if self.concurrency else 'disabled'}",
-                          f"Problem Type = {conformance_description if self.conformance else 'classical'}",
-                          f"Minimum search length bound = {'enabled' if self.use_search_length_bound else 'disabled'} with value {self.search_length_bound}"])
+        return (f"[Level = {self.level}] {conformance_description if self.conformance else 'classical'} : "
+                f"Concurrency {'enabled' if self.concurrency else 'disabled'} : "
+                f"Minimum search length bound {'enabled' if self.use_search_length_bound else 'disabled'} with value {self.search_length_bound}")
     
     @property
     def sgoals_range(self) -> range:
@@ -2689,13 +2688,15 @@ class HierarchicalPlanner(AbstractionHierarchy):
                                                           conformance, conformance_type, first_sgoals, last_sgoals,
                                                           sequential_yield, division_strategy, use_search_length_bound)
         
-        self.__logger.log(self.__log_level(Verbosity.Verbose, logging.INFO),
-                          f"Problem specification obtained: {problem!s}")
         self.__logger.log(self.__log_level(Verbosity.Standard, logging.INFO),
                           f"Generating monolevel plan:\n{problem.problem_description}")
+        self.__logger.log(self.__log_level(Verbosity.Verbose, logging.INFO),
+                          f"Problem specification obtained: {problem!s}")
         
         ## Warn if the given step limit is less than the determined min search length bound
-        if problem.use_search_length_bound and length_limit is not None and length_limit < problem.search_length_bound:
+        if (problem.use_search_length_bound
+            and length_limit is not None
+            and length_limit < problem.search_length_bound):
             self.__logger.log(self.__log_level(Verbosity.Standard, logging.WARNING),
                               f"The specified step limit of {length_limit} is less than the minimum step bound of {problem.search_length_bound}.")
         
@@ -2734,13 +2735,13 @@ class HierarchicalPlanner(AbstractionHierarchy):
         ## Preemptive positive final-goal achievement is enabled iff either;
         ##      - Explicitly enabled or,
         ##      - Not given or None and problem divisions may be applied.
-        _preempt_pos_fgoals: bool = (bool(preempt_pos_fgoals)
-                                     or (preempt_pos_fgoals is None
-                                         and partial_planning_enabled))
+        _preempt_pos_fgoals: bool = (partial_planning_enabled
+                                     and (bool(preempt_pos_fgoals)
+                                          or preempt_pos_fgoals is None))
         
         ## Preemptive negative final-goal achievement is enabled iff explicitly enabled
-        _preempt_neg_fgoals: bool = (bool(preempt_neg_fgoals)
-                                     and partial_planning_enabled)
+        _preempt_neg_fgoals: bool = (partial_planning_enabled
+                                     and bool(preempt_neg_fgoals))
         
         ## Determine the mode by which the final-goal preemptive achievement is enforced;
         ##      - By default heuristic mode is used if not given or None.
@@ -2817,6 +2818,12 @@ class HierarchicalPlanner(AbstractionHierarchy):
                                                                            _preempt_neg_fgoals,
                                                                            _preempt_mode)
         
+        _optimise: bool = (_minimise_actions
+                           or _order_fgoals_achievement
+                           or (_preempt_mode is PreemptMode.Optimise
+                               and (_preempt_pos_fgoals
+                                    or _preempt_neg_fgoals)))
+        
         ## Determine solver options
         solver_options = [ASP.Options.program_heuristics(),
                           ASP.Options.statistics(),
@@ -2825,7 +2832,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
                           ASP.Options.optimise(ASP.Options.OptimiseMode.EmunerateOptimal
                                                if _generate_problem_space else
                                                (ASP.Options.OptimiseMode.FindOptimum
-                                                if _minimise_actions else
+                                                if _optimise else
                                                 ASP.Options.OptimiseMode.Ignore))]
         if _generate_problem_space:
             solver_options.append(ASP.Options.models(0))
@@ -3023,12 +3030,18 @@ class HierarchicalPlanner(AbstractionHierarchy):
         ## Determine the number of final-goal preemptive achievement choices taken
         total_choices: int = 0
         preemptive_choices: int = 0
-        if preempt_mode == PreemptMode.Heuristic:
+        if _preempt_mode == PreemptMode.Heuristic:
             clingo_stats: dict = answer.statistics.incremental[answer.statistics.calls].clingo_stats
             total_choices = int(clingo_stats["accu"]["solving"]["solvers"]["choices"])
             preemptive_choices = int(clingo_stats["accu"]["solving"]["solvers"]["extra"]["domain_choices"])
-        elif preempt_mode == PreemptMode.Optimise:
-            preemptive_choices = (-answer.fmodel.cost[-2]) + answer.fmodel.cost[-1]
+        elif _preempt_mode == PreemptMode.Optimise:
+            if _preempt_pos_fgoals and not _preempt_neg_fgoals:
+                preemptive_choices -= answer.fmodel.cost[-1]
+            if _preempt_neg_fgoals and not _preempt_pos_fgoals:
+                preemptive_choices += answer.fmodel.cost[-1]
+            if _preempt_pos_fgoals and _preempt_neg_fgoals:
+                preemptive_choices -= answer.fmodel.cost[-2]
+                preemptive_choices += answer.fmodel.cost[-1]
         
         ## Construct the resulting monolevel plan
         monolevel_plan = MonolevelPlan(level=level,
@@ -3476,7 +3489,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
                 division_strategy.reset()
         
         ## Extract the resulting hierarchical plan
-        hierarchical_plan = self.get_hierarchical_plan()
+        hierarchical_plan = self.get_hierarchical_plan(min(level_range), max(level_range))
         
         ## Log the result of hierarchical planning
         self.__logger.log(self.__log_level(Verbosity.Simple),

@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% The Blocks World Plus Planning Domain                                 %%
-%% Medium Problem Specification :: Version 2                             %%
+%% Medium Problem Specification :: Version 1                             %%
 %%                                                                       %%
 %% Nine block setup, with the additional three on the table.             %%
 %% This problem has longer manipulation plans at all levels.             %%
