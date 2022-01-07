@@ -482,12 +482,14 @@ def __main() -> int:
             ## Find the regression plots for each partial plan
             regression_lines: dict[int, dict[str, Any]] = {"total" : {}, "ground" : {}, "search" : {}}
             for problem_number, partial_plan in enumerate(hierarchical_plan.get_plan_sequence(bottom_level)):
-                func, x_points, y_points, popt, pcov = partial_plan.regress_total_time
-                regression_lines["total"][problem_number] = {"func" : func, "x_points" : x_points, "y_points" : y_points, "popt" : popt, "pcov" : pcov}
-                func, x_points, y_points, popt, pcov = partial_plan.regress_grounding_time
-                regression_lines["ground"][problem_number] = {"func" : func, "x_points" : x_points, "y_points" : y_points, "popt" : popt, "pcov" : pcov}
-                func, x_points, y_points, popt, pcov = partial_plan.regress_solving_time
-                regression_lines["search"][problem_number] = {"func" : func, "x_points" : x_points, "y_points" : y_points, "popt" : popt, "pcov" : pcov}
+                try:
+                    func, x_points, y_points, popt, pcov = partial_plan.regress_total_time
+                    regression_lines["total"][problem_number] = {"func" : func, "x_points" : x_points, "y_points" : y_points, "popt" : popt, "pcov" : pcov}
+                    func, x_points, y_points, popt, pcov = partial_plan.regress_grounding_time
+                    regression_lines["ground"][problem_number] = {"func" : func, "x_points" : x_points, "y_points" : y_points, "popt" : popt, "pcov" : pcov}
+                    func, x_points, y_points, popt, pcov = partial_plan.regress_solving_time
+                    regression_lines["search"][problem_number] = {"func" : func, "x_points" : x_points, "y_points" : y_points, "popt" : popt, "pcov" : pcov}
+                except: pass
             
             ## Generate four graphs;
             ##      - Planning statistics per abstraction level bar chart,
@@ -496,7 +498,7 @@ def __main() -> int:
             ##      - Planning time per online planning increment.
             figure, axes = pyplot.subplots(2, 2)
             
-            xlabels = [str(n) for n in reversed(planner.domain.level_range)]
+            xlabels = [str(n) for n in reversed(hierarchical_plan.level_range)]
             x = numpy.arange(len(xlabels))
             
             grounding_times, solving_times, total_times, latency_times, completion_times = [], [], [], [], []

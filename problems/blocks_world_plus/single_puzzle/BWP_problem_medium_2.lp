@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% The Blocks World Plus Planning Domain                                 %%
-%% Medium Problem Specification :: Version 1                             %%
+%% Medium Problem Specification :: Version 2                             %%
 %%                                                                       %%
 %% Standard setup with 3-4 times larger number of cells per room.        %%
 %% This problem has longer ground level locomotion plans only.           %%
