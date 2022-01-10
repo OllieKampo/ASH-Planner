@@ -735,7 +735,7 @@ def __main() -> int:
             axes[1, 0].plot(steps, bottom_means["S_ST"], "b", label="Mean Step-Wise Solving")
             axes[1, 0].plot(steps, bottom_means["S_TT"], "r", label="Mean Step-Wise Total")
             axes[1, 0].bar(index_wise_means["YLD_AT"], max_time, width=0.20, color="magenta", label="Mean Yield Steps")
-            axes[1, 0].bar(bottom_means["SL"], [max_time if fuzzy_truth > 0.25 else 0 for fuzzy_truth in bottom_means["IS_DIV_APP"]], width=1.0,
+            axes[1, 0].bar(bottom_means["SL"], [max_time if fuzzy_truth > 0.25 else 0 for fuzzy_truth in bottom_means["IS_DIV_APP"]], width=0.20,
                            color=['#' + f"{round(int('FFFFFF', base=16) * (1.0 - fuzzy_truth)):06x}" for fuzzy_truth in bottom_means["IS_DIV_APP"]], label="Problem Divisions")
             if namespace.experimental_runs > 1:
                 axes[1, 0].plot(steps, bottom_means["S_GT"] + bottom_std["S_GT"], "--g")
