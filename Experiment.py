@@ -272,7 +272,6 @@ class Results:
                 
                 ## Hierarchical timing statistics
                 data_dict["CAT"]["LT"].append(hierarchical_plan.get_latency_time(level))
-                ## Threshold quality with 5s execution latency TODO
                 data_dict["CAT"]["CT"].append(hierarchical_plan.get_completion_time(level))
                 data_dict["CAT"]["WT"].append(hierarchical_plan.get_average_wait_time(level))
                 
