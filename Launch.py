@@ -734,8 +734,8 @@ def __main() -> int:
             axes[1, 0].plot(steps, bottom_means["S_GT"], "g", label="Mean Step-Wise Grounding")
             axes[1, 0].plot(steps, bottom_means["S_ST"], "b", label="Mean Step-Wise Solving")
             axes[1, 0].plot(steps, bottom_means["S_TT"], "r", label="Mean Step-Wise Total")
-            axes[1, 0].bar(index_wise_means["YLD_AT"], max_time, width=0.20, color="magenta", label="Mean Yield Steps")
-            axes[1, 0].bar(bottom_means["SL"], [max_time if fuzzy_truth > 0.25 else 0 for fuzzy_truth in bottom_means["IS_DIV_APP"]], width=0.20,
+            axes[1, 0].bar(index_wise_means["YLD_AT"], max_time, width=0.10, color="magenta", label="Mean Yield Steps")
+            axes[1, 0].bar(bottom_means["SL"], [max_time if fuzzy_truth > 0.01 else 0 for fuzzy_truth in bottom_means["IS_DIV_APP"]], width=0.20,
                            color=['#' + f"{round(int('FFFFFF', base=16) * (1.0 - fuzzy_truth)):06x}" for fuzzy_truth in bottom_means["IS_DIV_APP"]], label="Problem Divisions")
             if namespace.experimental_runs > 1:
                 axes[1, 0].plot(steps, bottom_means["S_GT"] + bottom_std["S_GT"], "--g")
@@ -753,7 +753,7 @@ def __main() -> int:
             max_memory: float = max(bottom_means["T_VMS"] + bottom_std["T_VMS"])
             axes[1, 1].plot(steps, bottom_means["T_VMS"], "g", label="Mean Step-Wise VMS")
             axes[1, 1].plot(steps, bottom_means["T_RSS"], "b", label="Mean Step-Wise RSS")
-            axes[1, 1].bar(bottom_means["SL"], [max_memory if fuzzy_truth > 0.25 else 0 for fuzzy_truth in bottom_means["IS_DIV_APP"]], width=0.20,
+            axes[1, 1].bar(bottom_means["SL"], [max_memory if fuzzy_truth > 0.01 else 0 for fuzzy_truth in bottom_means["IS_DIV_APP"]], width=0.20,
                            color=['#' + f"{round(int('FFFFFF', base=16) * (1.0 - fuzzy_truth)):06x}" for fuzzy_truth in bottom_means["IS_DIV_APP"]], label="Problem Divisions")
             if namespace.experimental_runs > 1:
                 axes[1, 1].plot(steps, bottom_means["T_VMS"] + bottom_std["T_VMS"], "--g")
@@ -791,7 +791,7 @@ def __main() -> int:
             axes[2, 1].plot(steps, bottom_means["C_SP_ED_L"], "b", label="Length Deviation")
             axes[2, 1].plot(steps, bottom_means["C_SP_ED_A"], "c", label="Action Deviation")
             axes[2, 1].plot(steps, bottom_means["C_SP_EB_L"], "r", label="Length Balance")
-            axes[2, 1].plot(steps, bottom_means["C_SP_EB_A"], "m", label="Action Blance")
+            axes[2, 1].plot(steps, bottom_means["C_SP_EB_A"], "m", label="Action Balance")
             if namespace.experimental_runs > 1:
                 axes[2, 1].plot(steps, bottom_means["C_CP_EF_L"] + bottom_std["C_CP_EF_L"], "--g")
                 axes[2, 1].plot(steps, bottom_means["C_CP_EF_L"] - bottom_std["C_CP_EF_L"], "--g")
