@@ -131,12 +131,14 @@ holds(1, configuration(DOOR), closed, 0) :- fluent(AL, inertial, configuration(D
 %% The puzzle room table is in the puzzle room
 holds(1, in(puzzle_room_table), (puzzle_room, 1), 0).
 
-%% The first four blocks are stacked on the puzzle room table
+%% The first three blocks are stacked on the puzzle room table:
+%%      - This configuration presents the Sussman anomoly.
 holds(1, on((block, 1)), puzzle_room_table_left, 0).
 holds(1, on((block, 2)), puzzle_room_table_right, 0).
 holds(1, on((block, 3)), (block, 1), 0).
 
-%% The other three blocks are on the floor in the store room
+%% The other three blocks are on the floor in the store room:
+%%      - Talos will have to make at least two trips to the store room to collect these.
 holds(1, in((block, 4)), (store_room, 0), 0).
 holds(1, in((block, 5)), (store_room, 0), 0).
 holds(1, in((block, 6)), (store_room, 0), 0).
@@ -144,10 +146,12 @@ holds(1, on((block, 4)), nothing, 0).
 holds(1, on((block, 5)), nothing, 0).
 holds(1, on((block, 6)), nothing, 0).
 
-%% The other three blocks are placed randomly on the table
+%% The additional three blocks are placed with two in the middle of the table and one in the store room:
+%%      - Talos will not have to make additional trips to the store room as a result of this.
 holds(1, on((block, 7)), puzzle_room_table_middle, 0).
-holds(1, on((block, 8)), puzzle_room_table_middle, 0).
-holds(1, on((block, 9)), puzzle_room_table_middle, 0).
+holds(1, in((block, 8)), (store_room, 0), 0).
+holds(1, on((block, 9)), (block, 7), 0).
+holds(1, on((block, 8)), nothing, 0).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -22,11 +22,12 @@
 import logging
 import statistics
 import time
-from typing import Any, Callable, Iterator, NamedTuple, Optional
+from typing import Any, Callable, Iterator, NamedTuple, Optional, Union
 
 import pandas
 import tqdm
 import numpy
+import math
 from ASP_Parser import Statistics
 
 import core.Planner as Planner
@@ -52,11 +53,13 @@ def rmse(actual: list[int], perfect: list[float]) -> float:
 class Results:
     "Encapsulates the results of experimental trails as a collection of hierarchical plans."
     
-    __slots__ = ("__plans",
+    __slots__ = ("__optimums",
+                 "__plans",
                  "__dataframes",
                  "__is_changed")
     
-    def __init__(self) -> None:
+    def __init__(self, optimums: Optional[dict[int, int]]) -> None:
+        self.__optimums: Optional[dict[int, int]] = optimums
         self.__plans: list[Planner.HierarchicalPlan] = []
         self.__dataframes: dict[str, pandas.DataFrame] = {}
         self.__is_changed: bool = False
@@ -135,7 +138,12 @@ class Results:
         ## Collate the data into a dictionary
         data_dict: dict[str, dict[str, list[float]]] = {}
         
-        data_dict["GLOBALS"] = {"RU" : [], "EX_T" : [], "HA_T" : [], "AW_T" : [], "AME_T" : [], "AME_T_PA" : [], "BL_LE" : [], "BL_AC" : []}
+        data_dict["GLOBALS"] = {"RU" : [],
+                                "EX_T" : [], "HA_T" : [], "AW_T" : [], "AME_T" : [], "AME_T_PA" : [],
+                                "BL_LE" : [], "BL_AC" : [],
+                                "QUALITY_SCORE" : [],
+                                "LATENCY_SCORE" : [], "ABSOLUTION_SCORE" : [], "WAIT_SCORE" : [],
+                                "LATENCY_GRADE" : [], "ABSOLUTION_GRADE" : [], "WAIT_GRADE" : [], "OVERALL_GRADE" : []}
         
         data_dict["PROBLEM_SEQUENCE"] = {"RU" : [], "SN" : [], "AL" : [], "IT" : [], "PN" : [],
                                          "START_S" : [], "IS_INITIAL" : [], "IS_FINAL" : [],
@@ -158,6 +166,9 @@ class Results:
                             "RSS" : [], "VMS" : [],
                             "LE" : [], "AC" : [], "CF" : [], "PSG" : [],
                             "SIZE" : [], "SGLITS_T" : [],
+                            "QUALITY_SCORE" : [],
+                            "LATENCY_SCORE" : [], "COMPLETION_SCORE" : [], "WAIT_SCORE" : [],
+                            "LATENCY_GRADE" : [], "COMPLETION_GRADE" : [], "WAIT_GRADE" : [], "OVERALL_GRADE" : [],
                             "HAS_TRAILING" : [], "TOT_CHOICES" : [], "PRE_CHOICES" : [], "FGOALS_ORDER" : [],
                             "CP_EF_L" : [], "CP_EF_A" : [], "SP_ED_L" : [], "SP_ED_A" : [], "SP_EB_L" : [], "SP_EB_A" : [],
                             "SP_MIN_L" : [], "SP_MIN_A" : [], "SP_LOWER_L" : [], "SP_LOWER_A" : [], "SP_MED_L" : [], "SP_MED_A" : [], "SP_UPPER_L" : [], "SP_UPPER_A" : [], "SP_MAX_L" : [], "SP_MAX_A" : [],
@@ -198,6 +209,15 @@ class Results:
                                   "SP_L" : [], "SP_A" : [], "SP_START_S" : [], "SP_END_S" : [], "INTER_Q" : [],
                                   "IS_LOCO" : [], "IS_MANI" : [], "IS_CONF" : []}
         
+        acceptable_lag_time: float = 5.0
+        max_time: float = 1800.0
+        
+        optimum: int = 0
+        if self.__optimums is not None:
+            optimum = self.__optimums[min(self.__optimums)]
+        else: optimum = min(hierarchical_plan[hierarchical_plan.bottom_level].total_actions
+                            for hierarchical_plan in self.__plans)
+        
         for run, hierarchical_plan in enumerate(self.__plans):
             data_dict["GLOBALS"]["RU"].append(run)
             data_dict["GLOBALS"]["EX_T"].append(hierarchical_plan.execution_latency_time)
@@ -209,6 +229,29 @@ class Results:
             
             data_dict["GLOBALS"]["BL_LE"].append(hierarchical_plan[hierarchical_plan.bottom_level].plan_length)
             data_dict["GLOBALS"]["BL_AC"].append(hierarchical_plan[hierarchical_plan.bottom_level].total_actions)
+            
+            data_dict["GLOBALS"]["QUALITY_SCORE"].append(quality_score := optimum / hierarchical_plan[hierarchical_plan.bottom_level].total_actions)
+            
+            latency_score: float = 1.0
+            if (latency_time := hierarchical_plan.execution_latency_time) > acceptable_lag_time:
+                latency_score = (1.0 - (math.log(latency_time - (acceptable_lag_time - 1.0)) / math.log(max_time)))
+            
+            absolution_score: float = 1.0
+            if (absolution_time := hierarchical_plan.absolution_time) > acceptable_lag_time:
+                absolution_score = (1.0 - (math.log(absolution_time - (acceptable_lag_time - 1.0)) / math.log(max_time)))
+            
+            wait_score: float = 1.0
+            if (wait_time := hierarchical_plan.get_average_wait_time(hierarchical_plan.bottom_level)) > acceptable_lag_time:
+                wait_score = (1.0 - (math.log(wait_time - (acceptable_lag_time - 1.0)) / math.log(max_time)))
+            
+            data_dict["GLOBALS"]["LATENCY_SCORE"].append(latency_score)
+            data_dict["GLOBALS"]["ABSOLUTION_SCORE"].append(absolution_score)
+            data_dict["GLOBALS"]["WAIT_SCORE"].append(wait_score)
+            
+            data_dict["GLOBALS"]["LATENCY_GRADE"].append(latency_grade := quality_score * latency_score)
+            data_dict["GLOBALS"]["ABSOLUTION_GRADE"].append(absolution_grade := quality_score * absolution_score)
+            data_dict["GLOBALS"]["WAIT_GRADE"].append(wait_grade := quality_score * wait_score)
+            data_dict["GLOBALS"]["OVERAL_GRADE"].append(statistics.mean([latency_grade, absolution_grade, wait_grade]))
             
             for sequence_number, level, increment, problem_number in hierarchical_plan.get_hierarchical_problem_sequence():
                 data_dict["PROBLEM_SEQUENCE"]["RU"].append(run)
@@ -293,6 +336,36 @@ class Results:
                     total_sub_goal_literals = concatenated_plan.conformance_mapping.total_constraining_sgoals
                 data_dict["CAT"]["SIZE"].append(problem_size)
                 data_dict["CAT"]["SGLITS_T"].append(total_sub_goal_literals)
+                
+                optimum: int = 0
+                if self.__optimums is not None:
+                    if level in self.__optimums:
+                        optimum = self.__optimums[level]
+                    else: optimum = min(hierarchical_plan[level].total_actions
+                                        for hierarchical_plan in self.__plans)
+                
+                data_dict["CAT"]["QUALITY_SCORE"].append(quality_score := optimum / concatenated_plan.total_actions)
+                
+                latency_score: float = 1.0
+                if (latency_time := hierarchical_plan.get_latency_time(level)) > acceptable_lag_time:
+                    latency_score = (1.0 - (math.log(latency_time - (acceptable_lag_time - 1.0)) / math.log(max_time)))
+                
+                completion_score: float = 1.0
+                if (completion_time := hierarchical_plan.get_completion_time(level)) > acceptable_lag_time:
+                    completion_score = (1.0 - (math.log(completion_time - (acceptable_lag_time - 1.0)) / math.log(max_time)))
+                
+                wait_score: float = 1.0
+                if (wait_time := hierarchical_plan.get_average_wait_time(level)) > acceptable_lag_time:
+                    wait_score = (1.0 - (math.log(wait_time - (acceptable_lag_time - 1.0)) / math.log(max_time)))
+                
+                data_dict["CAT"]["LATENCY_SCORE"].append(latency_score)
+                data_dict["CAT"]["COMPLETION_SCORE"].append(completion_score)
+                data_dict["CAT"]["WAIT_SCORE"].append(wait_score)
+                
+                data_dict["CAT"]["LATENCY_GRADE"].append(latency_grade := quality_score * latency_score)
+                data_dict["CAT"]["COMPLETION_GRADE"].append(completion_grade := quality_score * completion_score)
+                data_dict["CAT"]["WAIT_GRADE"].append(wait_grade := quality_score * wait_score)
+                data_dict["CAT"]["OVERAL_GRADE"].append(statistics.mean([latency_grade, completion_grade, wait_grade]))
                 
                 ## Trailing plans
                 data_dict["CAT"]["HAS_TRAILING"].append(concatenated_plan.has_trailing_plan)
@@ -760,6 +833,7 @@ class Experiment:
     
     __slots__ = ("__planner",
                  "__planning_function",
+                 "__optimums",
                  "__bottom_level",
                  "__top_level",
                  "__initial_runs",
@@ -769,6 +843,7 @@ class Experiment:
     def __init__(self,
                  planner: Planner.HierarchicalPlanner,
                  planning_function: Callable[[], Any],
+                 optimums: Optional[Union[int, dict[int, int]]],
                  bottom_level: int,
                  top_level: int,
                  initial_runs: int,
@@ -778,6 +853,11 @@ class Experiment:
         
         self.__planner: Planner.HierarchicalPlanner = planner
         self.__planning_function: Callable[[], Any] = planning_function
+        self.__optimums: Optional[dict[int, int]] = None
+        if optimums is not None:
+            if isinstance(optimums, int):
+                self.__optimums = {bottom_level : optimums}
+            else: self.__optimums = optimums
         self.__bottom_level: int = bottom_level
         self.__top_level: int = top_level
         self.__initial_runs: int = initial_runs
@@ -804,7 +884,7 @@ class Experiment:
         _EXP_logger.info("\n\n" + center_text(f"Running experiments : Initial runs = {self.__initial_runs} : Experimental runs = {self.__experimental_runs}",
                                               framing_width=96, centering_width=100, framing_char="#"))
         
-        results = Results()
+        results = Results(self.__optimums)
         hierarchical_plan: Planner.HierarchicalPlan
         planning_time: float
         
