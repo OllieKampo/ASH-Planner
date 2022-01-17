@@ -48,18 +48,18 @@
 %%
 
 %% Cell connections between rooms
-is(1, connected((starting_room, 7, 1), (hallway, 6, 0))).
+is(1, connected((starting_room, 7, 1), (hallway, 7, 0))).
 is(1, connected((store_room, 7, 1), (hallway, 0, 1))).
 is(1, connected((hallway, 11, 1), (puzzle_room, 0, 1))).
 
 %% Door connection between the hallway and the puzzle room
-% is(1, connected_by_door(starting_room_door, (starting_room, 7, 1), (hallway, 6, 0))).
+% is(1, connected_by_door(starting_room_door, (starting_room, 7, 1), (hallway, 7, 0))).
 is(1, connected_by_door(store_room_door, (store_room, 7, 1), (hallway, 0, 1))).
 is(1, connected_by_door(puzzle_room_door, (hallway, 11, 1), (puzzle_room, 0, 1))).
 
 %% The door's handles are located on either side of it
 is(1, in(starting_room_door_handle_inner, (starting_room, 7, 1))).
-is(1, in(starting_room_door_handle_outer, (hallway, 6, 0))).
+is(1, in(starting_room_door_handle_outer, (hallway, 7, 0))).
 is(1, in(store_room_door_handle_inner, (store_room, 7, 1))).
 is(1, in(store_room_door_handle_outer, (hallway, 0, 1))).
 is(1, in(puzzle_room_door_handle_inner, (puzzle_room, 0, 1))).
@@ -131,12 +131,14 @@ holds(1, configuration(DOOR), closed, 0) :- fluent(AL, inertial, configuration(D
 %% The puzzle room table is in the puzzle room
 holds(1, in(puzzle_room_table), (puzzle_room, 7, 0), 0).
 
-%% The first four blocks are stacked on the puzzle room table
+%% The first three blocks are stacked on the puzzle room table:
+%%      - This configuration presents the Sussman anomoly.
 holds(1, on((block, 1)), puzzle_room_table_left, 0).
 holds(1, on((block, 2)), puzzle_room_table_right, 0).
 holds(1, on((block, 3)), (block, 1), 0).
 
-%% The other three blocks are on the floor in the store room
+%% The other three blocks are on the floor in the store room:
+%%      - Talos will have to make at least two trips to the store room to collect these.
 holds(1, in((block, 4)), (store_room, 0, 0), 0).
 holds(1, in((block, 5)), (store_room, 0, 0), 0).
 holds(1, in((block, 6)), (store_room, 0, 0), 0).

@@ -50,22 +50,22 @@
 %%
 
 %% Cell connections between rooms
-is(1, connected((starting_room, 4, 1), (hallway, 4, 0))).
-is(1, connected((store_room, 7, 1), (hallway, 0, 1))).
-is(1, connected((hallway, 8, 1), (puzzle_room, 0, 1))).
+is(1, connected(((starting_room, 3), 7, 1), ((hallway, 3), 7, 0))).
+is(1, connected(((store_room, 3), 7, 1), ((hallway, 0), 0, 1))).
+is(1, connected(((hallway, 5), 11, 1), ((puzzle_room, 0), 0, 1))).
 
 %% Door connection between the hallway and the puzzle room
-% is(1, connected_by_door(starting_room_door, (starting_room, 4, 1), (hallway, 4, 0))).
-is(1, connected_by_door(store_room_door, (store_room, 7, 1), (hallway, 0, 1))).
-is(1, connected_by_door(puzzle_room_door, (hallway, 8, 1), (puzzle_room, 0, 1))).
+% is(1, connected_by_door(starting_room_door, ((starting_room, 3), 7, 1), ((hallway, 3), 7, 0))).
+is(1, connected_by_door(store_room_door, ((store_room, 3), 7, 1), ((hallway, 0), 0, 1))).
+is(1, connected_by_door(puzzle_room_door, ((hallway, 5), 11, 1), ((puzzle_room, 0), 0, 1))).
 
 %% The door's handles are located on either side of it
-is(1, in(starting_room_door_handle_inner, (starting_room, 4, 1))).
-is(1, in(starting_room_door_handle_outer, (hallway, 0, 1))).
-is(1, in(store_room_door_handle_inner, (store_room, 7, 1))).
-is(1, in(store_room_door_handle_outer, (hallway, 0, 1))).
-is(1, in(puzzle_room_door_handle_inner, (puzzle_room, 0, 1))).
-is(1, in(puzzle_room_door_handle_outer, (hallway, 8, 1))).
+is(1, in(starting_room_door_handle_inner, ((starting_room, 3), 7, 1))).
+is(1, in(starting_room_door_handle_outer, ((hallway, 3), 7, 0))).
+is(1, in(store_room_door_handle_inner, ((store_room, 3), 7, 1))).
+is(1, in(store_room_door_handle_outer, ((hallway, 0), 0, 1))).
+is(1, in(puzzle_room_door_handle_inner, ((puzzle_room, 0), 0, 1))).
+is(1, in(puzzle_room_door_handle_outer, ((hallway, 5), 11, 1))).
 
 %% Block colouring
 is(AL, colour_of((BLOCK, N), red)) :- static(AL, colour_of((BLOCK, N), red)),
@@ -83,9 +83,9 @@ is(AL, colour_of((BLOCK, N), yellow)) :- static(AL, colour_of((BLOCK, N), yellow
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Adjacent cells are connected
-is(1, connected((A, X_1, Y), (A, X_2, Y))) :- insta_of(1, cell, (A, X_1, Y)),
-                                              insta_of(1, cell, (A, X_2, Y)),
-                                              X_2 = X_1 + 1.
+is(1, connected(((R, N_1), X_1, Y), ((R, N_2), X_2, Y))) :- insta_of(1, cell, ((R, N_1), X_1, Y)),
+                                                            insta_of(1, cell, ((R, N_2), X_2, Y)),
+                                                            X_2 = X_1 + 1.
 is(1, connected((A, X, Y_1), (A, X, Y_2))) :- insta_of(1, cell, (A, X, Y_1)),
                                               insta_of(1, cell, (A, X, Y_2)),
                                               Y_2 = Y_1 + 1.
@@ -109,7 +109,7 @@ is(1, connected_by_door(D, C_1, C_2)) :- is(1, connected_by_door(D, C_2, C_1)),
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Talos starts in the starting room
-holds(1, in(talos), (starting_room, 0, 0), 0).
+holds(1, in(talos), ((starting_room, 0), 0, 0), 0).
 
 %% Talos start with nothing in its grasp
 holds(AL, grasping(DESC), nothing, 0) :- fluent(AL, inertial, grasping(DESC), nothing),
@@ -134,28 +134,29 @@ holds(1, configuration(DOOR), closed, 0) :- fluent(AL, inertial, configuration(D
                                             sl(AL).
 
 %% The puzzle room table is in the puzzle room
-holds(1, in(puzzle_room_table), (puzzle_room, 7, 0), 0).
+holds(1, in(puzzle_room_table), ((puzzle_room, 3), 7, 0), 0).
 
-%% The first four blocks are stacked on the puzzle room table
+%% The first three blocks are stacked on the puzzle room table:
+%%      - This configuration presents the Sussman anomoly.
 holds(1, on((block, 1)), puzzle_room_table_left, 0).
 holds(1, on((block, 2)), puzzle_room_table_right, 0).
 holds(1, on((block, 3)), (block, 1), 0).
 
-%% The other three blocks are on the floor in the store room
-holds(1, in((block, 4)), (store_room, 0, 0), 0).
-holds(1, in((block, 5)), (store_room, 0, 0), 0).
-holds(1, in((block, 6)), (store_room, 0, 0), 0).
+%% The other three blocks are on the floor in the store room:
+%%      - Talos will have to make at least two trips to the store room to collect these.
+holds(1, in((block, 4)), ((store_room, 0), 0, 0), 0).
+holds(1, in((block, 5)), ((store_room, 0), 0, 0), 0).
+holds(1, in((block, 6)), ((store_room, 0), 0, 0), 0).
 holds(1, on((block, 4)), nothing, 0).
 holds(1, on((block, 5)), nothing, 0).
 holds(1, on((block, 6)), nothing, 0).
 
-%% The other three blocks are placed randomly on the table
-holds(1, in((block, 7)), (store_room, 0, 1), 0).
-holds(1, in((block, 8)), (store_room, 0, 1), 0).
-holds(1, in((block, 9)), (store_room, 0, 1), 0).
-holds(1, on((block, 7)), nothing, 0).
+%% The additional three blocks are placed with two in the middle of the table and one in the store room:
+%%      - Talos will not have to make additional trips to the store room as a result of this.
+holds(1, on((block, 7)), puzzle_room_table_middle, 0).
+holds(1, in((block, 8)), ((store_room, 0), 0, 1), 0).
+holds(1, on((block, 9)), (block, 7), 0).
 holds(1, on((block, 8)), nothing, 0).
-holds(1, on((block, 9)), nothing, 0).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -211,12 +212,17 @@ entity(room, puzzle_room).
 entity(room, hallway).
 
 %% All the rooms have two cells except the hallway which has three
-n(0..9).
-size(starting_room, 5, 2).
+n(0..12).
+size(starting_room, 8, 2).
 size(store_room, 8, 2).
-size(hallway, 9, 2).
+size(hallway, 12, 2).
 size(puzzle_room, 8, 2).
-entity(cell, (ROOM, X, Y)) :- entity(room, ROOM), size(ROOM, X_MAX, Y_MAX), X < X_MAX, Y < Y_MAX, n(X), n(Y).
+
+%% Zones with two cell widths
+zone_width(2).
+entity(zone, (ROOM, N)) :- entity(room, ROOM), size(ROOM, N_MAX, _), N < (N_MAX / W), zone_width(W), n(N).
+zone_x((ROOM, N), (N * W) + P) :- P >= 0, P < W, zone_width(W), entity(zone, (ROOM, N)), n(P), n(N).
+entity(cell, ((ROOM, N), X, Y)) :- zone_x((ROOM, N), X), entity(room, ROOM), entity(zone, (ROOM, N)), size(ROOM, X_MAX, Y_MAX), X < X_MAX, Y < Y_MAX, n(N), n(X), n(Y).
 
 %% The is one door between the hallway and the puzzle room
 entity(door, store_room_door).
@@ -263,7 +269,8 @@ ancestry_relation(manipulator_arm_1, manipulator_end_1).
 ancestry_relation(manipulator_arm_2, manipulator_end_2).
 
 %% Relations between rooms and the cells that compose them
-ancestry_relation(ROOM, (ROOM, X, Y)) :- entity(room, ROOM), entity(cell, (ROOM, X, Y)), n(X), n(Y).
+ancestry_relation(ROOM, (ROOM, N)) :- entity(room, ROOM), entity(zone, (ROOM, N)), n(N).
+ancestry_relation((ROOM, N), ((ROOM, N), X, Y)) :- entity(room, ROOM), entity(zone, (ROOM, N)), entity(cell, ((ROOM, N), X, Y)), n(N), n(X), n(Y).
 
 %% Relations between the puzzle room door and its handles
 ancestry_relation(store_room_door, store_room_door_handle_inner).

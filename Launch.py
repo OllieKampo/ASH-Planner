@@ -185,7 +185,9 @@ Branching factor and search space are not the same;
 
 
 def get_hierarchical_arg(dict_or_number: Union[Number, dict[int, Number]], level: int, default: Optional[Number] = None) -> Optional[Number]:
-    """Get the value of a hierarchical argument at a given abstraction level."""
+    """
+    Get the value of a hierarchical argument at a given abstraction level.
+    """
     if isinstance(dict_or_number, dict):
         if (arg := dict_or_number.get(level, default)) is not None:
             return arg
@@ -247,8 +249,7 @@ def __main() -> int:
     if namespace.conformance_type is not None:
         conformance_type = Planner.ConformanceType(namespace.conformance_type)
     
-    def get_hierarchical_args(dict_or_number: Union[Number, dict[int, Number]], default: Optional[Number] = None) -> Union[Number, dict[int, Number]]:
-        """Get the value of a hierarchical argument at a given abstraction level."""
+    def get_hierarchical_args(dict_or_number: Union[Number, dict[int, Number]], default: Optional[Number] = None) -> Optional[Union[Number, dict[int, Number]]]:
         if isinstance(dict_or_number, dict):
             hierarchical_args: dict[int, Number] = {}
             for level in planner.domain.level_range:
@@ -644,6 +645,7 @@ def __main() -> int:
         ## Run the experiments
         experiment = Experiment.Experiment(planner=planner,
                                            planning_function=planning_function,
+                                           optimums=get_hierarchical_args(namespace.optimum),
                                            bottom_level=bottom_level,
                                            top_level=top_level,
                                            initial_runs=namespace.initial_runs,
@@ -978,8 +980,11 @@ def __setup() -> argparse.Namespace:
                         help="integer specifying number of experimental runs, by default 1")
     parser.add_argument("-ir", "--initial_runs", nargs="?", default=0, const=1, type=int,
                         help="integer specifying number of initial 'dry' runs before experimental results are recorded, by default 0, as standard 1")
+    parser.add_argument("--optimum", nargs="+", default=None, action=StoreHierarchicalArguments, type=str, metavar="level1=value1 level_i=value_i [...] level_n=value_n",
+                        help="the classical optimum for each level in the abstraction hierarchy, by default None (takes the optimum as the best quality plan over all experimental runs)")
     # parser.add_argument("--pause_on_run_completion", **bool_options(default=False),
-    #                     help="whether to pause execution of the benchmarking system after completion of each experimental run, by default False, as standard True")
+    #                     help="whether to pause execution of the benchmarking system after completion of each experimental run, "
+    #                          "the current results will be printed on each pause, by default False, as standard True")
     
     ## ASP solver options
     parser.add_argument("-th", "--threads", default=os.cpu_count(), type=int,
