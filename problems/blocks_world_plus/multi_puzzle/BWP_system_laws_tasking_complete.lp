@@ -1080,22 +1080,22 @@ holds(AL, in_tower(BLOCK_1, BLOCK_2), true, t) :- holds(AL, on(BLOCK_2), BLOCK_3
 
 %% A tower that is not stacked in descending order from top to bottom is unordered
 holds(AL, unordered_tower(BASE, TABLE), true, t) :- holds(AL, on(BLOCK_1), BLOCK_2, t),
-                                             holds(AL, in_tower(BASE, BLOCK_1), true, t),
-                                             holds(AL, in_tower(BASE, BLOCK_2), true, t),
-                                             holds(AL, tower_base(BASE, TABLE), true, t),
-                                             fluent(AL, defined, unordered_tower(BASE, TABLE), true),
-                                             fluent(AL, defined, in_tower(BASE, BLOCK_1), true),
-                                             fluent(AL, defined, in_tower(BASE, BLOCK_2), true),
-                                             fluent(AL, defined, tower_base(BASE, TABLE), true),
-                                             fluent(AL, inertial, on(BLOCK_1), BLOCK_2),
-                                             BLOCK_1 = (block, N_1), block_number(N_1),
-                                             BLOCK_2 = (block, N_2), block_number(N_2),
-                                             BLOCK_1 != BLOCK_2, N_1 > N_2,
-                                             insta_of(AL, block, BLOCK_1),
-                                             insta_of(AL, block, BLOCK_2),
-                                             insta_of(AL, block, BASE),
-                                             insta_of(AL, table, TABLE),
-                                             sl(AL).
+                                                    holds(AL, in_tower(BASE, BLOCK_1), true, t),
+                                                    holds(AL, in_tower(BASE, BLOCK_2), true, t),
+                                                    holds(AL, tower_base(BASE, TABLE), true, t),
+                                                    fluent(AL, defined, unordered_tower(BASE, TABLE), true),
+                                                    fluent(AL, defined, in_tower(BASE, BLOCK_1), true),
+                                                    fluent(AL, defined, in_tower(BASE, BLOCK_2), true),
+                                                    fluent(AL, defined, tower_base(BASE, TABLE), true),
+                                                    fluent(AL, inertial, on(BLOCK_1), BLOCK_2),
+                                                    BLOCK_1 = (block, N_1), block_number(N_1),
+                                                    BLOCK_2 = (block, N_2), block_number(N_2),
+                                                    BLOCK_1 != BLOCK_2, N_1 > N_2,
+                                                    insta_of(AL, block, BLOCK_1),
+                                                    insta_of(AL, block, BLOCK_2),
+                                                    insta_of(AL, block, BASE),
+                                                    insta_of(AL, table, TABLE),
+                                                    sl(AL).
 
 %% A tower is complete if it contains of the blocks of a particular colour and they are stacked in descending order from top to bottom
 holds(AL, complete_tower(COLOUR, TABLE), true, t) :- N = #count { BLOCK : holds(AL, in_tower(BASE, BLOCK), true, t),

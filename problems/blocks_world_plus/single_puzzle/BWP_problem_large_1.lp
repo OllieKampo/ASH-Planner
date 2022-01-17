@@ -104,6 +104,15 @@ is(AL, colour_of((BLOCK, N), blue)) :- static(AL, colour_of((BLOCK, N), blue)),
 is(AL, colour_of((BLOCK, N), yellow)) :- static(AL, colour_of((BLOCK, N), yellow)),
                                          insta_of(AL, block, (BLOCK, N)),
                                          N > 6, N <= 9, al(AL).
+is(AL, colour_of((BLOCK, N), red)) :- static(AL, colour_of((BLOCK, N), red)),
+                                      insta_of(AL, block, (BLOCK, N)),
+                                      N > 9, N <= 12, al(AL).
+is(AL, colour_of((BLOCK, N), blue)) :- static(AL, colour_of((BLOCK, N), blue)),
+                                       insta_of(AL, block, (BLOCK, N)),
+                                       N > 12, N <= 15, al(AL).
+is(AL, colour_of((BLOCK, N), yellow)) :- static(AL, colour_of((BLOCK, N), yellow)),
+                                         insta_of(AL, block, (BLOCK, N)),
+                                         N > 15, N <= 18, al(AL).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Static Relations
@@ -218,11 +227,14 @@ goal_fluent(AL, in_tower(BASE, BLOCK)) :- insta_of(AL, block, BASE), insta_of(AL
 goal_fluent(AL, tower_base(BASE, TABLE)) :- insta_of(AL, block, BASE), insta_of(AL, table, TABLE), al(AL).
 goal_fluent(AL, on(BLOCK)) :- insta_of(AL, block, BLOCK), al(AL).
 
-%% The goal is to put block 2 on the left hand side of the table in puzzle room 2 whilst leaving block 1 on the table in puzzle room 1
+%% 
 final_goal(AL, complete_tower(COLOUR, TABLE), true, true) :- insta_of(AL, colour, COLOUR), insta_of(AL, table, TABLE), al(AL).
 final_goal(1, on((block, 3)), puzzle_room_1_table_left, true).
 final_goal(1, on((block, 6)), puzzle_room_1_table_right, true).
 final_goal(1, on((block, 9)), puzzle_room_1_table_middle, true).
+final_goal(1, on((block, 12)), puzzle_room_2_table_left, true).
+final_goal(1, on((block, 15)), puzzle_room_2_table_right, true).
+final_goal(1, on((block, 18)), puzzle_room_2_table_middle, true).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -247,7 +259,7 @@ entity(manipulator_limb, manipulator_limb_2).
 entity(manipulator_end, manipulator_end_2).
 
 %% There are nine blocks
-block_number(1..9).
+block_number(1..18).
 blocks_per_tower(3).
 entity(block, (block, N)) :- block_number(N).
 
