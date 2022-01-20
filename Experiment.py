@@ -271,7 +271,7 @@ class Results:
                 # l_blend = 0; r_blend = 0
                 if solution.is_refined:
                     problem_size = solution.conformance_mapping.problem_size
-                    sgoal_literals_total = solution.conformance_mapping.total_constraining_sgoals
+                    sgoal_literals_total = solution.conformance_mapping.total_sgoal_literals
                     sgoals_range = solution.conformance_mapping.constraining_sgoals_range
                     # r_blend = hierarchical_plan.get_division_points(level + 1)[sequence_number - 1].blend.left
                     # r_blend = hierarchical_plan.get_division_points(level + 1)[sequence_number].blend.right
@@ -330,12 +330,12 @@ class Results:
                 
                 ## Conformance constraints
                 problem_size: int = 1
-                total_sub_goal_literals: int = 0
+                sgoal_literals_total: int = 0
                 if concatenated_plan.is_refined:
                     problem_size = concatenated_plan.conformance_mapping.problem_size
-                    total_sub_goal_literals = concatenated_plan.conformance_mapping.total_constraining_sgoals
+                    sgoal_literals_total = concatenated_plan.conformance_mapping.total_sgoal_literals
                 data_dict["CAT"]["SIZE"].append(problem_size)
-                data_dict["CAT"]["SGLITS_T"].append(total_sub_goal_literals)
+                data_dict["CAT"]["SGLITS_T"].append(sgoal_literals_total)
                 
                 optimum: int = 0
                 if self.__optimums is not None:
@@ -432,7 +432,7 @@ class Results:
                     total_problems: int = (total_divisions - 2) + 1
                     
                     if total_problems > 1:
-                        perfect_div_index_spacing: float = concatenated_plan.conformance_mapping.total_constraining_sgoals / total_problems
+                        perfect_div_index_spacing: float = concatenated_plan.conformance_mapping.problem_size / total_problems
                         perfect_div_index_spread: list[float] = [perfect_div_index_spacing * index for index in range(0, total_divisions)]
                         div_indices: list[int] = [point.index for point in hierarchical_plan.get_division_points(level + 1)]
                         rmse_div_indices = rmse(div_indices, perfect_div_index_spread)
@@ -768,7 +768,7 @@ class Results:
                         sgoals_range = SubGoalRange(1, 1)
                         if partial_plan.is_refined:
                             problem_size = partial_plan.conformance_mapping.problem_size
-                            sgoal_literals_total = partial_plan.conformance_mapping.total_constraining_sgoals
+                            sgoal_literals_total = partial_plan.conformance_mapping.total_sgoal_literals
                             sgoals_range = partial_plan.conformance_mapping.constraining_sgoals_range
                         data_dict["PAR"]["SIZE"].append(problem_size)
                         data_dict["PAR"]["SGLITS_T"].append(sgoal_literals_total)

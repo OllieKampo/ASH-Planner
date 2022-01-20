@@ -1,0 +1,216 @@
+{
+    "5": {
+        "1": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((store_room,1))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "move((store_room,1))",
+                    "F": "in(talos)",
+                    "V": "(store_room,1)"
+                }
+            ]
+        },
+        "2": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "transport_object_to((block,4),(puzzle_room,1))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "transport_object_to((block,4),(puzzle_room,1))",
+                    "F": "in((block,4))",
+                    "V": "(puzzle_room,1)"
+                }
+            ]
+        },
+        "3": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "transport_object_to((block,5),(puzzle_room,1))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "transport_object_to((block,5),(puzzle_room,1))",
+                    "F": "in((block,5))",
+                    "V": "(puzzle_room,1)"
+                }
+            ]
+        },
+        "4": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "transport_object_to((block,6),(puzzle_room,1))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "transport_object_to((block,6),(puzzle_room,1))",
+                    "F": "in((block,6))",
+                    "V": "(puzzle_room,1)"
+                }
+            ]
+        },
+        "5": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "move((puzzle_room,1))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "move((puzzle_room,1))",
+                    "F": "in(talos)",
+                    "V": "(puzzle_room,1)"
+                }
+            ]
+        },
+        "6": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "place_upon((block,3),((puzzle_room,1),table))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "place_upon((block,3),((puzzle_room,1),table))",
+                    "F": "on((block,3))",
+                    "V": "((puzzle_room,1),table)"
+                },
+                {
+                    "R": "talos",
+                    "A": "place_upon((block,3),((puzzle_room,1),table))",
+                    "F": "transporting(talos,(block,3))",
+                    "V": "false"
+                }
+            ]
+        },
+        "7": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "place_upon((block,2),(block,3))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "place_upon((block,2),(block,3))",
+                    "F": "on((block,2))",
+                    "V": "(block,3)"
+                },
+                {
+                    "R": "talos",
+                    "A": "place_upon((block,2),(block,3))",
+                    "F": "transporting(talos,(block,2))",
+                    "V": "false"
+                }
+            ]
+        },
+        "8": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "place_upon((block,1),(block,2))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "place_upon((block,1),(block,2))",
+                    "F": "on((block,1))",
+                    "V": "(block,2)"
+                },
+                {
+                    "R": "talos",
+                    "A": "place_upon((block,1),(block,2))",
+                    "F": "transporting(talos,(block,1))",
+                    "V": "false"
+                }
+            ]
+        },
+        "9": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "place_upon((block,6),((puzzle_room,1),table))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "place_upon((block,6),((puzzle_room,1),table))",
+                    "F": "on((block,6))",
+                    "V": "((puzzle_room,1),table)"
+                },
+                {
+                    "R": "talos",
+                    "A": "place_upon((block,6),((puzzle_room,1),table))",
+                    "F": "transporting(talos,(block,6))",
+                    "V": "false"
+                }
+            ]
+        },
+        "10": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "place_upon((block,5),(block,6))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "place_upon((block,5),(block,6))",
+                    "F": "on((block,5))",
+                    "V": "(block,6)"
+                },
+                {
+                    "R": "talos",
+                    "A": "place_upon((block,5),(block,6))",
+                    "F": "transporting(talos,(block,5))",
+                    "V": "false"
+                }
+            ]
+        },
+        "11": {
+            "actions": [
+                {
+                    "R": "talos",
+                    "A": "place_upon((block,4),(block,5))"
+                }
+            ],
+            "produced_sgoals": [
+                {
+                    "R": "talos",
+                    "A": "place_upon((block,4),(block,5))",
+                    "F": "on((block,4))",
+                    "V": "(block,5)"
+                },
+                {
+                    "R": "talos",
+                    "A": "place_upon((block,4),(block,5))",
+                    "F": "transporting(talos,(block,4))",
+                    "V": "false"
+                }
+            ]
+        }
+    }
+}

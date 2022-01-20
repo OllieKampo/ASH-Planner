@@ -330,22 +330,27 @@ class ConformanceMapping:
     
     @property
     def problem_size(self) -> int:
-        "The size of the conformance refinement planning problem (number of sub-goal stages) whose solution is represented by this conformance mapping."
+        "The size of the conformance refinement planning problem (number of sub-goal stages) represented by this conformance mapping."
         return len(self.constraining_sgoals)
     
     @property
     def constraining_sgoals_range(self) -> SubGoalRange:
-        "The sub-goal stage indices range of the conformance refinement planning problem."
+        "The sub-goal stage indices range of the conformance refinement planning problem represented by this conformance mapping."
         return SubGoalRange(min(self.constraining_sgoals), max(self.constraining_sgoals))
     
     @property
-    def total_constraining_sgoals(self) -> int:
-        "The total sum of all individual constraining sub-goals over all stages of the problem."
+    def total_sgoal_producing_actions(self) -> int:
+        "The number of sub-goal producing actions from the abstract plan that this conformance mapping refines."
+        return len(set((sgoal["I"], sgoal["R"], sgoal["A"]) for sgoals in self.constraining_sgoals.values() for sgoal in sgoals))
+    
+    @property
+    def total_sgoal_literals(self) -> int:
+        "The total sum of all individual constraining sub-goal literals over all stages of the problem."
         return sum(len(sgoals) for sgoals in self.constraining_sgoals.values())
     
     @property
     def length_expansion_factor(self) -> float:
-        "The factor by which the refined plan expands in length with respect to the given refinement problem size (equivalent to the sub-goal stage producing abstract plan length minus one)."
+        "The factor by which the refined plan expands in length with respect to the given refinement problem size (equivalent to the sub-goal stage producing abstract plan length)."
         return len(self.current_sgoals) / len(self.constraining_sgoals)
     
     @property
@@ -695,7 +700,8 @@ class MonolevelPlan(_collections_abc.Mapping):
         """
         if self.is_refined:
             if action_type is None:
-                return Expansion(self.plan_length / self.conformance_mapping.problem_size, self.total_actions / self.conformance_mapping.total_constraining_sgoals)
+                return Expansion(self.plan_length / self.conformance_mapping.problem_size,
+                                 self.total_actions / self.conformance_mapping.total_sgoal_producing_actions)
             matching_steps: int = 0
             matching_actions: int = 0
             for step in self:
@@ -706,7 +712,8 @@ class MonolevelPlan(_collections_abc.Mapping):
                             matching_steps +=1
                             counted = True
                         matching_actions += 1
-            return Expansion(matching_steps / self.conformance_mapping.problem_size, matching_actions / self.conformance_mapping.total_constraining_sgoals)
+            return Expansion(matching_steps / self.conformance_mapping.problem_size,
+                             matching_actions / self.conformance_mapping.total_sgoal_producing_actions)
         return Expansion(1.0, 1.0)
     
     def get_expansion_factor(self, indices: Optional[Union[int, range]] = None, action_type: Optional[ActionType] = None, accu_step: Optional[int] = None) -> Expansion:
@@ -992,7 +999,7 @@ class HierarchicalPlan(_collections_abc.Mapping, AbstractionHierarchy):
     @property
     def execution_latency_time(self) -> float:
         "The execution latency time (ground level latency time) of this hierarchical plan."
-        return self.get_latency_time(1)
+        return self.get_latency_time(self.bottom_level)
     
     @property
     def absolution_time(self) -> float:
@@ -3008,12 +3015,26 @@ class HierarchicalPlanner(AbstractionHierarchy):
         fgoal_ordering_correct: Optional[bool] = None
         if _order_fgoals_achievement:
             desired_order = answer.fmodel.query("goal_order", ['L', 'F', 'V', 'B', 'O'],
-                                                sort_by='O', group_by='O', cast_to={'O' : int})
+                                                sort_by='O', group_by='O', cast_to={'O' : [str, int]})
             goals_satisfied = answer.fmodel.query("goal_satisfied", ['L', 'F', 'V', 'B', 'S'],
-                                                  sort_by='S', group_by='S', cast_to={'S' : int})
+                                                  sort_by='S', group_by='S', cast_to={'S' : [str, int]})
+            _goals_satisfied = {}
+            added = []
+            for step in goals_satisfied:
+                for goal_satisfied in goals_satisfied[step]:
+                    for order in desired_order:
+                        for goal_order in desired_order[order]:
+                            if (goal_satisfied['F'] == goal_order['F']
+                                and goal_satisfied['V'] == goal_order['V']
+                                and goal_order not in added):
+                                added.append(goal_order)
+                                _goals_satisfied.setdefault(step, []).append(goal_order)
+            goals_satisfied = _goals_satisfied
+            
             fgoals_achieved_at = list(goals_satisfied.keys())
             
             def check_order() -> bool:
+                current_order: int = 0
                 for step in goals_satisfied:
                     for goal_satisfied in goals_satisfied[step]:
                         for order in desired_order:
@@ -3026,6 +3047,11 @@ class HierarchicalPlanner(AbstractionHierarchy):
                 return True
             
             fgoal_ordering_correct = check_order()
+            
+            self.__logger.log(self.__log_level(Verbosity.Standard),
+                              "Final-goal intermediate ordering:\n"
+                              f"Achievement steps = {fgoals_achieved_at}\n"
+                              f"Correct = {fgoal_ordering_correct}")
         
         ## Determine the number of final-goal preemptive achievement choices taken
         total_choices: int = 0
@@ -3084,7 +3110,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
         self.__logger.log(self.__log_level(Verbosity.Verbose), f"\n\n{header}\n\n" + plan)
         if self.__verbosity.value.level == Verbosity.Standard.value.level:
             print(f"{header}\n\n" + "\n".join([f"{step:<3d} => [ " + ", ".join(f"{action['R']}: {action['A']}" for action in actions) + " ]"
-                                               for step, actions in self.__actions[level].items()]))
+                                               for step, actions in self.__actions[level].items()]) + "\n")
         
         ## Return the plan
         return monolevel_plan

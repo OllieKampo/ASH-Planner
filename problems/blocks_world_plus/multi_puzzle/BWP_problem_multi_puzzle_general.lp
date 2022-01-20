@@ -58,7 +58,7 @@
 %%%% Variables for changing number of puzzles
 
 %% We test the blocks world plus with 1, 3 and 5 puzzles
-total_puzzles(1).
+total_puzzles(2).
 % total_puzzles(3).
 % total_puzzles(5).
 
@@ -209,7 +209,7 @@ goal_fluent(AL, on(BLOCK)) :- insta_of(AL, block, BLOCK), al(AL).
 
 %% The goal is to put block 2 on the left hand side of the table in puzzle room 2 whilst leaving block 1 on the table in puzzle room 1
 final_goal(AL, complete_puzzle(TABLE), true, true) :- insta_of(AL, table, TABLE), al(AL).
-% final_goal(AL, complete_tower(COLOUR, TABLE), true, true) :- insta_of(AL, colour, COLOUR), insta_of(AL, table, TABLE), al(AL).
+final_goal(AL, complete_tower(COLOUR, TABLE), true, true) :- insta_of(AL, colour, COLOUR), insta_of(AL, table, TABLE), al(AL).
 final_goal(1, on((block, (N * 6) - 3)), (((puzzle_room, N), table), left), true) :- puzzle_number(N).
 final_goal(1, on((block, (N * 6) - 0)), (((puzzle_room, N), table), right), true) :- puzzle_number(N).
 
