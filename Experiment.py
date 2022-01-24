@@ -206,11 +206,11 @@ class Results:
         acceptable_lag_time: float = 5.0
         max_time: float = 1800.0
         
-        optimum: int = 0
+        ground_optimum: int = 0
         if self.__optimums is not None:
-            optimum = self.__optimums[min(self.__optimums)]
-        else: optimum = min(hierarchical_plan[hierarchical_plan.bottom_level].total_actions
-                            for hierarchical_plan in self.__plans)
+            ground_optimum = self.__optimums[min(self.__optimums)]
+        else: ground_optimum = min(hierarchical_plan[hierarchical_plan.bottom_level].total_actions
+                                   for hierarchical_plan in self.__plans)
         
         for run, hierarchical_plan in enumerate(self.__plans):
             data_dict["GLOBALS"]["RU"].append(run)
@@ -224,7 +224,7 @@ class Results:
             data_dict["GLOBALS"]["BL_LE"].append(hierarchical_plan[hierarchical_plan.bottom_level].plan_length)
             data_dict["GLOBALS"]["BL_AC"].append(hierarchical_plan[hierarchical_plan.bottom_level].total_actions)
             
-            data_dict["GLOBALS"]["QUALITY_SCORE"].append(quality_score := optimum / hierarchical_plan[hierarchical_plan.bottom_level].total_actions)
+            data_dict["GLOBALS"]["QUALITY_SCORE"].append(quality_score := ground_optimum / hierarchical_plan[hierarchical_plan.bottom_level].total_actions)
             
             latency_score: float = 1.0
             if (latency_time := hierarchical_plan.execution_latency_time) > acceptable_lag_time:
@@ -245,7 +245,7 @@ class Results:
             data_dict["GLOBALS"]["LATENCY_GRADE"].append(latency_grade := quality_score * latency_score)
             data_dict["GLOBALS"]["ABSOLUTION_GRADE"].append(absolution_grade := quality_score * absolution_score)
             data_dict["GLOBALS"]["WAIT_GRADE"].append(wait_grade := quality_score * wait_score)
-            data_dict["GLOBALS"]["OVERAL_GRADE"].append(statistics.mean([latency_grade, absolution_grade, wait_grade]))
+            data_dict["GLOBALS"]["OVERALL_GRADE"].append(statistics.mean([latency_grade, absolution_grade, wait_grade]))
             
             for sequence_number, level, increment, problem_number in hierarchical_plan.get_hierarchical_problem_sequence():
                 data_dict["PROBLEM_SEQUENCE"]["RU"].append(run)
@@ -332,11 +332,11 @@ class Results:
                 data_dict["CAT"]["SGLITS_T"].append(sgoal_literals_total)
                 
                 optimum: int = 0
-                if self.__optimums is not None:
-                    if level in self.__optimums:
-                        optimum = self.__optimums[level]
-                    else: optimum = min(hierarchical_plan[level].total_actions
-                                        for hierarchical_plan in self.__plans)
+                if (self.__optimums is not None
+                    and level in self.__optimums):
+                    optimum = self.__optimums[level]
+                else: optimum = min(h_plan[level].total_actions
+                                    for h_plan in self.__plans)
                 
                 data_dict["CAT"]["QUALITY_SCORE"].append(quality_score := optimum / concatenated_plan.total_actions)
                 
@@ -359,7 +359,7 @@ class Results:
                 data_dict["CAT"]["LATENCY_GRADE"].append(latency_grade := quality_score * latency_score)
                 data_dict["CAT"]["COMPLETION_GRADE"].append(completion_grade := quality_score * completion_score)
                 data_dict["CAT"]["WAIT_GRADE"].append(wait_grade := quality_score * wait_score)
-                data_dict["CAT"]["OVERAL_GRADE"].append(statistics.mean([latency_grade, completion_grade, wait_grade]))
+                data_dict["CAT"]["OVERALL_GRADE"].append(statistics.mean([latency_grade, completion_grade, wait_grade]))
                 
                 ## Trailing plans
                 data_dict["CAT"]["HAS_TRAILING"].append(concatenated_plan.has_trailing_plan)
