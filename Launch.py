@@ -956,10 +956,10 @@ def __setup() -> argparse.Namespace:
     parser.add_argument("-i", "--instructions", action="store_true", help="show the program's instructions on launch and exit")
     
     ## Launcher options
-    parser.add_argument("-ao", "--ash_output", choices=["verbose", "standard", "simple", "experiment"], default="simple", type=str,
+    parser.add_argument("-ao", "--ash_output", choices=["verbose", "standard", "simple", "experiment"], default="standard", type=str,
                         help="the output verbosity of ASH; 'verbose' (full details of planned actions and the achievement sub-goal stages), "
                         "'standard' (only planned actions), 'simple' (tqdm progress bars, plans and results), "
-                        "or 'experiment' (experiment tracking tqdm progress bars and results only), by default 'simple'")
+                        "or 'experiment' (experiment tracking tqdm progress bars and results only), by default 'standard'")
     parser.add_argument("-co", "--clingo_output", **bool_options(default=False),
                         help="whether to enable output from Clingo, by default False")
     parser.add_argument("-cl", "--console_logging", choices=["DEBUG", "INFO", "WARN"], default="INFO",
