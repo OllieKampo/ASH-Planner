@@ -149,12 +149,6 @@ class Results:
                                          "START_S" : [], "IS_INITIAL" : [], "IS_FINAL" : [],
                                          "SIZE" : [],  "SGLITS_T" : [],
                                          "FIRST_I" : [], "LAST_I" : []}
-                                        #  "L_BLEND" : [], "R_BLEND" : []
-        
-        # data_dict["SCENARIOS"] = {"RU" : [], "AL" : [], "SN" : [],
-        #                           "SIZE" : [], "SGLITS_T" : [],
-        #                           "FIRST_I" : [], "LAST_I" : [],
-        #                           "DIVS" : [], "SPREAD" : []}
         
         data_dict["DIVISIONS"] = {"RU" : [], "AL" : [], "DN" : [],
                                   "APP_INDEX" : [], "COM_INDEX" : [], "COM_STEP" : [], "L_BLEND" : [], "R_BLEND" : [],

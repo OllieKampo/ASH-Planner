@@ -980,7 +980,7 @@ def __setup() -> argparse.Namespace:
                         help="integer specifying number of experimental runs, by default 1")
     parser.add_argument("-ir", "--initial_runs", nargs="?", default=0, const=1, type=int,
                         help="integer specifying number of initial 'dry' runs before experimental results are recorded, by default 0, as standard 1")
-    parser.add_argument("--optimum", nargs="+", default=None, action=StoreHierarchicalArguments, type=str, metavar="level1=value1 level_i=value_i [...] level_n=value_n",
+    parser.add_argument("-opti", "--optimum", nargs="+", default=None, action=StoreHierarchicalArguments, type=str, metavar="level1=value1 level_i=value_i [...] level_n=value_n",
                         help="the classical optimum for each level in the abstraction hierarchy, by default None (takes the optimum as the best quality plan over all experimental runs)")
     # parser.add_argument("--pause_on_run_completion", **bool_options(default=False),
     #                     help="whether to pause execution of the benchmarking system after completion of each experimental run, "

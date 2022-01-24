@@ -3346,11 +3346,17 @@ class HierarchicalPlanner(AbstractionHierarchy):
                     last_achieved_sgoals: int = conformance_mapping.constraining_sgoals_range.last_index
                     interrupted: bool = last_achieved_sgoals < last_sgoals
                     
+                    ## Obtain achievement step of last sub-goal stage and the concatenated plan length
                     last_achievement_step: int = conformance_mapping.sgoals_achieved_at[last_achieved_sgoals]
                     plan_length: int = monolevel_plan.end_step
+                    
+                    ## If the problem was final then the last goal index included the final-goal;
+                    ##      - The achievement step of the final-goal might not be the same as the achievement step of the last sub-goal stage,
+                    ##      - So the achievement step of the last goal index becomes the end step of the concatenated plan.
                     if monolevel_plan.is_final:
                         if last_achievement_step < plan_length:
-                            trailing_plan_length = plan_length - last_achievement_step ## TODO
+                            trailing_plan_length = plan_length - last_achievement_step
+                            self.__logger.debug(f"Final plan has trailing plan length of {trailing_plan_length}.")
                         last_achievement_step = plan_length
                     
                     if last_achievement_step != plan_length:
