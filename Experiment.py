@@ -47,8 +47,14 @@ class Quantiles(NamedTuple):
     max: float = 0.0
 
 def rmse(actual: list[int], perfect: list[float]) -> float:
+    "Calculates root mean squared error."
     if len(actual) != len(perfect): raise ValueError("Actual and perfect point spread lists must have equal length.")
-    return (sum(abs(obs - float(pred)) ** 2 for obs, pred in zip(actual, perfect)) / len(actual)) ** (0.5)
+    return (sum(abs(float(obs) - float(pred)) ** 2 for obs, pred in zip(actual, perfect)) / len(actual)) ** (0.5)
+
+def mae(actual: list[int], perfect: list[float]) -> float:
+    "Calculates mean absolute error."
+    if len(actual) != len(perfect): raise ValueError("Actual and perfect point spread lists must have equal length.")
+    return (sum(abs(float(obs) - float(pred)) for obs, pred in zip(actual, perfect)) / len(actual))
 
 class Results:
     "Encapsulates the results of experimental trails as a collection of hierarchical plans."
@@ -78,6 +84,21 @@ class Results:
         self.__is_changed = True
     
     @property
+    def globals_means(self) -> pandas.DataFrame:
+        dataframes = self.process()
+        return dataframes["GLOBALS"].drop("RU", axis="columns").mean().sort_index(axis="index", ascending=False).reset_index()
+    
+    @property
+    def globals_stdev(self) -> pandas.DataFrame:
+        dataframes = self.process()
+        return dataframes["GLOBALS"].drop("RU", axis="columns").std().sort_index(axis="index", ascending=False).reset_index()
+    
+    @property
+    def globals_quantiles(self) -> pandas.DataFrame:
+        dataframes = self.process()
+        return dataframes["GLOBALS"].drop("RU", axis="columns").quantile([0.0, 0.25, 0.5, 0.75, 1.0]).sort_index(axis="index", ascending=False).reset_index()
+    
+    @property
     def cat_level_wise_means(self) -> pandas.DataFrame:
         dataframes = self.process()
         return dataframes["CAT"].drop("RU", axis="columns").groupby("AL").mean().sort_index(axis="index", ascending=False).reset_index()
@@ -88,6 +109,11 @@ class Results:
         return dataframes["CAT"].drop("RU", axis="columns").groupby("AL").std().sort_index(axis="index", ascending=False).reset_index()
     
     @property
+    def cat_level_wise_quantiles(self) -> pandas.DataFrame:
+        dataframes = self.process()
+        return dataframes["CAT"].drop("RU", axis="columns").groupby("AL").quantile([0.0, 0.25, 0.5, 0.75, 1.0]).sort_index(axis="index", ascending=False).reset_index()
+    
+    @property
     def par_level_wise_means(self) -> pandas.DataFrame:
         dataframes = self.process()
         return dataframes["PAR"].drop(["RU", "IT"], axis="columns").groupby("AL").mean().sort_index(axis="index", ascending=False).reset_index()
@@ -96,6 +122,26 @@ class Results:
     def par_level_wise_stdev(self) -> pandas.DataFrame:
         dataframes = self.process()
         return dataframes["PAR"].drop(["RU", "IT"], axis="columns").groupby("AL").std().sort_index(axis="index", ascending=False).reset_index()
+    
+    @property
+    def par_level_wise_quantiles(self) -> pandas.DataFrame:
+        dataframes = self.process()
+        return dataframes["PAR"].drop(["RU", "IT"], axis="columns").groupby("AL").quantile([0.0, 0.25, 0.5, 0.75, 1.0]).sort_index(axis="index", ascending=False).reset_index()
+    
+    @property
+    def par_problem_wise_means(self) -> pandas.DataFrame:
+        dataframes = self.process()
+        return dataframes["PAR"].drop(["RU", "IT"], axis="columns").groupby(["AL", "PN"]).mean().sort_index(axis="index", ascending=False).reset_index()
+    
+    @property
+    def par_problem_wise_stdev(self) -> pandas.DataFrame:
+        dataframes = self.process()
+        return dataframes["PAR"].drop(["RU", "IT"], axis="columns").groupby(["AL", "PN"]).std().sort_index(axis="index", ascending=False).reset_index()
+    
+    @property
+    def par_problem_wise_quantiles(self) -> pandas.DataFrame:
+        dataframes = self.process()
+        return dataframes["PAR"].drop(["RU", "IT"], axis="columns").groupby(["AL", "PN"]).quantile([0.0, 0.25, 0.5, 0.75, 1.0]).sort_index(axis="index", ascending=False).reset_index()
     
     @property
     def step_wise_means(self) -> pandas.DataFrame:
@@ -139,11 +185,14 @@ class Results:
         data_dict: dict[str, dict[str, list[float]]] = {}
         
         data_dict["GLOBALS"] = {"RU" : [],
-                                "EX_T" : [], "HA_T" : [], "AW_T" : [], "AME_T" : [], "AME_T_PA" : [],
+                                "EX_T" : [], "HA_T" : [], "AW_T" : [], "AW_T_PA" : [], "AME_T" : [], "AME_T_PA" : [],
                                 "BL_LE" : [], "BL_AC" : [],
-                                "QUALITY_SCORE" : [],
-                                "LATENCY_SCORE" : [], "ABSOLUTION_SCORE" : [], "WAIT_SCORE" : [],
-                                "LATENCY_GRADE" : [], "ABSOLUTION_GRADE" : [], "WAIT_GRADE" : [], "OVERALL_GRADE" : []}
+                                "QL_SCORE" : [],
+                                "EX_SCORE" : [], "HA_SCORE" : [],
+                                "AW_SCORE" : [], "AW_PA_SCORE" : [], "AME_SCORE" : [], "AME_PA_SCORE" : [],
+                                "EX_GRADE" : [], "HA_GRADE" : [],
+                                "AW_GRADE" : [], "AW_PA_GRADE" : [], "AME_GRADE" : [], "AME_PA_GRADE" : [],
+                                "GRADE" : []}
         
         data_dict["PROBLEM_SEQUENCE"] = {"RU" : [], "SN" : [], "AL" : [], "IT" : [], "PN" : [],
                                          "START_S" : [], "IS_INITIAL" : [], "IS_FINAL" : [],
@@ -156,18 +205,26 @@ class Results:
         
         data_dict["CAT"] = {"RU" : [], "AL" : [],
                             "GT" : [], "ST" : [], "OT" : [], "TT" : [],
-                            "LT" : [], "CT" : [], "WT" : [],
+                            "LT" : [], "CT" : [], "WT" : [], "WT_PA" : [], "MET" : [], "MET_PA" : [],
                             "RSS" : [], "VMS" : [],
                             "LE" : [], "AC" : [], "CF" : [], "PSG" : [],
                             "SIZE" : [], "SGLITS_T" : [],
-                            "QUALITY_SCORE" : [],
-                            "LATENCY_SCORE" : [], "COMPLETION_SCORE" : [], "WAIT_SCORE" : [],
-                            "LATENCY_GRADE" : [], "COMPLETION_GRADE" : [], "WAIT_GRADE" : [], "OVERALL_GRADE" : [],
+                            "QL_SCORE" : [],
+                            "LT_SCORE" : [], "CT_SCORE" : [],
+                            "AW_SCORE" : [], "AW_PA_SCORE" : [], "AME_SCORE" : [], "AME_PA_SCORE" : [],
+                            "LT_GRADE" : [], "CT_GRADE" : [],
+                            "AW_GRADE" : [], "AW_PA_GRADE" : [], "AME_GRADE" : [], "AME_PA_GRADE" : [],
+                            "GRADE" : [],
                             "HAS_TRAILING" : [], "TOT_CHOICES" : [], "PRE_CHOICES" : [], "FGOALS_ORDER" : [],
                             "CP_EF_L" : [], "CP_EF_A" : [], "SP_ED_L" : [], "SP_ED_A" : [], "SP_EB_L" : [], "SP_EB_A" : [],
                             "SP_MIN_L" : [], "SP_MIN_A" : [], "SP_LOWER_L" : [], "SP_LOWER_A" : [], "SP_MED_L" : [], "SP_MED_A" : [], "SP_UPPER_L" : [], "SP_UPPER_A" : [], "SP_MAX_L" : [], "SP_MAX_A" : [],
                             "T_INTER_SP" : [], "P_INTER_SP" : [], "T_INTER_Q" : [], "P_INTER_Q" : [],
-                            "M_CHILD_SPREAD" : [], "DIV_INDEX_SPREAD" : [], "DIV_STEP_SPREAD" : [],
+                            "M_CHILD_RMSE" : [], "M_CHILD_RMSE_SCORE" : [], "M_CHILD_MAE" : [], "M_CHILD_MAE_SCORE" : [],
+                            "M_CHILD_NRMSE" : [], "M_CHILD_NRMSE_SCORE" : [], "M_CHILD_NMAE" : [], "M_CHILD_NMAE_SCORE" : [],
+                            "DIV_INDEX_RMSE" : [], "DIV_INDEX_RMSE_SCORE" : [], "DIV_INDEX_MAE" : [], "DIV_INDEX_MAE_SCORE" : [],
+                            "DIV_INDEX_NRMSE" : [], "DIV_INDEX_NRMSE_SCORE" : [], "DIV_INDEX_NMAE" : [], "DIV_INDEX_NMAE_SCORE" : [],
+                            "DIV_STEP_RMSE" : [], "DIV_STEP_RMSE_SCORE" : [], "DIV_STEP_MAE" : [], "DIV_STEP_MAE_SCORE" : [],
+                            "DIV_STEP_NRMSE" : [], "DIV_STEP_NRMSE_SCORE" : [], "DIV_STEP_NMAE" : [], "DIV_STEP_NMAE_SCORE" : [],
                             "DIVS_T" : [], "DS_T" : [], "DS_TD_MEAN" : [], "DS_TD_STD" : [], "DS_TD_CD" : [],
                             "DS_TD_MIN" : [], "DS_TD_LOWER" : [], "DS_TD_MED" : [], "DS_TD_UPPER" : [], "DS_TD_MAX" : [],
                             "DS_TS_MEAN" : [], "DS_TS_STD" : [], "DS_TS_CD" : [],
@@ -204,6 +261,7 @@ class Results:
                                   "IS_LOCO" : [], "IS_MANI" : [], "IS_CONF" : []}
         
         acceptable_lag_time: float = 5.0
+        acceptable_action_minimum_execution_time: float = 1.0
         max_time: float = 1800.0
         
         ground_optimum: int = 0
@@ -214,18 +272,23 @@ class Results:
         
         for run, hierarchical_plan in enumerate(self.__plans):
             data_dict["GLOBALS"]["RU"].append(run)
+            
+            data_dict["GLOBALS"]["BL_LE"].append(plan_length := hierarchical_plan[hierarchical_plan.bottom_level].plan_length)
+            data_dict["GLOBALS"]["BL_AC"].append(total_actions := hierarchical_plan[hierarchical_plan.bottom_level].total_actions)
+            
             data_dict["GLOBALS"]["EX_T"].append(hierarchical_plan.execution_latency_time)
             data_dict["GLOBALS"]["HA_T"].append(hierarchical_plan.absolution_time)
-            data_dict["GLOBALS"]["AW_T"].append(hierarchical_plan.get_average_wait_time(hierarchical_plan.bottom_level))
             
-            data_dict["GLOBALS"]["AME_T"].append(hierarchical_plan.get_average_minimum_execution_time(hierarchical_plan.bottom_level))
-            data_dict["GLOBALS"]["AME_T_PA"].append(hierarchical_plan.get_average_minimum_execution_time(hierarchical_plan.bottom_level, per_action=True))
+            data_dict["GLOBALS"]["AW_T"].append(wait_time := hierarchical_plan.get_average_wait_time(hierarchical_plan.bottom_level))
+            data_dict["GLOBALS"]["AW_T_PA"].append(wait_pa_time := hierarchical_plan.get_average_wait_time(hierarchical_plan.bottom_level) / total_actions)
             
-            data_dict["GLOBALS"]["BL_LE"].append(hierarchical_plan[hierarchical_plan.bottom_level].plan_length)
-            data_dict["GLOBALS"]["BL_AC"].append(hierarchical_plan[hierarchical_plan.bottom_level].total_actions)
+            data_dict["GLOBALS"]["AME_T"].append(minimum_execution_time := hierarchical_plan.get_average_minimum_execution_time(hierarchical_plan.bottom_level))
+            data_dict["GLOBALS"]["AME_T_PA"].append(minimum_execution_pa_time := hierarchical_plan.get_average_minimum_execution_time(hierarchical_plan.bottom_level, per_action=True))
             
-            data_dict["GLOBALS"]["QUALITY_SCORE"].append(quality_score := ground_optimum / hierarchical_plan[hierarchical_plan.bottom_level].total_actions)
+            ## Plan quality score relative to optimal
+            data_dict["GLOBALS"]["QL_SCORE"].append(quality_score := ground_optimum / total_actions)
             
+            ## Time scores have an inverse logarithmic trend which tends to zero in the limit to 1800 seconds
             latency_score: float = 1.0
             if (latency_time := hierarchical_plan.execution_latency_time) > acceptable_lag_time:
                 latency_score = (1.0 - (math.log(latency_time - (acceptable_lag_time - 1.0)) / math.log(max_time)))
@@ -235,17 +298,52 @@ class Results:
                 absolution_score = (1.0 - (math.log(absolution_time - (acceptable_lag_time - 1.0)) / math.log(max_time)))
             
             wait_score: float = 1.0
-            if (wait_time := hierarchical_plan.get_average_wait_time(hierarchical_plan.bottom_level)) > acceptable_lag_time:
+            wait_pa_score: float = 1.0
+            if wait_time > acceptable_lag_time:
                 wait_score = (1.0 - (math.log(wait_time - (acceptable_lag_time - 1.0)) / math.log(max_time)))
+            if wait_pa_time > acceptable_action_minimum_execution_time:
+                wait_pa_score = (1.0 - (math.log(wait_pa_time - (acceptable_action_minimum_execution_time - 1.0)) / math.log(max_time)))
             
-            data_dict["GLOBALS"]["LATENCY_SCORE"].append(latency_score)
-            data_dict["GLOBALS"]["ABSOLUTION_SCORE"].append(absolution_score)
-            data_dict["GLOBALS"]["WAIT_SCORE"].append(wait_score)
+            minimum_execution_score: float = 1.0
+            minimum_execution_pa_score: float = 1.0
+            if minimum_execution_time > acceptable_lag_time:
+                minimum_execution_score = (1.0 - (math.log(minimum_execution_time - (acceptable_lag_time - 1.0)) / math.log(max_time)))
+            if minimum_execution_pa_time > acceptable_action_minimum_execution_time:
+                minimum_execution_pa_score = (1.0 - (math.log(minimum_execution_pa_time - (acceptable_action_minimum_execution_time - 1.0)) / math.log(max_time)))
             
-            data_dict["GLOBALS"]["LATENCY_GRADE"].append(latency_grade := quality_score * latency_score)
-            data_dict["GLOBALS"]["ABSOLUTION_GRADE"].append(absolution_grade := quality_score * absolution_score)
-            data_dict["GLOBALS"]["WAIT_GRADE"].append(wait_grade := quality_score * wait_score)
-            data_dict["GLOBALS"]["OVERALL_GRADE"].append(statistics.mean([latency_grade, absolution_grade, wait_grade]))
+            ## Time scores
+            data_dict["GLOBALS"]["EX_SCORE"].append(latency_score)
+            data_dict["GLOBALS"]["HA_SCORE"].append(absolution_score)
+            
+            data_dict["GLOBALS"]["AW_SCORE"].append(wait_score)
+            data_dict["GLOBALS"]["AW_PA_SCORE"].append(wait_pa_score)
+            
+            data_dict["GLOBALS"]["AME_SCORE"].append(minimum_execution_score)
+            data_dict["GLOBALS"]["AME_PA_SCORE"].append(minimum_execution_pa_score)
+            
+            ## Time grades
+            data_dict["GLOBALS"]["EX_GRADE"].append(latency_grade := quality_score * latency_score)
+            data_dict["GLOBALS"]["HA_GRADE"].append(absolution_grade := quality_score * absolution_score)
+            
+            data_dict["GLOBALS"]["AW_GRADE"].append(quality_score * wait_score)
+            data_dict["GLOBALS"]["AW_PA_GRADE"].append(quality_score * wait_pa_score)
+            
+            data_dict["GLOBALS"]["AME_GRADE"].append(minimum_execution_grade := quality_score * minimum_execution_score)
+            data_dict["GLOBALS"]["AME_PA_GRADE"].append(minimum_execution_pa_grade := quality_score * minimum_execution_pa_score)
+            
+            ## Overall grade
+            if (hierarchical_plan.is_hierarchical_refinement
+                and len(hierarchical_plan.partial_plans[hierarchical_plan.bottom_level]) > 1):
+                ## For online planning the latency time accounts for time to get the initial ground-level partial plan,
+                ## minimum execution time accounts for the wait time to generate all non-initial
+                ## ground-level partial plans, relative to the total actions yielded by the plan.
+                overall_grade = statistics.mean([latency_grade, minimum_execution_grade, minimum_execution_pa_grade])
+            ## For offline planning since the planner does not yield partial plans such that there is no wait time
+            ##        (the robot does not have to wait beyond the latency time since it gets the complete plan on yield);
+            ##      - The execution latency, absolution, and average wait scores are the same,
+            ##      - The average minimum execution time is irrelevant.
+            else: overall_grade = absolution_grade
+            data_dict["GLOBALS"]["GRADE"].append(overall_grade)
             
             for sequence_number, level, increment, problem_number in hierarchical_plan.get_hierarchical_problem_sequence():
                 data_dict["PROBLEM_SEQUENCE"]["RU"].append(run)
@@ -310,7 +408,10 @@ class Results:
                 ## Hierarchical timing statistics
                 data_dict["CAT"]["LT"].append(hierarchical_plan.get_latency_time(level))
                 data_dict["CAT"]["CT"].append(hierarchical_plan.get_completion_time(level))
-                data_dict["CAT"]["WT"].append(hierarchical_plan.get_average_wait_time(level))
+                data_dict["CAT"]["WT"].append(wait_time := hierarchical_plan.get_average_wait_time(level))
+                data_dict["CAT"]["WT_PA"].append(wait_pa_time := wait_time / concatenated_plan.total_actions)
+                data_dict["CAT"]["MET"].append(minimum_execution_time := hierarchical_plan.get_average_minimum_execution_time(level))
+                data_dict["CAT"]["MET_PA"].append(minimum_execution_pa_time := minimum_execution_time / concatenated_plan.total_actions)
                 
                 ## Required memory usage
                 data_dict["CAT"]["RSS"].append(concatenated_totals.memory.rss)
@@ -338,7 +439,7 @@ class Results:
                 else: optimum = min(h_plan[level].total_actions
                                     for h_plan in self.__plans)
                 
-                data_dict["CAT"]["QUALITY_SCORE"].append(quality_score := optimum / concatenated_plan.total_actions)
+                data_dict["CAT"]["QL_SCORE"].append(quality_score := optimum / concatenated_plan.total_actions)
                 
                 latency_score: float = 1.0
                 if (latency_time := hierarchical_plan.get_latency_time(level)) > acceptable_lag_time:
@@ -349,17 +450,43 @@ class Results:
                     completion_score = (1.0 - (math.log(completion_time - (acceptable_lag_time - 1.0)) / math.log(max_time)))
                 
                 wait_score: float = 1.0
-                if (wait_time := hierarchical_plan.get_average_wait_time(level)) > acceptable_lag_time:
+                wait_pa_score: float = 1.0
+                if wait_time > acceptable_lag_time:
                     wait_score = (1.0 - (math.log(wait_time - (acceptable_lag_time - 1.0)) / math.log(max_time)))
+                if wait_pa_time > acceptable_action_minimum_execution_time:
+                    wait_pa_score = (1.0 - (math.log(wait_pa_time - (acceptable_action_minimum_execution_time - 1.0)) / math.log(max_time)))
                 
-                data_dict["CAT"]["LATENCY_SCORE"].append(latency_score)
-                data_dict["CAT"]["COMPLETION_SCORE"].append(completion_score)
-                data_dict["CAT"]["WAIT_SCORE"].append(wait_score)
+                minimum_execution_score: float = 1.0
+                minimum_execution_pa_score: float = 1.0
+                if minimum_execution_time > acceptable_lag_time:
+                    minimum_execution_score = (1.0 - (math.log(minimum_execution_time - (acceptable_lag_time - 1.0)) / math.log(max_time)))
+                if minimum_execution_pa_time > acceptable_action_minimum_execution_time:
+                    minimum_execution_pa_score = (1.0 - (math.log(minimum_execution_pa_time - (acceptable_action_minimum_execution_time - 1.0)) / math.log(max_time)))
                 
-                data_dict["CAT"]["LATENCY_GRADE"].append(latency_grade := quality_score * latency_score)
-                data_dict["CAT"]["COMPLETION_GRADE"].append(completion_grade := quality_score * completion_score)
-                data_dict["CAT"]["WAIT_GRADE"].append(wait_grade := quality_score * wait_score)
-                data_dict["CAT"]["OVERALL_GRADE"].append(statistics.mean([latency_grade, completion_grade, wait_grade]))
+                data_dict["CAT"]["LT_SCORE"].append(latency_score)
+                data_dict["CAT"]["CT_SCORE"].append(completion_score)
+                
+                data_dict["CAT"]["AW_SCORE"].append(wait_score)
+                data_dict["CAT"]["AW_PA_SCORE"].append(wait_pa_score)
+                
+                data_dict["CAT"]["AME_SCORE"].append(minimum_execution_score)
+                data_dict["CAT"]["AME_PA_SCORE"].append(minimum_execution_pa_score)
+                
+                data_dict["CAT"]["LT_GRADE"].append(latency_grade := quality_score * latency_score)
+                data_dict["CAT"]["CT_GRADE"].append(completion_grade := quality_score * completion_score)
+                
+                data_dict["CAT"]["AW_GRADE"].append(quality_score * wait_score)
+                data_dict["CAT"]["AW_PA_GRADE"].append(quality_score * wait_pa_score)
+                
+                data_dict["CAT"]["AME_GRADE"].append(minimum_execution_grade := quality_score * minimum_execution_score)
+                data_dict["CAT"]["AME_PA_GRADE"].append(minimum_execution_pa_grade := quality_score * minimum_execution_pa_score)
+                
+                ## Overall grade
+                if (concatenated_plan.is_refined
+                    and len(hierarchical_plan.partial_plans[level]) > 1):
+                    overall_grade = statistics.mean([latency_grade, minimum_execution_grade, minimum_execution_pa_grade])
+                else: overall_grade = completion_grade
+                data_dict["CAT"]["GRADE"].append(overall_grade)
                 
                 ## Trailing plans
                 data_dict["CAT"]["HAS_TRAILING"].append(concatenated_plan.has_trailing_plan)
@@ -412,15 +539,18 @@ class Results:
                 data_dict["CAT"]["P_INTER_Q"].append(interleaving[1][1])
                 
                 ## Sub-plan (refinement tree) balancing, partial plan balancing, and division spread
-                rmse_mchild: float = 0.0
-                rmse_div_indices: float = 0.0
-                rmse_div_steps: float = 0.0
+                rmse_mchild = nrmse_mchild = mae_mchild = nmae_mchild = 0.0
+                rmse_div_indices = nrmse_div_indices = mae_div_indices = nmae_div_indices = 0.0
+                rmse_div_steps = nrmse_div_steps = mae_div_steps = nmae_div_steps = 0.0
                 
                 if concatenated_plan.is_refined:
                     perfect_mchild_spacing: float = concatenated_plan.plan_length / problem_size
                     perfect_mchild_spread: list[float] = [perfect_mchild_spacing * index for index in concatenated_plan.conformance_mapping.constraining_sgoals_range]
                     mchilds: list[int] = list(concatenated_plan.conformance_mapping.sgoals_achieved_at.values())
                     rmse_mchild = rmse(mchilds, perfect_mchild_spread)
+                    nrmse_mchild = rmse_mchild / perfect_mchild_spacing
+                    mae_mchild = mae(mchilds, perfect_mchild_spread)
+                    nmae_mchild = mae_mchild / perfect_mchild_spacing
                     
                     total_divisions: int = len(hierarchical_plan.get_division_points(level + 1))
                     total_problems: int = (total_divisions - 2) + 1
@@ -430,21 +560,52 @@ class Results:
                         perfect_div_index_spread: list[float] = [perfect_div_index_spacing * index for index in range(0, total_divisions)]
                         div_indices: list[int] = [point.index for point in hierarchical_plan.get_division_points(level + 1)]
                         rmse_div_indices = rmse(div_indices, perfect_div_index_spread)
+                        nrmse_div_indices = rmse_div_indices / perfect_div_index_spacing
+                        mae_div_indices = mae(div_indices, perfect_div_index_spread)
+                        nmae_div_indices = mae_div_indices / perfect_div_index_spacing
                         
                         perfect_div_step_spacing: float = concatenated_plan.plan_length / total_problems
                         perfect_div_step_spread: list[float] = [perfect_div_step_spacing * index for index in range(0, total_divisions)]
                         div_steps: list[int] = [concatenated_plan.conformance_mapping.sgoals_achieved_at.get(point.index, 0) for point in hierarchical_plan.get_division_points(level + 1)]
                         rmse_div_steps = rmse(div_steps, perfect_div_step_spread)
+                        nrmse_div_steps = rmse_div_steps / perfect_div_step_spacing
+                        mae_div_steps = mae(div_steps, perfect_div_step_spread)
+                        nmae_div_steps = mae_div_steps / perfect_div_step_spacing
                     
-                    _EXP_logger.debug(f"Refinement spread at {run=}, {level=}: {rmse_mchild=}, {rmse_div_indices=}, {rmse_div_steps=}")
+                    _EXP_logger.debug(f"Refinement spread at {run=}, {level=}:\n"
+                                      f"Root Mean Squared Errors: {rmse_mchild=}, {rmse_div_indices=}, {rmse_div_steps=}\n"
+                                      f"Mean Absolute Errors: {mae_mchild=}, {mae_div_indices=}, {mae_div_steps=}")
                 
                 ## The spread is the root mean squared error between;
                 ##      - The final achieved matching child steps (representing the observed data),
                 ##      - The theoretical perfectly balanced spread of matching child steps (representing the predicted data).
                 ## The facet is that the perfect spacing is usually not achievable since the spacing will usually lie between steps since the plan length is usually not perfect
-                data_dict["CAT"]["M_CHILD_SPREAD"].append(rmse_mchild)
-                data_dict["CAT"]["DIV_INDEX_SPREAD"].append(rmse_div_indices)
-                data_dict["CAT"]["DIV_STEP_SPREAD"].append(rmse_div_steps)
+                data_dict["CAT"]["M_CHILD_RMSE"].append(rmse_mchild)
+                data_dict["CAT"]["M_CHILD_RMSE_SCORE"].append(math.exp(-rmse_mchild))
+                data_dict["CAT"]["M_CHILD_NRMSE"].append(nrmse_mchild)
+                data_dict["CAT"]["M_CHILD_NRMSE_SCORE"].append(math.exp(-nrmse_mchild))
+                data_dict["CAT"]["M_CHILD_MAE"].append(mae_mchild)
+                data_dict["CAT"]["M_CHILD_MAE_SCORE"].append(math.exp(-mae_mchild))
+                data_dict["CAT"]["M_CHILD_NMAE"].append(nmae_mchild)
+                data_dict["CAT"]["M_CHILD_NMAE_SCORE"].append(math.exp(-nmae_mchild))
+                
+                data_dict["CAT"]["DIV_INDEX_RMSE"].append(rmse_div_indices)
+                data_dict["CAT"]["DIV_INDEX_RMSE_SCORE"].append(math.exp(-rmse_div_indices))
+                data_dict["CAT"]["DIV_INDEX_NRMSE"].append(nrmse_div_indices)
+                data_dict["CAT"]["DIV_INDEX_NRMSE_SCORE"].append(math.exp(-nrmse_div_indices))
+                data_dict["CAT"]["DIV_INDEX_MAE"].append(mae_div_indices)
+                data_dict["CAT"]["DIV_INDEX_MAE_SCORE"].append(math.exp(-mae_div_indices))
+                data_dict["CAT"]["DIV_INDEX_NMAE"].append(nmae_div_indices)
+                data_dict["CAT"]["DIV_INDEX_NMAE_SCORE"].append(math.exp(-nmae_div_indices))
+                
+                data_dict["CAT"]["DIV_STEP_RMSE"].append(rmse_div_steps)
+                data_dict["CAT"]["DIV_STEP_RMSE_SCORE"].append(math.exp(-rmse_div_steps))
+                data_dict["CAT"]["DIV_STEP_NRMSE"].append(nrmse_div_steps)
+                data_dict["CAT"]["DIV_STEP_NRMSE_SCORE"].append(math.exp(-nrmse_div_steps))
+                data_dict["CAT"]["DIV_STEP_MAE"].append(mae_div_steps)
+                data_dict["CAT"]["DIV_STEP_MAE_SCORE"].append(math.exp(-mae_div_steps))
+                data_dict["CAT"]["DIV_STEP_NMAE"].append(nmae_div_steps)
+                data_dict["CAT"]["DIV_STEP_NMAE_SCORE"].append(math.exp(-nmae_div_steps))
                 
                 ## Division Scenarios
                 division_tree_level: list[DivisionScenario] = hierarchical_plan.problem_division_tree.get(level, [])
@@ -559,9 +720,9 @@ class Results:
                         stdev_plan_length = 0.0
                         stdev_total_actions = 0.0
                     bal_plan_length = stdev_plan_length / mean_plan_length
-                    bal_plan_length = stdev_total_actions / mean_total_actions
+                    bal_total_actions = stdev_total_actions / mean_total_actions
                     quantiles_plan_length = Quantiles(*numpy.quantile(length_per_plan, [0.0, 0.25, 0.5, 0.75, 1.0]))
-                    quantiles_plan_length = Quantiles(*numpy.quantile(actions_per_plan, [0.0, 0.25, 0.5, 0.75, 1.0]))
+                    quantiles_total_actions = Quantiles(*numpy.quantile(actions_per_plan, [0.0, 0.25, 0.5, 0.75, 1.0]))
                 
                 data_dict["CAT"]["PP_LE_MEAN"].append(mean_plan_length)
                 data_dict["CAT"]["PP_AC_MEAN"].append(mean_total_actions)
@@ -773,10 +934,10 @@ class Results:
                         data_dict["PAR"]["TOT_CHOICES"].append(partial_plan.total_choices)
                         data_dict["PAR"]["PRE_CHOICES"].append(partial_plan.preemptive_choices)
         
-        ## Create a Pandas dataframe from the data dictionary
+        # Create a Pandas dataframe from the data dictionary
         # for key in data_dict:
         #     for _key in data_dict[key]:
-        #         print(f"{_key}: {len(data_dict[key][_key])}")
+        #         print(f"{key} - {_key}: {len(data_dict[key][_key])}")
         self.__dataframes = {key : pandas.DataFrame(data_dict[key]) for key in data_dict}
         return self.__dataframes
     
@@ -788,37 +949,61 @@ class Results:
     def to_excel(self, file: str) -> None:
         "Save the currently collected data to an excel file."
         dataframes = self.process()
+        top_level: int = self.__plans[-1].top_level
         writer = pandas.ExcelWriter(file, engine="xlsxwriter") # pylint: disable=abstract-class-instantiated
         
+        ## General global statistics
         dataframes["GLOBALS"].to_excel(writer, sheet_name="Globals")
+        dataframes["GLOBALS"].describe().to_excel(writer, sheet_name="Globals", startrow=len(self.__plans) + 2)
         
+        ## Problem definitions statistics
         dataframes["PROBLEM_SEQUENCE"].to_excel(writer, sheet_name="Problem Sequence")
-        
-        # dataframes["SCENARIOS"].to_excel(writer, sheet_name="Division Scenarios")
-        
         dataframes["DIVISIONS"].to_excel(writer, sheet_name="Division Points")
         
+        ## Concatenated plan statistics
         dataframes["CAT"].to_excel(writer, sheet_name="Cat Plans")
         self.cat_level_wise_means.to_excel(writer, sheet_name="Cat Level-Wise Aggregates", startrow=1)
-        self.cat_level_wise_stdev.to_excel(writer, sheet_name="Cat Level-Wise Aggregates", startrow=(self.__plans[-1].top_level + 4))
+        self.cat_level_wise_stdev.to_excel(writer, sheet_name="Cat Level-Wise Aggregates", startrow=((top_level + 3) * 1) + 1)
         worksheet = writer.sheets["Cat Level-Wise Aggregates"]
         worksheet.write(0, 0, "Means")
-        worksheet.write(self.__plans[-1].top_level + 3, 0, "Standard Deviation")
+        worksheet.write(top_level + 3, 0, "Standard Deviation")
+        quantiles = self.cat_level_wise_quantiles
+        for order, quantile in enumerate([0.0, 0.25, 0.5, 0.75, 1.0], start=2):
+            quantile_data = quantiles[quantiles["level_1"].isin([quantile])].drop("level_1", axis="columns")
+            quantile_data.to_excel(writer, sheet_name="Cat Level-Wise Aggregates", startrow=((top_level + 3) * order) + 1)
+            worksheet.write((top_level + 3) * order, 0, f"Quantile {quantile}")
         
+        ## Partial plan statistics
         dataframes["PAR"].to_excel(writer, sheet_name="Partial Plans")
         self.par_level_wise_means.to_excel(writer, sheet_name="Par Level-Wise Aggregates", startrow=1)
-        self.par_level_wise_stdev.to_excel(writer, sheet_name="Par Level-Wise Aggregates", startrow=(self.__plans[-1].top_level + 4))
+        self.par_level_wise_stdev.to_excel(writer, sheet_name="Par Level-Wise Aggregates", startrow=((top_level + 3) * 1) + 1)
         worksheet = writer.sheets["Par Level-Wise Aggregates"]
         worksheet.write(0, 0, "Means")
-        worksheet.write(self.__plans[-1].top_level + 3, 0, "Standard Deviation")
+        worksheet.write(top_level + 3, 0, "Standard Deviation")
+        quantiles = self.par_level_wise_quantiles
+        for order, quantile in enumerate([0.0, 0.25, 0.5, 0.75, 1.0], start=2):
+            quantile_data = quantiles[quantiles["level_1"].isin([quantile])].drop("level_1", axis="columns")
+            quantile_data.to_excel(writer, sheet_name="Par Level-Wise Aggregates", startrow=((top_level + 3) * order) + 1)
+            worksheet.write((top_level + 3) * order, 0, f"Quantile {quantile}")
+        max_problems: int = len(self.par_problem_wise_means["PN"])
+        self.par_problem_wise_means.to_excel(writer, sheet_name="Par Problem-Wise Aggregates", startrow=1)
+        self.par_problem_wise_stdev.to_excel(writer, sheet_name="Par Problem-Wise Aggregates", startrow=((max_problems + 3) * 1) + 1)
+        worksheet = writer.sheets["Par Problem-Wise Aggregates"]
+        worksheet.write(0, 0, "Means")
+        worksheet.write(max_problems + 3, 0, "Standard Deviation")
+        quantiles = self.par_problem_wise_quantiles
+        for order, quantile in enumerate([0.0, 0.25, 0.5, 0.75, 1.0], start=2):
+            quantile_data = quantiles[quantiles["level_2"].isin([quantile])].drop("level_2", axis="columns")
+            quantile_data.to_excel(writer, sheet_name="Par Problem-Wise Aggregates", startrow=((max_problems + 3) * order) + 1)
+            worksheet.write((max_problems + 3) * order, 0, f"Quantile {quantile}")
         
+        ## Step- and index-wise statistics
         dataframes["STEP_CAT"].to_excel(writer, sheet_name="Concat Step-wise")
-        self.step_wise_means.to_excel(writer, sheet_name="Concat Step-wise Mean") # (2 + len(dataframes["STEP_CAT"]))
-        self.step_wise_stdev.to_excel(writer, sheet_name="Concat Step-wise Stdev") # (2 + (len(dataframes["STEP_CAT"]) * 2))
-        
+        self.step_wise_means.to_excel(writer, sheet_name="Concat Step-wise Mean")
+        self.step_wise_stdev.to_excel(writer, sheet_name="Concat Step-wise Stdev")
         dataframes["INDEX_CAT"].to_excel(writer, sheet_name="Concat Index-wise")
-        self.index_wise_means.to_excel(writer, sheet_name="Concat Index-wise Mean") # (2 + len(dataframes["STEP_CAT"]))
-        self.index_wise_stdev.to_excel(writer, sheet_name="Concat Index-wise Stdev") # (2 + (len(dataframes["STEP_CAT"]) * 2))
+        self.index_wise_means.to_excel(writer, sheet_name="Concat Index-wise Mean")
+        self.index_wise_stdev.to_excel(writer, sheet_name="Concat Index-wise Stdev")
         
         writer.save()
 
@@ -862,7 +1047,8 @@ class Experiment:
         "Run the encapsulated experiments and return a result object containing obtained statistics."
         results: Results = self.__run_all()
         dataframes = results.process()
-        columns: list[str] = ["RU", "AL", "GT", "ST", "OT", "TT", "LT", "CT", "WT", "RSS", "VMS", "LE", "AC", "CF", "PSG"]
+        columns: list[str] = ["RU", "AL", "LE", "AC", "CF", "GT", "ST", "OT", "TT", "LT", "CT", "WT", "RSS", "VMS",
+                              "QL_SCORE", "LT_SCORE", "CT_SCORE", "AW_SCORE", "AME_SCORE", "LT_GRADE", "CT_GRADE", "AW_GRADE", "AME_GRADE", "GRADE"]
         _EXP_logger.info("\n\n" + center_text("Experimental Results", framing_width=40, centering_width=60)
                          + "\n\n" + center_text("Concatenated Plans", frame_after=False, framing_char='~', framing_width=30, centering_width=60)
                          + "\n" + dataframes["CAT"].to_string(index=False, columns=columns)

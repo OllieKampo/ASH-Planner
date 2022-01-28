@@ -26,9 +26,10 @@ import logging
 import logging.handlers
 import os
 import sys
-from typing import Any, Iterable, Optional, Sequence, Type, Union
+from typing import Any, Optional, Sequence, Type, Union
 import time
 import json
+from matplotlib.backend_bases import FigureManagerBase
 import numpy
 from matplotlib import pyplot
 from pandas.core.frame import DataFrame
@@ -111,7 +112,7 @@ Division Strategies
 The strategy 'none' does not make any divisions, making all monolevel planning problems complete.
 The strategy 'all' makes every possible problem division, entering the planner into sub-planning mode.
 
-Saving grounding
+Saved grounding
 ----------------
 
 Gets rid of any learnt no-good clauses, might reduce some overheads, and uses less memory, but there is a cost in solving the base program parts again.
@@ -216,10 +217,8 @@ def __main() -> int:
     if not namespace.disable_pause_on_start:
         input("Press any key to begin...")
     
-    
-    
     ## Find the verbosity mode;
-    ##      - Results is a special mode where output from the planner is disabled and only experimental results are shown
+    ##      - Experiment ouput mode disables outputs from the planner and only experimental results are shown
     if namespace.ash_output != "experiment":
         verbosity = Planner.Verbosity[namespace.ash_output.capitalize()]
     else: verbosity = Planner.Verbosity.Minimal
@@ -241,8 +240,6 @@ def __main() -> int:
     planner.initialise_problem(find_inconsistencies)
     if find_inconsistencies: return 0
     
-    
-    
     conformance_type: Optional[Planner.ConformanceType] = None
     division_strategy: Optional[Strategies.DivisionStrategy] = None
     
@@ -262,15 +259,15 @@ def __main() -> int:
     ## If problem space generation or dependency detection is enabled then attempt to load a schema
     if namespace.problem_space is not None:
         
-        # if not namespace.load_schema is not None:
-        #     raise RuntimeError("Cannot generate problem spaces or detect dependencies without a refinement schema.")
-        # if namespace.operation != "standard":
-        #     raise RuntimeError("Can only generate problem spaces or detect dependencies in standard operation mode.")
+        if not namespace.load_schema is not None:
+            raise RuntimeError("Cannot generate problem spaces or detect dependencies without a refinement schema.")
+        if namespace.operation != "standard":
+            raise RuntimeError("Can only generate problem spaces or detect dependencies in standard operation mode.")
         
-        # with open(namespace.load_schema, 'r') as file_reader:
-        #     json_dict = json.loads(file_reader.read())
-        # schema = Planner.RefinementSchema.from_json(json_dict)
-        # planner.load_schema(schema, False, False)
+        with open(namespace.load_schema, 'r') as file_reader:
+            json_dict = json.loads(file_reader.read())
+        schema = Planner.RefinementSchema.from_json(json_dict)
+        planner.load_schema(schema, False, False)
         
         planning_function = functools.partial(planner.monolevel_plan,
                                               1, # schema.level - 1,
@@ -437,8 +434,10 @@ def __main() -> int:
                                               time_limit=get_hierarchical_arg(namespace.planning_time_limit, bottom_level),
                                               length_limit=get_hierarchical_arg(namespace.search_length_limit, bottom_level))
     
-    
-    
+    ## Test mode runs the planner once, the outputs are;
+    ##      - A standard log file,
+    ##      - A plan and refinement schema in json format,
+    ##      - A figure file displaying basic statistics.
     if namespace.operation == "test":
         planning_function()
         
@@ -474,7 +473,7 @@ def __main() -> int:
                 _Launcher_logger.error("Failed to save schema to file.", exc_info=1)
         
         ## Graphify statistics as requested
-        if namespace.display_graph:
+        if namespace.display_figure:
             
             bar_width: float
             # def bar_width(bar: int, tbars: int, pad: float) -> float:
@@ -638,9 +637,7 @@ def __main() -> int:
             #                 width=bar_width, color="magenta", label="Expansion Deviation (goal-wise)")
             
             pyplot.show()
-        
-        
-        
+    
     else:
         ## Run the experiments
         experiment = Experiment.Experiment(planner=planner,
@@ -668,7 +665,9 @@ def __main() -> int:
             results.to_dsv(data_file, sep=namespace.data_sep, endl=namespace.data_end)
         
         ## Display a summary of results in simple graphs
-        if namespace.display_graph:
+        if (namespace.display_figure
+            or namespace.figure_file is not None):
+            
             means: DataFrame = results.cat_level_wise_means
             std: DataFrame = results.cat_level_wise_stdev
             step_wise_means: DataFrame = results.step_wise_means
@@ -703,7 +702,7 @@ def __main() -> int:
             axes[0, 0].set_xlabel("Abstraction Level")
             axes[0, 0].set_xticks(al_range)
             axes[0, 0].set_xticklabels(al_labels)
-            axes[0, 0].legend()
+            axes[0, 0].legend(prop={"size" : "xx-small"})
             
             ## Level-wise memory statistics
             set_bars(2)
@@ -714,7 +713,7 @@ def __main() -> int:
             axes[0, 1].set_xlabel("Abstraction Level")
             axes[0, 1].set_xticks(al_range)
             axes[0, 1].set_xticklabels(al_labels)
-            axes[0, 1].legend()
+            axes[0, 1].legend(prop={"size" : "xx-small"})
             
             ## Level-wise quality statistics
             set_bars(2)
@@ -725,7 +724,7 @@ def __main() -> int:
             axes[0, 2].set_xlabel("Abstraction Level")
             axes[0, 2].set_xticks(al_range)
             axes[0, 2].set_xticklabels(al_labels)
-            axes[0, 2].legend()
+            axes[0, 2].legend(prop={"size" : "xx-small"})
             
             ## Bottom-level step-wise timing statistics
             bottom_means: DataFrame = step_wise_means[step_wise_means["AL"].isin([bottom_level])].sort_index()
@@ -749,7 +748,7 @@ def __main() -> int:
             axes[1, 0].set_title("Bottom-Level Search Times")
             axes[1, 0].set_ylabel("Time (s)")
             axes[1, 0].set_xlabel("Search Length")
-            axes[1, 0].legend()
+            axes[1, 0].legend(prop={"size" : "xx-small"})
             
             ## Bottom-level step-wise memory statistics
             max_memory: float = max(bottom_means["T_VMS"] + bottom_std["T_VMS"])
@@ -765,7 +764,7 @@ def __main() -> int:
             axes[1, 1].set_title("Bottom-Level Memory Usage")
             axes[1, 1].set_ylabel("Total Memory (MBs)")
             axes[1, 1].set_xlabel("Search Length")
-            axes[1, 1].legend()
+            axes[1, 1].legend(prop={"size" : "xx-small"})
             
             ## Index-wise sub-plan length
             set_bars(2)
@@ -774,7 +773,7 @@ def __main() -> int:
             axes[1, 2].set_title("Bottom-Level Sub-Plan Lengths")
             axes[1, 2].set_ylabel("Length")
             axes[1, 2].set_xlabel("Sub-goal Stage Index")
-            axes[1, 2].legend()
+            axes[1, 2].legend(prop={"size" : "xx-small"})
             
             ## Achieved sub-goal stages against search length
             axes[2, 0].plot(steps, bottom_means["C_TACHSGOALS"], "g", label="Achieved Sub-goal Stages")
@@ -785,7 +784,7 @@ def __main() -> int:
             axes[2, 0].set_title("Bottom-Level Sub-Goal Achievement")
             axes[2, 0].set_ylabel("Total")
             axes[2, 0].set_xlabel("Plan Length")
-            axes[2, 0].legend()
+            axes[2, 0].legend(prop={"size" : "xx-small"})
             
             ## Plan expansion against search length
             axes[2, 1].plot(steps, bottom_means["C_CP_EF_L"], "g", label="Length Factor")
@@ -812,7 +811,7 @@ def __main() -> int:
             axes[2, 1].set_title("Bottom-Level Refinement Expansion")
             axes[2, 1].set_ylabel("Accumulating Expansion")
             axes[2, 1].set_xlabel("Plan Length")
-            axes[2, 1].legend()
+            axes[2, 1].legend(prop={"size" : "xx-small"})
             
             ## Partial-problem balancing
             set_bars(7)
@@ -821,21 +820,35 @@ def __main() -> int:
             axes[2, 2].bar(al_range - (bar_width * 1.0), means["PR_TS_STD"], bar_width, label="Stdev Size")
             axes[2, 2].bar(al_range, means["PP_LE_MEAN"], bar_width, label="Mean Refinement Length")
             axes[2, 2].bar(al_range + (bar_width * 1.0), means["PP_LE_STD"], bar_width, label="Stdev Refinement Length")
-            axes[2, 2].bar(al_range + (bar_width * 2.0), means["DIV_INDEX_SPREAD"], bar_width, label="Divisions Index Spread")
-            axes[2, 2].bar(al_range + (bar_width * 3.0), means["DIV_STEP_SPREAD"], bar_width, label="Divisions Step Spread")
+            axes[2, 2].bar(al_range + (bar_width * 2.0), means["DIV_INDEX_MAE"], bar_width, label="Divisions Index Spread")
+            axes[2, 2].bar(al_range + (bar_width * 3.0), means["DIV_STEP_MAE"], bar_width, label="Divisions Step Spread")
             axes[2, 2].set_title("Problem Balance")
             axes[2, 2].set_ylabel("Total")
             axes[2, 2].set_xlabel("Abstraction Level")
             axes[2, 2].set_xticks(al_range)
             axes[2, 2].set_xticklabels(al_labels)
-            axes[2, 2].legend()
+            axes[2, 2].legend(prop={"size" : "xx-small"})
             
-            pyplot.show()
+            ## Add a little more space vertically to make room for plot titles
+            figure.subplots_adjust(hspace=0.4)
+            
+            ## Save the plots
+            if (figure_file := namespace.figure_file) is not None:
+                if namespace.config_file_naming:
+                    figure_file = figure_file.split(".png")[0] + f"_{config_file_name}" + ".png"
+                _Launcher_logger.info(f"Saving results to figure file: {figure_file}")
+                pyplot.pause(1)
+                figure.set_size_inches(16, 9.8)
+                pyplot.savefig(figure_file, bbox_inches="tight", dpi=120)
+            
+            ## Display the plots
+            if namespace.display_figure:
+                figure_manager: FigureManagerBase = pyplot.get_current_fig_manager()
+                figure_manager.window.showMaximized()
+                pyplot.show()
     
     ## Return a clean exit
     return 0
-
-
 
 def __setup() -> argparse.Namespace:
     ## Record launch time
@@ -944,6 +957,9 @@ def __setup() -> argparse.Namespace:
                         help="string specifying the delimiter between fields (values) of the output data file, by default ' '")
     parser.add_argument("-df_de", "--data_end", default="\n", type=str,
                         help="string specifying the delimiter between records (rows) of the output data file, by default '\\n'")
+    parser.add_argument("-ff", "--figure_file", nargs="?", default=None, const=f"./experiments/results/ASH_Figure_{output_file_append}.png", type=optional_str,
+                        help="output experimental results displayed as a set of graphs on a figure to Portable Network Graphics (PNG) (.png) file, "
+                             f"optionally specify a file name, as standard ./experiments/results/ASH_Figure_{output_file_append}.dat")
     parser.add_argument("-sf", "--save_schema", default=f"./solutions/schemas/ASH_Schema_{output_file_append}.txt", type=str,
                         help=f"specify a file name to save a schema to, by default ./solutions/schemas/ASH_Schema_{output_file_append}.txt")
     parser.add_argument("--schema_level", default=1, type=int,
@@ -968,7 +984,7 @@ def __setup() -> argparse.Namespace:
                         help="disable all logging, removing all overhead on producing logs")
     parser.add_argument("-dpos", "--disable_pause_on_start", action="store_true", default=False,
                         help="disable the pause for user input when the planner starts")
-    parser.add_argument("-dg", "--display_graph", **bool_options(default=True),
+    parser.add_argument("-disp_fig", "--display_figure", **bool_options(default=True),
                         help="whether to display experimental results in a simple set of graphs upon completion of all experimental runs")
     
     ## Experimentation options
@@ -982,9 +998,6 @@ def __setup() -> argparse.Namespace:
                         help="integer specifying number of initial 'dry' runs before experimental results are recorded, by default 0, as standard 1")
     parser.add_argument("-opti", "--optimum", nargs="+", default=None, action=StoreHierarchicalArguments, type=str, metavar="level1=value1 level_i=value_i [...] level_n=value_n",
                         help="the classical optimum for each level in the abstraction hierarchy, by default None (takes the optimum as the best quality plan over all experimental runs)")
-    # parser.add_argument("--pause_on_run_completion", **bool_options(default=False),
-    #                     help="whether to pause execution of the benchmarking system after completion of each experimental run, "
-    #                          "the current results will be printed on each pause, by default False, as standard True")
     
     ## ASP solver options
     parser.add_argument("-th", "--threads", default=os.cpu_count(), type=int,
@@ -1167,8 +1180,6 @@ def __setup() -> argparse.Namespace:
         logging.getLogger("").addHandler(console_handler)
     
     return namespace
-
-
 
 ## Launch ASH and enter main method
 if __name__ == "__main__":
