@@ -1,0 +1,2 @@
+$a = $args[0];
+Get-ChildItem -Path $a -File | Resolve-Path -Relative | ForEach-Object { Start-Process Python -ArgumentList "./Launch.py --config=$($_) -ao experiment -op experiment -cfn -dpos -disp_fig False" -Wait -NoNewWindow };
