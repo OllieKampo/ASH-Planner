@@ -190,6 +190,7 @@ class Results:
                                 "QL_SCORE" : [],
                                 "EX_SCORE" : [], "HA_SCORE" : [],
                                 "AW_SCORE" : [], "AW_PA_SCORE" : [], "AME_SCORE" : [], "AME_PA_SCORE" : [],
+                                "TI_SCORE" : [],
                                 "EX_GRADE" : [], "HA_GRADE" : [],
                                 "AW_GRADE" : [], "AW_PA_GRADE" : [], "AME_GRADE" : [], "AME_PA_GRADE" : [],
                                 "GRADE" : []}
@@ -212,11 +213,12 @@ class Results:
                             "QL_SCORE" : [],
                             "LT_SCORE" : [], "CT_SCORE" : [],
                             "AW_SCORE" : [], "AW_PA_SCORE" : [], "AME_SCORE" : [], "AME_PA_SCORE" : [],
+                            "TI_SCORE" : [],
                             "LT_GRADE" : [], "CT_GRADE" : [],
                             "AW_GRADE" : [], "AW_PA_GRADE" : [], "AME_GRADE" : [], "AME_PA_GRADE" : [],
                             "GRADE" : [],
                             "HAS_TRAILING" : [], "TOT_CHOICES" : [], "PRE_CHOICES" : [], "FGOALS_ORDER" : [],
-                            "CP_EF_L" : [], "CP_EF_A" : [], "SP_ED_L" : [], "SP_ED_A" : [], "SP_EB_L" : [], "SP_EB_A" : [],
+                            "CP_EF_L" : [], "CP_EF_A" : [], "SP_ED_L" : [], "SP_ED_A" : [], "SP_EB_L" : [], "SP_EB_A" : [], "SP_EBS_L" : [], "SP_EBS_A" : [],
                             "SP_MIN_L" : [], "SP_MIN_A" : [], "SP_LOWER_L" : [], "SP_LOWER_A" : [], "SP_MED_L" : [], "SP_MED_A" : [], "SP_UPPER_L" : [], "SP_UPPER_A" : [], "SP_MAX_L" : [], "SP_MAX_A" : [],
                             "T_INTER_SP" : [], "P_INTER_SP" : [], "T_INTER_Q" : [], "P_INTER_Q" : [],
                             "M_CHILD_RMSE" : [], "M_CHILD_RMSE_SCORE" : [], "M_CHILD_MAE" : [], "M_CHILD_MAE_SCORE" : [],
@@ -232,7 +234,9 @@ class Results:
                             "PR_T" : [], "PR_TS_MEAN" : [], "PR_TS_STD" : [], "PR_TS_CD" : [],
                             "PR_TS_MIN" : [], "PR_TS_LOWER" : [], "PR_TS_MED" : [], "PR_TS_UPPER" : [], "PR_TS_MAX" : [],
                             "PP_LE_MEAN" : [], "PP_AC_MEAN" : [], "PP_LE_STD" : [], "PP_AC_STD" : [], "PP_LE_CD" : [], "PP_AC_CD" : [], 
-                            "PP_LE_MIN" : [], "PP_AC_MIN" : [], "PP_LE_LOWER" : [], "PP_AC_LOWER" : [], "PP_LE_MED" : [], "PP_AC_MED" : [], "PP_LE_UPPER" : [], "PP_AC_UPPER" : [], "PP_LE_MAX" : [], "PP_AC_MAX" : []}
+                            "PP_LE_MIN" : [], "PP_AC_MIN" : [], "PP_LE_LOWER" : [], "PP_AC_LOWER" : [], "PP_LE_MED" : [], "PP_AC_MED" : [], "PP_LE_UPPER" : [], "PP_AC_UPPER" : [], "PP_LE_MAX" : [], "PP_AC_MAX" : [],
+                            "PP_ED_L" : [], "PP_ED_A" : [], "PP_EB_L" : [], "PP_EB_A" : [], "PP_EBS_L" : [], "PP_EBS_A" : [],
+                            "PP_EF_LE_MIN" : [], "PP_EF_AC_MIN" : [], "PP_EF_LE_LOWER" : [], "PP_EF_AC_LOWER" : [], "PP_EF_LE_MED" : [], "PP_EF_AC_MED" : [], "PP_EF_LE_UPPER" : [], "PP_EF_AC_UPPER" : [], "PP_EF_LE_MAX" : [], "PP_EF_AC_MAX" : []}
         
         data_dict["PAR"] = {"RU" : [], "AL" : [], "IT" : [], "PN" : [],
                             "GT" : [], "ST" : [], "OT" : [], "TT" : [],
@@ -242,6 +246,7 @@ class Results:
                             "START_S" : [], "END_S" : [],
                             "SIZE" : [], "SGLITS_T" : [],
                             "FIRST_I" : [], "LAST_I" : [],
+                            "PP_EF_L" : [], "PP_EF_A" : [], "SP_ED_L" : [], "SP_ED_A" : [], "SP_EB_L" : [], "SP_EB_A" : [], "SP_EBS_L" : [], "SP_EBS_A" : [],
                             "TOT_CHOICES" : [], "PRE_CHOICES" : []}
         
         data_dict["STEP_CAT"] = {"RU" : [], "AL" : [], "SL" : [],
@@ -249,7 +254,7 @@ class Results:
                                  "C_GT" : [], "C_ST" : [], "C_TT" : [],
                                  "T_RSS" : [], "T_VMS" : [], "M_RSS" : [], "M_VMS" : [],
                                  "C_TACHSGOALS" : [], "S_SGOALI" : [], "IS_MATCHING" : [], "IS_TRAILING" : [],
-                                 "C_CP_EF_L" : [], "C_CP_EF_A" : [], "C_SP_ED_L" : [], "C_SP_ED_A" : [], "C_SP_EB_L" : [], "C_SP_EB_A" : [],
+                                 "C_CP_EF_L" : [], "C_CP_EF_A" : [], "C_SP_ED_L" : [], "C_SP_ED_A" : [], "C_SP_EB_L" : [], "C_SP_EB_A" : [], "C_SP_EBS_L" : [], "C_SP_EBS_A" : [],
                                  "IS_DIV_APP" : [], "IS_INHERITED" : [], "IS_PROACTIVE" : [], "IS_INTERRUPT" : [], "PREEMPTIVE" : [], "IS_DIV_COM" : [], "DIV_COM_APP_AT" : [],
                                  "IS_LOCO" : [], "IS_MANI" : [], "IS_CONF" : []}
         
@@ -321,6 +326,13 @@ class Results:
             data_dict["GLOBALS"]["AME_SCORE"].append(minimum_execution_score)
             data_dict["GLOBALS"]["AME_PA_SCORE"].append(minimum_execution_pa_score)
             
+            time_score: float = 0.0
+            if (hierarchical_plan.is_hierarchical_refinement
+                and len(hierarchical_plan.partial_plans[hierarchical_plan.bottom_level]) > 1):
+                time_score = statistics.mean([latency_score, minimum_execution_score, minimum_execution_pa_score])
+            else: time_score = absolution_score
+            data_dict["GLOBALS"]["TI_SCORE"].append(time_score)
+            
             ## Time grades
             data_dict["GLOBALS"]["EX_GRADE"].append(latency_grade := quality_score * latency_score)
             data_dict["GLOBALS"]["HA_GRADE"].append(absolution_grade := quality_score * absolution_score)
@@ -332,6 +344,7 @@ class Results:
             data_dict["GLOBALS"]["AME_PA_GRADE"].append(minimum_execution_pa_grade := quality_score * minimum_execution_pa_score)
             
             ## Overall grade
+            overall_grade: float = 0.0
             if (hierarchical_plan.is_hierarchical_refinement
                 and len(hierarchical_plan.partial_plans[hierarchical_plan.bottom_level]) > 1):
                 ## For online planning the latency time accounts for time to get the initial ground-level partial plan,
@@ -472,6 +485,13 @@ class Results:
                 data_dict["CAT"]["AME_SCORE"].append(minimum_execution_score)
                 data_dict["CAT"]["AME_PA_SCORE"].append(minimum_execution_pa_score)
                 
+                time_score: float = 0.0
+                if (hierarchical_plan.is_hierarchical_refinement
+                    and len(hierarchical_plan.partial_plans[hierarchical_plan.bottom_level]) > 1):
+                    time_score = statistics.mean([latency_score, minimum_execution_score, minimum_execution_pa_score])
+                else: time_score = completion_score
+                data_dict["CAT"]["TI_SCORE"].append(time_score)
+                
                 data_dict["CAT"]["LT_GRADE"].append(latency_grade := quality_score * latency_score)
                 data_dict["CAT"]["CT_GRADE"].append(completion_grade := quality_score * completion_score)
                 
@@ -508,6 +528,15 @@ class Results:
                 data_dict["CAT"]["SP_ED_A"].append(deviation.action)
                 data_dict["CAT"]["SP_EB_L"].append(balance.length)
                 data_dict["CAT"]["SP_EB_A"].append(balance.action)
+                
+                length_balance_score: float = 1.0
+                action_balance_score: float = 1.0
+                if deviation.length > 0.0:
+                    length_balance_score = (1.0 - (math.log(deviation.length + 1.0) / math.log(problem_size)))
+                if deviation.action > 0.0:
+                    action_balance_score = (1.0 - (math.log(deviation.action + 1.0) / math.log(problem_size)))
+                data_dict["CAT"]["SP_EBS_L"].append(length_balance_score)
+                data_dict["CAT"]["SP_EBS_A"].append(action_balance_score)
                 
                 sub_plan_expansion: list[Planner.Expansion] = []
                 length_expansion = Quantiles()
@@ -698,9 +727,8 @@ class Results:
                 ## Partial Plan Length Balancing
                 length_per_plan: list[int] = []
                 actions_per_plan: list[int] = []
-                if concatenated_plan.is_refined:
-                    length_per_plan = [partial_plan.plan_length for partial_plan in partial_plans.values()]
-                    actions_per_plan = [partial_plan.total_actions for partial_plan in partial_plans.values()]
+                partial_plan_expansion: list[Planner.Expansion] = []
+                
                 mean_plan_length: float = 1.0
                 mean_total_actions: float = 1.0
                 stdev_plan_length: float = 0.0
@@ -710,7 +738,21 @@ class Results:
                 quantiles_plan_length = Quantiles()
                 quantiles_total_actions = Quantiles()
                 
+                partial_plan_length_expansion_deviation: float = 0.0
+                partial_plan_action_expansion_deviation: float = 0.0
+                partial_plan_length_expansion_balance: float = 0.0
+                partial_plan_action_expansion_balance: float = 0.0
+                partial_plan_length_expansion_balance_score: float = 0.0
+                partial_plan_action_expansion_balance_score: float = 0.0
+                quantiles_plan_length_expansion = Quantiles()
+                quantiles_total_actions_expansion = Quantiles()
+                
                 if concatenated_plan.is_refined:
+                    for partial_plan in partial_plans.values():
+                        length_per_plan.append(partial_plan.plan_length) 
+                        actions_per_plan.append(partial_plan.total_actions)
+                        partial_plan_expansion.append(partial_plan.get_plan_expansion_factor())
+                    
                     mean_plan_length = statistics.mean(length_per_plan)
                     mean_total_actions = statistics.mean(actions_per_plan)
                     if len(length_per_plan) >= 2:
@@ -723,6 +765,19 @@ class Results:
                     bal_total_actions = stdev_total_actions / mean_total_actions
                     quantiles_plan_length = Quantiles(*numpy.quantile(length_per_plan, [0.0, 0.25, 0.5, 0.75, 1.0]))
                     quantiles_total_actions = Quantiles(*numpy.quantile(actions_per_plan, [0.0, 0.25, 0.5, 0.75, 1.0]))
+                    
+                    if total_problems > 1:
+                        ## The mean partial plan expansion factor/deviation/balance is identical to the concatenated plan expansion factor/deviation/balance
+                        partial_plan_length_expansion_deviation = statistics.stdev([pp.length for pp in partial_plan_expansion])
+                        partial_plan_action_expansion_deviation = statistics.stdev([pp.action for pp in partial_plan_expansion])
+                        partial_plan_length_expansion_balance = partial_plan_length_expansion_deviation / concatenated_plan.get_plan_expansion_factor().length
+                        partial_plan_action_expansion_balance = partial_plan_action_expansion_deviation / concatenated_plan.get_plan_expansion_factor().action
+                        if partial_plan_length_expansion_deviation > 0.0:
+                            partial_plan_length_expansion_balance_score = (1.0 - (math.log(partial_plan_length_expansion_deviation + 1.0) / math.log(problem_size)))
+                        if partial_plan_action_expansion_deviation > 0.0:
+                            partial_plan_action_expansion_balance_score = (1.0 - (math.log(partial_plan_action_expansion_deviation + 1.0) / math.log(problem_size)))
+                    quantiles_plan_length_expansion = Quantiles(*numpy.quantile([pp.length for pp in partial_plan_expansion], [0.0, 0.25, 0.5, 0.75, 1.0]))
+                    quantiles_total_actions_expansion = Quantiles(*numpy.quantile([pp.action for pp in partial_plan_expansion], [0.0, 0.25, 0.5, 0.75, 1.0]))
                 
                 data_dict["CAT"]["PP_LE_MEAN"].append(mean_plan_length)
                 data_dict["CAT"]["PP_AC_MEAN"].append(mean_total_actions)
@@ -741,6 +796,24 @@ class Results:
                 data_dict["CAT"]["PP_LE_MAX"].append(quantiles_plan_length.max)
                 data_dict["CAT"]["PP_AC_MAX"].append(quantiles_total_actions.max)
                 
+                data_dict["CAT"]["PP_ED_L"].append(partial_plan_length_expansion_deviation)
+                data_dict["CAT"]["PP_ED_A"].append(partial_plan_action_expansion_deviation)
+                data_dict["CAT"]["PP_EB_L"].append(partial_plan_length_expansion_balance)
+                data_dict["CAT"]["PP_EB_A"].append(partial_plan_action_expansion_balance)
+                data_dict["CAT"]["PP_EBS_L"].append(partial_plan_length_expansion_balance_score)
+                data_dict["CAT"]["PP_EBS_A"].append(partial_plan_action_expansion_balance_score)
+                
+                data_dict["CAT"]["PP_EF_LE_MIN"].append(quantiles_plan_length_expansion.min)
+                data_dict["CAT"]["PP_EF_AC_MIN"].append(quantiles_total_actions_expansion.min)
+                data_dict["CAT"]["PP_EF_LE_LOWER"].append(quantiles_plan_length_expansion.lower)
+                data_dict["CAT"]["PP_EF_AC_LOWER"].append(quantiles_total_actions_expansion.lower)
+                data_dict["CAT"]["PP_EF_LE_MED"].append(quantiles_plan_length_expansion.med)
+                data_dict["CAT"]["PP_EF_AC_MED"].append(quantiles_total_actions_expansion.med)
+                data_dict["CAT"]["PP_EF_LE_UPPER"].append(quantiles_plan_length_expansion.upper)
+                data_dict["CAT"]["PP_EF_AC_UPPER"].append(quantiles_total_actions_expansion.upper)
+                data_dict["CAT"]["PP_EF_LE_MAX"].append(quantiles_plan_length_expansion.max)
+                data_dict["CAT"]["PP_EF_AC_MAX"].append(quantiles_total_actions_expansion.max)
+                
                 ## Step-wise
                 grounding_time_sum: float = 0.0
                 solving_time_sum: float = 0.0
@@ -749,7 +822,6 @@ class Results:
                 vms_max: float = 0.0
                 
                 for step in concatenated_plan:
-                    
                     current_stat: Statistics = Statistics(0.0, 0.0)
                     for stat in concatenated_plan.planning_statistics.incremental.values():
                         if max(stat.step_range) == step:
@@ -800,6 +872,15 @@ class Results:
                     data_dict["STEP_CAT"]["C_SP_EB_L"].append(step_balance.length)
                     data_dict["STEP_CAT"]["C_SP_EB_A"].append(step_balance.action)
                     
+                    step_length_balance_score: float = 1.0
+                    step_action_balance_score: float = 1.0
+                    if step_deviation.length > 0.0:
+                        step_length_balance_score = (1.0 - (math.log(step_deviation.length + 1.0) / math.log(current_sgoals_index)))
+                    if step_deviation.action > 0.0:
+                        step_action_balance_score = (1.0 - (math.log(step_deviation.action + 1.0) / math.log(current_sgoals_index)))
+                    data_dict["STEP_CAT"]["C_SP_EBS_L"].append(step_length_balance_score)
+                    data_dict["STEP_CAT"]["C_SP_EBS_A"].append(step_action_balance_score)
+                    
                     ## Problem divisions
                     division_points: list[DivisionPoint] = []
                     if concatenated_plan.is_refined:
@@ -811,7 +892,7 @@ class Results:
                             reached_point = point
                         if step == point.committed_step:
                             committed_point = point
-                    data_dict["STEP_CAT"]["IS_DIV_APP"].append(reached_point is not None) ## TODO Add the sequence number of the division point
+                    data_dict["STEP_CAT"]["IS_DIV_APP"].append(reached_point is not None)
                     data_dict["STEP_CAT"]["IS_INHERITED"].append(reached_point is not None and reached_point.inherited)
                     data_dict["STEP_CAT"]["IS_PROACTIVE"].append(reached_point is not None and reached_point.proactive)
                     data_dict["STEP_CAT"]["IS_INTERRUPT"].append(reached_point is not None and reached_point.interrupting)
@@ -918,7 +999,7 @@ class Results:
                         data_dict["PAR"]["END_S"].append(partial_plan.end_step)
                         
                         ## Conformance constraints
-                        problem_size: int = 0
+                        problem_size: int = 1
                         sgoal_literals_total: int = 0
                         sgoals_range = SubGoalRange(1, 1)
                         if partial_plan.is_refined:
@@ -930,14 +1011,33 @@ class Results:
                         data_dict["PAR"]["FIRST_I"].append(sgoals_range.first_index)
                         data_dict["PAR"]["LAST_I"].append(sgoals_range.last_index)
                         
+                        factor: Planner.Expansion = partial_plan.get_plan_expansion_factor()
+                        deviation: Planner.Expansion = partial_plan.get_expansion_deviation()
+                        balance: Planner.Expansion = partial_plan.get_degree_of_balance()
+                        data_dict["PAR"]["PP_EF_L"].append(factor.length)
+                        data_dict["PAR"]["PP_EF_A"].append(factor.action)
+                        data_dict["PAR"]["SP_ED_L"].append(deviation.length)
+                        data_dict["PAR"]["SP_ED_A"].append(deviation.action)
+                        data_dict["PAR"]["SP_EB_L"].append(balance.length)
+                        data_dict["PAR"]["SP_EB_A"].append(balance.action)
+                        
+                        length_balance_score: float = 1.0
+                        action_balance_score: float = 1.0
+                        if deviation.length > 0.0:
+                            length_balance_score = (1.0 - (math.log(deviation.length + 1.0) / math.log(problem_size)))
+                        if deviation.action > 0.0:
+                            action_balance_score = (1.0 - (math.log(deviation.action + 1.0) / math.log(problem_size)))
+                        data_dict["PAR"]["SP_EBS_L"].append(length_balance_score)
+                        data_dict["PAR"]["SP_EBS_A"].append(action_balance_score)
+                        
                         ## Final-goal preemptive achievement
                         data_dict["PAR"]["TOT_CHOICES"].append(partial_plan.total_choices)
                         data_dict["PAR"]["PRE_CHOICES"].append(partial_plan.preemptive_choices)
         
         # Create a Pandas dataframe from the data dictionary
-        # for key in data_dict:
-        #     for _key in data_dict[key]:
-        #         print(f"{key} - {_key}: {len(data_dict[key][_key])}")
+        for key in data_dict:
+            for _key in data_dict[key]:
+                print(f"{key} - {_key}: {len(data_dict[key][_key])}")
         self.__dataframes = {key : pandas.DataFrame(data_dict[key]) for key in data_dict}
         return self.__dataframes
     

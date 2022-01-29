@@ -216,6 +216,8 @@ def __main() -> int:
     ## Pause to let the user read the headers
     if not namespace.disable_pause_on_start:
         input("Press any key to begin...")
+        sys.stdout.write("\033[A")
+        sys.stdout.flush()
     
     ## Find the verbosity mode;
     ##      - Experiment ouput mode disables outputs from the planner and only experimental results are shown
@@ -639,6 +641,10 @@ def __main() -> int:
             pyplot.show()
     
     else:
+        _Launcher_logger.info("Experimental setup:" + (f" [configuration file loaded = {config_file_name}]\n\n" if config_file else "\n\n")
+                              + f"Planning Mode            :: {'Hierarchical' if namespace.planning_mode.startswith('h') else 'Monolevel'} {'conformance refinement' if namespace.planning_mode.endswith('cr') else 'classical'}\n"
+                              + "Domain and Problem Files :: " + f"\n{' '*len('Domain and Problem Files :: ')}".join(planner.domain.domain_files))
+        
         ## Run the experiments
         experiment = Experiment.Experiment(planner=planner,
                                            planning_function=planning_function,
@@ -1107,7 +1113,8 @@ def __setup() -> argparse.Namespace:
     
     ## Search for a configuration file in the argument list
     options: Optional[list[str]] = None
-    config_file: Optional[str] = None
+    global config_file
+    config_file = None
     for index, arg in enumerate(sys.argv):
         if "--config" in arg:
             options = []
@@ -1133,15 +1140,14 @@ def __setup() -> argparse.Namespace:
     namespace: argparse.Namespace = parser.parse_args(options)
     
     ## Record the name of the configuration file in the global scope
-    if namespace.config_file_naming:
-        global config_file_name
-        config_file_name = ""
-        if config_file is not None:
-            if "\\" in config_file:
-                config_file_name = config_file.split(".config")[0].split("\\")[-1]
-            elif "/" in config_file:
-                config_file_name = config_file.split(".config")[0].split("/")[-1]
-            else: config_file_name = config_file.split(".config")[0]
+    global config_file_name
+    config_file_name = ""
+    if config_file is not None:
+        if "\\" in config_file:
+            config_file_name = config_file.split(".config")[0].split("\\")[-1]
+        elif "/" in config_file:
+            config_file_name = config_file.split(".config")[0].split("/")[-1]
+        else: config_file_name = config_file.split(".config")[0]
     
     ## Setup the logger
     if not namespace.disable_logging:
