@@ -875,9 +875,9 @@ class Results:
                     step_length_balance_score: float = 1.0
                     step_action_balance_score: float = 1.0
                     if step_deviation.length > 0.0:
-                        step_length_balance_score = (1.0 - (math.log(step_deviation.length + 1.0) / math.log(current_sgoals_index)))
+                        step_length_balance_score = max(0.0, 1.0 - (math.log(step_deviation.length + 1.0) / math.log(current_sgoals_index)))
                     if step_deviation.action > 0.0:
-                        step_action_balance_score = (1.0 - (math.log(step_deviation.action + 1.0) / math.log(current_sgoals_index)))
+                        step_action_balance_score = max(0.0, 1.0 - (math.log(step_deviation.action + 1.0) / math.log(current_sgoals_index)))
                     data_dict["STEP_CAT"]["C_SP_EBS_L"].append(step_length_balance_score)
                     data_dict["STEP_CAT"]["C_SP_EBS_A"].append(step_action_balance_score)
                     
