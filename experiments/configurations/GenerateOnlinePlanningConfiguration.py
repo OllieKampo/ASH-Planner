@@ -3,7 +3,7 @@ import itertools
 
 with open(sys.argv[1], "r") as file_reader:
     lines: list[str] = file_reader.readlines()
-    bound_line: int = lines.index("-bound\n")
+    bound_line: int = lines.index("-bound << insert bounds >>\n")
     combinations = set()
     
     for permutation in itertools.permutations(sys.argv[3:]):
@@ -11,7 +11,8 @@ with open(sys.argv[1], "r") as file_reader:
             combinations.add(combination)
     
     for combination in combinations:
-        file_name: str = f"{sys.argv[1].split('.config')[0]}_{'_'.join(combination)}.config"
+        split_name: list[str] = sys.argv[1].split('bounds')
+        file_name: str = f"{split_name[0]}{'_'.join(combination)}{split_name[1]}"
         print(f"Generating: {file_name} with bounds {combination}")
         
         with open(file_name, "w") as file_writer:
