@@ -21,5 +21,5 @@ with open(sys.argv[1], "r") as file_reader:
                     bounds: str = ""
                     for l, bound in enumerate(combination):
                         bounds = bounds + f" {(int(sys.argv[2]) + 1) - l}={bound}"
-                    file_writer.write(f"-bounds{bounds}\n")
+                    file_writer.write(f"-bound{bounds}\n")
                 else: file_writer.write(line)
