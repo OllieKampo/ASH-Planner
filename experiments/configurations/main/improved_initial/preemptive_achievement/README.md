@@ -1,5 +1,6 @@
-Final-goal preemptive achievement testing
------------------------------------------
+# Final-Goal Preemptive Achievement
+
+Applicable only for online planning.
 
 Tested in: heuristic and optimise mode.
 For problems: small[1-3].
@@ -17,3 +18,8 @@ In this case, heuristic may perform better, as to overhead of optimising might b
 Configurations with 8 configurations are also now tested.
 Previously, there was little reason, to do more divisions, since the unconsidered goal problem had by far the biggest influence on plan quality.
 Now that this problem has been mostly eliminated, the effects of the dependency problem can be more closely examined.
+
+## Heuristic
+
+
+## Optimise

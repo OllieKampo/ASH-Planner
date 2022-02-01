@@ -30,7 +30,6 @@ from typing import Any, Callable, Final, Iterable, Iterator, Literal, NamedTuple
 import statistics
 import json
 import _collections_abc
-import math
 
 import ASP_Parser as ASP
 from core.Helpers import AbstractionHierarchy, ReversableDict, center_text
@@ -40,14 +39,6 @@ import sys
 import statistics
 from scipy.optimize import curve_fit
 import time
-
-## Fgoal achievement preference to monolevel plan class, and to proactive strategies?
-##      - Check this is being calculated correctly, and update display of monolevel plans for it,
-##      - Test independent tasks and order tasks division strategy overrides.
-## Add huge version with square rooms and spread out blocks
-## Add version with obstacles that talos must move around, and which have blocks on different sides of themto force longer locomotion plans
-## Add starting room door to the small problems, so that problem 1 also takes longer by classical planning
-## Minimum required execution time per partial plan, tells us how long it'd have to take to execute that partial plan before the next one is available, without the robot having to pause execution between them.
 
 ## Module logger
 _planner_logger: logging.Logger = logging.getLogger(__name__)
@@ -1928,7 +1919,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
         self.__logger.debug(f"Current concatenated monoevel plan lengths:\n"
                             + "\n".join(f"Level [{level}]: "
                                         f"Length = {len(self.__actions.get(level, {}))}, "
-                                        f"Tota actions = {sum(len(actions) for actions in self.__actions.get(level, {}).values())}, "
+                                        f"Total actions = {sum(len(actions) for actions in self.__actions.get(level, {}).values())}, "
                                         f"Produced sub-goal stages = {sum(len(sgoals) for sgoals in self.__sgoals.get(level, {}).values())}"
                                         for level in reversed(self.level_range)))
         
@@ -2948,12 +2939,12 @@ class HierarchicalPlanner(AbstractionHierarchy):
         
         ## Raise a no solution error if no answer set was found;
         ##      - This occurs if the program was unsatisfiable,
-        ##      - or the search length limit was reached.
+        ##      - or the search length or time limit was reached.
         if ((unsat := solution.answer.result.unsatisfiable)
-            or (len_lim := solve_signal.halt_reason == ASP.HaltReason.StepMaximum)):
+            or (limit := solve_signal.halt_reason in [ASP.HaltReason.StepMaximum, ASP.HaltReason.TimeLimit])):
             log_and_raise(ASH_NoSolutionError,
                           f"The monolevel planning problem at level {level} does not have solution within given limits. Reason: "
-                          + ("The problem is unsatisfiable" if unsat else "The search length limit was reached." if len_lim else "Unknown."),
+                          + ("The problem is unsatisfiable" if unsat else "The search length or time limit was reached." if limit else "Unknown."),
                           logger=self.__logger)
         
         #############################################################################

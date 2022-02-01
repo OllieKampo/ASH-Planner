@@ -1692,8 +1692,8 @@ class HaltReason(enum.Enum):
     
     TimeLimit = HaltReasonValue(description="Time limit reached",
                                 is_reached=lambda incrementor, increment_limit, feedback:
-                                    incrementor.increment_time_limit == feedback.increment_statistics.total_time
-                                    or incrementor.cumulative_time_limit == feedback.cumulative_statistics.total_time)
+                                    incrementor.increment_time_limit <= feedback.increment_statistics.total_time
+                                    or incrementor.cumulative_time_limit <= feedback.cumulative_statistics.total_time)
     
     def is_reached(self, incrementor: SolveIncrementor, increment_limit: Optional[int], feedback: Feedback) -> bool:
         return self.value.is_reached(incrementor, increment_limit, feedback)
