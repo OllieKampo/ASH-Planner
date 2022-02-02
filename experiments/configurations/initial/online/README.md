@@ -1,5 +1,4 @@
-Online planning testing
------------------------
+# Online Planning Testing
 
 Tested in: min-bound planning mode.
 For problems: small[1-3].
