@@ -1675,25 +1675,27 @@ class HaltReason(enum.Enum):
     """
     StepMaximum = HaltReasonValue(description="Step end maximum reached",
                                   is_reached=lambda incrementor, increment_limit, feedback:
-                                      incrementor.step_end_max is not None and
-                                      incrementor.step_end_max <= feedback.end_step)
+                                      incrementor.step_end_max is not None
+                                      and incrementor.step_end_max <= feedback.end_step)
     
     StopCondition = HaltReasonValue(description="Stop condition reached",
                                     is_reached=lambda incrementor, increment_limit, feedback:
-                                        incrementor.stop_condition is not None and
-                                        feedback.solve_result == incrementor.stop_condition)
+                                        incrementor.stop_condition is not None
+                                        and feedback.solve_result == incrementor.stop_condition)
     
     IncrementCount = HaltReasonValue(description="Increment count reached",
                                      is_reached=lambda incrementor, increment_limit, feedback:
-                                         (incrementor.increment_limit is not None and
-                                          incrementor.increment_limit <= feedback.increment) or
-                                          (increment_limit is not None and
-                                           increment_limit <= feedback.increment))
+                                         (incrementor.increment_limit is not None
+                                          and incrementor.increment_limit <= feedback.increment)
+                                         or (increment_limit is not None
+                                             and increment_limit <= feedback.increment))
     
     TimeLimit = HaltReasonValue(description="Time limit reached",
                                 is_reached=lambda incrementor, increment_limit, feedback:
-                                    incrementor.increment_time_limit <= feedback.increment_statistics.total_time
-                                    or incrementor.cumulative_time_limit <= feedback.cumulative_statistics.total_time)
+                                    (incrementor.increment_time_limit is not None
+                                     and incrementor.increment_time_limit <= feedback.increment_statistics.total_time)
+                                    or (incrementor.cumulative_time_limit is not None
+                                        and incrementor.cumulative_time_limit <= feedback.cumulative_statistics.total_time))
     
     def is_reached(self, incrementor: SolveIncrementor, increment_limit: Optional[int], feedback: Feedback) -> bool:
         return self.value.is_reached(incrementor, increment_limit, feedback)
