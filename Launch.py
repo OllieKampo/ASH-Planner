@@ -97,93 +97,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 _ASH_INSTRUCTIONS: str = """
 
-Onine Planning Methods
-----------------------
+Onine Planning
+--------------
 
-If continuous yield is disabled and the division strategy is 'none', then the planner enters offline planning mode.
+If the division strategy is 'none' then no divisions are made, making all monolevel planning problems complete, entering the planner into offline planning mode.
 In offline mode, all monolevel planning problems are complete, and solved prior to yielding anything (execution).
 
 An increment can involve at most one partial problem per level, but might not include all levels in each increment.
 For example, in complete-first divided planning, there is only one partial problem per increment, whereas ground-first usually involves a hierarchy of partial problems per increment.
-
-Division Strategies
--------------------
-
-The strategy 'none' does not make any divisions, making all monolevel planning problems complete.
-The strategy 'all' makes every possible problem division, entering the planner into sub-planning mode.
-
-Saved grounding
-----------------
-
-Gets rid of any learnt no-good clauses, might reduce some overheads, and uses less memory, but there is a cost in solving the base program parts again.
-
-Detecting Partial Problem Dependencies
---------------------------------------
-
-In sequential yield mode, 'simple' will identify both dependent sub-problems and interleaved sub-problems, within each partial problem or the complete problem if division is disabled.
-If blending is enabled, 'simple' will also find dependencies between adjacent partial problems only, since blending only occurs between adjacent partial problems.
-
-If problem division is enabled, dependencies between the partial problems themselves will only be detected in 'all' mode, which requires that a complete version of the problem to also be solved.
-
-Final Goal Preemptive Achievement Heuristics
---------------------------------------------
-
-The final-goal preemtive achievement heuristics modify the behaviour of the underlying Clingo ASP solver.
-If enabled, they ensure that; when an arbitrary choice between multiple actions, whose effects
-all achieve the included sub-goal stages, is available in a non-final partial problem the,
-solver will prefer to choose the action(s) whose effects achieve a final goal literal, if one such action is available.
-
-When there is an arbitrary choice, we say that the final-goal is preemptively applicable to the
-partial problem. This usually occurs because sub-goals are defined by the more general abstract
-state space, and there is usually many ways to achieve that sub-goal in the original state space,
-because many original fluent state literals will map to any given abstract state literal. As a
-result, there are many actions whose effects will achieve one such sub-goal, but don't achieve the final-goal.
-This is called the guidance problem, where the sub-goals don't give the planner at the next level enough
-information at the level, in order the achieve the stricter requirements of problems with larger, more detailed
-state spaces, and thus more specific/detailed final-goals.
-
-Informally, the heuristic requests the planner to plan actions that achieve positive goals, and to not plan actions that would unachieve negative goals, if doing so is possible and does not increase the plan length.
-Importantly, these are effectively soft suggestions, the planner only accepts them if there are no drawbacks in the short-term.
-Resultantly, the solutions to early partial plans still have the same quality in terms of length and number of actions, but the heuristic will override action preferences.
-
-By default, only preemptively achieving positive final-goals are prefered. This is because there is
-a comparitively small number of positive final goals, and only very few are applicable at a given time.
-This tends to mean that preemptively achieving positive final goals is a very prudent course of action.
-Contrastly, preemptively achieving negative final-goals is rarely effective. This is because there is
-usually far more negtive final-goals, since all fluent state literals for any final goal state variable
-that are not assigned a positive final-goal, are assigned a negative final goal literal As a result, there
-are usually many possible negtive final-goals that can be preemptively achieved, many of which will
-not actually be at all helpful in the long term, especially as achieving the positives usually achieves the
-negatives by implication.
-
-Search and Solution Spaces
---------------------------
-
-The solution space is the set of all legal solutions to a monolevel planning problem.
-The union of the ground-level solution spaces over all possible refinement schemas is effective solution space of the hierarchical planning problem.
-This may be the top-level classical planning problem, or a refinement planning problem defined under some refinement schema.
-Solution spaces are generating during the standard planning mode, simply by requesting the ASP program solver to find all its answer sets (usually only one is requested, which effectively contains one random solution).
-This is similar to multiple-refinement, except ever possible top-level plan is refined, as are all of their refinements
-
-Note that the planner cannot simultaneously generate both the search and solution space, as this would have no meaning.
-
-The ith index sub-goals stage search space is equivalent to the partial solution space of a partial problem whose last sub-goal stage is the ith index.
-
-To generating the search space, the planner enters a special mode, that forces a certain length plan to be generated,
-and seeing how many possible plans there are of that length, whilst achieving a fixed (or maximal) number of subgoals if conformance is enabled.
-    - Goal-wise: minimal achievement of ith sub-goal stage
-    - Step-wise: achievement of maximal number of subgoals of k length
-achievement of ith subgoal at k > k_{min} length (useful when looking at solution space of interleaved subgoal stages)
-
-Solution space says that there are X potential/feasible/viable solutions of the complete problem having achieved the ith subgoal stage in k steps.
-Should be able to work out the branching factor from the search spaces, since the branching factor is just the everage number of legal state transitions from the state at each step 'j' less than the 'k' length search space.
-Branching factor and search space are not the same;
-    - branching factor 'b' is the number of 'choices' (legal transitions) that were available at each step of the plan that was actually chosen as the solution,
-    - partial solution space is the number of possible plans of 'k' length or that achieve the 'ith' subgoal state at step 'k' (state that satisfies the subgoal stage) which is usually 'b^k',
-    - solution space is the number of actual solutions (the search space to a final goal state (state that satisfies the final goal)).
 """
-
-
 
 def get_hierarchical_arg(dict_or_number: Union[Number, dict[int, Number]], level: int, default: Optional[Number] = None) -> Optional[Number]:
     """
