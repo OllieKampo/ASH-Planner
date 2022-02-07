@@ -1,8 +1,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% The Blocks World Plus Planning Domain                                 %%
+%% The Blocks World Plus Planning Domain :: Small problem version 1.5    %%
 %% Copyright (C)  2021  Oliver Michael Kamperis                          %%
 %% Email: o.m.kamperis@gmail.com                                         %%
+%%                                                                       %%
+%% The position of blocks 2 and 3 are swapped,                           %%
+%% such that block 3 starts on the right side of the table.              %%
 %%                                                                       %%
 %% This program is free software: you can redistribute it and/or modify  %%
 %% it under the terms of the GNU General Public License as published by  %%
@@ -18,14 +21,6 @@
 %% along with this program. If not, see <https://www.gnu.org/licenses/>. %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%% The position of blocks 2 and 3 are swapped, such that block 3 starts on the right side of the table.
-%% The goal requires block 3 to end up on the left side of the table, so it must thus be moved to solve the ground level problem.
-%% However, it does not have to be moved to solve the abstract problem, since the sides of the table are abstracted away, and it simply being somewhere on the table is sufficient to solve the problem.
-%% As a result, the minimal abstract plan will never include an action that moves block 3, and so the produced sub-goal stage sequence will not encode knowledge that will be useful during ground level planning to guide early partial problems towards moving block 3 on the left side of the table before stacking the other blocks atop of it.
-%% Thusly, it is not possible to eliminate the unconsidered goal problem in this case, as there is no arbitrary choice involved, since the block is never moved.
-%% Preemptive achievement preferences rely on this arbitrary choice, by biasing planning towards selecting actions amoungst the arbitrary choices that preemptively achieve final-goal literals.
-%% The reduction in plan quality caused by this problem is not always the same however, as the tower whose base is block 6 can be stacked correctly by chance.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
