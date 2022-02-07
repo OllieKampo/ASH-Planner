@@ -1035,9 +1035,9 @@ class Results:
                         data_dict["PAR"]["PRE_CHOICES"].append(partial_plan.preemptive_choices)
         
         # Create a Pandas dataframe from the data dictionary
-        for key in data_dict:
-            for _key in data_dict[key]:
-                print(f"{key} - {_key}: {len(data_dict[key][_key])}")
+        # for key in data_dict:
+        #     for _key in data_dict[key]:
+        #         print(f"{key} - {_key}: {len(data_dict[key][_key])}")
         self.__dataframes = {key : pandas.DataFrame(data_dict[key]) for key in data_dict}
         return self.__dataframes
     
