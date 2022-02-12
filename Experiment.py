@@ -270,7 +270,8 @@ class Results:
         max_time: float = 1800.0
         
         ground_optimum: int = 0
-        if self.__optimums is not None:
+        if (self.__optimums is not None
+            and self.__optimums[min(self.__optimums)] is not None):
             ground_optimum = self.__optimums[min(self.__optimums)]
         else: ground_optimum = min(hierarchical_plan[hierarchical_plan.bottom_level].total_actions
                                    for hierarchical_plan in self.__plans)
@@ -447,7 +448,8 @@ class Results:
                 
                 optimum: int = 0
                 if (self.__optimums is not None
-                    and level in self.__optimums):
+                    and level in self.__optimums
+                    and self.__optimums[level] is not None):
                     optimum = self.__optimums[level]
                 else: optimum = min(h_plan[level].total_actions
                                     for h_plan in self.__plans)
@@ -1201,7 +1203,7 @@ class Experiment:
         
         run_start_time: float = time.perf_counter()
         
-        ## Generate one plan for run
+        ## Generate one plan per run
         self.__planning_function()
         hierarchical_plan: Planner.HierarchicalPlan = self.__planner.get_hierarchical_plan(bottom_level=self.__bottom_level,
                                                                                            top_level=self.__top_level)
