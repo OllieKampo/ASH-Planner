@@ -48,22 +48,22 @@
 %%
 
 %% Cell connections between rooms
-is(1, connected(((starting_room, 3), 7, 1), ((hallway, 3), 7, 0))).
-is(1, connected(((store_room, 3), 7, 1), ((hallway, 0), 0, 1))).
-is(1, connected(((hallway, 5), 11, 1), ((puzzle_room, 0), 0, 1))).
+is(1, connected(((starting_room, 1), 5, 1), ((hallway, 1), 4, 0))).
+is(1, connected(((store_room, 1), 5, 1), ((hallway, 0), 0, 1))).
+is(1, connected(((hallway, 2), 8, 1), ((puzzle_room, 0), 0, 1))).
 
 %% Door connection between the hallway and the puzzle room
-% is(1, connected_by_door(starting_room_door, ((starting_room, 3), 7, 1), ((hallway, 3), 7, 0))).
-is(1, connected_by_door(store_room_door, ((store_room, 3), 7, 1), ((hallway, 0), 0, 1))).
-is(1, connected_by_door(puzzle_room_door, ((hallway, 5), 11, 1), ((puzzle_room, 0), 0, 1))).
+% is(1, connected_by_door(starting_room_door, ((starting_room, 1), 5, 1), ((hallway, 1), 4, 0))).
+is(1, connected_by_door(store_room_door, ((store_room, 1), 5, 1), ((hallway, 0), 0, 1))).
+is(1, connected_by_door(puzzle_room_door, ((hallway, 2), 8, 1), ((puzzle_room, 0), 0, 1))).
 
 %% The door's handles are located on either side of it
-is(1, in(starting_room_door_handle_inner, ((starting_room, 3), 7, 1))).
-is(1, in(starting_room_door_handle_outer, ((hallway, 3), 7, 0))).
-is(1, in(store_room_door_handle_inner, ((store_room, 3), 7, 1))).
+is(1, in(starting_room_door_handle_inner, ((starting_room, 1), 5, 1))).
+is(1, in(starting_room_door_handle_outer, ((hallway, 1), 5, 0))).
+is(1, in(store_room_door_handle_inner, ((store_room, 1), 5, 1))).
 is(1, in(store_room_door_handle_outer, ((hallway, 0), 0, 1))).
 is(1, in(puzzle_room_door_handle_inner, ((puzzle_room, 0), 0, 1))).
-is(1, in(puzzle_room_door_handle_outer, ((hallway, 5), 11, 1))).
+is(1, in(puzzle_room_door_handle_outer, ((hallway, 2), 8, 1))).
 
 %% Block colouring
 is(AL, colour_of((BLOCK, N), red)) :- static(AL, colour_of((BLOCK, N), red)),
@@ -129,7 +129,7 @@ holds(1, configuration(DOOR), closed, 0) :- fluent(AL, inertial, configuration(D
                                             sl(AL).
 
 %% The puzzle room table is in the puzzle room
-holds(1, in(puzzle_room_table), ((puzzle_room, 3), 7, 0), 0).
+holds(1, in(puzzle_room_table), ((puzzle_room, 1), 5, 0), 0).
 
 %% The first three blocks are stacked on the puzzle room table:
 %%      - This configuration presents the Sussman anomoly.
@@ -199,21 +199,17 @@ entity(room, puzzle_room).
 entity(room, hallway).
 
 %% All the rooms have two cells except the hallway which has three
-n(0..12).
-size(starting_room, 8, 2).
-size(store_room, 8, 2).
-size(hallway, 12, 2).
-size(puzzle_room, 8, 2).
+n(0..9).
+size(starting_room, 6, 2).
+size(store_room, 6, 2).
+size(hallway, 9, 2).
+size(puzzle_room, 6, 2).
 
-%% Zones with two cell widths
-zone_width(2).
+%% Zones with three cell widths
+zone_width(3).
 entity(zone, (ROOM, N)) :- entity(room, ROOM), size(ROOM, N_MAX, _), N < (N_MAX / W), zone_width(W), n(N).
 zone_x((ROOM, N), (N * W) + P) :- P >= 0, P < W, zone_width(W), entity(zone, (ROOM, N)), n(P), n(N).
 entity(cell, ((ROOM, N), X, Y)) :- zone_x((ROOM, N), X), entity(room, ROOM), entity(zone, (ROOM, N)), size(ROOM, X_MAX, Y_MAX), X < X_MAX, Y < Y_MAX, n(N), n(X), n(Y).
-
-% One zone for each pair of X cells - Barely reduces expansion factors
-% entity(zone, (ROOM, N)) :- entity(room, ROOM), size(ROOM, N_MAX, _), N < N_MAX, n(N).
-% entity(cell, ((ROOM, N), N, Y)) :- entity(room, ROOM), entity(zone, (ROOM, N)), size(ROOM, X_MAX, Y_MAX), N < X_MAX, Y < Y_MAX, n(N), n(X), n(Y).
 
 %% The is one door between the hallway and the puzzle room
 entity(door, store_room_door).

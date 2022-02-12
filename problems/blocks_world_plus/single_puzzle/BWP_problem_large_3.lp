@@ -50,22 +50,22 @@
 %%
 
 %% Cell connections between rooms
-is(1, connected((starting_room, 7, 1), (hallway, 7, 0))).
-is(1, connected((store_room, 7, 1), (hallway, 0, 1))).
-is(1, connected((hallway, 11, 1), (puzzle_room, 0, 1))).
+is(1, connected((starting_room, 5, 1), (hallway, 4, 0))).
+is(1, connected((store_room, 5, 1), (hallway, 0, 1))).
+is(1, connected((hallway, 8, 1), (puzzle_room, 0, 1))).
 
 %% Door connection between the hallway and the puzzle room
-% is(1, connected_by_door(starting_room_door, (starting_room, 7, 1), (hallway, 7, 0))).
-is(1, connected_by_door(store_room_door, (store_room, 7, 1), (hallway, 0, 1))).
-is(1, connected_by_door(puzzle_room_door, (hallway, 11, 1), (puzzle_room, 0, 1))).
+% is(1, connected_by_door(starting_room_door, (starting_room, 5, 1), (hallway, 4, 0))).
+is(1, connected_by_door(store_room_door, (store_room, 5, 1), (hallway, 0, 1))).
+is(1, connected_by_door(puzzle_room_door, (hallway, 8, 1), (puzzle_room, 0, 1))).
 
 %% The door's handles are located on either side of it
-is(1, in(starting_room_door_handle_inner, (starting_room, 7, 1))).
-is(1, in(starting_room_door_handle_outer, (hallway, 7, 0))).
-is(1, in(store_room_door_handle_inner, (store_room, 7, 1))).
+is(1, in(starting_room_door_handle_inner, (starting_room, 5, 1))).
+is(1, in(starting_room_door_handle_outer, (hallway, 4, 0))).
+is(1, in(store_room_door_handle_inner, (store_room, 5, 1))).
 is(1, in(store_room_door_handle_outer, (hallway, 0, 1))).
 is(1, in(puzzle_room_door_handle_inner, (puzzle_room, 0, 1))).
-is(1, in(puzzle_room_door_handle_outer, (hallway, 11, 1))).
+is(1, in(puzzle_room_door_handle_outer, (hallway, 8, 1))).
 
 %% Block colouring
 is(AL, colour_of((BLOCK, N), red)) :- static(AL, colour_of((BLOCK, N), red)),
@@ -134,7 +134,7 @@ holds(1, configuration(DOOR), closed, 0) :- fluent(AL, inertial, configuration(D
                                             sl(AL).
 
 %% The puzzle room table is in the puzzle room
-holds(1, in(puzzle_room_table), (puzzle_room, 7, 0), 0).
+holds(1, in(puzzle_room_table), (puzzle_room, 5, 0), 0).
 
 %% The first three blocks are stacked on the puzzle room table:
 %%      - This configuration presents the Sussman anomoly.
@@ -154,7 +154,7 @@ holds(1, on((block, 6)), nothing, 0).
 %% The additional three blocks are placed with two in the middle of the table and one in the store room:
 %%      - Talos will not have to make additional trips to the store room as a result of this.
 holds(1, on((block, 7)), puzzle_room_table_middle, 0).
-holds(1, in((block, 8)), (store_room, 0, 1), 0).
+holds(1, in((block, 8)), (store_room, 0, 0), 0).
 holds(1, on((block, 9)), (block, 7), 0).
 holds(1, on((block, 8)), nothing, 0).
 
@@ -212,11 +212,11 @@ entity(room, puzzle_room).
 entity(room, hallway).
 
 %% All the rooms have two cells except the hallway which has three
-n(0..12).
-size(starting_room, 8, 2).
-size(store_room, 8, 2).
-size(hallway, 12, 2).
-size(puzzle_room, 8, 2).
+n(0..9).
+size(starting_room, 6, 2).
+size(store_room, 6, 2).
+size(hallway, 9, 2).
+size(puzzle_room, 6, 2).
 entity(cell, (ROOM, X, Y)) :- entity(room, ROOM), size(ROOM, X_MAX, Y_MAX), X < X_MAX, Y < Y_MAX, n(X), n(Y).
 
 %% The is one door between the hallway and the puzzle room
