@@ -3333,6 +3333,9 @@ class HierarchicalPlanner(AbstractionHierarchy):
                     
                 except ASH_NoSolutionError as error:
                     ## An error will be raise if a solution to the planning problem was not found
+                    planning_level_tracking_progress_bar.close()
+                    planning_increment_bar.close()
+                    division_strategy.reset()
                     log_and_raise(ASH_NoSolutionError, f"The hierarchical planning problem over levels [{min(level_range)}-{max(level_range)}] does not have a valid solution.",
                                   from_exception=error, logger=self.__logger)
                 

@@ -1067,11 +1067,11 @@ class Results:
         ## General global statistics
         dataframes["GLOBALS"].to_excel(writer, sheet_name="Globals")
         dataframes["GLOBALS"].describe().to_excel(writer, sheet_name="Globals", startrow=len(self.__plans) + 2)
-        worksheet = writer.sheets["Par Level-Wise Aggregates"]
-        worksheet.write(len(self.__plans) + 10, 0, "Successful Runs")
-        worksheet.write(len(self.__plans) + 10, 1, self.__successful_runs)
-        worksheet.write(len(self.__plans) + 11, 0, "Failed Runs")
-        worksheet.write(len(self.__plans) + 11, 1, self.__failed_runs)
+        worksheet = writer.sheets["Globals"]
+        worksheet.write(len(self.__plans) + 12, 0, "Successful Runs")
+        worksheet.write(len(self.__plans) + 12, 1, self.__successful_runs)
+        worksheet.write(len(self.__plans) + 13, 0, "Failed Runs")
+        worksheet.write(len(self.__plans) + 13, 1, self.__failed_runs)
         
         ## Problem definitions statistics
         dataframes["PROBLEM_SEQUENCE"].to_excel(writer, sheet_name="Problem Sequence")
