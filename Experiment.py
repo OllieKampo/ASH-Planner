@@ -20,17 +20,18 @@
 ###########################################################################
 
 import logging
+import math
 import statistics
 import time
+from collections import defaultdict
 from typing import Any, Callable, Iterator, NamedTuple, Optional, Union
 
+import numpy
 import pandas
 import tqdm
-import numpy
-import math
-from ASP_Parser import Statistics
 
 import core.Planner as Planner
+from ASP_Parser import Statistics
 from core.Helpers import center_text
 from core.Strategies import DivisionPoint, DivisionScenario, SubGoalRange
 
@@ -62,13 +63,17 @@ class Results:
     __slots__ = ("__optimums",
                  "__plans",
                  "__dataframes",
-                 "__is_changed")
+                 "__is_changed",
+                 "__successful_runs",
+                 "__failed_runs")
     
     def __init__(self, optimums: Optional[dict[int, int]]) -> None:
         self.__optimums: Optional[dict[int, int]] = optimums
         self.__plans: list[Planner.HierarchicalPlan] = []
         self.__dataframes: dict[str, pandas.DataFrame] = {}
         self.__is_changed: bool = False
+        self.__successful_runs: int = 0
+        self.__failed_runs: int = 0
     
     def __getitem__(self, index: int) -> Planner.HierarchicalPlan:
         return self.__plans[index]
@@ -81,6 +86,11 @@ class Results:
     
     def add(self, plan: Planner.HierarchicalPlan) -> None:
         self.__plans.append(plan)
+        self.__is_changed = True
+    
+    def runs_completed(self, successful_runs: int, failed_runs: int) -> None:
+        self.__successful_runs = successful_runs
+        self.__failed_runs = failed_runs
         self.__is_changed = True
     
     @property
@@ -182,88 +192,88 @@ class Results:
         self.__is_changed = False
         
         ## Collate the data into a dictionary
-        data_dict: dict[str, dict[str, list[float]]] = {}
+        data_dict: dict[str, dict[str, list[float]]] = defaultdict(lambda: defaultdict(list))
         
-        data_dict["GLOBALS"] = {"RU" : [],
-                                "EX_T" : [], "HA_T" : [], "AW_T" : [], "AW_T_PA" : [], "AME_T" : [], "AME_T_PA" : [],
-                                "BL_LE" : [], "BL_AC" : [],
-                                "QL_SCORE" : [],
-                                "EX_SCORE" : [], "HA_SCORE" : [],
-                                "AW_SCORE" : [], "AW_PA_SCORE" : [], "AME_SCORE" : [], "AME_PA_SCORE" : [],
-                                "TI_SCORE" : [],
-                                "EX_GRADE" : [], "HA_GRADE" : [],
-                                "AW_GRADE" : [], "AW_PA_GRADE" : [], "AME_GRADE" : [], "AME_PA_GRADE" : [],
-                                "GRADE" : []}
+        # data_dict["GLOBALS"] = {"RU" : [],
+        #                         "EX_T" : [], "HA_T" : [], "AW_T" : [], "AW_T_PA" : [], "AME_T" : [], "AME_T_PA" : [],
+        #                         "BL_LE" : [], "BL_AC" : [],
+        #                         "QL_SCORE" : [],
+        #                         "EX_SCORE" : [], "HA_SCORE" : [],
+        #                         "AW_SCORE" : [], "AW_PA_SCORE" : [], "AME_SCORE" : [], "AME_PA_SCORE" : [],
+        #                         "TI_SCORE" : [],
+        #                         "EX_GRADE" : [], "HA_GRADE" : [],
+        #                         "AW_GRADE" : [], "AW_PA_GRADE" : [], "AME_GRADE" : [], "AME_PA_GRADE" : [],
+        #                         "GRADE" : []}
         
-        data_dict["PROBLEM_SEQUENCE"] = {"RU" : [], "SN" : [], "AL" : [], "IT" : [], "PN" : [],
-                                         "START_S" : [], "IS_INITIAL" : [], "IS_FINAL" : [],
-                                         "SIZE" : [],  "SGLITS_T" : [],
-                                         "FIRST_I" : [], "LAST_I" : []}
+        # data_dict["PROBLEM_SEQUENCE"] = {"RU" : [], "SN" : [], "AL" : [], "IT" : [], "PN" : [],
+        #                                  "START_S" : [], "IS_INITIAL" : [], "IS_FINAL" : [],
+        #                                  "SIZE" : [],  "SGLITS_T" : [],
+        #                                  "FIRST_I" : [], "LAST_I" : []}
         
-        data_dict["DIVISIONS"] = {"RU" : [], "AL" : [], "DN" : [],
-                                  "APP_INDEX" : [], "COM_INDEX" : [], "COM_STEP" : [], "L_BLEND" : [], "R_BLEND" : [],
-                                  "IS_INHERITED" : [], "IS_PROACTIVE" : [], "IS_INTERRUPT" : [], "PREEMPTIVE" : []}
+        # data_dict["DIVISIONS"] = {"RU" : [], "AL" : [], "DN" : [],
+        #                           "APP_INDEX" : [], "COM_INDEX" : [], "COM_STEP" : [], "L_BLEND" : [], "R_BLEND" : [],
+        #                           "IS_INHERITED" : [], "IS_PROACTIVE" : [], "IS_INTERRUPT" : [], "PREEMPTIVE" : []}
         
-        data_dict["CAT"] = {"RU" : [], "AL" : [],
-                            "GT" : [], "ST" : [], "OT" : [], "TT" : [],
-                            "LT" : [], "CT" : [], "WT" : [], "WT_PA" : [], "MET" : [], "MET_PA" : [],
-                            "RSS" : [], "VMS" : [],
-                            "LE" : [], "AC" : [], "CF" : [], "PSG" : [],
-                            "SIZE" : [], "SGLITS_T" : [],
-                            "QL_SCORE" : [],
-                            "LT_SCORE" : [], "CT_SCORE" : [],
-                            "AW_SCORE" : [], "AW_PA_SCORE" : [], "AME_SCORE" : [], "AME_PA_SCORE" : [],
-                            "TI_SCORE" : [],
-                            "LT_GRADE" : [], "CT_GRADE" : [],
-                            "AW_GRADE" : [], "AW_PA_GRADE" : [], "AME_GRADE" : [], "AME_PA_GRADE" : [],
-                            "GRADE" : [],
-                            "HAS_TRAILING" : [], "TOT_CHOICES" : [], "PRE_CHOICES" : [], "FGOALS_ORDER" : [],
-                            "CP_EF_L" : [], "CP_EF_A" : [], "SP_ED_L" : [], "SP_ED_A" : [], "SP_EB_L" : [], "SP_EB_A" : [], "SP_EBS_L" : [], "SP_EBS_A" : [],
-                            "SP_MIN_L" : [], "SP_MIN_A" : [], "SP_LOWER_L" : [], "SP_LOWER_A" : [], "SP_MED_L" : [], "SP_MED_A" : [], "SP_UPPER_L" : [], "SP_UPPER_A" : [], "SP_MAX_L" : [], "SP_MAX_A" : [],
-                            "T_INTER_SP" : [], "P_INTER_SP" : [], "T_INTER_Q" : [], "P_INTER_Q" : [],
-                            "M_CHILD_RMSE" : [], "M_CHILD_RMSE_SCORE" : [], "M_CHILD_MAE" : [], "M_CHILD_MAE_SCORE" : [],
-                            "M_CHILD_NRMSE" : [], "M_CHILD_NRMSE_SCORE" : [], "M_CHILD_NMAE" : [], "M_CHILD_NMAE_SCORE" : [],
-                            "DIV_INDEX_RMSE" : [], "DIV_INDEX_RMSE_SCORE" : [], "DIV_INDEX_MAE" : [], "DIV_INDEX_MAE_SCORE" : [],
-                            "DIV_INDEX_NRMSE" : [], "DIV_INDEX_NRMSE_SCORE" : [], "DIV_INDEX_NMAE" : [], "DIV_INDEX_NMAE_SCORE" : [],
-                            "DIV_STEP_RMSE" : [], "DIV_STEP_RMSE_SCORE" : [], "DIV_STEP_MAE" : [], "DIV_STEP_MAE_SCORE" : [],
-                            "DIV_STEP_NRMSE" : [], "DIV_STEP_NRMSE_SCORE" : [], "DIV_STEP_NMAE" : [], "DIV_STEP_NMAE_SCORE" : [],
-                            "DIVS_T" : [], "DS_T" : [], "DS_TD_MEAN" : [], "DS_TD_STD" : [], "DS_TD_CD" : [],
-                            "DS_TD_MIN" : [], "DS_TD_LOWER" : [], "DS_TD_MED" : [], "DS_TD_UPPER" : [], "DS_TD_MAX" : [],
-                            "DS_TS_MEAN" : [], "DS_TS_STD" : [], "DS_TS_CD" : [],
-                            "DS_TS_MIN" : [], "DS_TS_LOWER" : [], "DS_TS_MED" : [], "DS_TS_UPPER" : [], "DS_TS_MAX" : [],
-                            "PR_T" : [], "PR_TS_MEAN" : [], "PR_TS_STD" : [], "PR_TS_CD" : [],
-                            "PR_TS_MIN" : [], "PR_TS_LOWER" : [], "PR_TS_MED" : [], "PR_TS_UPPER" : [], "PR_TS_MAX" : [],
-                            "PP_LE_MEAN" : [], "PP_AC_MEAN" : [], "PP_LE_STD" : [], "PP_AC_STD" : [], "PP_LE_CD" : [], "PP_AC_CD" : [], 
-                            "PP_LE_MIN" : [], "PP_AC_MIN" : [], "PP_LE_LOWER" : [], "PP_AC_LOWER" : [], "PP_LE_MED" : [], "PP_AC_MED" : [], "PP_LE_UPPER" : [], "PP_AC_UPPER" : [], "PP_LE_MAX" : [], "PP_AC_MAX" : [],
-                            "PP_ED_L" : [], "PP_ED_A" : [], "PP_EB_L" : [], "PP_EB_A" : [], "PP_EBS_L" : [], "PP_EBS_A" : [],
-                            "PP_EF_LE_MIN" : [], "PP_EF_AC_MIN" : [], "PP_EF_LE_LOWER" : [], "PP_EF_AC_LOWER" : [], "PP_EF_LE_MED" : [], "PP_EF_AC_MED" : [], "PP_EF_LE_UPPER" : [], "PP_EF_AC_UPPER" : [], "PP_EF_LE_MAX" : [], "PP_EF_AC_MAX" : []}
+        # data_dict["CAT"] = {"RU" : [], "AL" : [],
+        #                     "GT" : [], "ST" : [], "OT" : [], "TT" : [],
+        #                     "LT" : [], "CT" : [], "WT" : [], "WT_PA" : [], "MET" : [], "MET_PA" : [],
+        #                     "RSS" : [], "VMS" : [],
+        #                     "LE" : [], "AC" : [], "CF" : [], "PSG" : [],
+        #                     "SIZE" : [], "SGLITS_T" : [],
+        #                     "QL_SCORE" : [],
+        #                     "LT_SCORE" : [], "CT_SCORE" : [],
+        #                     "AW_SCORE" : [], "AW_PA_SCORE" : [], "AME_SCORE" : [], "AME_PA_SCORE" : [],
+        #                     "TI_SCORE" : [],
+        #                     "LT_GRADE" : [], "CT_GRADE" : [],
+        #                     "AW_GRADE" : [], "AW_PA_GRADE" : [], "AME_GRADE" : [], "AME_PA_GRADE" : [],
+        #                     "GRADE" : [],
+        #                     "HAS_TRAILING" : [], "TOT_CHOICES" : [], "PRE_CHOICES" : [], "FGOALS_ORDER" : [],
+        #                     "CP_EF_L" : [], "CP_EF_A" : [], "SP_ED_L" : [], "SP_ED_A" : [], "SP_EB_L" : [], "SP_EB_A" : [], "SP_EBS_L" : [], "SP_EBS_A" : [],
+        #                     "SP_MIN_L" : [], "SP_MIN_A" : [], "SP_LOWER_L" : [], "SP_LOWER_A" : [], "SP_MED_L" : [], "SP_MED_A" : [], "SP_UPPER_L" : [], "SP_UPPER_A" : [], "SP_MAX_L" : [], "SP_MAX_A" : [],
+        #                     "T_INTER_SP" : [], "P_INTER_SP" : [], "T_INTER_Q" : [], "P_INTER_Q" : [],
+        #                     "M_CHILD_RMSE" : [], "M_CHILD_RMSE_SCORE" : [], "M_CHILD_MAE" : [], "M_CHILD_MAE_SCORE" : [],
+        #                     "M_CHILD_NRMSE" : [], "M_CHILD_NRMSE_SCORE" : [], "M_CHILD_NMAE" : [], "M_CHILD_NMAE_SCORE" : [],
+        #                     "DIV_INDEX_RMSE" : [], "DIV_INDEX_RMSE_SCORE" : [], "DIV_INDEX_MAE" : [], "DIV_INDEX_MAE_SCORE" : [],
+        #                     "DIV_INDEX_NRMSE" : [], "DIV_INDEX_NRMSE_SCORE" : [], "DIV_INDEX_NMAE" : [], "DIV_INDEX_NMAE_SCORE" : [],
+        #                     "DIV_STEP_RMSE" : [], "DIV_STEP_RMSE_SCORE" : [], "DIV_STEP_MAE" : [], "DIV_STEP_MAE_SCORE" : [],
+        #                     "DIV_STEP_NRMSE" : [], "DIV_STEP_NRMSE_SCORE" : [], "DIV_STEP_NMAE" : [], "DIV_STEP_NMAE_SCORE" : [],
+        #                     "DIVS_T" : [], "DS_T" : [], "DS_TD_MEAN" : [], "DS_TD_STD" : [], "DS_TD_CD" : [],
+        #                     "DS_TD_MIN" : [], "DS_TD_LOWER" : [], "DS_TD_MED" : [], "DS_TD_UPPER" : [], "DS_TD_MAX" : [],
+        #                     "DS_TS_MEAN" : [], "DS_TS_STD" : [], "DS_TS_CD" : [],
+        #                     "DS_TS_MIN" : [], "DS_TS_LOWER" : [], "DS_TS_MED" : [], "DS_TS_UPPER" : [], "DS_TS_MAX" : [],
+        #                     "PR_T" : [], "PR_TS_MEAN" : [], "PR_TS_STD" : [], "PR_TS_CD" : [],
+        #                     "PR_TS_MIN" : [], "PR_TS_LOWER" : [], "PR_TS_MED" : [], "PR_TS_UPPER" : [], "PR_TS_MAX" : [],
+        #                     "PP_LE_MEAN" : [], "PP_AC_MEAN" : [], "PP_LE_STD" : [], "PP_AC_STD" : [], "PP_LE_CD" : [], "PP_AC_CD" : [], 
+        #                     "PP_LE_MIN" : [], "PP_AC_MIN" : [], "PP_LE_LOWER" : [], "PP_AC_LOWER" : [], "PP_LE_MED" : [], "PP_AC_MED" : [], "PP_LE_UPPER" : [], "PP_AC_UPPER" : [], "PP_LE_MAX" : [], "PP_AC_MAX" : [],
+        #                     "PP_ED_L" : [], "PP_ED_A" : [], "PP_EB_L" : [], "PP_EB_A" : [], "PP_EBS_L" : [], "PP_EBS_A" : [],
+        #                     "PP_EF_LE_MIN" : [], "PP_EF_AC_MIN" : [], "PP_EF_LE_LOWER" : [], "PP_EF_AC_LOWER" : [], "PP_EF_LE_MED" : [], "PP_EF_AC_MED" : [], "PP_EF_LE_UPPER" : [], "PP_EF_AC_UPPER" : [], "PP_EF_LE_MAX" : [], "PP_EF_AC_MAX" : []}
         
-        data_dict["PAR"] = {"RU" : [], "AL" : [], "IT" : [], "PN" : [],
-                            "GT" : [], "ST" : [], "OT" : [], "TT" : [],
-                            "YT" : [], "WT" : [], "ET" : [],
-                            "RSS" : [], "VMS" : [],
-                            "LE" : [], "AC" : [], "CF" : [], "PSG" : [],
-                            "START_S" : [], "END_S" : [],
-                            "SIZE" : [], "SGLITS_T" : [],
-                            "FIRST_I" : [], "LAST_I" : [],
-                            "PP_EF_L" : [], "PP_EF_A" : [], "SP_ED_L" : [], "SP_ED_A" : [], "SP_EB_L" : [], "SP_EB_A" : [], "SP_EBS_L" : [], "SP_EBS_A" : [],
-                            "TOT_CHOICES" : [], "PRE_CHOICES" : []}
+        # data_dict["PAR"] = {"RU" : [], "AL" : [], "IT" : [], "PN" : [],
+        #                     "GT" : [], "ST" : [], "OT" : [], "TT" : [],
+        #                     "YT" : [], "WT" : [], "ET" : [],
+        #                     "RSS" : [], "VMS" : [],
+        #                     "LE" : [], "AC" : [], "CF" : [], "PSG" : [],
+        #                     "START_S" : [], "END_S" : [],
+        #                     "SIZE" : [], "SGLITS_T" : [],
+        #                     "FIRST_I" : [], "LAST_I" : [],
+        #                     "PP_EF_L" : [], "PP_EF_A" : [], "SP_ED_L" : [], "SP_ED_A" : [], "SP_EB_L" : [], "SP_EB_A" : [], "SP_EBS_L" : [], "SP_EBS_A" : [],
+        #                     "TOT_CHOICES" : [], "PRE_CHOICES" : []}
         
-        data_dict["STEP_CAT"] = {"RU" : [], "AL" : [], "SL" : [],
-                                 "S_GT" : [], "S_ST" : [], "S_TT" : [],
-                                 "C_GT" : [], "C_ST" : [], "C_TT" : [],
-                                 "T_RSS" : [], "T_VMS" : [], "M_RSS" : [], "M_VMS" : [],
-                                 "C_TACHSGOALS" : [], "S_SGOALI" : [], "IS_MATCHING" : [], "IS_TRAILING" : [],
-                                 "C_CP_EF_L" : [], "C_CP_EF_A" : [], "C_SP_ED_L" : [], "C_SP_ED_A" : [], "C_SP_EB_L" : [], "C_SP_EB_A" : [], "C_SP_EBS_L" : [], "C_SP_EBS_A" : [],
-                                 "IS_DIV_APP" : [], "IS_INHERITED" : [], "IS_PROACTIVE" : [], "IS_INTERRUPT" : [], "PREEMPTIVE" : [], "IS_DIV_COM" : [], "DIV_COM_APP_AT" : [],
-                                 "IS_LOCO" : [], "IS_MANI" : [], "IS_CONF" : []}
+        # data_dict["STEP_CAT"] = {"RU" : [], "AL" : [], "SL" : [],
+        #                          "S_GT" : [], "S_ST" : [], "S_TT" : [],
+        #                          "C_GT" : [], "C_ST" : [], "C_TT" : [],
+        #                          "T_RSS" : [], "T_VMS" : [], "M_RSS" : [], "M_VMS" : [],
+        #                          "C_TACHSGOALS" : [], "S_SGOALI" : [], "IS_MATCHING" : [], "IS_TRAILING" : [],
+        #                          "C_CP_EF_L" : [], "C_CP_EF_A" : [], "C_SP_ED_L" : [], "C_SP_ED_A" : [], "C_SP_EB_L" : [], "C_SP_EB_A" : [], "C_SP_EBS_L" : [], "C_SP_EBS_A" : [],
+        #                          "IS_DIV_APP" : [], "IS_INHERITED" : [], "IS_PROACTIVE" : [], "IS_INTERRUPT" : [], "PREEMPTIVE" : [], "IS_DIV_COM" : [], "DIV_COM_APP_AT" : [],
+        #                          "IS_LOCO" : [], "IS_MANI" : [], "IS_CONF" : []}
         
-        data_dict["INDEX_CAT"] = {"RU" : [], "AL" : [], "INDEX" : [],
-                                  "NUM_SGOALS" : [], "ACH_AT" : [], "YLD_AT" : [],
-                                  "IS_DIV" : [], "IS_INHERITED" : [], "IS_PROACTIVE" : [], "IS_INTERRUPT" : [], "PREEMPTIVE" : [],
-                                  "SP_RE_GT" : [], "SP_RE_ST" : [], "SP_RE_TT" : [],
-                                  "SP_L" : [], "SP_A" : [], "SP_START_S" : [], "SP_END_S" : [], "INTER_Q" : [],
-                                  "IS_LOCO" : [], "IS_MANI" : [], "IS_CONF" : []}
+        # data_dict["INDEX_CAT"] = {"RU" : [], "AL" : [], "INDEX" : [],
+        #                           "NUM_SGOALS" : [], "ACH_AT" : [], "YLD_AT" : [],
+        #                           "IS_DIV" : [], "IS_INHERITED" : [], "IS_PROACTIVE" : [], "IS_INTERRUPT" : [], "PREEMPTIVE" : [],
+        #                           "SP_RE_GT" : [], "SP_RE_ST" : [], "SP_RE_TT" : [],
+        #                           "SP_L" : [], "SP_A" : [], "SP_START_S" : [], "SP_END_S" : [], "INTER_Q" : [],
+        #                           "IS_LOCO" : [], "IS_MANI" : [], "IS_CONF" : []}
         
         acceptable_lag_time: float = 5.0
         acceptable_action_minimum_execution_time: float = 1.0
@@ -1057,6 +1067,11 @@ class Results:
         ## General global statistics
         dataframes["GLOBALS"].to_excel(writer, sheet_name="Globals")
         dataframes["GLOBALS"].describe().to_excel(writer, sheet_name="Globals", startrow=len(self.__plans) + 2)
+        worksheet = writer.sheets["Par Level-Wise Aggregates"]
+        worksheet.write(len(self.__plans) + 10, 0, "Successful Runs")
+        worksheet.write(len(self.__plans) + 10, 1, self.__successful_runs)
+        worksheet.write(len(self.__plans) + 11, 0, "Failed Runs")
+        worksheet.write(len(self.__plans) + 11, 1, self.__failed_runs)
         
         ## Problem definitions statistics
         dataframes["PROBLEM_SEQUENCE"].to_excel(writer, sheet_name="Problem Sequence")
@@ -1179,14 +1194,20 @@ class Experiment:
         
         experiment_real_start_time = time.perf_counter()
         experiment_process_start_time = time.process_time()
+        successful_runs: int = 0
+        failed_runs: int = 0
         
         ## Do experimental runs
         for run in tqdm.tqdm(range(1, self.__experimental_runs + 1), desc="Experimental runs completed", disable=not self.__enable_tqdm, leave=False, ncols=180, colour="white", unit="run"):
             hierarchical_plan, planning_time = self.__run()
-            results.add(hierarchical_plan)
+            if hierarchical_plan is not None:
+                results.add(hierarchical_plan)
+                successful_runs += 1
+            else: failed_runs += 1
             _EXP_logger.log(logging.DEBUG if self.__enable_tqdm else logging.INFO,
                             "\n\n" + center_text(f"Experimental run {run} : Time {planning_time:.6f}s",
                                                  framing_width=48, centering_width=60))
+        results.runs_completed(successful_runs, failed_runs)
         
         experiment_real_total_time: float = time.perf_counter() - experiment_real_start_time
         experiment_process_total_time: float = time.process_time() - experiment_process_start_time
@@ -1198,15 +1219,18 @@ class Experiment:
         
         return results
     
-    def __run(self) -> tuple[Planner.HierarchicalPlan, float]:
+    def __run(self) -> tuple[Optional[Planner.HierarchicalPlan], float]:
         "Run the planner with this experiment's planning function once and return the plan."
         
         run_start_time: float = time.perf_counter()
         
         ## Generate one plan per run
-        self.__planning_function()
-        hierarchical_plan: Planner.HierarchicalPlan = self.__planner.get_hierarchical_plan(bottom_level=self.__bottom_level,
-                                                                                           top_level=self.__top_level)
+        hierarchical_plan: Optional[Planner.HierarchicalPlan] = None
+        try:
+            self.__planning_function()
+            hierarchical_plan = self.__planner.get_hierarchical_plan(bottom_level=self.__bottom_level,
+                                                                     top_level=self.__top_level)
+        except: pass
         
         ## Ensure that the planner is purged after reach run
         self.__planner.purge_solutions()
