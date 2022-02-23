@@ -2903,6 +2903,11 @@ class HierarchicalPlanner(AbstractionHierarchy):
                 self.__logger.log(self.__log_level(Verbosity.Verbose),
                                   f"Starting new logic program: {local_program!s}")
                 
+                current_hierarchical_plan: HierarchicalPlan = self.get_hierarchical_plan()
+                total_planning_time_at_level: float = 0.0
+                if level in current_hierarchical_plan:
+                    total_planning_time_at_level = current_hierarchical_plan.get_completion_time(level)
+                
                 ## A new incrementor is needed because a new program grounding is being created
                 incrementor = ASP.SolveIncrementor(step_start=problem.start_step,
                                                    step_increase_initial=((problem.search_length_bound - problem.start_step) + 1) if problem.use_search_length_bound else 2,
@@ -2912,7 +2917,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
                                                                    if (not problem.sequential_yield
                                                                        and not _generate_search_space)
                                                                    else None),
-                                                   cumulative_time_limit=time_limit)
+                                                   cumulative_time_limit=(time_limit - total_planning_time_at_level))
                 
                 ## If this grounding is going to be saved and continued later then setup the external context function for updating the total last sub-goal stage index
                 def get_total_last_sgoals(problem_level: clingo.Symbol) -> clingo.Symbol:
