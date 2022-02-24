@@ -3288,11 +3288,17 @@ class HierarchicalPlanner(AbstractionHierarchy):
                 
                 ## Find the search limits
                 _time_limit: Optional[float] = convert(time_limit, level)
+                if level != max(level_range):
+                    current_hierarchical_plan: HierarchicalPlan = self.get_hierarchical_plan()
+                    total_planning_time_at_previous_level: float = 0.0
+                    if (level + 1) in current_hierarchical_plan:
+                        total_planning_time_at_previous_level = current_hierarchical_plan.get_completion_time(level + 1)
+                    _time_limit = _time_limit - total_planning_time_at_previous_level
                 _length_limit: Optional[Number] = convert(length_limit, level)
                 if isinstance(_length_limit, float):
                     if not _conformance:
                         log_and_raise(ASH_InvalidInputError, "Cannot use an expansion factor as a length limit for classical planning.", logger=self.__logger)
-                    _length_limit = _length_limit * self.__actions[level + 1]
+                    _length_limit = _length_limit * len(self.__actions[level + 1])
                 
                 ## Plan at the current level
                 try:
