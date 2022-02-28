@@ -1967,7 +1967,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
         is_final: bool = self.__complete_plan.get(level, False) and (step_range.stop - 1) == total_plan_length
         return MonolevelPlan(level, self.__domain.get_model_type(level), states, actions, produced_sgoals, is_final, self.__statistics[level], conformance_mapping)
     
-    def get_hierarchical_plan(self, bottom_level: int = 1, top_level: Optional[int] = None) -> HierarchicalPlan:
+    def get_hierarchical_plan(self, bottom_level: int = 1, top_level: Optional[int] = None, ignore_missing: bool = False) -> HierarchicalPlan:
         """
         Get the currently stored hierarchical plan over a given abstraction level range.
         The plan will include all levels in the given range that are in the currently loaded planning domain and have been generated.
@@ -1978,6 +1978,9 @@ class HierarchicalPlanner(AbstractionHierarchy):
         
         `top_level: Optional[int] = None` - The top level of the abstraction level range to include in the plan.
         If None, then all levels above the bottom level are included.
+        
+        `ignore_missing: bool = False` - Whether to ignore levels in the given range at which a monolevel plan does not yet exist.
+        If False, then an error will be raised if no plan exists at some level in the range.
         
         Returns
         -------
@@ -1992,6 +1995,10 @@ class HierarchicalPlanner(AbstractionHierarchy):
         problem_division_tree: dict[int, list[DivisionScenario]] = {}
         
         for level in self.constrained_level_range(bottom_level, top_level):
+            if (ignore_missing
+                and level not in self.__actions):
+                continue
+            
             concatenated_plans[level] = self.get_monolevel_plan(level)
             if level in self.__partial_plans:
                 partial_plans[level] = self.__partial_plans[level]
@@ -2903,7 +2910,8 @@ class HierarchicalPlanner(AbstractionHierarchy):
                 self.__logger.log(self.__log_level(Verbosity.Verbose),
                                   f"Starting new logic program: {local_program!s}")
                 
-                current_hierarchical_plan: HierarchicalPlan = self.get_hierarchical_plan()
+                current_hierarchical_plan: HierarchicalPlan = self.get_hierarchical_plan(bottom_level=level,
+                                                                                         ignore_missing=True)
                 total_planning_time_at_level: float = 0.0
                 if level in current_hierarchical_plan:
                     total_planning_time_at_level = current_hierarchical_plan.get_completion_time(level)
@@ -3288,8 +3296,9 @@ class HierarchicalPlanner(AbstractionHierarchy):
                 
                 ## Find the search limits
                 _time_limit: Optional[float] = convert(time_limit, level)
-                if level != max(level_range):
-                    current_hierarchical_plan: HierarchicalPlan = self.get_hierarchical_plan()
+                if _conformance:
+                    current_hierarchical_plan: HierarchicalPlan = self.get_hierarchical_plan(bottom_level=level,
+                                                                                             ignore_missing=True)
                     total_planning_time_at_previous_level: float = 0.0
                     if (level + 1) in current_hierarchical_plan:
                         total_planning_time_at_previous_level = current_hierarchical_plan.get_completion_time(level + 1)
