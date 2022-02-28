@@ -1046,10 +1046,7 @@ class Results:
                         data_dict["PAR"]["TOT_CHOICES"].append(partial_plan.total_choices)
                         data_dict["PAR"]["PRE_CHOICES"].append(partial_plan.preemptive_choices)
         
-        # Create a Pandas dataframe from the data dictionary
-        # for key in data_dict:
-        #     for _key in data_dict[key]:
-        #         print(f"{key} - {_key}: {len(data_dict[key][_key])}")
+        ## Create a Pandas dataframe from the data dictionary
         self.__dataframes = {key : pandas.DataFrame(data_dict[key]) for key in data_dict}
         return self.__dataframes
     
@@ -1075,7 +1072,8 @@ class Results:
         
         ## Problem definitions statistics
         dataframes["PROBLEM_SEQUENCE"].to_excel(writer, sheet_name="Problem Sequence")
-        dataframes["DIVISIONS"].to_excel(writer, sheet_name="Division Points")
+        if "DIVISIONS" in dataframes:
+            dataframes["DIVISIONS"].to_excel(writer, sheet_name="Division Points")
         
         ## Concatenated plan statistics
         dataframes["CAT"].to_excel(writer, sheet_name="Cat Plans")
