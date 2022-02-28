@@ -305,9 +305,9 @@ sub_goal(AL, ROBOT, A, F, V, step) :- occurs(AL, ROBOT, A, step), effect(AL, ROB
 %%      - Solve the perference order problem as a minimisation problem,
 %%      - TODO
 % :~ not goal_satisfied(AL, F, V, B, step), goal_order(AL, F, V, B, ORDER), final_goal(AL, F, V, B),
-%    fluent(AL, _, F, V), pl(AL), boolean(B), max_order(M), order_fgoals = true. [(((M + 1) - ORDER) * step) @ 4, AL, F, V, B]
+%    fluent(AL, _, F, V), pl(AL), boolean(B), max_order(M), order_fgoals = true. [(((M + 1) - ORDER) * step) @ 3, AL, F, V, B]
 :~ goal_satisfied(AL, F, V, B, step), goal_order(AL, F, V, B, ORDER), final_goal(AL, F, V, B),
-   fluent(AL, _, F, V), pl(AL), boolean(B), max_order(M), order_fgoals = true. [(((M + 1) - ORDER) * (-step)) @ 4, AL, F, V, B]
+   fluent(AL, _, F, V), pl(AL), boolean(B), max_order(M), order_fgoals = true. [(((M + 1) - ORDER) * (-step)) @ 3, AL, F, V, B]
 max_order(M) :- M = #max { ORDER : goal_order(AL, F, V, B, ORDER) }, final_goal(AL, F, V, B),
                 fluent(AL, _, F, V), pl(AL), boolean(B), order_fgoals = true.
 
@@ -324,13 +324,13 @@ max_order(M) :- M = #max { ORDER : goal_order(AL, F, V, B, ORDER) }, final_goal(
                                         fluent(AL, inertial, F, V), pl(AL), step > start, preempt_neg_fgoals = true, preempt_mode = heuristic. [10 @ 0, false]
 
 :~ occurs(AL, ROBOT, A, step), action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V), final_goal(AL, F, V, true),
-   fluent(AL, inertial, F, V), pl(AL), step > start, preempt_pos_fgoals = true, preempt_mode = optimise. [-1 @ 0, AL, ROBOT, A, F, V, step]
+   fluent(AL, inertial, F, V), pl(AL), step > start, preempt_pos_fgoals = true, preempt_mode = optimise. [-1 @ 1, AL, ROBOT, A, F, V, step]
 :~ occurs(AL, ROBOT, A, step), action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V, step), final_goal(AL, F, V, true),
-   fluent(AL, inertial, F, V), pl(AL), step > start, preempt_pos_fgoals = true, preempt_mode = optimise. [-1 @ 0, AL, ROBOT, A, F, V, step]
+   fluent(AL, inertial, F, V), pl(AL), step > start, preempt_pos_fgoals = true, preempt_mode = optimise. [-1 @ 1, AL, ROBOT, A, F, V, step]
 :~ occurs(AL, ROBOT, A, step), action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V), final_goal(AL, F, V, false),
-   fluent(AL, inertial, F, V), pl(AL), step > start, preempt_neg_fgoals = true, preempt_mode = optimise. [1 @ -1, AL, ROBOT, A, F, V, step]
+   fluent(AL, inertial, F, V), pl(AL), step > start, preempt_neg_fgoals = true, preempt_mode = optimise. [1 @ 0, AL, ROBOT, A, F, V, step]
 :~ occurs(AL, ROBOT, A, step), action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V, step), final_goal(AL, F, V, false),
-   fluent(AL, inertial, F, V), pl(AL), step > start, preempt_neg_fgoals = true, preempt_mode = optimise. [1 @ -1, AL, ROBOT, A, F, V, step]
+   fluent(AL, inertial, F, V), pl(AL), step > start, preempt_neg_fgoals = true, preempt_mode = optimise. [1 @ 0, AL, ROBOT, A, F, V, step]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

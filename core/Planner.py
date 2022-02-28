@@ -2740,7 +2740,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
         ## Partial-planning is enabled if either;
         ##      - A complete plan is not being generated or,
         ##      - Reactive problem divisions are possible.
-        partial_planning_enabled: bool = (not problem.complete_planning
+        partial_planning_enabled: bool = (not problem.is_final
                                           or problem.reactive_divisions)
         
         ## Preemptive positive final-goal achievement is enabled iff either;
