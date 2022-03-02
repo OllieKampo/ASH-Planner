@@ -17,6 +17,8 @@ However, since the quality of conformance refinement plans are subject to the qu
 The true optimum of a given hierarchical conformance refinement planning problem at some non-top-abstraction-level, is the minimum possible (possibly concatenated) conformance refinement plan length, over all possible refinement diagrams.
 In other words, it is the minimum of the global minimums over all possibly conformance constraints that could be obtained from the previous level.
 
+
+
 Planning Problem  | Classical Optimum Plan Length | True Conformance Refinement Optimum Plan Length
 ----------------- | ----------------------------- | -----------------------------------------------
 Small problem 1   | 39                            | 39
@@ -25,6 +27,9 @@ Small problem 2   | 54                            | 54
 Small problem 3   | 67                            | 69
 Large problem 1   | 85                            | 
 Large problem 2   | 129 (estimated)               | 
+Large problem 3   | 147 (estimated)               | 
+
+
 
 ## Planner Configurations Overview
 
@@ -46,12 +51,14 @@ Large problem 2   | 129 (estimated)               |
 
 Planning Mode | Planning Problem | Plan Length | Quality Score | Execution Latency | Ground-Level Completion Time | Time Score | Overall Grade
 ------------- | ---------------- | ----------- | ------------- | ----------------- | ---------------------------- | ---------- | -------------
-Classical     | Problem 1        | | |
-Offline       | Problem 1        | | |
-Online        | Problem 1        | | |
+Classical     | Problem 1        | | | | | | 
+Offline       | Problem 1        | | | | | | 
+Online        | Problem 1        | | | | | | 
+
+
 
 Three general reasoning problems were identified:
 - The Ignorance Problem:
 - The Dependency Problem:
 - The Unconsidered Final-Goal Problem:
-For more detail and examples see Section  (Page ) of the thesis.
+For more detail and examples see Chapter 3 Section  Page  of the thesis.
