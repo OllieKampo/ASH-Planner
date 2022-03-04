@@ -127,7 +127,6 @@ holds(1, in(puzzle_room_table), (puzzle_room, 1), 0).
 holds(1, on((block, 1)), puzzle_room_table_left, 0).
 holds(1, on((block, 2)), puzzle_room_table_right, 0).
 holds(1, on((block, 3)), (block, 1), 0).
-% holds(1, on((block, 4)), (block, 2), 0).
 
 %% The other three blocks are on the floor in the store room
 holds(1, in((block, 4)), (store_room, 0), 0).

@@ -74,6 +74,7 @@ super_class(robot, armed_robot).
 
 %% Location classes
 super_class(location, room).
+super_class(location, zone).
 super_class(location, cell).
 
 %% Object classes
@@ -124,8 +125,11 @@ override_class(manipulator_arm, manipulator_end, grasper).
 %% Manipulator arms are extensible because they are composed of a manipulator limb
 override_class(manipulator_arm, manipulator_limb, extensible).
 
-%% A room is composed from a set of cells
-override_class(room, cell, location).
+%% A room is composed from a set of zones
+override_class(room, zone, location).
+
+%% A zone is composed from a set of cells
+override_class(zone, cell, location).
 
 %% A table has multiple sides that compose its surface
 override_class(table, side, surface).

@@ -2286,7 +2286,11 @@ class HierarchicalPlanner(AbstractionHierarchy):
                                                              ASP.BasePart("variable_relations", [0]),
                                                              ASP.BasePart("abstraction_mappings", [0])])
         
-        self.__logger.log(self.__verbosity.value.log, f"Initial states generated successfully:\n{answer!s}")
+        self.__logger.log(self.__verbosity.value.log,
+                          "Initial states {0}:\n{1!s}".format('generated successfully'
+                                                              if answer.result.satisfiable else
+                                                              'failed to generate',
+                                                              answer))
         
         is_valid: bool = False
         is_unique: bool = False
@@ -2365,7 +2369,11 @@ class HierarchicalPlanner(AbstractionHierarchy):
                                                              ASP.BasePart("variable_relations", [0]),
                                                              ASP.BasePart("abstraction_mappings", [0])])
         
-        self.__logger.log(self.__verbosity.value.log, f"Final-goals generated successfully:\n{answer!s}")
+        self.__logger.log(self.__verbosity.value.log,
+                          "Final-goals {0}:\n{1!s}".format('generated successfully'
+                                                           if answer.result.satisfiable else
+                                                           'failed to generate',
+                                                           answer))
         
         is_valid: bool = False
         is_unique: bool = False
@@ -2735,7 +2743,8 @@ class HierarchicalPlanner(AbstractionHierarchy):
                                    and not _generate_search_space)
         
         ## Final-goal intermediate achievement ordering preferences are enabled iff explicitly enabled
-        _order_fgoals_achievement: bool = bool(order_fgoals_achievement)
+        _order_fgoals_achievement: bool = (bool(order_fgoals_achievement)
+                                           and self.__domain.get_model_type(level) == DomainModelType.Tasking)
         
         ## Partial-planning is enabled if either;
         ##      - A complete plan is not being generated or,
