@@ -194,91 +194,12 @@ class Results:
         ## Collate the data into a dictionary
         data_dict: dict[str, dict[str, list[float]]] = defaultdict(lambda: defaultdict(list))
         
-        # data_dict["GLOBALS"] = {"RU" : [],
-        #                         "EX_T" : [], "HA_T" : [], "AW_T" : [], "AW_T_PA" : [], "AME_T" : [], "AME_T_PA" : [],
-        #                         "BL_LE" : [], "BL_AC" : [],
-        #                         "QL_SCORE" : [],
-        #                         "EX_SCORE" : [], "HA_SCORE" : [],
-        #                         "AW_SCORE" : [], "AW_PA_SCORE" : [], "AME_SCORE" : [], "AME_PA_SCORE" : [],
-        #                         "TI_SCORE" : [],
-        #                         "EX_GRADE" : [], "HA_GRADE" : [],
-        #                         "AW_GRADE" : [], "AW_PA_GRADE" : [], "AME_GRADE" : [], "AME_PA_GRADE" : [],
-        #                         "GRADE" : []}
-        
-        # data_dict["PROBLEM_SEQUENCE"] = {"RU" : [], "SN" : [], "AL" : [], "IT" : [], "PN" : [],
-        #                                  "START_S" : [], "IS_INITIAL" : [], "IS_FINAL" : [],
-        #                                  "SIZE" : [],  "SGLITS_T" : [],
-        #                                  "FIRST_I" : [], "LAST_I" : []}
-        
-        # data_dict["DIVISIONS"] = {"RU" : [], "AL" : [], "DN" : [],
-        #                           "APP_INDEX" : [], "COM_INDEX" : [], "COM_STEP" : [], "L_BLEND" : [], "R_BLEND" : [],
-        #                           "IS_INHERITED" : [], "IS_PROACTIVE" : [], "IS_INTERRUPT" : [], "PREEMPTIVE" : []}
-        
-        # data_dict["CAT"] = {"RU" : [], "AL" : [],
-        #                     "GT" : [], "ST" : [], "OT" : [], "TT" : [],
-        #                     "LT" : [], "CT" : [], "WT" : [], "WT_PA" : [], "MET" : [], "MET_PA" : [],
-        #                     "RSS" : [], "VMS" : [],
-        #                     "LE" : [], "AC" : [], "CF" : [], "PSG" : [],
-        #                     "SIZE" : [], "SGLITS_T" : [],
-        #                     "QL_SCORE" : [],
-        #                     "LT_SCORE" : [], "CT_SCORE" : [],
-        #                     "AW_SCORE" : [], "AW_PA_SCORE" : [], "AME_SCORE" : [], "AME_PA_SCORE" : [],
-        #                     "TI_SCORE" : [],
-        #                     "LT_GRADE" : [], "CT_GRADE" : [],
-        #                     "AW_GRADE" : [], "AW_PA_GRADE" : [], "AME_GRADE" : [], "AME_PA_GRADE" : [],
-        #                     "GRADE" : [],
-        #                     "HAS_TRAILING" : [], "TOT_CHOICES" : [], "PRE_CHOICES" : [], "FGOALS_ORDER" : [],
-        #                     "CP_EF_L" : [], "CP_EF_A" : [], "SP_ED_L" : [], "SP_ED_A" : [], "SP_EB_L" : [], "SP_EB_A" : [], "SP_EBS_L" : [], "SP_EBS_A" : [],
-        #                     "SP_MIN_L" : [], "SP_MIN_A" : [], "SP_LOWER_L" : [], "SP_LOWER_A" : [], "SP_MED_L" : [], "SP_MED_A" : [], "SP_UPPER_L" : [], "SP_UPPER_A" : [], "SP_MAX_L" : [], "SP_MAX_A" : [],
-        #                     "T_INTER_SP" : [], "P_INTER_SP" : [], "T_INTER_Q" : [], "P_INTER_Q" : [],
-        #                     "M_CHILD_RMSE" : [], "M_CHILD_RMSE_SCORE" : [], "M_CHILD_MAE" : [], "M_CHILD_MAE_SCORE" : [],
-        #                     "M_CHILD_NRMSE" : [], "M_CHILD_NRMSE_SCORE" : [], "M_CHILD_NMAE" : [], "M_CHILD_NMAE_SCORE" : [],
-        #                     "DIV_INDEX_RMSE" : [], "DIV_INDEX_RMSE_SCORE" : [], "DIV_INDEX_MAE" : [], "DIV_INDEX_MAE_SCORE" : [],
-        #                     "DIV_INDEX_NRMSE" : [], "DIV_INDEX_NRMSE_SCORE" : [], "DIV_INDEX_NMAE" : [], "DIV_INDEX_NMAE_SCORE" : [],
-        #                     "DIV_STEP_RMSE" : [], "DIV_STEP_RMSE_SCORE" : [], "DIV_STEP_MAE" : [], "DIV_STEP_MAE_SCORE" : [],
-        #                     "DIV_STEP_NRMSE" : [], "DIV_STEP_NRMSE_SCORE" : [], "DIV_STEP_NMAE" : [], "DIV_STEP_NMAE_SCORE" : [],
-        #                     "DIVS_T" : [], "DS_T" : [], "DS_TD_MEAN" : [], "DS_TD_STD" : [], "DS_TD_CD" : [],
-        #                     "DS_TD_MIN" : [], "DS_TD_LOWER" : [], "DS_TD_MED" : [], "DS_TD_UPPER" : [], "DS_TD_MAX" : [],
-        #                     "DS_TS_MEAN" : [], "DS_TS_STD" : [], "DS_TS_CD" : [],
-        #                     "DS_TS_MIN" : [], "DS_TS_LOWER" : [], "DS_TS_MED" : [], "DS_TS_UPPER" : [], "DS_TS_MAX" : [],
-        #                     "PR_T" : [], "PR_TS_MEAN" : [], "PR_TS_STD" : [], "PR_TS_CD" : [],
-        #                     "PR_TS_MIN" : [], "PR_TS_LOWER" : [], "PR_TS_MED" : [], "PR_TS_UPPER" : [], "PR_TS_MAX" : [],
-        #                     "PP_LE_MEAN" : [], "PP_AC_MEAN" : [], "PP_LE_STD" : [], "PP_AC_STD" : [], "PP_LE_CD" : [], "PP_AC_CD" : [], 
-        #                     "PP_LE_MIN" : [], "PP_AC_MIN" : [], "PP_LE_LOWER" : [], "PP_AC_LOWER" : [], "PP_LE_MED" : [], "PP_AC_MED" : [], "PP_LE_UPPER" : [], "PP_AC_UPPER" : [], "PP_LE_MAX" : [], "PP_AC_MAX" : [],
-        #                     "PP_ED_L" : [], "PP_ED_A" : [], "PP_EB_L" : [], "PP_EB_A" : [], "PP_EBS_L" : [], "PP_EBS_A" : [],
-        #                     "PP_EF_LE_MIN" : [], "PP_EF_AC_MIN" : [], "PP_EF_LE_LOWER" : [], "PP_EF_AC_LOWER" : [], "PP_EF_LE_MED" : [], "PP_EF_AC_MED" : [], "PP_EF_LE_UPPER" : [], "PP_EF_AC_UPPER" : [], "PP_EF_LE_MAX" : [], "PP_EF_AC_MAX" : []}
-        
-        # data_dict["PAR"] = {"RU" : [], "AL" : [], "IT" : [], "PN" : [],
-        #                     "GT" : [], "ST" : [], "OT" : [], "TT" : [],
-        #                     "YT" : [], "WT" : [], "ET" : [],
-        #                     "RSS" : [], "VMS" : [],
-        #                     "LE" : [], "AC" : [], "CF" : [], "PSG" : [],
-        #                     "START_S" : [], "END_S" : [],
-        #                     "SIZE" : [], "SGLITS_T" : [],
-        #                     "FIRST_I" : [], "LAST_I" : [],
-        #                     "PP_EF_L" : [], "PP_EF_A" : [], "SP_ED_L" : [], "SP_ED_A" : [], "SP_EB_L" : [], "SP_EB_A" : [], "SP_EBS_L" : [], "SP_EBS_A" : [],
-        #                     "TOT_CHOICES" : [], "PRE_CHOICES" : []}
-        
-        # data_dict["STEP_CAT"] = {"RU" : [], "AL" : [], "SL" : [],
-        #                          "S_GT" : [], "S_ST" : [], "S_TT" : [],
-        #                          "C_GT" : [], "C_ST" : [], "C_TT" : [],
-        #                          "T_RSS" : [], "T_VMS" : [], "M_RSS" : [], "M_VMS" : [],
-        #                          "C_TACHSGOALS" : [], "S_SGOALI" : [], "IS_MATCHING" : [], "IS_TRAILING" : [],
-        #                          "C_CP_EF_L" : [], "C_CP_EF_A" : [], "C_SP_ED_L" : [], "C_SP_ED_A" : [], "C_SP_EB_L" : [], "C_SP_EB_A" : [], "C_SP_EBS_L" : [], "C_SP_EBS_A" : [],
-        #                          "IS_DIV_APP" : [], "IS_INHERITED" : [], "IS_PROACTIVE" : [], "IS_INTERRUPT" : [], "PREEMPTIVE" : [], "IS_DIV_COM" : [], "DIV_COM_APP_AT" : [],
-        #                          "IS_LOCO" : [], "IS_MANI" : [], "IS_CONF" : []}
-        
-        # data_dict["INDEX_CAT"] = {"RU" : [], "AL" : [], "INDEX" : [],
-        #                           "NUM_SGOALS" : [], "ACH_AT" : [], "YLD_AT" : [],
-        #                           "IS_DIV" : [], "IS_INHERITED" : [], "IS_PROACTIVE" : [], "IS_INTERRUPT" : [], "PREEMPTIVE" : [],
-        #                           "SP_RE_GT" : [], "SP_RE_ST" : [], "SP_RE_TT" : [],
-        #                           "SP_L" : [], "SP_A" : [], "SP_START_S" : [], "SP_END_S" : [], "INTER_Q" : [],
-        #                           "IS_LOCO" : [], "IS_MANI" : [], "IS_CONF" : []}
-        
+        ## Constants for calculating time scores
         acceptable_lag_time: float = 5.0
         acceptable_action_minimum_execution_time: float = 1.0
         max_time: float = 1800.0
         
+        ## Constant for calculating ground plan quality
         ground_optimum: int = 0
         if (self.__optimums is not None
             and self.__optimums[min(self.__optimums)] is not None):
@@ -296,7 +217,7 @@ class Results:
             data_dict["GLOBALS"]["HA_T"].append(hierarchical_plan.absolution_time)
             
             data_dict["GLOBALS"]["AW_T"].append(wait_time := hierarchical_plan.get_average_wait_time(hierarchical_plan.bottom_level))
-            data_dict["GLOBALS"]["AW_T_PA"].append(wait_pa_time := hierarchical_plan.get_average_wait_time(hierarchical_plan.bottom_level) / total_actions)
+            data_dict["GLOBALS"]["AW_T_PA"].append(wait_pa_time := hierarchical_plan.get_average_wait_time(hierarchical_plan.bottom_level, per_action=True))
             
             data_dict["GLOBALS"]["AME_T"].append(minimum_execution_time := hierarchical_plan.get_average_minimum_execution_time(hierarchical_plan.bottom_level))
             data_dict["GLOBALS"]["AME_T_PA"].append(minimum_execution_pa_time := hierarchical_plan.get_average_minimum_execution_time(hierarchical_plan.bottom_level, per_action=True))
@@ -433,9 +354,9 @@ class Results:
                 data_dict["CAT"]["LT"].append(hierarchical_plan.get_latency_time(level))
                 data_dict["CAT"]["CT"].append(hierarchical_plan.get_completion_time(level))
                 data_dict["CAT"]["WT"].append(wait_time := hierarchical_plan.get_average_wait_time(level))
-                data_dict["CAT"]["WT_PA"].append(wait_pa_time := wait_time / concatenated_plan.total_actions)
+                data_dict["CAT"]["WT_PA"].append(wait_pa_time := hierarchical_plan.get_average_wait_time(level, per_action=True))
                 data_dict["CAT"]["MET"].append(minimum_execution_time := hierarchical_plan.get_average_minimum_execution_time(level))
-                data_dict["CAT"]["MET_PA"].append(minimum_execution_pa_time := minimum_execution_time / concatenated_plan.total_actions)
+                data_dict["CAT"]["MET_PA"].append(minimum_execution_pa_time := hierarchical_plan.get_average_minimum_execution_time(level, per_action=True))
                 
                 ## Required memory usage
                 data_dict["CAT"]["RSS"].append(concatenated_totals.memory.rss)

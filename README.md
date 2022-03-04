@@ -13,8 +13,6 @@ Conformance refinement planning problems are characterised by three aspects:
 
 Three domains have been developed to test the proposed approach and its implementation.
 * __The Blocks World Plus (BWP)__ - An extension of the classic blocks world domain. A single robot named Talos must solve block world puzzles, in a combined logistics and manipulation planning domain.
-* __Supermarket Restocking (SRS)__ - A combination of many typical challenges, in which a heterogenous robot team must restock a supermarket.
-* __Electric Vehicle Remanufacturing (EVR)__ - Involving two cooperating robot arms, that much use a selection of tools to disassemble a battery electric vehicle. This domain is smaller than SRS, but presents a more complex set of reasoning challenges, with a large variety of planning constraints.
 
 ## Conformance Refinement Domain Models
 
@@ -42,6 +40,9 @@ Planning Domain | Problem Instance | Execution Latency | Planning Time | Plan Qu
 --------------- | ---------------- | ----------------- | ------------- | ------------
  | | | |
  | | | |
+
+Important Note: Due to a bug, in the results for the initial experiments and improved initial, the average wait time per action in globals is erroneously small, and the average wait time per action, the average minimum execution time per action, and thus the time score and grade for online, in concatenated plans is also erroneously small.
+Important Note: Due to an oversight, in all results, action expansion factors, deviations, and balance all erroneously large.
 
 ## Installation
 
