@@ -945,22 +945,26 @@ class HierarchicalPlan(_collections_abc.Mapping, AbstractionHierarchy):
                    for increment in self.partial_plans[_level]
                    if increment <= yield_increment)
     
-    def get_wait_time(self, level: int, problem_number: int) -> float:
+    def get_wait_time(self, level: int, problem_number: int, per_action: bool = False) -> float:
         """
         The wait time of the partial plan that solves a given problem number at a given level in this hierarchical plan.
         This is the time difference between yielding the previous partial plan at the given level, and yielding the given.
         """
+        raw_wait_time: float = 0.0
         if problem_number == 1:
-            return self.get_yield_time(level, problem_number)
-        return self.get_yield_time(level, problem_number) - self.get_yield_time(level, problem_number - 1)
+            raw_wait_time = self.get_yield_time(level, problem_number)
+        else: raw_wait_time = self.get_yield_time(level, problem_number) - self.get_yield_time(level, problem_number - 1)
+        if per_action:
+            return raw_wait_time / self.partial_plans[level][problem_number].total_actions
+        return raw_wait_time
     
-    def get_average_wait_time(self, level: int, exclude_initial: bool = False) -> float:
+    def get_average_wait_time(self, level: int, exclude_initial: bool = False, per_action: bool = False) -> float:
         "The average partial plan wait time at a given level in this hierarchical plan."
         if not self.is_hierarchical_refinement:
             return self.get_completion_time(level)
         if exclude_initial and len(self.partial_plans[level]) == 1:
             return 0.0
-        return statistics.mean(self.get_wait_time(level, problem_number)
+        return statistics.mean(self.get_wait_time(level, problem_number, per_action)
                                for problem_number, increment_number
                                in enumerate(self.partial_plans[level], start=1)
                                if (not exclude_initial or problem_number > 1))
