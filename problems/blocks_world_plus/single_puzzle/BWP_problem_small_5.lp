@@ -63,12 +63,20 @@ is(1, connected((hallway_1, 1), (hallway_2, 1))).
 is(1, connected((store_room_2, 1), (hallway_2, 0))).
 is(1, connected((hallway_2, 2), (puzzle_room_2, 0))).
 
+is(1, connected((hallway_2, 1), (hallway_3, 1))).
+
+is(1, connected((store_room_3, 1), (hallway_3, 0))).
+is(1, connected((hallway_3, 2), (puzzle_room_3, 0))).
+
 %% Door connection between the hallway and the puzzle room
 is(1, connected_by_door(store_room_1_door, (store_room_1, 1), (hallway_1, 0))).
 is(1, connected_by_door(puzzle_room_1_door, (hallway_1, 2), (puzzle_room_1, 0))).
 
 is(1, connected_by_door(store_room_2_door, (store_room_2, 1), (hallway_2, 0))).
 is(1, connected_by_door(puzzle_room_2_door, (hallway_2, 2), (puzzle_room_2, 0))).
+
+is(1, connected_by_door(store_room_3_door, (store_room_3, 1), (hallway_3, 0))).
+is(1, connected_by_door(puzzle_room_3_door, (hallway_3, 2), (puzzle_room_3, 0))).
 
 %% The door's handles are located on either side of it
 is(1, in(store_room_1_door_handle_inner, (store_room_1, 1))).
@@ -80,6 +88,11 @@ is(1, in(store_room_2_door_handle_inner, (store_room_2, 1))).
 is(1, in(store_room_2_door_handle_outer, (hallway_2, 0))).
 is(1, in(puzzle_room_2_door_handle_inner, (puzzle_room_2, 0))).
 is(1, in(puzzle_room_2_door_handle_outer, (hallway_2, 2))).
+
+is(1, in(store_room_2_door_handle_inner, (store_room_3, 1))).
+is(1, in(store_room_2_door_handle_outer, (hallway_3, 0))).
+is(1, in(puzzle_room_2_door_handle_inner, (puzzle_room_3, 0))).
+is(1, in(puzzle_room_2_door_handle_outer, (hallway_3, 2))).
 
 %% Block colouring
 is(AL, colour_of((BLOCK, N), red)) :- static(AL, colour_of((BLOCK, N), red)),
@@ -94,6 +107,12 @@ is(AL, colour_of((BLOCK, N), red)) :- static(AL, colour_of((BLOCK, N), red)),
 is(AL, colour_of((BLOCK, N), blue)) :- static(AL, colour_of((BLOCK, N), blue)),
                                        insta_of(AL, block, (BLOCK, N)),
                                        N > 9, N <= 12, al(AL).
+is(AL, colour_of((BLOCK, N), red)) :- static(AL, colour_of((BLOCK, N), red)),
+                                      insta_of(AL, block, (BLOCK, N)),
+                                      N > 12, N <= 15, al(AL).
+is(AL, colour_of((BLOCK, N), blue)) :- static(AL, colour_of((BLOCK, N), blue)),
+                                       insta_of(AL, block, (BLOCK, N)),
+                                       N > 15, N <= 18, al(AL).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Static Relations
@@ -150,6 +169,7 @@ holds(1, configuration(DOOR), closed, 0) :- fluent(AL, inertial, configuration(D
 %% The puzzle room table is in the puzzle room
 holds(1, in(puzzle_room_1_table), (puzzle_room_1, 1), 0).
 holds(1, in(puzzle_room_2_table), (puzzle_room_2, 1), 0).
+holds(1, in(puzzle_room_3_table), (puzzle_room_3, 1), 0).
 
 %% The first four blocks are stacked on the puzzle room table
 holds(1, on((block, 1)), puzzle_room_1_table_left, 0).
@@ -158,6 +178,9 @@ holds(1, on((block, 3)), (block, 1), 0).
 holds(1, on((block, 7)), puzzle_room_2_table_left, 0).
 holds(1, on((block, 8)), puzzle_room_2_table_right, 0).
 holds(1, on((block, 9)), (block, 7), 0).
+holds(1, on((block, 13)), puzzle_room_3_table_left, 0).
+holds(1, on((block, 14)), puzzle_room_3_table_right, 0).
+holds(1, on((block, 15)), (block, 13), 0).
 
 %% The other three blocks are on the floor in the store room
 holds(1, in((block, 4)), (store_room_1, 0), 0).
@@ -172,6 +195,12 @@ holds(1, in((block, 12)), (store_room_2, 0), 0).
 holds(1, on((block, 10)), nothing, 0).
 holds(1, on((block, 11)), nothing, 0).
 holds(1, on((block, 12)), nothing, 0).
+holds(1, in((block, 16)), (store_room_3, 0), 0).
+holds(1, in((block, 17)), (store_room_3, 0), 0).
+holds(1, in((block, 18)), (store_room_3, 0), 0).
+holds(1, on((block, 16)), nothing, 0).
+holds(1, on((block, 17)), nothing, 0).
+holds(1, on((block, 18)), nothing, 0).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -193,6 +222,8 @@ final_goal(1, on((block, 3)), puzzle_room_1_table_left, true).
 final_goal(1, on((block, 6)), puzzle_room_1_table_right, true).
 final_goal(1, on((block, 9)), puzzle_room_2_table_left, true).
 final_goal(1, on((block, 12)), puzzle_room_2_table_right, true).
+final_goal(1, on((block, 15)), puzzle_room_3_table_left, true).
+final_goal(1, on((block, 18)), puzzle_room_3_table_right, true).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -203,6 +234,7 @@ final_goal(1, on((block, 12)), puzzle_room_2_table_right, true).
 
 goal_order(AL, complete_tower(COLOUR, puzzle_room_1_table), true, true, 1) :- insta_of(AL, colour, COLOUR), al(AL).
 goal_order(AL, complete_tower(COLOUR, puzzle_room_2_table), true, true, 2) :- insta_of(AL, colour, COLOUR), al(AL).
+goal_order(AL, complete_tower(COLOUR, puzzle_room_3_table), true, true, 3) :- insta_of(AL, colour, COLOUR), al(AL).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%s%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Entity Instance Declarations - entity(CLS, EN) declares an entity EN of class CLS
@@ -220,7 +252,7 @@ entity(manipulator_limb, manipulator_limb_2).
 entity(manipulator_end, manipulator_end_2).
 
 %% There are six blocks
-block_number(1..12).
+block_number(1..18).
 blocks_per_tower(3).
 entity(block, (block, N)) :- block_number(N).
 
@@ -232,6 +264,9 @@ entity(room, hallway_1).
 entity(room, store_room_2).
 entity(room, puzzle_room_2).
 entity(room, hallway_2).
+entity(room, store_room_3).
+entity(room, puzzle_room_3).
+entity(room, hallway_3).
 
 %% All the rooms have two cells except the hallway which has three
 x(0..3).
@@ -242,6 +277,9 @@ size(puzzle_room_1, 2).
 size(store_room_2, 2).
 size(hallway_2, 3).
 size(puzzle_room_2, 2).
+size(store_room_3, 2).
+size(hallway_3, 3).
+size(puzzle_room_3, 2).
 entity(cell, (ROOM, X)) :- entity(room, ROOM), size(ROOM, MAX), X < MAX, x(X).
 
 %% The is one door between the hallway and the puzzle room
@@ -249,6 +287,8 @@ entity(door, store_room_1_door).
 entity(door, puzzle_room_1_door).
 entity(door, store_room_2_door).
 entity(door, puzzle_room_2_door).
+entity(door, store_room_3_door).
+entity(door, puzzle_room_3_door).
 
 %% The door has two handles
 entity(handle, store_room_1_door_handle_inner).
@@ -259,16 +299,23 @@ entity(handle, store_room_2_door_handle_inner).
 entity(handle, store_room_2_door_handle_outer).
 entity(handle, puzzle_room_2_door_handle_inner).
 entity(handle, puzzle_room_2_door_handle_outer).
+entity(handle, store_room_3_door_handle_inner).
+entity(handle, store_room_3_door_handle_outer).
+entity(handle, puzzle_room_3_door_handle_inner).
+entity(handle, puzzle_room_3_door_handle_outer).
 
 %% There is one table in the puzzle room
 entity(table, puzzle_room_1_table).
 entity(table, puzzle_room_2_table).
+entity(table, puzzle_room_3_table).
 
 %% The table has three sides
 entity(side, puzzle_room_1_table_left).
 entity(side, puzzle_room_1_table_right).
 entity(side, puzzle_room_2_table_left).
 entity(side, puzzle_room_2_table_right).
+entity(side, puzzle_room_3_table_left).
+entity(side, puzzle_room_3_table_right).
 
 %% Available colours
 entity(colour, red).
@@ -304,9 +351,15 @@ ancestry_relation(store_room_2_door, store_room_2_door_handle_inner).
 ancestry_relation(store_room_2_door, store_room_2_door_handle_outer).
 ancestry_relation(puzzle_room_2_door, puzzle_room_2_door_handle_inner).
 ancestry_relation(puzzle_room_2_door, puzzle_room_2_door_handle_outer).
+ancestry_relation(store_room_3_door, store_room_3_door_handle_inner).
+ancestry_relation(store_room_3_door, store_room_3_door_handle_outer).
+ancestry_relation(puzzle_room_3_door, puzzle_room_3_door_handle_inner).
+ancestry_relation(puzzle_room_3_door, puzzle_room_3_door_handle_outer).
 
 %% Relations betweens the puzzle room table and its sides
 ancestry_relation(puzzle_room_1_table, puzzle_room_1_table_left).
 ancestry_relation(puzzle_room_1_table, puzzle_room_1_table_right).
 ancestry_relation(puzzle_room_2_table, puzzle_room_2_table_left).
 ancestry_relation(puzzle_room_2_table, puzzle_room_2_table_right).
+ancestry_relation(puzzle_room_3_table, puzzle_room_3_table_left).
+ancestry_relation(puzzle_room_3_table, puzzle_room_3_table_right).
