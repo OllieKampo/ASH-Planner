@@ -187,9 +187,13 @@ class Results:
     
     def process(self) -> dict[str, pandas.DataFrame]:
         "Process the currently collected data and return them as a pandas dataframe."
-        if self.__dataframes is not None and not self.__is_changed:
+        if (self.__dataframes is not None
+            and not self.__is_changed):
             return self.__dataframes
         self.__is_changed = False
+        
+        if not self.__plans:
+            raise RuntimeError("Cannot process an empty set of plans.")
         
         ## Collate the data into a dictionary
         data_dict: dict[str, dict[str, list[float]]] = defaultdict(lambda: defaultdict(list))
@@ -992,7 +996,8 @@ class Results:
         worksheet.write(len(self.__plans) + 13, 1, self.__failed_runs)
         
         ## Problem definitions statistics
-        dataframes["PROBLEM_SEQUENCE"].to_excel(writer, sheet_name="Problem Sequence")
+        if "PROBLEM_SEQUENCE" in dataframes:
+            dataframes["PROBLEM_SEQUENCE"].to_excel(writer, sheet_name="Problem Sequence")
         if "DIVISIONS" in dataframes:
             dataframes["DIVISIONS"].to_excel(writer, sheet_name="Division Points")
         
@@ -1010,36 +1015,38 @@ class Results:
             worksheet.write((top_level + 3) * order, 0, f"Quantile {quantile}")
         
         ## Partial plan statistics
-        dataframes["PAR"].to_excel(writer, sheet_name="Partial Plans")
-        self.par_level_wise_means.to_excel(writer, sheet_name="Par Level-Wise Aggregates", startrow=1)
-        self.par_level_wise_stdev.to_excel(writer, sheet_name="Par Level-Wise Aggregates", startrow=((top_level + 3) * 1) + 1)
-        worksheet = writer.sheets["Par Level-Wise Aggregates"]
-        worksheet.write(0, 0, "Means")
-        worksheet.write(top_level + 3, 0, "Standard Deviation")
-        quantiles = self.par_level_wise_quantiles
-        for order, quantile in enumerate([0.0, 0.25, 0.5, 0.75, 1.0], start=2):
-            quantile_data = quantiles[quantiles["level_1"].isin([quantile])].drop("level_1", axis="columns")
-            quantile_data.to_excel(writer, sheet_name="Par Level-Wise Aggregates", startrow=((top_level + 3) * order) + 1)
-            worksheet.write((top_level + 3) * order, 0, f"Quantile {quantile}")
-        max_problems: int = len(self.par_problem_wise_means["PN"])
-        self.par_problem_wise_means.to_excel(writer, sheet_name="Par Problem-Wise Aggregates", startrow=1)
-        self.par_problem_wise_stdev.to_excel(writer, sheet_name="Par Problem-Wise Aggregates", startrow=((max_problems + 3) * 1) + 1)
-        worksheet = writer.sheets["Par Problem-Wise Aggregates"]
-        worksheet.write(0, 0, "Means")
-        worksheet.write(max_problems + 3, 0, "Standard Deviation")
-        quantiles = self.par_problem_wise_quantiles
-        for order, quantile in enumerate([0.0, 0.25, 0.5, 0.75, 1.0], start=2):
-            quantile_data = quantiles[quantiles["level_2"].isin([quantile])].drop("level_2", axis="columns")
-            quantile_data.to_excel(writer, sheet_name="Par Problem-Wise Aggregates", startrow=((max_problems + 3) * order) + 1)
-            worksheet.write((max_problems + 3) * order, 0, f"Quantile {quantile}")
+        if "PAR" in dataframes:
+            dataframes["PAR"].to_excel(writer, sheet_name="Partial Plans")
+            self.par_level_wise_means.to_excel(writer, sheet_name="Par Level-Wise Aggregates", startrow=1)
+            self.par_level_wise_stdev.to_excel(writer, sheet_name="Par Level-Wise Aggregates", startrow=((top_level + 3) * 1) + 1)
+            worksheet = writer.sheets["Par Level-Wise Aggregates"]
+            worksheet.write(0, 0, "Means")
+            worksheet.write(top_level + 3, 0, "Standard Deviation")
+            quantiles = self.par_level_wise_quantiles
+            for order, quantile in enumerate([0.0, 0.25, 0.5, 0.75, 1.0], start=2):
+                quantile_data = quantiles[quantiles["level_1"].isin([quantile])].drop("level_1", axis="columns")
+                quantile_data.to_excel(writer, sheet_name="Par Level-Wise Aggregates", startrow=((top_level + 3) * order) + 1)
+                worksheet.write((top_level + 3) * order, 0, f"Quantile {quantile}")
+            max_problems: int = len(self.par_problem_wise_means["PN"])
+            self.par_problem_wise_means.to_excel(writer, sheet_name="Par Problem-Wise Aggregates", startrow=1)
+            self.par_problem_wise_stdev.to_excel(writer, sheet_name="Par Problem-Wise Aggregates", startrow=((max_problems + 3) * 1) + 1)
+            worksheet = writer.sheets["Par Problem-Wise Aggregates"]
+            worksheet.write(0, 0, "Means")
+            worksheet.write(max_problems + 3, 0, "Standard Deviation")
+            quantiles = self.par_problem_wise_quantiles
+            for order, quantile in enumerate([0.0, 0.25, 0.5, 0.75, 1.0], start=2):
+                quantile_data = quantiles[quantiles["level_2"].isin([quantile])].drop("level_2", axis="columns")
+                quantile_data.to_excel(writer, sheet_name="Par Problem-Wise Aggregates", startrow=((max_problems + 3) * order) + 1)
+                worksheet.write((max_problems + 3) * order, 0, f"Quantile {quantile}")
         
         ## Step- and index-wise statistics
         dataframes["STEP_CAT"].to_excel(writer, sheet_name="Concat Step-wise")
         self.step_wise_means.to_excel(writer, sheet_name="Concat Step-wise Mean")
         self.step_wise_stdev.to_excel(writer, sheet_name="Concat Step-wise Stdev")
-        dataframes["INDEX_CAT"].to_excel(writer, sheet_name="Concat Index-wise")
-        self.index_wise_means.to_excel(writer, sheet_name="Concat Index-wise Mean")
-        self.index_wise_stdev.to_excel(writer, sheet_name="Concat Index-wise Stdev")
+        if "INDEX_CAT" in dataframes:
+            dataframes["INDEX_CAT"].to_excel(writer, sheet_name="Concat Index-wise")
+            self.index_wise_means.to_excel(writer, sheet_name="Concat Index-wise Mean")
+            self.index_wise_stdev.to_excel(writer, sheet_name="Concat Index-wise Stdev")
         
         writer.save()
 
@@ -1080,20 +1087,20 @@ class Experiment:
         self.__enable_tqdm: bool = enable_tqdm
     
     def run_experiments(self) -> Results:
-        "Run the encapsulated experiments and return a result object containing obtained statistics."
+        "Run the encapsulated experiments and return a results object containing obtained statistics."
         results: Results = self.__run_all()
         dataframes = results.process()
-        columns: list[str] = ["RU", "AL", "LE", "AC", "CF", "GT", "ST", "OT", "TT", "LT", "CT", "WT", "RSS", "VMS",
-                              "QL_SCORE", "LT_SCORE", "CT_SCORE", "AW_SCORE", "AME_SCORE", "LT_GRADE", "CT_GRADE", "AW_GRADE", "AME_GRADE", "GRADE"]
-        _EXP_logger.info("\n\n" + center_text("Experimental Results", framing_width=40, centering_width=60)
-                         + "\n\n" + center_text("Concatenated Plans", frame_after=False, framing_char='~', framing_width=30, centering_width=60)
-                         + "\n" + dataframes["CAT"].to_string(index=False, columns=columns)
-                         + "\n\n" + center_text("Level-wise Means", frame_after=False, framing_char='~', framing_width=30, centering_width=60)
-                         + "\n" + results.cat_level_wise_means.to_string(index=False, columns=columns[1:])
-                         + "\n\n" + center_text("Level-wise Standard Deviation", frame_after=False, framing_char='~', framing_width=30, centering_width=60)
-                         + "\n" + results.cat_level_wise_stdev.to_string(index=False, columns=columns[1:])
-                         + "\n\n" + center_text("Partial Plans", frame_after=False, framing_char='~', framing_width=30, centering_width=60)
-                         + "\n" + dataframes["PAR"].to_string(index=False))
+        columns: list[str] = ["LE", "AC", "QL_SCORE",
+                              "GT", "ST", "OT", "TT", "LT", "CT", "WT", "MET_PA", "TI_SCORE",
+                              "RSS", "VMS", "GRADE"]
+        _EXP_logger.info("\n\n" + center_text("Experimental Results",
+                                              framing_char='=', framing_width=54, centering_width=60)
+                         + "\n\n" + center_text("Concatenated Plan Level-Wise Means",
+                                                frame_after=False, framing_char='~', framing_width=50, centering_width=60)
+                         + "\n" + results.cat_level_wise_means.to_string(columns=columns)
+                         + "\n\n" + center_text("Concatenated Plan Level-Wise Standard Deviation",
+                                                frame_after=False, framing_char='~', framing_width=50, centering_width=60)
+                         + "\n" + results.cat_level_wise_stdev.to_string(columns=columns))
         return results
     
     def __run_all(self) -> Results:
@@ -1119,13 +1126,13 @@ class Experiment:
         ## Do experimental runs
         for run in tqdm.tqdm(range(1, self.__experimental_runs + 1), desc="Experimental runs completed", disable=not self.__enable_tqdm, leave=False, ncols=180, colour="white", unit="run"):
             hierarchical_plan, planning_time = self.__run()
-            if hierarchical_plan is not None:
+            if (success := hierarchical_plan is not None):
                 results.add(hierarchical_plan)
                 successful_runs += 1
             else: failed_runs += 1
             _EXP_logger.log(logging.DEBUG if self.__enable_tqdm else logging.INFO,
-                            "\n\n" + center_text(f"Experimental run {run} : Time {planning_time:.6f}s",
-                                                 framing_width=48, centering_width=60))
+                            "\n\n" + center_text(f"Experimental run {run} : {'SUCCESSFUL' if success else 'FAILED'} : Time {planning_time:.6f}s",
+                                                 framing_width=54, centering_width=60))
         results.runs_completed(successful_runs, failed_runs)
         
         experiment_real_total_time: float = time.perf_counter() - experiment_real_start_time
@@ -1149,7 +1156,7 @@ class Experiment:
             self.__planning_function()
             hierarchical_plan = self.__planner.get_hierarchical_plan(bottom_level=self.__bottom_level,
                                                                      top_level=self.__top_level)
-        except: pass
+        except Planner.ASH_NoSolutionError as error: pass
         
         ## Ensure that the planner is purged after reach run
         self.__planner.purge_solutions()

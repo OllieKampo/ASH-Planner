@@ -41,8 +41,11 @@ Planning Domain | Problem Instance | Execution Latency | Planning Time | Plan Qu
  | | | |
  | | | |
 
-Important Note: Due to a bug, in the results for the initial experiments and improved initial, the average wait time per action in globals is erroneously small, and the average wait time per action, the average minimum execution time per action, and thus the time score and grade for online, in concatenated plans is also erroneously small.
-Important Note: Due to an oversight, in all results, action expansion factors, deviations, and balance all erroneously large.
+IMPORTANT: Due to a bug in the experiment system;
+- The globals for the initial and improved initial experiments, the average wait time per action is erroneously small. The time scores and grades are still correct, as the average wait time per action is not used for calculating those statistics.
+- The concatenated plans for the initial and improved initial experiments, the average wait time per action, and the average minimum execution time per action are all erroneously small. Therefore, the concatenated plan time scores and grades for all online experiments under these categories may be incorrect and must be ignored, and only the global time scores and grades are valid.
+
+IMPORTANT: Due to an oversight, in all results, action expansion factors, deviations, and balance may have small errors. These has resultantly been omitted from the thesis.
 
 ## Installation
 

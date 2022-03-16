@@ -79,7 +79,7 @@ class SubscriptableDataClass(_collections_abc.Sequence):
 
 
 ## ASP symbol type
-ASP_Symbol: type = Union[str, clingo.Symbol]
+ASP_Symbol = Union[str, clingo.Symbol]
 
 def to_clingo_form(symbol: ASP_Symbol) -> clingo.Symbol:
     """
@@ -90,7 +90,7 @@ def to_clingo_form(symbol: ASP_Symbol) -> clingo.Symbol:
     
     Parameters
     ----------
-    `symbol : {str | clingo.Symbol}` - An ASP symbol, given a string or a clingo Symbol.
+    `symbol : {str | clingo.Symbol}` - An ASP symbol, given as a string or a pre-constructed clingo Symbol.
     
     Returns
     -------
@@ -98,7 +98,7 @@ def to_clingo_form(symbol: ASP_Symbol) -> clingo.Symbol:
 
     Raises
     ------
-    `RuntimeError` - If the symbol is given as a string, and has invalid sntax according to gringo's term parser.
+    `RuntimeError` - If the symbol is given as a string, and has invalid syntax according to gringo's term parser.
     """
     if isinstance(symbol, str):
         try:
@@ -1424,8 +1424,10 @@ class SolveSignal:
         
         Parameters
         ----------
-        `dummy : bool = False` - A Boolean, if no solver call has yet been made by the underlying logic program
-        since the creation of this solve signal then; True returns a 'dummy' answer object, and False returns None.
+        `dummy : bool = False` - A Boolean, by default False.
+        If no solver call has yet been made by the underlying logic program since the creation of this solve signal then;
+        True returns a 'dummy' answer object, and False returns None.
+        Otherise, if at least one solve call has been made, this parameter is ignored, and the answer is always returned.
         
         Returns
         -------
@@ -1438,7 +1440,7 @@ class SolveSignal:
         external
             A symbol representing the external atom.
         truth
-            A Boolean fixes the external to the respective truth value; and None leaves its truth value open.
+            A Boolean to fix the external to the respective truth value; and None leaves its truth value open.
         inc_range
             The incremental step range over which this external should be assigned.
             If the incremental step range is None, then the external is assigned only once.
@@ -1453,12 +1455,14 @@ class SolveSignal:
         self.__control.release_external(to_clingo_form(symbol))
     
     def online_extend_program(self, program_part: BasePart, program: str, context: Iterable[Callable[..., clingo.Symbol]] = []) -> None:
+        """
+        This method does not update the logic program's solving statistics directly.
+        As such, the time spent grounding the program extension will not be represented by a statistics object extracted from that logic program.
+        """
         _ASP_logger.debug(f"Solve signal {self!s} => Extending logic program {self.logic_program!s} to part {program_part!s} with:\n{program}")
         self.__control.add(program_part.name, list(map(str, program_part.args)), program)
         context_type = type("context", (object,), {func.__name__ : func for func in context})
         self.__control.ground([program_part._clingo_form], context_type)
-    
-    
     
     def run_for(self, callback: Callable[["Feedback"], None] = None, increments: Optional[int] = None) -> Answer:
         for feedback in self.yield_run(increments):
@@ -2713,7 +2717,7 @@ class LogicProgram:
         ##      - the minimum step value has not been reached or,
         ##          - the maximum step value has not been reached and,
         ##          - the stop condition has not been reached.
-        try: 
+        try:
             while (((increments is None
                      or (start_increment + increments - 1) >= self.__bounds.increment)
                     and (self.__incrementor.increment_limit is None
@@ -2987,6 +2991,7 @@ class Options:
         
         `calls : PrintMode` - Whether details about each individual solver call are printed.
         """
+        ## TODO Allow integer arguments as well, according to user preference
         return f"--quiet={models.value},{costs.value},{calls.value}"
     
     @enum.unique

@@ -580,6 +580,7 @@ def __main() -> int:
                                            enable_tqdm=namespace.ash_output == "experiment")
         results: Experiment.Results = experiment.run_experiments()
         dataframes: dict[str, DataFrame] = results.process()
+        is_refinement: bool = namespace.planning_mode == "hcr"
         
         ## Save the results as requseted
         if (excel_file := namespace.excel_file) is not None:
@@ -602,8 +603,11 @@ def __main() -> int:
             std: DataFrame = results.cat_level_wise_stdev
             step_wise_means: DataFrame = results.step_wise_means
             step_wise_std: DataFrame = results.step_wise_stdev
-            index_wise_means: DataFrame = results.index_wise_means
-            index_wise_std: DataFrame = results.index_wise_stdev
+            index_wise_means: DataFrame
+            index_wise_std: DataFrame
+            if is_refinement:
+                index_wise_means = results.index_wise_means
+                index_wise_std = results.index_wise_stdev
             
             figure, axes = pyplot.subplots(3, 3)
             
@@ -664,15 +668,17 @@ def __main() -> int:
             ## Bottom-level step-wise timing statistics
             bottom_step_wise_means: DataFrame = step_wise_means[step_wise_means["AL"].isin([bottom_level])].sort_index()
             bottom_step_wise_std: DataFrame = step_wise_std[step_wise_std["AL"].isin([bottom_level])].sort_index()
-            bottom_index_wise_means: DataFrame = index_wise_means[index_wise_means["AL"].isin([bottom_level])].sort_index()
+            bottom_index_wise_means: DataFrame = DataFrame({})
+            if is_refinement: bottom_index_wise_means = index_wise_means[index_wise_means["AL"].isin([bottom_level])].sort_index()
             steps: list[int] = bottom_step_wise_means["SL"].to_list()
             max_time: float = bottom_step_wise_means["S_TT"].add(bottom_step_wise_std["S_TT"], fill_value=0).max()
             axes[1, 0].plot(steps, bottom_step_wise_means["S_GT"], "g", label="Mean Step-Wise Grounding")
             axes[1, 0].plot(steps, bottom_step_wise_means["S_ST"], "b", label="Mean Step-Wise Solving")
             axes[1, 0].plot(steps, bottom_step_wise_means["S_TT"], "r", label="Mean Step-Wise Total")
-            axes[1, 0].bar(bottom_index_wise_means["YLD_AT"], max_time, width=0.20, color="magenta", label="Mean Yield Steps")
-            axes[1, 0].bar(bottom_step_wise_means["SL"], [max_time if fuzzy_truth > 0.01 else 0 for fuzzy_truth in bottom_step_wise_means["IS_DIV_APP"]], width=0.20,
-                           color=['#' + f"{round(int('FFFFFF', base=16) * (1.0 - fuzzy_truth)):06x}" for fuzzy_truth in bottom_step_wise_means["IS_DIV_APP"]], label="Problem Divisions")
+            if is_refinement:
+                axes[1, 0].bar(bottom_index_wise_means["YLD_AT"], max_time, width=0.20, color="magenta", label="Mean Yield Steps")
+                axes[1, 0].bar(bottom_step_wise_means["SL"], [max_time if fuzzy_truth > 0.01 else 0 for fuzzy_truth in bottom_step_wise_means["IS_DIV_APP"]], width=0.20,
+                               color=['#' + f"{round(int('FFFFFF', base=16) * (1.0 - fuzzy_truth)):06x}" for fuzzy_truth in bottom_step_wise_means["IS_DIV_APP"]], label="Problem Divisions")
             if namespace.experimental_runs > 1:
                 axes[1, 0].plot(steps, bottom_step_wise_means["S_GT"] + bottom_step_wise_std["S_GT"], "--g")
                 axes[1, 0].plot(steps, bottom_step_wise_means["S_ST"] + bottom_step_wise_std["S_ST"], "--b")
@@ -701,68 +707,69 @@ def __main() -> int:
             axes[1, 1].set_xlabel("Search Length")
             axes[1, 1].legend(prop={"size" : "xx-small"})
             
-            ## Bottom-level index-wise sub-plan length
-            set_bars(2)
-            axes[1, 2].bar(numpy.array(bottom_index_wise_means["INDEX"]) - (bar_width / 2), bottom_index_wise_means["SP_L"], width=bar_width, color="cyan", label="Mean Sub-Plan Lengths")
-            axes[1, 2].bar(numpy.array(bottom_index_wise_means["INDEX"]) + (bar_width / 2), bottom_index_wise_means["INTER_Q"], width=bar_width, color="magenta", label="Mean Interleaving Quantity")
-            axes[1, 2].set_title("Bottom-Level Sub-Plan Lengths")
-            axes[1, 2].set_ylabel("Length")
-            axes[1, 2].set_xlabel("Sub-goal Stage Index")
-            axes[1, 2].legend(prop={"size" : "xx-small"})
-            
-            ## Achieved sub-goal stages against search length
-            axes[2, 0].plot(steps, bottom_step_wise_means["C_TACHSGOALS"], "g", label="Achieved Sub-goal Stages")
-            axes[2, 0].bar(bottom_index_wise_means["ACH_AT"], max(bottom_step_wise_means["C_TACHSGOALS"]), width=0.20, color="cyan", label="Mean Achievement Steps")
-            if namespace.experimental_runs > 1:
-                axes[2, 0].plot(steps, bottom_step_wise_means["C_TACHSGOALS"] + bottom_step_wise_std["C_TACHSGOALS"], "--g")
-                axes[2, 0].plot(steps, bottom_step_wise_means["C_TACHSGOALS"] - bottom_step_wise_std["C_TACHSGOALS"], "--g")
-            axes[2, 0].set_title("Bottom-Level Sub-Goal Achievement")
-            axes[2, 0].set_ylabel("Total")
-            axes[2, 0].set_xlabel("Plan Length")
-            axes[2, 0].legend(prop={"size" : "xx-small"})
-            
-            ## Plan expansion against search length
-            axes[2, 1].plot(steps, bottom_step_wise_means["C_CP_EF_L"], "g", label="Length Factor")
-            axes[2, 1].plot(steps, bottom_step_wise_means["C_CP_EF_A"], "y", label="Action Factor")
-            axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_ED_L"], "b", label="Length Deviation")
-            axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_ED_A"], "c", label="Action Deviation")
-            axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_EB_L"], "r", label="Length Balance")
-            axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_EB_A"], "m", label="Action Balance")
-            if namespace.experimental_runs > 1:
-                axes[2, 1].plot(steps, bottom_step_wise_means["C_CP_EF_L"] + bottom_step_wise_std["C_CP_EF_L"], "--g")
-                axes[2, 1].plot(steps, bottom_step_wise_means["C_CP_EF_L"] - bottom_step_wise_std["C_CP_EF_L"], "--g")
-                axes[2, 1].plot(steps, bottom_step_wise_means["C_CP_EF_A"] + bottom_step_wise_std["C_CP_EF_A"], "--y")
-                axes[2, 1].plot(steps, bottom_step_wise_means["C_CP_EF_A"] - bottom_step_wise_std["C_CP_EF_A"], "--y")
+            if is_refinement:
+                ## Bottom-level index-wise sub-plan length
+                set_bars(2)
+                axes[1, 2].bar(numpy.array(bottom_index_wise_means["INDEX"]) - (bar_width / 2), bottom_index_wise_means["SP_L"], width=bar_width, color="cyan", label="Mean Sub-Plan Lengths")
+                axes[1, 2].bar(numpy.array(bottom_index_wise_means["INDEX"]) + (bar_width / 2), bottom_index_wise_means["INTER_Q"], width=bar_width, color="magenta", label="Mean Interleaving Quantity")
+                axes[1, 2].set_title("Bottom-Level Sub-Plan Lengths")
+                axes[1, 2].set_ylabel("Length")
+                axes[1, 2].set_xlabel("Sub-goal Stage Index")
+                axes[1, 2].legend(prop={"size" : "xx-small"})
                 
-                axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_ED_L"] + bottom_step_wise_std["C_SP_ED_L"], "--b")
-                axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_ED_L"] - bottom_step_wise_std["C_SP_ED_L"], "--b")
-                axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_ED_A"] + bottom_step_wise_std["C_SP_ED_A"], "--c")
-                axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_ED_A"] - bottom_step_wise_std["C_SP_ED_A"], "--c")
+                ## Achieved sub-goal stages against search length
+                axes[2, 0].plot(steps, bottom_step_wise_means["C_TACHSGOALS"], "g", label="Achieved Sub-goal Stages")
+                axes[2, 0].bar(bottom_index_wise_means["ACH_AT"], max(bottom_step_wise_means["C_TACHSGOALS"]), width=0.20, color="cyan", label="Mean Achievement Steps")
+                if namespace.experimental_runs > 1:
+                    axes[2, 0].plot(steps, bottom_step_wise_means["C_TACHSGOALS"] + bottom_step_wise_std["C_TACHSGOALS"], "--g")
+                    axes[2, 0].plot(steps, bottom_step_wise_means["C_TACHSGOALS"] - bottom_step_wise_std["C_TACHSGOALS"], "--g")
+                axes[2, 0].set_title("Bottom-Level Sub-Goal Achievement")
+                axes[2, 0].set_ylabel("Total")
+                axes[2, 0].set_xlabel("Plan Length")
+                axes[2, 0].legend(prop={"size" : "xx-small"})
                 
-                axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_EB_L"] + bottom_step_wise_std["C_SP_EB_L"], "--r")
-                axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_EB_L"] - bottom_step_wise_std["C_SP_EB_L"], "--r")
-                axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_EB_A"] + bottom_step_wise_std["C_SP_EB_A"], "--m")
-                axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_EB_A"] - bottom_step_wise_std["C_SP_EB_A"], "--m")
-            axes[2, 1].set_title("Bottom-Level Refinement Expansion")
-            axes[2, 1].set_ylabel("Accumulating Expansion")
-            axes[2, 1].set_xlabel("Plan Length")
-            axes[2, 1].legend(prop={"size" : "xx-small"})
-            
-            ## Partial-problem balancing
-            set_bars(7)
-            axes[2, 2].bar(al_range - (bar_width * 3.0), means["PR_T"], bar_width, label="Total Problems")
-            axes[2, 2].bar(al_range - (bar_width * 2.0), means["PR_TS_MEAN"], bar_width, label="Mean Size")
-            axes[2, 2].bar(al_range - (bar_width * 1.0), means["PR_TS_STD"], bar_width, label="Stdev Size")
-            axes[2, 2].bar(al_range, means["PP_LE_MEAN"], bar_width, label="Mean Refinement Length")
-            axes[2, 2].bar(al_range + (bar_width * 1.0), means["PP_LE_STD"], bar_width, label="Stdev Refinement Length")
-            axes[2, 2].bar(al_range + (bar_width * 2.0), means["DIV_INDEX_MAE"], bar_width, label="Divisions Index Spread")
-            axes[2, 2].bar(al_range + (bar_width * 3.0), means["DIV_STEP_MAE"], bar_width, label="Divisions Step Spread")
-            axes[2, 2].set_title("Problem Balance")
-            axes[2, 2].set_ylabel("Total")
-            axes[2, 2].set_xlabel("Abstraction Level")
-            axes[2, 2].set_xticks(al_range)
-            axes[2, 2].set_xticklabels(al_labels)
-            axes[2, 2].legend(prop={"size" : "xx-small"})
+                ## Plan expansion against search length
+                axes[2, 1].plot(steps, bottom_step_wise_means["C_CP_EF_L"], "g", label="Length Factor")
+                axes[2, 1].plot(steps, bottom_step_wise_means["C_CP_EF_A"], "y", label="Action Factor")
+                axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_ED_L"], "b", label="Length Deviation")
+                axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_ED_A"], "c", label="Action Deviation")
+                axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_EB_L"], "r", label="Length Balance")
+                axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_EB_A"], "m", label="Action Balance")
+                if namespace.experimental_runs > 1:
+                    axes[2, 1].plot(steps, bottom_step_wise_means["C_CP_EF_L"] + bottom_step_wise_std["C_CP_EF_L"], "--g")
+                    axes[2, 1].plot(steps, bottom_step_wise_means["C_CP_EF_L"] - bottom_step_wise_std["C_CP_EF_L"], "--g")
+                    axes[2, 1].plot(steps, bottom_step_wise_means["C_CP_EF_A"] + bottom_step_wise_std["C_CP_EF_A"], "--y")
+                    axes[2, 1].plot(steps, bottom_step_wise_means["C_CP_EF_A"] - bottom_step_wise_std["C_CP_EF_A"], "--y")
+                    
+                    axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_ED_L"] + bottom_step_wise_std["C_SP_ED_L"], "--b")
+                    axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_ED_L"] - bottom_step_wise_std["C_SP_ED_L"], "--b")
+                    axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_ED_A"] + bottom_step_wise_std["C_SP_ED_A"], "--c")
+                    axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_ED_A"] - bottom_step_wise_std["C_SP_ED_A"], "--c")
+                    
+                    axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_EB_L"] + bottom_step_wise_std["C_SP_EB_L"], "--r")
+                    axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_EB_L"] - bottom_step_wise_std["C_SP_EB_L"], "--r")
+                    axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_EB_A"] + bottom_step_wise_std["C_SP_EB_A"], "--m")
+                    axes[2, 1].plot(steps, bottom_step_wise_means["C_SP_EB_A"] - bottom_step_wise_std["C_SP_EB_A"], "--m")
+                axes[2, 1].set_title("Bottom-Level Refinement Expansion")
+                axes[2, 1].set_ylabel("Accumulating Expansion")
+                axes[2, 1].set_xlabel("Plan Length")
+                axes[2, 1].legend(prop={"size" : "xx-small"})
+                
+                ## Partial-problem balancing
+                set_bars(7)
+                axes[2, 2].bar(al_range - (bar_width * 3.0), means["PR_T"], bar_width, label="Total Problems")
+                axes[2, 2].bar(al_range - (bar_width * 2.0), means["PR_TS_MEAN"], bar_width, label="Mean Size")
+                axes[2, 2].bar(al_range - (bar_width * 1.0), means["PR_TS_STD"], bar_width, label="Stdev Size")
+                axes[2, 2].bar(al_range, means["PP_LE_MEAN"], bar_width, label="Mean Refinement Length")
+                axes[2, 2].bar(al_range + (bar_width * 1.0), means["PP_LE_STD"], bar_width, label="Stdev Refinement Length")
+                axes[2, 2].bar(al_range + (bar_width * 2.0), means["DIV_INDEX_MAE"], bar_width, label="Divisions Index Spread")
+                axes[2, 2].bar(al_range + (bar_width * 3.0), means["DIV_STEP_MAE"], bar_width, label="Divisions Step Spread")
+                axes[2, 2].set_title("Problem Balance")
+                axes[2, 2].set_ylabel("Total")
+                axes[2, 2].set_xlabel("Abstraction Level")
+                axes[2, 2].set_xticks(al_range)
+                axes[2, 2].set_xticklabels(al_labels)
+                axes[2, 2].legend(prop={"size" : "xx-small"})
             
             ## Add a little more space vertically to make room for plot titles
             figure.subplots_adjust(hspace=0.4)
