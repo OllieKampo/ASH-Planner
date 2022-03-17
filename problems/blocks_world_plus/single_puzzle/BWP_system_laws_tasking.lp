@@ -996,15 +996,15 @@ precond(AL, ROBO, place_upon(OBJ_1, OBJ_2), on(OBJ_2), nothing, false) :- OBJ_1 
    sl(AL).
 
 %% A robot cannot transport more objects than it has manipulator arms
-% :- N = #count { OBJ : holds(AL_1, transporting(ROBO, OBJ), true, t),
-%                       fluent(AL_1, inertial, transporting(ROBO, OBJ), true),
-%                       insta_of(AL_1, graspable, OBJ) },
-%    M = #count { ARM : desce_of(AL_2, ROBO, ARM),
-%                       insta_of(AL_2, manipulator_arm, ARM),
-%                       al(AL_2), AL_1 >= AL_2 },
-%    N > M, block_number(N), block_number(M),
-%    insta_of(AL_1, robot, ROBO),
-%    AL_1 >= TL, model_type(TL, tasking), sl(AL_1).
+:- N = #count { OBJ : holds(AL_1, transporting(ROBO, OBJ), true, t),
+                      fluent(AL_1, inertial, transporting(ROBO, OBJ), true),
+                      insta_of(AL_1, graspable, OBJ) },
+   M = #count { ARM : desce_of(AL_2, ROBO, ARM),
+                      insta_of(AL_2, manipulator_arm, ARM),
+                      al(AL_2), AL_1 >= AL_2 },
+   N > M, block_number(N), block_number(M),
+   insta_of(AL_1, robot, ROBO),
+   AL_1 >= TL, model_type(TL, tasking), sl(AL_1).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Fluent Definitions - Rules defining the truth of defined fluents

@@ -2928,12 +2928,6 @@ class HierarchicalPlanner(AbstractionHierarchy):
                 self.__logger.log(self.__log_level(Verbosity.Verbose),
                                   f"Starting new logic program: {local_program!s}")
                 
-                current_hierarchical_plan: HierarchicalPlan = self.get_hierarchical_plan(bottom_level=level,
-                                                                                         ignore_missing=True)
-                total_planning_time_at_level: float = 0.0
-                if level in current_hierarchical_plan:
-                    total_planning_time_at_level = current_hierarchical_plan.get_completion_time(level)
-                
                 ## A new incrementor is needed because a new program grounding is being created
                 incrementor = ASP.SolveIncrementor(step_start=problem.start_step,
                                                    step_increase_initial=((problem.search_length_bound - problem.start_step) + 1) if problem.use_search_length_bound else 2,
@@ -2943,7 +2937,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
                                                                    if (not problem.sequential_yield
                                                                        and not _generate_search_space)
                                                                    else None),
-                                                   cumulative_time_limit=(time_limit - total_planning_time_at_level))
+                                                   cumulative_time_limit=time_limit)
                 
                 ## If this grounding is going to be saved and continued later then setup the external context function for updating the total last sub-goal stage index
                 def get_total_last_sgoals(problem_level: clingo.Symbol) -> clingo.Symbol:
@@ -2972,7 +2966,8 @@ class HierarchicalPlanner(AbstractionHierarchy):
         ##      - This occurs if the program was unsatisfiable,
         ##      - or the search length or time limit was reached.
         if ((unsat := solution.answer.result.unsatisfiable)
-            or (limit := solve_signal.halt_reason in [ASP.HaltReason.StepMaximum, ASP.HaltReason.TimeLimit])):
+            or (limit := (solve_signal.halt_reason in [ASP.HaltReason.StepMaximum, ASP.HaltReason.TimeLimit]
+                          or solution.answer.statistics.grand_totals.total_time > time_limit))):
             log_and_raise(ASH_NoSolutionError,
                           f"The monolevel planning problem at level {level} does not have solution within given limits. Reason: "
                           + ("The problem is unsatisfiable" if unsat else "The search length or time limit was reached." if limit else "Unknown."),
@@ -3317,9 +3312,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
                 if _conformance:
                     current_hierarchical_plan: HierarchicalPlan = self.get_hierarchical_plan(bottom_level=level,
                                                                                              ignore_missing=True)
-                    total_planning_time_at_previous_level: float = 0.0
-                    if (level + 1) in current_hierarchical_plan:
-                        total_planning_time_at_previous_level = current_hierarchical_plan.get_completion_time(level + 1)
+                    total_planning_time_at_previous_level: float = current_hierarchical_plan.get_completion_time(current_hierarchical_plan.bottom_level)
                     _time_limit = _time_limit - total_planning_time_at_previous_level
                 _length_limit: Optional[Number] = convert(length_limit, level)
                 if isinstance(_length_limit, float):

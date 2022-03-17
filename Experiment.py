@@ -432,6 +432,7 @@ class Results:
                 data_dict["CAT"]["LT_GRADE"].append(latency_grade := quality_score * latency_score)
                 data_dict["CAT"]["CT_GRADE"].append(completion_grade := quality_score * completion_score)
                 
+                ## TODO Add average wait time non-initial? This would be less affected by the execution latency time?
                 data_dict["CAT"]["AW_GRADE"].append(quality_score * wait_score)
                 data_dict["CAT"]["AW_PA_GRADE"].append(quality_score * wait_pa_score)
                 

@@ -1034,11 +1034,11 @@ class Model(_collections_abc.Set):
         return atoms
     
     def evaluate(self, rule: str, solver_options: Iterable[str] = [], assumptions: Iterable[clingo.Symbol] = [], context: Iterable[Callable[..., clingo.Symbol]] = []) -> "Answer":
-        context_type = type("context", (object,), {func.__name__ : func for func in context})
+        ## context_type = type("context", (object,), {func.__name__ : func for func in context})
         _ASP_logger.debug(f"Evaluating rule '{rule}' over:\n{self}")
         logic_program = LogicProgram(rule, name="Evaluate", silent=True)
         logic_program.add_rules(self.symbols)
-        return logic_program.solve(solver_options=solver_options, assumptions=assumptions, context=context_type)
+        return logic_program.solve(solver_options=solver_options, assumptions=assumptions, context=context)
 
 class ModelCount(NamedTuple):
     model: Model
@@ -1097,7 +1097,7 @@ class Answer(NamedTuple):
     Model(symbols=frozenset(), cost=[], optimality_proven=False, number=-1, thread_id=-1, model_type=None)
     """
     result: Result ## TODO Change to base_result and inc_result
-    statistics: Statistics ## TODO Change to base_statistics and inc_statistics
+    statistics: Statistics ## TODO Change to base_statistics and inc_statistics (that means we can get rid of "grand totals" in inc_statistics)
     base_models: Union[list[Model], ModelCount]
     inc_models: dict[int, Union[list[Model], ModelCount]]
     
@@ -1666,6 +1666,9 @@ class HaltReason(enum.Enum):
     The value of each item is a tuple, containing a description and a function that returns True if the reason was satisfied.
     The reasons are resolved in the order given below.
     If multiple reasons are satisfied, only the first will be returned.
+    
+    TODO If the time limit is reached before the minimum step limit is reached and the program is satisfiable,
+    it will erroneously report "stop condition reached", whereas it should return "cumulative/incremental time limit reached".
     
     Items
     -----
@@ -2827,7 +2830,8 @@ class LogicProgram:
         finally:
             if self.__tqdm: progress_bar.close()
             
-            self.__logger.debug(f"Incremental statistics:\n{self.get_answer(dummy=True).statistics.incremental_stats_str}")
+            if isinstance(statistics := self.get_answer(dummy=True).statistics, IncrementalStatistics):
+                self.__logger.debug(f"Incremental statistics:\n{statistics.incremental_stats_str}")
             
             ## If we don't have a halt reason yet, and at least one increment ran, find the halt reason as usual,
             if halt_reason_description is None and last_feedback is not None:
@@ -2841,6 +2845,8 @@ class LogicProgram:
             
             ## Else if we still don't have a halt reason, an error must have occured.
             if halt_reason_description is None:
+                ## TODO If no increments ran because a limited was reached instantly, such that last_feedback is None, we still get here with no description of why.
+                ## The logic program should store a halt reason its and determine it when returning from the incremental solve call to fix this.
                 halt_reason_description = "Unknown (an error occured)"
             
             ## self.__halt_reason = halt_reason ## TODO and add to result?
