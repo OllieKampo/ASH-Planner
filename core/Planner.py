@@ -65,7 +65,7 @@ def log_and_raise(exception_type: type[BaseException],
                   *args: object, from_exception: Optional[BaseException] = None,
                   logger: logging.Logger = _planner_logger) -> None:
     "Commit a log (at debug level) and then raise an exception from a sequence of arbitrary arguments."
-    logger.debug(*args, exc_info=True)
+    logger.debug(*args, exc_info=(from_exception is not None))
     raise exception_type(*args) from from_exception
 
 #############################################################################################################################################
@@ -1891,10 +1891,12 @@ class HierarchicalPlanner(AbstractionHierarchy):
         refined_plan: bool = ((level + 1) in self.__sgoals
                               and level in self.__sgoals_achieved_at)
         
-        if refined_plan and start_step != 0 and start_step not in self.__sgoals_achieved_at[level].values():
+        if (refined_plan
+            and start_step != 0
+            and start_step not in self.__sgoals_achieved_at[level].values()):
             self.__logger.log(self.__log_level(Verbosity.Minimal, logging.WARNING),
-                              f"Extracted plan at non-initial start step {start_step} does not start on the step following a matching child...\n"
-                              f"These are: {list(self.__sgoals_achieved_at.keys())}")
+                              f"Extracted plan at non-initial start step {start_step} does not start on a matching child step...\n"
+                              f"These are: {list(self.__sgoals_achieved_at[level].values())}")
         
         ## The elements that make up a monolevel plan
         states: dict[int, list[Fluent]] = {}
@@ -1918,12 +1920,14 @@ class HierarchicalPlanner(AbstractionHierarchy):
                            if end_step is not None else
                            total_plan_length + 1))
         
-        self.__logger.debug(f"Extracting monolevel plan: {level=}, {start_step=}, {total_plan_length=}, {step_range=}")
-        self.__logger.debug(f"Current concatenated monoevel plan lengths:\n"
+        self.__logger.debug(f"Extracting monolevel plan at level {level}:\n"
+                            f"Current total plan length = {total_plan_length}, chosen step range to extract = {step_range}")
+        self.__logger.debug(f"Current concatenated monolevel plan progression:\n"
                             + "\n".join(f"Level [{level}]: "
                                         f"Length = {len(self.__actions.get(level, {}))}, "
                                         f"Total actions = {sum(len(actions) for actions in self.__actions.get(level, {}).values())}, "
-                                        f"Produced sub-goal stages = {sum(len(sgoals) for sgoals in self.__sgoals.get(level, {}).values())}"
+                                        f"Produced sub-goal stages = {len(self.__sgoals.get(level, {}))}, "
+                                        f"Produced sub-goal literals = {sum(len(sgoals) for sgoals in self.__sgoals.get(level, {}).values())}"
                                         for level in reversed(self.level_range)))
         
         trailing_plan: bool = False
@@ -2532,12 +2536,13 @@ class HierarchicalPlanner(AbstractionHierarchy):
         ##      - Assume no revision of the existing plan and extend from its end step,
         ##          - The end step is the achievement step of the last achieved sub-goal stage.
         ##      - If any of the existing plan is to be revised (by blending) then;
-        ##          - Start from the step at which the sub-goal stage that preceeds the first in the current sequence was achieved.
+        ##          - Start from the step at which the sub-goal stage that preceeds the first in the current sequence was achieved,
+        ##          - This is because that state is need as the start state even though the first sub-goal stage is not current until the following state.
         ##      - Note that if either;
-        ##          - A preemptive reaction division was made on a saved grounding,
+        ##          - A preemptive reactive division was made on a saved grounding,
         ##          - A left blend was made over a saved grounding,
-        ##              - The currently stored search length may be greater than the start step of the current problem,
-        ##              - This is valid because the plan cannot possible get shorter than the currently stored search length.
+        ##              - The current search length of that grounding that has been reached so far, may be greater than the start step of the current problem,
+        ##              - This is valid because the plan cannot possibly get shorter than the currently stored search length.
         _start_step: int = self.total_plan_length(level)
         if _first_sgoals <= achieved_sgoals:
             _start_step = self.__sgoals_achieved_at[level].get(_first_sgoals - 1, 0)
@@ -2922,12 +2927,6 @@ class HierarchicalPlanner(AbstractionHierarchy):
                 self.__logger.log(self.__log_level(Verbosity.Verbose),
                                   f"Starting new logic program: {local_program!s}")
                 
-                current_hierarchical_plan: HierarchicalPlan = self.get_hierarchical_plan(bottom_level=level,
-                                                                                         ignore_missing=True)
-                total_planning_time_at_level: float = 0.0
-                if level in current_hierarchical_plan:
-                    total_planning_time_at_level = current_hierarchical_plan.get_completion_time(level)
-                
                 ## A new incrementor is needed because a new program grounding is being created
                 incrementor = ASP.SolveIncrementor(step_start=problem.start_step,
                                                    step_increase_initial=((problem.search_length_bound - problem.start_step) + 1) if problem.use_search_length_bound else 2,
@@ -2937,7 +2936,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
                                                                    if (not problem.sequential_yield
                                                                        and not _generate_search_space)
                                                                    else None),
-                                                   cumulative_time_limit=(time_limit - total_planning_time_at_level))
+                                                   cumulative_time_limit=time_limit)
                 
                 ## If this grounding is going to be saved and continued later then setup the external context function for updating the total last sub-goal stage index
                 def get_total_last_sgoals(problem_level: clingo.Symbol) -> clingo.Symbol:
@@ -2966,7 +2965,8 @@ class HierarchicalPlanner(AbstractionHierarchy):
         ##      - This occurs if the program was unsatisfiable,
         ##      - or the search length or time limit was reached.
         if ((unsat := solution.answer.result.unsatisfiable)
-            or (limit := solve_signal.halt_reason in [ASP.HaltReason.StepMaximum, ASP.HaltReason.TimeLimit])):
+            or (limit := (solve_signal.halt_reason in [ASP.HaltReason.StepMaximum, ASP.HaltReason.TimeLimit]
+                          or solution.answer.statistics.grand_totals.total_time > time_limit))):
             log_and_raise(ASH_NoSolutionError,
                           f"The monolevel planning problem at level {level} does not have solution within given limits. Reason: "
                           + ("The problem is unsatisfiable" if unsat else "The search length or time limit was reached." if limit else "Unknown."),
@@ -3312,9 +3312,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
                 if _conformance:
                     current_hierarchical_plan: HierarchicalPlan = self.get_hierarchical_plan(bottom_level=level,
                                                                                              ignore_missing=True)
-                    total_planning_time_at_previous_level: float = 0.0
-                    if (level + 1) in current_hierarchical_plan:
-                        total_planning_time_at_previous_level = current_hierarchical_plan.get_completion_time(level + 1)
+                    total_planning_time_at_previous_level: float = current_hierarchical_plan.get_completion_time(current_hierarchical_plan.bottom_level)
                     _time_limit = _time_limit - total_planning_time_at_previous_level
                 _length_limit: Optional[Number] = convert(length_limit, level)
                 if isinstance(_length_limit, float):
@@ -3368,7 +3366,8 @@ class HierarchicalPlanner(AbstractionHierarchy):
                     ## An error will be raise if a solution to the planning problem was not found
                     planning_level_tracking_progress_bar.close()
                     planning_increment_bar.close()
-                    division_strategy.reset()
+                    if division_strategy is not None:
+                        division_strategy.reset()
                     log_and_raise(ASH_NoSolutionError, f"The hierarchical planning problem over levels [{min(level_range)}-{max(level_range)}] does not have a valid solution.",
                                   from_exception=error, logger=self.__logger)
                 
@@ -3431,9 +3430,93 @@ class HierarchicalPlanner(AbstractionHierarchy):
                                                 "Search length wasted by preemptive interrupting reactive division without saved grounding:\n"
                                                 f"Plan length = {plan_length}, search length = {search_length}, difference = {search_length - plan_length}")
                 
+                ## Obtain the start and end steps of the plan that is about to be divided at the current level;
+                ##      - Starts from the step equal to the number of achieved sub-goal stages at the next level (this will be the step of the end state of the matching child of the last achieved sgoal),
+                ##      - This would be the abstract partial plan that was just generated (extending from the last inherited division at the next level) for ground-first,
+                ##      - or it will be the abstract complete plan that was just generated for complete-first.
+                start_step: int = self.total_achieved_sgoals(level - 1)
+                end_step: Optional[int] = None
+                self.__logger.debug(f"Default value of start step and end steps of abstract plan to divide: {start_step=}, {end_step=}")
+                
+                ## Determine number of previously solved problems and account for;
+                ##      - Parts of the plan at the current level that have not been refined but have already been divided;
+                ##          - This cannot happen in ground-first or complete-first, since we never ascend back to a level unless all its produced sgoals have been refined,
+                ##          - But other more general methods, like hybrid, we need to be able to account for this possibility.
+                previously_solved_problems: int = problems.get(level - 1, 0)
+                if (scenarios := self.__division_scenarios.get(level, [])):
+                    start_step = max(start_step, scenarios[-1].last_index)
+                    previously_solved_problems = max(previously_solved_problems, max(scenarios[-1].problem_range))
+                    self.__logger.debug(f"Value of start step of abstract plan to divide adjusted for parts of the existing plan at the current level that have already been divided: {start_step=}")
+                
+                ## If this planning problem was possibly partial (it was divided by a division scenario);
+                ##      - The blends of the division points must be considered.
+                if dividing_scenario is not None:
+                    division_points: DivisionPointPair = dividing_scenario.get_division_point_pair(problems[level])
+                    
+                    ## If the right division point of the current partial problem is not the last in the dividing scenario;
+                    ##      - Do not divide (or refine) the part of this abstract plan that achieves sgoals in the right blend,
+                    ##      - This essentially just avoids refining the sub-goal stages in the right-blend of the solution to the current monolevel problem,
+                    ##          - If it is the last, then the sub-goal stage producing actions of the last sub-goal stage of this scenario, divides the entire plan that current exists at the previous level, or divides up to the achievement of the final-goal,
+                    ##          - In this case, we have to divide the whole plan, and cannot use the last achievement step as the end step, as there may be a trailing plan which does not descend from any sub-goal stages from the previous level.
+                    if (right_point := division_points.right) is not None:
+                        end_step = self.__sgoals_achieved_at[level][right_point.index]
+                        self.__logger.debug(f"Value of end step of abstract plan to divide adjusted for right blend of current problem: {end_step=}")
+                    
+                    ## To avoid dividing/refining sub-goal stages marked for blending;
+                    ##      - This essentially further avoids refining the sub-goal stages in the left-blend of the solution to the monolevel problem,
+                    ##          - Do not divide the plan at the current level that will be revised by the left blend of the next partial problem,
+                    ##          - This avoids refining those sub-goal stages multiple times, since they will be revised by blending and must be refined again anyway,
+                    ##              - Start from the step that the left blend point of the right division point of the current partial problem was achieved,
+                    ##              - All indices less than that point cannot be revised by blending so can only ever be refined once, avoiding refining them multiple times, but giving us smaller problems at the lower levels, which may make those plans greedy in the long run,
+                    ##      - This does avoid re-refining plans at the next level, that achieve sub-goal stages that descend from those in the left blend of the next problem at the current level, but also has a significant impact on the hierarchical progression and problem division process.
+                    if avoid_refining_sgoals_marked_for_blending: ## TODO or level == bottom_level:
+                        if (right_point := division_points.right) is not None:
+                            problem_size: int = dividing_scenario.get_subgoals_indices_range(problems[level], ignore_blend=True).problem_size
+                            ## The index when left point could actually be index 1 (the first one which means that the next problem is actually initial!),
+                            ## modified to 0 to get index of previous sub-goal stage before the blend, which is actually indicating the initial state!
+                            ## This means that the whole plan is going to be revised, and there is nothing to be refined!
+                            end_step = min(end_step, self.__sgoals_achieved_at[level].get(right_point.index_when_left_point(problem_size) - 1, 0))
+                            self.__logger.debug(f"Avoiding refining at level {level - 1} produced sgoals in range [{end_step + 1}-{monolevel_plan.end_step}] marked to be revised by problem blending at level {level}.")
+                    
+                    ## Otherwise, re-refine any sub-goal stages revised by blending;
+                    ##      - Start from the step that achieved the sub-goal stage immediately preceeding that of the left-blend index of the current monolevel problem,
+                    ##      - Ensure that we still divide over any sub-goal stages that are yet to be achieved, i.e. parts of the plan at this level that have not been refined yet (this can happen in complete-first or hybrid mode).
+                    else:
+                        start_step = min(start_step, self.__sgoals_achieved_at[level].get(first_sgoals - 1, 0))
+                        self.__logger.debug(f"Value of start step of abstract plan to divide adjusted for left blend of current problem: {start_step=}")
+                
+                ## If the entire monolevel plan that was just generated is not to be divided;
+                ##      - Discard the sub-goals produced at this level that were produced from abstract actions
+                ##        that achieved ascending sub-goal stages from the current monolevel refinement problem;
+                ##          - That were inside the right-blend of the current problem,
+                ##          - If avoiding refining sub-goal stages marked for blending;
+                ##              - Will be revised by the left-blend of the next problem,
+                ##      - This is necessary to ensure the valid planning levels are determined correctly.
+                if end_step is not None:
+                    states: dict[int, list[Action]] = {}
+                    actions: dict[int, list[Fluent]] = {}
+                    produced_sgoals: dict[int, list[SubGoal]] = {}
+                    sgoals_achieved_at: dict[int, int] = {}
+                    for step in self.__states[level]:
+                        if step <= end_step:
+                            states[step] = self.__states[level][step]
+                            if step > 0:
+                                actions[step] = self.__actions[level][step]
+                                if level != 1:
+                                    produced_sgoals[step] = self.__sgoals[level][step]
+                    for index in self.__sgoals_achieved_at[level]:
+                        if index <= right_point.index:
+                            sgoals_achieved_at[index] = self.__sgoals_achieved_at[level][index]
+                    self.__states[level] = states
+                    self.__actions[level] = actions
+                    self.__sgoals[level] = produced_sgoals
+                    self.__sgoals_achieved_at[level] = sgoals_achieved_at
+                
                 ## Add a division scenario for the (partial) refinement planning problem of the monolevel plan that was just generated
                 if (conformance and level != 1
                     and division_strategy is not None):
+                    self.__logger.log(self.__log_level(Verbosity.Verbose),
+                                      "Preparing to invoke division strategy...")
                     
                     ## Proactively divide the abstract plan at the current level iff either;
                     ##      - Ground first planning is enabled (since the next level requires a new scenario since this one was the lowest unsolved problem so it is not possible for a scenario that divides it to exist),
@@ -3444,75 +3527,11 @@ class HierarchicalPlanner(AbstractionHierarchy):
                         or ((online_method == OnlineMethod.CompleteFirst
                              or (online_method == OnlineMethod.Hybrid
                                  and increments > 1))
-                            and self.__complete_plan[level])):
+                            and self.__complete_plan.get(level, False))):
                         
-                        ## The plan that is divided at the current level;
-                        ##      - starts from the step equal to the number of achieved sub-goal stages at the next level (this will be the step of the end state of the matching child of the last achieved sgoal),
-                        ##      - This would be the abstract partial plan that was just generated (extending from the last inherited division at the next level) for ground-first,
-                        ##      - or it will be the abstract complete plan that was just generated for complete-first.
-                        start_step: int = self.total_achieved_sgoals(level - 1)
-                        end_step: Optional[int] = None
-                        
-                        ## If this planning problem was possibly partial (it was divided by a division scenario);
-                        ##      - The blends of the division points must be considered.
-                        if dividing_scenario is not None:
-                            division_points: DivisionPointPair = dividing_scenario.get_division_point_pair(problems[level])
-                            
-                            ## If the right division point of the current partial problem is not the last in the dividing scenario;
-                            ##      - Do not divide (or refine) the part of this abstract plan that achieves sgoals in the right blend,
-                            ##      - This essentially just avoids refining the sub-goal stages in the right-blend of the solution to the current monolevel problem,
-                            ##          - If it is the last, then the sub-goal stage producing actions of the last sub-goal stage of this scenario, divides the entire plan that current exists at the previous level, or divides up to the achievement of the final-goal,
-                            ##          - In this case, we have to divide the whole plan, and cannot use the last achievement step as the end step, as there may be a trailing plan which does not descend from any sub-goal stages from the previous level.
-                            if (right_point := division_points.right) is not None:
-                                end_step = self.__sgoals_achieved_at[level][right_point.index]
-                            
-                            ## To avoid dividing/refining sub-goal stages marked for blending;
-                            ##  - This essentially further avoids refining the sub-goal stages in the left-blend of the solution to the monolevel problem,
-                            ##      - Do not divide the plan at the current level that will be revised by the left blend of the next partial problem,
-                            ##      - This avoids refining those sub-goal stages multiple times, since they will be revised by blending and must be refined again anyway,
-                            ##          - Start from the step that the left blend point of the right division point of the current partial problem was achieved,
-                            ##          - All indices less than that point cannot be revised by blending so can only ever be refined once, avoiding refining them multiple times, but giving us smaller problems at the lower levels, which may make those plans greedy in the long run,
-                            ##  - This does avoid re-refining plans at the next level, that achieve sub-goal stages that descend from those in the left blend of the next problem at the current level, but also has a significant impact on the hierarchical progression and problem division process.
-                            if avoid_refining_sgoals_marked_for_blending: # TODO or level == bottom_level:
-                                if (right_point := division_points.right) is not None:
-                                    problem_size: int = dividing_scenario.get_subgoals_indices_range(problems[level], ignore_blend=True).problem_size
-                                    end_step = min(end_step, self.__sgoals_achieved_at[level][right_point.index_when_left_point(problem_size) - 1])
-                                    
-                                    self.__logger.log(self.__log_level(Verbosity.Verbose),
-                                                      f"Avoiding refining at level {level - 1} produced sgoals in range [{end_step + 1}-{monolevel_plan.end_step}] marked to be revised by problem blending at level {level}.")
-                            
-                            ## Otherwise, re-refine any sub-goal stages revised by blending;
-                            ##      - Start from the step that achieved the sub-goal stage immediately preceeding that of the left-blend index of the current monolevel problem,
-                            ##      - Ensure that we still divide over any sub-goal stages that are yet to be achieved, i.e. parts of the plan at this level that have not been refined yet (this can happen in complete-first or hybrid mode).
-                            else: start_step = min(start_step, self.__sgoals_achieved_at[level].get(first_sgoals - 1, 0))
-                            
-                            ## If the entire monolevel plan that was just generated is not to be divided;
-                            ##      - Discard the sub-goals produced at this level that were produced from abstract actions
-                            ##        that achieved ascending sub-goal stages from the current monolevel refinement problem;
-                            ##          - That were inside the right-blend of the current problem,
-                            ##          - If avoiding refining sub-goal stages marked for blending;
-                            ##              - Will be revised by the left-blend of the next problem,
-                            ##      - This is necessary to ensure the valid planning levels are determined correctly.
-                            if end_step is not None:
-                                # TODO Remove states and actions as well.
-                                produced_sgoals: dict[int, list[SubGoal]] = {}
-                                sgoals_achieved_at: dict[int, int] = {}
-                                for step in self.__sgoals[level]:
-                                    if step <= end_step:
-                                        produced_sgoals[step] = self.__sgoals[level][step]
-                                for index in self.__sgoals_achieved_at[level]:
-                                    if index <= right_point.index:
-                                        sgoals_achieved_at[index] = self.__sgoals_achieved_at[level][index]
-                                self.__sgoals[level] = produced_sgoals
-                                self.__sgoals_achieved_at[level] = sgoals_achieved_at
-                        
-                        ## Determine number of previously solved problems and account for parts of the plan at the current level that have not been refined but have already been divided;
-                        ##      - This cannot happen in ground-first or complete-first, since we never ascend back to a level unless all its produced sgoals have been refined,
-                        ##      - But other more general method, like hybrid, need to be able to account for the fact that
-                        previously_solved_problems: int = problems.get(level - 1, 0)
-                        if (scenarios := self.__division_scenarios.get(level, [])):
-                            start_step = max(start_step, scenarios[-1].last_index)
-                            previously_solved_problems = max(previously_solved_problems, max(scenarios[-1].problem_range))
+                        self.__logger.log(self.__log_level(Verbosity.Verbose),
+                                          f"Online method {online_method} chose to invoke the division strategy before a downwards level change:"
+                                          f"Current increment = {increments}, Current planning level is complete = {self.__complete_plan.get(level, False)}")
                         
                         ## Extract the abstract plan to be divided
                         abstract_plan: MonolevelPlan = self.get_monolevel_plan(level, start_step=start_step, end_step=end_step)
@@ -3522,10 +3541,17 @@ class HierarchicalPlanner(AbstractionHierarchy):
                         generated_scenario: DivisionScenario = division_strategy.proact(abstract_plan, previously_solved_problems)
                         self.__division_scenarios.setdefault(level, []).append(generated_scenario)
                         self.__logger.log(self.__log_level(Verbosity.Verbose), f"Division scenario generated:\n{generated_scenario}")
+                    
+                    else: self.__logger.log(self.__log_level(Verbosity.Verbose),
+                                            f"Online method {online_method} chose not to invoke the division strategy:"
+                                            f"Current increment = {increments}, Current planning level is complete = {self.__complete_plan.get(level, False)}")
                 
-                ## The planning level is about to change...
+                ## The current monolevel planning problem at the current planning level has been solved
                 self.__logger.log(self.__verbosity.value.log, f"Monolevel problem {problems[level]} at level {level} solved.")
                 planning_level_tracking_progress_bar.update(1)
+                
+                ## The planning level is about to change down a level iff;
+                ##      - The current planning level is the bottom of the hierarchical level range on the current online planning increment.
                 if pause_on_level_change and level != min(current_level_range):
                     planning_level_tracking_progress_bar.clear()
                     planning_increment_bar.clear()
@@ -3536,7 +3562,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
                     planning_increment_bar.refresh()
                     planning_level_tracking_progress_bar.refresh()
             
-            ## The current online planning increment has finished...
+            ## The current online planning increment has finished
             self.__logger.log(self.__verbosity.value.log, f"Online planning increment {increments} finished.")
             planning_level_tracking_progress_bar.close()
             planning_increment_bar.update(1)
@@ -3683,7 +3709,9 @@ class HierarchicalPlanner(AbstractionHierarchy):
             answer: ASP.Answer = solve_signal.run_while(generate_search_space)
             return Solution(answer, last_sgoals)
         
-        ## Variable for storing the overhead time
+        ## Variable for storing the overhead time;
+        ##      - The overhead time is primarily needed to record the online grounding time for the program extension that handles the reactive division,
+        ##        since this is not recorded in the usual statistics objects returned by ASP Parser.
         overhead_time: float = 0.0
         
         ## Variable for keeping track of the current last in seuqnece sub-goal stage (that which is to be achieved next).
