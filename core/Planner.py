@@ -1537,8 +1537,7 @@ class MonolevelProblem:
         "The contiguous sub-goal stage indices range of the problem, equivalent to [first_sgoals-last_sgoals]."
         return range(self.first_sgoals, self.last_sgoals + 1)
     
-    def create_program_parts(
-                             self,
+    def create_program_parts(self,
                              save_grounding: bool,
                              minimise_actions: bool,
                              order_fgoal_achievement: bool,
@@ -2611,7 +2610,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
                        ## Common arguments
                        conformance_type: Optional[ConformanceType] = None,
                        first_sgoals: Optional[int] = None,
-                       last_sgoals: Optional[int] = None,
+                       last_sgoals: Optional[int] = None, ## TODO Should take last_sgoals_right_blend as well, so it knows about the blend and discard it before returning.
                        sequential_yield: bool = False,
                        division_strategy: Optional[DivisionStrategy] = None,
                        save_grounding: bool = False,
@@ -3302,6 +3301,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
                         if problems[level] not in dividing_scenario.problem_range:
                             raise ASH_InternalError(f"Invalid problem number for current division scenario: number = {problems[level]}, scenario range = {dividing_scenario.problem_range}.")
                         
+                        ## TODO The sub-goal stage range should include the true division points, and the calculated blend points
                         sgoals_range: SubGoalRange = dividing_scenario.get_subgoals_indices_range(problems[level])
                         first_sgoals, last_sgoals = sgoals_range.first_index, sgoals_range.last_index
                         self.__logger.log(self.__log_level(Verbosity.Verbose),
