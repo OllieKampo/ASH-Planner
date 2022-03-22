@@ -575,6 +575,8 @@ class DivisionStrategy(metaclass=ABCMeta):
         
         If the level is the specified top level
         """
+        division_indices: list[int] = []
+        divisions: list[DivisionPoint] = []
         
         ## If the plan's level is the top-level of the domain's hierarchy and was generated in the tasking model...
         if (abstract_plan.level == self.__top_level
@@ -584,25 +586,20 @@ class DivisionStrategy(metaclass=ABCMeta):
             ##      - Takes presidence over dividing based on the fgoal achievement order,
             ##      - This is regardless of whether the fgoals where actually ordered or not.
             if self.__inde_tasks:
-                problems: int = abstract_plan.plan_length
-                divisions: list[DivisionPoint] = self.make_homogenous_divisions(problems,
-                                                                                abstract_plan.plan_length,
-                                                                                abstract_plan.state_start_step,
-                                                                                self.get_blend(abstract_plan.level))
-                return DivisionScenario(abstract_plan, divisions, previously_solved_problems)
+                division_indices = list(range(2, abstract_plan.plan_length))
             
             ## Divides based on the actual achievement steps, regardless of what the preference order actually was, or if there was one at all.
             elif self.__order_tasks:
-                
-                division_indices: list[int] = []
-                
                 for step in abstract_plan.fgoals_achieved_at:
-                    if 0 < step < abstract_plan.end_step:
+                    if 1 < step < abstract_plan.end_step:
                         division_indices.append(step)
-                
-                return self.make_heterogenous_divisions(division_indices, abstract_plan.plan_length, abstract_plan.state_start_step, self.get_blend(abstract_plan.level))
+            
+            divisions: list[DivisionPoint] = self.make_heterogenous_divisions(division_indices,
+                                                                              abstract_plan.plan_length,
+                                                                              abstract_plan.state_start_step,
+                                                                              self.get_blend(abstract_plan.level))
         
-        return DivisionScenario(abstract_plan, [], previously_solved_problems)
+        return DivisionScenario(abstract_plan, divisions, previously_solved_problems)
     
     def react(self, problem_level: int, problem_total_sgoals_range: SubGoalRange, problem_start_step: int, current_search_length: int, current_subgoal_index: int, matching_child: bool, incremental_times: list[float], observable_plan: Optional[dict[int, list["Planner.Action"]]]) -> Reaction:
         return Reaction()

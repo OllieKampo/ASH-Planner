@@ -79,7 +79,7 @@ class SubscriptableDataClass(_collections_abc.Sequence):
 
 
 ## ASP symbol type
-ASP_Symbol: type = Union[str, clingo.Symbol]
+ASP_Symbol = Union[str, clingo.Symbol]
 
 def to_clingo_form(symbol: ASP_Symbol) -> clingo.Symbol:
     """
@@ -90,7 +90,7 @@ def to_clingo_form(symbol: ASP_Symbol) -> clingo.Symbol:
     
     Parameters
     ----------
-    `symbol : {str | clingo.Symbol}` - An ASP symbol, given a string or a clingo Symbol.
+    `symbol : {str | clingo.Symbol}` - An ASP symbol, given as a string or a pre-constructed clingo Symbol.
     
     Returns
     -------
@@ -98,7 +98,7 @@ def to_clingo_form(symbol: ASP_Symbol) -> clingo.Symbol:
 
     Raises
     ------
-    `RuntimeError` - If the symbol is given as a string, and has invalid sntax according to gringo's term parser.
+    `RuntimeError` - If the symbol is given as a string, and has invalid syntax according to gringo's term parser.
     """
     if isinstance(symbol, str):
         try:
@@ -1034,11 +1034,11 @@ class Model(_collections_abc.Set):
         return atoms
     
     def evaluate(self, rule: str, solver_options: Iterable[str] = [], assumptions: Iterable[clingo.Symbol] = [], context: Iterable[Callable[..., clingo.Symbol]] = []) -> "Answer":
-        context_type = type("context", (object,), {func.__name__ : func for func in context})
+        ## context_type = type("context", (object,), {func.__name__ : func for func in context})
         _ASP_logger.debug(f"Evaluating rule '{rule}' over:\n{self}")
         logic_program = LogicProgram(rule, name="Evaluate", silent=True)
         logic_program.add_rules(self.symbols)
-        return logic_program.solve(solver_options=solver_options, assumptions=assumptions, context=context_type)
+        return logic_program.solve(solver_options=solver_options, assumptions=assumptions, context=context)
 
 class ModelCount(NamedTuple):
     model: Model
@@ -1097,7 +1097,7 @@ class Answer(NamedTuple):
     Model(symbols=frozenset(), cost=[], optimality_proven=False, number=-1, thread_id=-1, model_type=None)
     """
     result: Result ## TODO Change to base_result and inc_result
-    statistics: Statistics ## TODO Change to base_statistics and inc_statistics
+    statistics: Statistics ## TODO Change to base_statistics and inc_statistics (that means we can get rid of "grand totals" in inc_statistics)
     base_models: Union[list[Model], ModelCount]
     inc_models: dict[int, Union[list[Model], ModelCount]]
     
@@ -1424,8 +1424,10 @@ class SolveSignal:
         
         Parameters
         ----------
-        `dummy : bool = False` - A Boolean, if no solver call has yet been made by the underlying logic program
-        since the creation of this solve signal then; True returns a 'dummy' answer object, and False returns None.
+        `dummy : bool = False` - A Boolean, by default False.
+        If no solver call has yet been made by the underlying logic program since the creation of this solve signal then;
+        True returns a 'dummy' answer object, and False returns None.
+        Otherise, if at least one solve call has been made, this parameter is ignored, and the answer is always returned.
         
         Returns
         -------
@@ -1438,7 +1440,7 @@ class SolveSignal:
         external
             A symbol representing the external atom.
         truth
-            A Boolean fixes the external to the respective truth value; and None leaves its truth value open.
+            A Boolean to fix the external to the respective truth value; and None leaves its truth value open.
         inc_range
             The incremental step range over which this external should be assigned.
             If the incremental step range is None, then the external is assigned only once.
@@ -1453,12 +1455,14 @@ class SolveSignal:
         self.__control.release_external(to_clingo_form(symbol))
     
     def online_extend_program(self, program_part: BasePart, program: str, context: Iterable[Callable[..., clingo.Symbol]] = []) -> None:
+        """
+        This method does not update the logic program's solving statistics directly.
+        As such, the time spent grounding the program extension will not be represented by a statistics object extracted from that logic program.
+        """
         _ASP_logger.debug(f"Solve signal {self!s} => Extending logic program {self.logic_program!s} to part {program_part!s} with:\n{program}")
         self.__control.add(program_part.name, list(map(str, program_part.args)), program)
         context_type = type("context", (object,), {func.__name__ : func for func in context})
         self.__control.ground([program_part._clingo_form], context_type)
-    
-    
     
     def run_for(self, callback: Callable[["Feedback"], None] = None, increments: Optional[int] = None) -> Answer:
         for feedback in self.yield_run(increments):
@@ -1662,6 +1666,9 @@ class HaltReason(enum.Enum):
     The value of each item is a tuple, containing a description and a function that returns True if the reason was satisfied.
     The reasons are resolved in the order given below.
     If multiple reasons are satisfied, only the first will be returned.
+    
+    TODO If the time limit is reached before the minimum step limit is reached and the program is satisfiable,
+    it will erroneously report "stop condition reached", whereas it should return "cumulative/incremental time limit reached".
     
     Items
     -----
@@ -2713,7 +2720,7 @@ class LogicProgram:
         ##      - the minimum step value has not been reached or,
         ##          - the maximum step value has not been reached and,
         ##          - the stop condition has not been reached.
-        try: 
+        try:
             while (((increments is None
                      or (start_increment + increments - 1) >= self.__bounds.increment)
                     and (self.__incrementor.increment_limit is None
@@ -2823,7 +2830,8 @@ class LogicProgram:
         finally:
             if self.__tqdm: progress_bar.close()
             
-            self.__logger.debug(f"Incremental statistics:\n{self.get_answer(dummy=True).statistics.incremental_stats_str}")
+            if isinstance(statistics := self.get_answer(dummy=True).statistics, IncrementalStatistics):
+                self.__logger.debug(f"Incremental statistics:\n{statistics.incremental_stats_str}")
             
             ## If we don't have a halt reason yet, and at least one increment ran, find the halt reason as usual,
             if halt_reason_description is None and last_feedback is not None:
@@ -2837,6 +2845,8 @@ class LogicProgram:
             
             ## Else if we still don't have a halt reason, an error must have occured.
             if halt_reason_description is None:
+                ## TODO If no increments ran because a limited was reached instantly, such that last_feedback is None, we still get here with no description of why.
+                ## The logic program should store a halt reason its and determine it when returning from the incremental solve call to fix this.
                 halt_reason_description = "Unknown (an error occured)"
             
             ## self.__halt_reason = halt_reason ## TODO and add to result?
@@ -2987,6 +2997,7 @@ class Options:
         
         `calls : PrintMode` - Whether details about each individual solver call are printed.
         """
+        ## TODO Allow integer arguments as well, according to user preference
         return f"--quiet={models.value},{costs.value},{calls.value}"
     
     @enum.unique
