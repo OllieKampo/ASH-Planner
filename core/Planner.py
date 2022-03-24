@@ -3868,7 +3868,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
                     
                     ## Assign the next sub-goal stage to be achieved (checked correct 15/09/2021);
                     ##      - This is assigned at the previous search step (the step the previous sub-goal index was achieved)
-                    ##        this so that the current sub-goal index becomes current at the previous step so that it is ready to be achieved at the current
+                    ##        this so that the current sub-goal index becomes current at the previous step so that it is ready to be achieved at the current.
                     solve_signal.queue_assign_external(f"current_last_sgoals({current_last_sgoals}, {feedback.end_step})", True)
                     self.__logger.debug(f"Setting current sequential sub-goal stage [index = {current_last_sgoals}, step = {feedback.end_step}]:\n"
                                         + "\n".join(str(subgoal) for subgoal in self.__sgoals[level + 1][current_last_sgoals]))

@@ -1444,7 +1444,7 @@ class SolveSignal:
         inc_range
             The incremental step range over which this external should be assigned.
             If the incremental step range is None, then the external is assigned only once.
-            To assign over all steps, set both the start and end steps if the incremental range to None.
+            To assign over all steps, set both the start and end steps of the incremental range to None.
         """
         self.__program.queue_assign_external(External(symbol, truth, inc_range))
     

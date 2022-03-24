@@ -381,7 +381,8 @@ max_order(M) :- M = #max { ORDER : goal_order(AL, F, V, B, ORDER) }, final_goal(
 
 %% Include sub-goal stages as such;
 %%      - Up to the current last in sequence sub-goal stage index in sequential yield planning mode,
-%%      - Include all sub-goal stages simultaneously in standard planning mode.
+%%      - Include all sub-goal stages simultaneously in standard planning mode,
+%%      - The term "step >= S" is needed because "current_last_sgoals(I_L, S)" is only inserted once, where S is the achievement step of the previous sub-goal stage index "I_L - 1".
 include_sgoals(I, step) :- I <= I_L, step >= S, current_last_sgoals(I_L, S), sgoals_index(I).
 include_sgoals(I, step) :- sgoals_index(I), yield = false.
 
