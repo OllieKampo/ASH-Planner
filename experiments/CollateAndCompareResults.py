@@ -400,11 +400,6 @@ quantiles_cat_plans: pandas.DataFrame = pandas.concat(combined_data_sets_quantil
 ######## Process the scores and grades
 #########################################################################################################################################################################################
 
-## Open a new output excel file to save the collated data to
-##      - https://xlsxwriter.readthedocs.io/working_with_pandas.html
-writer = pandas.ExcelWriter(f"{cli_args.output_path}.xlsx", engine="xlsxwriter") # pylint: disable=abstract-class-instantiated
-out_workbook: xlsxwriter.Workbook = writer.book
-
 ## Tests of statistical significance;
 ##      - The p-value, is a measure of the significance or confidence in the difference between the measurements in two different samples (data sets).
 ##        If the p-value is statistically significant, the values in one sample are more likely to be larger than the values in the other sample.
@@ -435,7 +430,6 @@ summary_globals: pandas.DataFrame = pandas.concat([score_medians, score_IQR, sco
                                                   keys=["Median", "IQR", "IQR%"], names=["Statistic", *configuration_headers])
 summary_globals = summary_globals.reorder_levels(["Statistic", *HEADER_ORDER])
 summary_globals = summary_globals.sort_index(level=cli_args.sort_index_values)
-summary_globals.to_latex(f"{cli_args.output_path}_Globals_Summary.tex")
 
 ## Global comparisons (comparisons simultaneously over all data sets)
 
@@ -502,11 +496,17 @@ for comparison_statistic, comparison_function in pair_wise_comparison_statistics
 ######## Excel Outputs
 #########################################################################################################################################################################################
 
-## Collate and compare the data to excel...
+## Open a new output excel file to save the collated data to;
 ##      - https://pbpython.com/excel-file-combine.html
+##      - https://xlsxwriter.readthedocs.io/working_with_pandas.html
+writer = pandas.ExcelWriter(f"{cli_args.output_path}.xlsx", engine="xlsxwriter") # pylint: disable=abstract-class-instantiated
+out_workbook: xlsxwriter.Workbook = writer.book
+
 quantiles_globals.to_excel(writer, sheet_name="Globals Comparison", merge_cells=False)
 quantiles_cat_plans.to_excel(writer, sheet_name="Cat Plan Comparison", merge_cells=False)
 worksheet_globals = writer.sheets["Globals Comparison"]
+
+summary_globals.to_latex(f"{cli_args.output_path}_Globals_Summary.tex")
 
 ## TODO The graph should probably be of the medians, with IQR as error bars
 ## TODO Put conditional formatting for scores with coloured bar
@@ -583,26 +583,70 @@ writer.save()
 #         comparison_set.to_csv(cli_args.send_to_dsv[comparison_statistic], sep=",", na_rep=" ", line_terminator="\n", index=True)
 
 #########################################################################################################################################################################################
-######## Pgf plot graph outputs
+######## Latex table and pgfplots graph outputs
 #########################################################################################################################################################################################
+######## All results are given as medians, with IQR used as represenation of variance
 
-# # update latex preamble
-# pyplot.rcParams.update({
-#     "font.family": "serif",
-#     "text.usetex": True,
-#     "pgf.rcfonts": False,
-#     "pgf.texsystem": 'pdflatex', # default is xetex
-#     "pgf.preamble": [
-#          r"\usepackage[T1]{fontenc}",
-#          r"\usepackage{mathpazo}"
-#          ]
-# })
+################################################################
+######## Bar charts for plan quality
+figure_quality_abs_bars, axis_quality_abs_bars = pyplot.subplots() # Cat plans
+figure_quality_score_bars, axis_quality_score_bars = pyplot.subplots() # Globals
 
-# figure, axis = pyplot.subplots(3, 3)
 
-configuration = next(iter(combined_data_sets))
-time_score = combined_data_sets[configuration]["Globals"]["HA_T"]
-pyplot.hist(time_score, 50, (0.0, 15.0))
+
+################################################################
+######## Bar charts for planning time
+figure_time_raw_bars, axis_time_raw_bars = pyplot.subplots() # Cat plans
+figure_time_agg_bars, axis_time_agg_bars = pyplot.subplots() # Globals
+figure_time_score_bars, axis_time_score_bars = pyplot.subplots() # Globals
+
+## Raw planning time per abstraction level;
+##      - Solving time, grounding time, total time, yield time, completion time.
+set_bars(5)
+axis_time_raw_bars.bar(al_range - (bar_width * 2), means["GT"], bar_width, yerr=get_std("GT"), capsize=5, label="Median Grounding Time")
+axis_time_raw_bars.bar(al_range - bar_width, means["ST"], bar_width, yerr=get_std("ST"), capsize=5, label="Median Solving")
+axis_time_raw_bars.bar(al_range - bar_width, means["ST"], bar_width, yerr=get_std("ST"), capsize=5, label="Median Solving")
+axis_time_raw_bars.bar(al_range, means["TT"], bar_width, yerr=get_std("TT"), capsize=5, label="Mean Total")
+
+## Aggregate ground-level planning times;
+##      - Latency time, absolution time, average non-initial wait time, average minimum execution time per action.
+
+
+
+## Overall time scores;
+##      - Latency time score, absolution time score, average non-initial wait time score, average minimum execution time per action score.
+
+
+
+################################################################
+######## Bar charts for required memory
+figure_memory_bars, axis_memory_bars = pyplot.subplots()
+
+
+
+################################################################
+######## Bar charts for expansion factors and sub/partial-plan balance
+figure_expansion_raw_bars, axis_expansion_raw_bars = pyplot.subplots() # Cat plans
+figure_spbalance_raw_bars, axis_spbalance_raw_bars = pyplot.subplots() # Cat plans
+
+## Raw sub/partial-plan expansions;
+##      - Expansion factor per level, sub-plan expansion deviation, sub-plan expansion balance, partial-plan expansion deviation, partial-plan expansion balance.
+
+
+
+## Sub/partial-plan balance/matching child distribution/spread scores;
+##      - Sub-plan expansion balance score, partial-plan expansion balance score, matching-child step normalised mean absolute error score, division step normalised mean absolute error score
+
+
+
+################################################################
+########
+
+
+
+# configuration = next(iter(combined_data_sets))
+# time_score = combined_data_sets[configuration]["Globals"]["HA_T"]
+# axis.hist(time_score, 50, (0.0, 15.0))
 
 ## https://github.com/texworld/tikzplotlib
 tikzplotlib.clean_figure()
