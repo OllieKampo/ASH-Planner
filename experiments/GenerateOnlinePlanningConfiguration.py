@@ -6,6 +6,8 @@ from os.path import isfile, join
 abstraction_levels: int = int(sys.argv[2])
 bounds_to_combine: list[str] = sys.argv[3:]
 
+absolute_bounds: bool = '.' not in bounds_to_combine[0]
+
 def generate_configurations(template_file_path: str) -> None:
     print(f"Generating configurations for template file: {template_file_path} over "
           f"{abstraction_levels} abstraction levels by combining bounds {bounds_to_combine}.")
@@ -21,8 +23,17 @@ def generate_configurations(template_file_path: str) -> None:
         
         for combination in combinations:
             split_path: list[str] = template_file_path.split('bounds')
-            new_file_path: str = f"{split_path[0]}{'_'.join(combination)}{split_path[1]}"
-            print(f"Generating configuration file: {new_file_path} with bounds {combination}.")
+            
+            bound_type: str = ""
+            if any(proactive_strategy in template_file_path for proactive_strategy in ["hasty", "steady", "jumpy"]):
+                bound_type = "_abs_" if absolute_bounds else "_per_"
+            
+            _combination: tuple[str, ...] = combination
+            if not absolute_bounds:
+                _combination = tuple(str(100 * float(bound)) for bound in combination)
+            
+            new_file_path: str = f"{split_path[0]}{bound_type}{'_'.join(_combination)}{split_path[1]}"
+            print(f"Generating configuration file: {new_file_path} with bounds {_combination}.")
             
             with open(new_file_path, "w") as file_writer:
                 for number, line in enumerate(lines):
