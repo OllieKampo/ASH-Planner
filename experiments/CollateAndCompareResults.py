@@ -1,26 +1,48 @@
 from collections import defaultdict
+import functools
 import itertools
 import os
-from typing import Optional, Sequence, Union
+from typing import Optional, Sequence
+import numpy
 import pandas
 import glob
 import argparse
-import numpy
 import tqdm
 import xlsxwriter
-## https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ranksums.html
-## https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.mannwhitneyu.html#scipy.stats.mannwhitneyu
-## https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html
-## https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kruskal.html#scipy.stats.kruskal
-## https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.friedmanchisquare.html#scipy.stats.friedmanchisquare
-## Problem with friedmanchisquare is that affect of one measurement not being seperable may make two that are statistically significant seem like they are not.
-from scipy.stats import ranksums, mannwhitneyu, wilcoxon, kruskal, friedmanchisquare
+import subprocess
+import matplotlib
+from matplotlib import pyplot
+import tikzplotlib
+import warnings
+warnings.simplefilter(action='ignore', category=pandas.errors.PerformanceWarning)
 
-__statistics_sets: list[str] = ["Globals Comparison",
-                                "Score Ranksums"]
+## Global data set comparison statistics;
+##      - Problem with global comparisons, are that affect of one sample is not being seperable may make two others, that are statistically significant, seem like they are not.
+##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kruskal.html
+##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.friedmanchisquare.html
+##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.fligner.html
+from scipy.stats import kruskal, friedmanchisquare, fligner
 
-## Special action for storing arguments of parameters that can have a different values for each abstraction level in the hierarchy
+## Pair-wise data set comparison statistics;
+##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ranksums.html
+##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.mannwhitneyu.html
+##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html
+##      - https://stats.stackexchange.com/questions/91034/what-is-the-difference-between-the-wilcoxon-srank-sum-test-and-the-wilcoxons-s
+from scipy.stats import ranksums, mannwhitneyu, wilcoxon
+
+## Data set-wise statistics;
+##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.normaltest.html
+##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.skewtest.html
+##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kurtosis.html
+##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kurtosistest.html
+from scipy.stats import normaltest, skewtest, kurtosis, kurtosistest
+
+#########################################################################################################################################################################################
+######## Build the raw data sets
+#########################################################################################################################################################################################
+
 def mapping_argument_factory(key_choices: Optional[list[str]] = None, allow_multiple_values: bool = True) -> type:
+    "Special action for storing arguments of parameters given as a mapping."   
     
     def __call__(self, parser: argparse.ArgumentParser, namespace: argparse.Namespace,
                  values: Sequence[str], option_string: Optional[str] = None):
@@ -52,21 +74,29 @@ def mapping_argument_factory(key_choices: Optional[list[str]] = None, allow_mult
                                                              "key_choices" : key_choices.copy() if key_choices is not None else None,
                                                              "allow_multiple_values" : allow_multiple_values})
 
+__STATISTICS_SETS: list[str] = ["Score Summary",
+                                "Globals Comparison",
+                                "Level-wise Summary",
+                                "Cat Plans Comparison",
+                                "Score Ranksums"]
+
 ## Command line arguments parser
 parser = argparse.ArgumentParser()
 parser.add_argument("input_paths", nargs="*", type=str)
+parser.add_argument("-out", "--output_path", required=True, type=str)
 parser.add_argument("-filter", nargs="+", default=None, action=mapping_argument_factory(), type=str,
                     metavar="header=value_1,value_2,[...]value_n")
-parser.add_argument("-out", "--output_path", required=True, type=str)
 parser.add_argument("-combine", "--combine_on", nargs="*", default=[], type=str)
-parser.add_argument("-group", "--group_by", nargs="*", default=["problem"], type=str)
-parser.add_argument("-diff", "--compare_only_different", nargs="*", default=["achievement_type"], type=str)
-parser.add_argument("-same", "--compare_only_same", nargs="*", default=["problem", "planning_type", "planning_mode", "search_mode"], type=str)
-parser.add_argument("-send_to_dsv", nargs="+", default=None, action=mapping_argument_factory(key_choices=__statistics_sets, allow_multiple_values=False), type=str,
+parser.add_argument("-order", "--order_index_headers", nargs="*", default=[], type=str)
+parser.add_argument("-sort", "--sort_index_values", nargs="*", default=[], type=str)
+parser.add_argument("-diff", "--compare_only_different", nargs="*", default=[], type=str)
+parser.add_argument("-same", "--compare_only_same", nargs="*", default=[], type=str)
+parser.add_argument("-send_to_dsv", nargs="+", default=None, action=mapping_argument_factory(key_choices=__STATISTICS_SETS, allow_multiple_values=False), type=str,
                     metavar="statistics_set=file_path")
 cli_args: argparse.Namespace = parser.parse_args()
 
 def get_option_list(option_list: list[str]) -> str:
+    "List the options given by the user for a particular parameter."
     if option_list:
         return "\n\t".join(option_list)
     return "None"
@@ -80,24 +110,38 @@ print("Input paths:\n\t" + get_option_list(cli_args.input_paths), end="\n\n")
 print("File filters:\n\t" + get_option_list((f"{key} : [{', '.join(value)}]" for key, value in cli_args.filter.items()) if cli_args.filter is not None else None), end="\n\n")
 print("Output path: " + cli_args.output_path, end="\n\n")
 print("Combine data sets on:\n\t" + get_option_list(cli_args.combine_on), end="\n\n")
-print("Group and sort data sets by:\n\t" + get_option_list(cli_args.group_by), end="\n\n")
+print("Order of index headers:\n\t" + get_option_list(cli_args.order_index_headers), end="\n\n")
+print("Sort index values by:\n\t" + get_option_list(cli_args.sort_index_values), end="\n\n")
 print("Compare only data sets with different:\n\t" + get_option_list(cli_args.compare_only_different), end="\n\n")
 print("Compare only data sets with same:\n\t" + get_option_list(cli_args.compare_only_same), end="\n\n")
 print("Send statistics to dsv file:\n\t" + get_option_list((f"{key} : {value}" for key, value in cli_args.send_to_dsv.items()) if cli_args.send_to_dsv is not None else None), end="\n\n")
 
 print("Your original files will NOT be modified.")
-input_: str = input("Proceed? [(y)/n]: ")
+input_: str = input("\nProceed? [(y)/n]: ")
 if input_ == "n": exit()
 print()
 
+#########################################################################################################################################################################################
+######## Build the raw data sets
+#########################################################################################################################################################################################
+
 ## Gather the configurations we want to compare into tuples (each defines a unique set) which we want to compare between each other;
-##      - Aggregates are generated seperately for each set.
+##      - Aggregates are generated seperately for each set,
+##      - The following are the configuration headers.
 configuration_headers: list[str] = ["problem",
                                     "planning_type",
                                     "planning_mode",
+                                    "strategy",
+                                    "bound_type",
                                     "online_bounds",
                                     "search_mode",
-                                    "achievement_type"]
+                                    "achievement_type",
+                                    "action_planning",
+                                    "preach_type",
+                                    "blend_direction",
+                                    "blend_type",
+                                    "blend_quantity",
+                                    "online_method"]
 
 for combine in cli_args.combine_on:
     configuration_headers.remove(combine)
@@ -119,42 +163,68 @@ def extract_configuration(excel_file_name: str) -> Optional[list[str]]:
         
     else:
         index: int = 1
-        def get_term(matches: Optional[list[str]] = None) -> str:
+        def get_term(matches: Optional[list[str]] = None, default: str = "NONE") -> str:
+            "Function for getting hierarchical conformance refinement planning configuration terms from file names."
+            
+            ## Move to the next term index
             nonlocal index
             index += 1
+            
+            ## If the index exists...
             if index in range(len(terms)):
                 term: str = terms[index]
+                ## If the term matches, return it...
                 if (matches is None or term in matches):
                     return term
+                ## Otherwise, move back to the previous index
                 else: index -= 1
-            return "NONE"
+            
+            ## Return the default if the index does not exist,
+            ## or the term does not match
+            return default
         
-        configuration_dict["planning_mode"] = get_term()
+        configuration_dict["planning_mode"] = get_term(["offline", "online"], "online")
+        
         if configuration_dict["planning_mode"] == "online":
-            configuration_dict["strategy"] = get_term(["basic", "hasty", "steady", "jumpy", "impetuous", "relentless"])
-            configuration_dict["bound_type"] = get_term(["abs", "per", "sl", "inct", "dift", "intt"])
+            configuration_dict["strategy"] = get_term(["basic", "hasty", "steady", "jumpy", "impetuous", "relentless"], "basic")
+            configuration_dict["bound_type"] = get_term(["abs", "per", "sl", "inct", "dift", "intt"], "abs")
             for rel_index, term in enumerate(terms[(index := index + 1):]):
                 if not term.isdigit():
-                    rel_index -= 1
-                    break
+                    rel_index -= 1; break
             configuration_dict["online_bounds"] = str(tuple(int(bound) for bound in terms[index : index + rel_index + 1]))
             index += rel_index
-        else: configuration_dict["online_bounds"] = "NONE"
+        else:
+            configuration_dict["strategy"] = "NONE"
+            configuration_dict["bound_type"] = "NONE"
+            configuration_dict["online_bounds"] = "NONE"
         
-        configuration_dict["search_mode"] = get_term()
+        configuration_dict["search_mode"] = get_term(["min", "standard", "yield"], "min")
         if configuration_dict["search_mode"] == "min":
             configuration_dict["search_mode"] = configuration_dict["search_mode"] + get_term()
-        configuration_dict["achievement_type"] = get_term(["seqa", "sima"])
+        configuration_dict["achievement_type"] = get_term(["seqa", "sima"], "seqa")
+        
         if get_term(["conc"]) == "conc":
             configuration_dict["action_planning"] = "concurrent"
         else: configuration_dict["action_planning"] = "sequential"
         
-        # if configuration_dict["planning_mode"] == "online":
-        #     preach_type
-        #     blend_direction
-        #     blend_type
-        #     blend_quantity
-        #     online_method
+        if configuration_dict["planning_mode"] == "online":
+            if get_term(["preach"]) == "preach":
+                configuration_dict["preach_type"] = get_term(["heur", "opt"], "opt")
+            
+            if get_term(["blend"]) == "blend":
+                configuration_dict["blend_direction"] = get_term(["left", "right"], "right")
+                
+                blend: str = get_term()
+                configuration_dict["blend_type"] = blend[0]
+                configuration_dict["blend_quantity"] = int(blend[1:])
+            
+            configuration_dict["online_method"] = get_term(["gf", "cf", "hy"], "gf")
+        else:
+            configuration_dict["preach_type"] = "NONE"
+            configuration_dict["blend_direction"] = "NONE"
+            configuration_dict["blend_type"] = "NONE"
+            configuration_dict["blend_quantity"] = "NONE"
+            configuration_dict["online_method"] = "NONE"
     
     if (cli_args.filter is not None
         and not all((key not in cli_args.filter
@@ -165,14 +235,18 @@ def extract_configuration(excel_file_name: str) -> Optional[list[str]]:
                  if key in configuration_headers)
 
 ## A dictionary of data sets;
-##  - Mapping: workbook name x worksheet name -> data frame
-data_sets: dict[tuple[str, ...], dict[str, pandas.DataFrame]] = defaultdict(dict) ## TODO Need to take the average of the quantiles over data sets!!!
+##      - A data set is all the data for a given problem and planner configuration (or unit of a set of them) for a given property,
+##      - Mapping: configuration set (row index) X property (worksheet name) -> data frame
+data_sets: dict[tuple[str, ...], dict[str, list[pandas.DataFrame]]] = defaultdict(dict)
 
 ## Iterate over all directory paths and all excel files within them
 files_loaded: int = 0
 for path in cli_args.input_paths:
-    for excel_file_name in glob.glob(f"{path}/*.xlsx"):
+    print(f"\nLoading files from path {path} ...")
+    for excel_file_name in tqdm.tqdm(glob.glob(f"{path}/*.xlsx")):
         
+        ## Extract the configuration from the file name,
+        ## if a matching configuration exists, load the data, otherwise ignore the file.
         configuration: Optional[list[str]] = extract_configuration(excel_file_name)
         if configuration is None:
             continue
@@ -180,7 +254,7 @@ for path in cli_args.input_paths:
         
         ## Open each excel workbook and extract its data
         ## https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html#excelfile-class
-        print(f"Opening excel file {excel_file_name} :: Matching Data Set Configuration {configuration}")
+        # print(f"Opening excel file {excel_file_name} :: Matching Data Set Configuration {configuration}")
         with pandas.ExcelFile(excel_file_name, engine="openpyxl") as excel_file:
             ## Read globals and concatenated plans
             worksheets: dict[str, pandas.DataFrame] = pandas.read_excel(excel_file, ["Globals", "Cat Plans"])
@@ -195,9 +269,6 @@ for path in cli_args.input_paths:
             if "TI_SCORE" not in worksheets["Globals"]:
                 worksheets["Globals"].insert(worksheets["Globals"].columns.get_loc("AME_PA_SCORE") + 1,
                                              "TI_SCORE", worksheets["Globals"]["HA_SCORE"])
-            
-            ## Set the order of the columns to be consistent????
-            
             
             ## Calculate the percentage of the total time spent in grounding, solving, and overhead;
             ##      - These define the Relative complexity of;
@@ -216,119 +287,204 @@ for path in cli_args.input_paths:
                 ## Convert the data types to those pandas thinks is best
                 worksheets[sheet_name] = worksheets[sheet_name].convert_dtypes()
             
-            if configuration not in data_sets:
-                print(f"Creating new data set for configuration {configuration}")
-                data_sets[configuration].update(worksheets)
-            else:
-                print(f"Combining with existing data set for configuration {configuration}")
-                for sheet_name in worksheets:
-                    data_sets[configuration][sheet_name] = data_sets[configuration][sheet_name].append(worksheets[sheet_name])
+            for sheet_name in worksheets:
+                data_sets[configuration].setdefault(sheet_name, []).append(worksheets[sheet_name])
+
+## Remove all NONE headers
+new_configuration_headers: list[str] = []
+none_header_indices: list[int] = []
+new_data_sets: dict[tuple[str, ...], dict[str, list[pandas.DataFrame]]] = defaultdict(dict)
+
+for index, header in enumerate(configuration_headers):
+    if any(configuration[index] != "NONE" for configuration in data_sets):
+        new_configuration_headers.append(header)
+    else: none_header_indices.append(index)
+
+for configuration in data_sets:
+    new_data_sets[tuple(header for index, header in enumerate(configuration) if index not in none_header_indices)] = data_sets[configuration]
+
+configuration_headers = new_configuration_headers
+data_sets = new_data_sets
+
+HEADER_ORDER: list[str] = []
+for header in cli_args.order_index_headers:
+    if header in configuration_headers:
+        HEADER_ORDER.append(header)
+for header in configuration_headers:
+    if header not in HEADER_ORDER:
+        HEADER_ORDER.append(header)
 
 print(f"\nA total of {files_loaded} matching files were loaded.")
-print(f"A total of {len(data_sets)} combined data sets were obtained.")
-input_: str = input("Proceed? [(y)/n]: ")
+print(f"A total of {len(data_sets)} combined data sets were obtained.\n")
+
+print(f"Configuration headers:\n\t{configuration_headers}")
+print("Data sets:\n\t" + "\n\t".join(repr(configuration) for configuration in data_sets))
+
+input_: str = input("\nProceed? [(y)/n]: ")
 if input_ == "n": exit()
 
-## Open a new output excel file to save the collated data to
-## https://xlsxwriter.readthedocs.io/working_with_pandas.html
-writer = pandas.ExcelWriter(cli_args.output_path, engine="xlsxwriter") # pylint: disable=abstract-class-instantiated
-out_workbook: xlsxwriter.Workbook = writer.book
+#########################################################################################################################################################################################
+######## Process the raw data sets
+#########################################################################################################################################################################################
 
-## Add a column to table for each comparison level
-out_worksheets: dict[str, list[pandas.DataFrame]] = defaultdict(list)
+combined_data_sets: dict[tuple[str, ...], dict[str, pandas.DataFrame]] = defaultdict(dict)
+combined_data_sets_quantiles: dict[str, list[pandas.DataFrame]] = defaultdict(list)
 
 ## For each data set, add a row to the dataframe with column entries for each comparison level for that set
 print("\nProcessing raw data sets...")
-for configuration, data_set in tqdm.tqdm(data_sets.items()):
-    for sheet_name in data_set:
-        data_raw: pandas.DataFrame = data_set[sheet_name]
+for configuration, combined_data_set in tqdm.tqdm(data_sets.items()):
+    
+    for sheet_name in combined_data_set:
+        quantiles_for_data_set: dict[str, list[pandas.DataFrame]] = defaultdict(list)
+        data_set: dict[str, list[pandas.DataFrame]] = defaultdict(list)
+        
+        index_for_data_set: list[str]
         if sheet_name == "Cat Plans":
-            data_quantiles: pandas.DataFrame = data_set[sheet_name].groupby("AL").quantile([0.0, 0.25, 0.50, 0.75, 1.0])
-            data_quantiles.index = data_quantiles.index.set_levels(data_quantiles.index.levels[1].astype(str), level=1)
-            data_quantiles = data_quantiles.rename_axis(["AL", "statistic"])
+            index_for_data_set = configuration_headers + ["AL", "statistic"]
+        else: index_for_data_set = configuration_headers + ["statistic"]
+        
+        individual_data_set: pandas.DataFrame
+        for individual_data_set in combined_data_set[sheet_name]:
+            individual_data_set_copy: pandas.DataFrame = individual_data_set.copy(deep=True)
+            data_quantiles: pandas.DataFrame
             
-            ## Data quantiles is a multi-index, with the abstraction level (level 0) and the quantiles (level 1)
-            ## https://pandas.pydata.org/docs/reference/api/pandas.MultiIndex.get_level_values.html
-            for abstraction_level in data_quantiles.index.get_level_values("AL").unique():
-                ## Need to use a tuple to get the index to .loc as Pandas interprets tuple entries as levels and list entries as items in a level
-                ##      - DataFrame.loc[rowId,colId]
-                ##      - https://pandas.pydata.org/pandas-docs/stable/user_guide/advanced.html#advanced-indexing-with-hierarchical-index
-                data_quantiles.loc[(abstraction_level, "IQR"),:] = (data_quantiles.loc[(abstraction_level, "0.75")] - data_quantiles.loc[(abstraction_level, "0.25")]).values
-                data_quantiles.loc[(abstraction_level, "Range"),:] = (data_quantiles.loc[(abstraction_level, "1.0")] - data_quantiles.loc[(abstraction_level, "0.0")]).values
-            data_quantiles = data_quantiles.sort_index()
+            if sheet_name == "Cat Plans":
+                data_quantiles = individual_data_set.groupby("AL").quantile([0.0, 0.25, 0.50, 0.75, 1.0])
+                data_quantiles.index = data_quantiles.index.set_levels(data_quantiles.index.levels[1].astype(str), level=1)
+                data_quantiles = data_quantiles.rename_axis(["AL", "statistic"])
+                
+                ## Data quantiles is a multi-index, with the abstraction level (level 0) and the quantiles (level 1)
+                ## https://pandas.pydata.org/docs/reference/api/pandas.MultiIndex.get_level_values.html
+                for abstraction_level in data_quantiles.index.get_level_values("AL").unique():
+                    ## Need to use a tuple to get the index to .loc as Pandas interprets tuple entries as levels and list entries as items in a level
+                    ##      - DataFrame.loc[rowId,colId]
+                    ##      - https://pandas.pydata.org/pandas-docs/stable/user_guide/advanced.html#advanced-indexing-with-hierarchical-index
+                    data_quantiles.loc[(abstraction_level, "IQR"),:] = (data_quantiles.loc[(abstraction_level, "0.75")] - data_quantiles.loc[(abstraction_level, "0.25")]).values
+                    data_quantiles.loc[(abstraction_level, "Range"),:] = (data_quantiles.loc[(abstraction_level, "1.0")] - data_quantiles.loc[(abstraction_level, "0.0")]).values
+                data_quantiles = data_quantiles.sort_index()
+                
+            else:
+                data_quantiles = individual_data_set.quantile([0.0, 0.25, 0.50, 0.75, 1.0])
+                data_quantiles = data_quantiles.rename_axis("statistic")
+                data_quantiles.loc["IQR",:] = (data_quantiles.loc[0.75] - data_quantiles.loc[0.25]).values
+                data_quantiles.loc["Range",:] = (data_quantiles.loc[1.0] - data_quantiles.loc[0.0]).values
             
-        else:
-            data_quantiles: pandas.DataFrame = data_set[sheet_name].quantile([0.0, 0.25, 0.50, 0.75, 1.0])
-            data_quantiles = data_quantiles.rename_axis("statistic")
-            data_quantiles = data_quantiles.append((data_quantiles.loc[0.75] - data_quantiles.loc[0.25]).rename("IQR"))
-            data_quantiles = data_quantiles.append((data_quantiles.loc[1.0] - data_quantiles.loc[0.0]).rename("Range"))
+            ## Insert columns to define the configurations,
+            ## then append those columns to the index (the abstraction level and aggregate statistic is also part of the index)
+            for index, level_name in enumerate(configuration_headers):
+                individual_data_set_copy.insert(index, level_name, configuration[index])
+                data_quantiles.insert(index, level_name, configuration[index])
+            individual_data_set_copy = individual_data_set_copy.set_index(configuration_headers)
+            data_quantiles = data_quantiles.set_index(configuration_headers, append=True)
+            
+            ## Set the order of the index levels;
+            ##      - Configurations comes first, then abstraction level for concatenated plans, then the statistic.
+            individual_data_set_copy = individual_data_set_copy.reorder_levels(configuration_headers)
+            data_quantiles = data_quantiles.reorder_levels(index_for_data_set)
+            
+            ## Append the data quantiles for the current data set to the list
+            data_set[sheet_name].append(individual_data_set_copy)
+            quantiles_for_data_set[sheet_name].append(data_quantiles)
         
-        ## Insert columns into the sheet to define the configurations
-        for index, level_name in enumerate(configuration_headers):
-            data_quantiles.insert(index, level_name, configuration[index])
-        data_quantiles = data_quantiles.set_index(configuration_headers, append=True)
-        
-        if sheet_name == "Cat Plans":
-            data_quantiles = data_quantiles.reorder_levels(configuration_headers + ["AL", "statistic"])
-        else: data_quantiles = data_quantiles.reorder_levels(configuration_headers + ["statistic"])
-        data_quantiles = data_quantiles.sort_index(level=cli_args.group_by)
-        
-        out_worksheets[sheet_name].append(data_quantiles)
+        ## Take the average of the quantiles over the all the individual data sets in the combined data set
+        combined_data_sets[configuration][sheet_name] = pandas.concat(data_set[sheet_name])
+        combined_data_sets_quantiles[sheet_name].append(pandas.concat(quantiles_for_data_set[sheet_name]).groupby(index_for_data_set).mean())
 
-collated_globals: pandas.DataFrame = pandas.concat(out_worksheets["Globals"])
-collated_cat_plans: pandas.DataFrame = pandas.concat(out_worksheets["Cat Plans"])
+## Concatenate all the individual quantile data set frames into single dataframes
+quantiles_globals: pandas.DataFrame = pandas.concat(combined_data_sets_quantiles["Globals"])
+quantiles_cat_plans: pandas.DataFrame = pandas.concat(combined_data_sets_quantiles["Cat Plans"])
+# quantiles_globals.describe()
+# quantiles_cat_plans.groupby("AL").describe().stack()
 
-## Use IQR as the representation of the distribution, then use a non-parametric test like mann-whitney to evalute statistical significance, since we are not sure that it is gaussian/normal.
-## https://www.simplypsychology.org/p-value.html#:~:text=A%20p%2Dvalue%20less%20than,and%20accept%20the%20alternative%20hypothesis.
-## https://blog.minitab.com/en/understanding-statistics/what-can-you-say-when-your-p-value-is-greater-than-005
-## Is statistically significant if p > 0.5.
-## If the p-value is less than 0.05, we reject the null hypothesis that there's no difference between the median and conclude that a significant difference does exist. If the p-value is larger than 0.05, we cannot conclude that a significant difference exists. 
-## A p-value less than 0.05 (typically ≤ 0.05) is statistically significant and indicates strong evidence against the null hypothesis. Therefore, we reject the null hypothesis, and accept the alternative hypothesis.
-## A p-value higher than 0.05 (> 0.05) is not statistically significant and indicates strong evidence for the null hypothesis. This means we retain the null hypothesis and reject the alternative hypothesis.
-## If the p-value is statistically significant, the values in one sample are more likely to be larger than the values in the other sample, this means there is significant differences between the data sets.
+#########################################################################################################################################################################################
+######## Process the scores and grades
+#########################################################################################################################################################################################
 
-## The score statistics
-compare_statistics: list[str] = ["QL_SCORE", "TI_SCORE", "GRADE"]
+## Open a new output excel file to save the collated data to
+##      - https://xlsxwriter.readthedocs.io/working_with_pandas.html
+writer = pandas.ExcelWriter(f"{cli_args.output_path}.xlsx", engine="xlsxwriter") # pylint: disable=abstract-class-instantiated
+out_workbook: xlsxwriter.Workbook = writer.book
 
-## Construct a dataframe including the medians for all combined configurations
+## Tests of statistical significance;
+##      - The p-value, is a measure of the significance or confidence in the difference between the measurements in two different samples (data sets).
+##        If the p-value is statistically significant, the values in one sample are more likely to be larger than the values in the other sample.
+##          - A p-value less than 0.05 is statistically significant, and indicates strong evidence against the null hypothesis.
+##            Therefore, the null hypothesis (that there's no difference between the medians of the samples) is rejected, and significant support for the alternative hypothesis (that a significant difference does exist) exists.
+##            Note that this does not mean that the alternative is accepted, i.e. it does not prove that the data are different, only that there is a sufficiently low chance (less than 5%) that the difference in the data was caused by random chance.
+##          - A p-value greater than 0.05 is not statistically significant, and indicates evidence for the null hypothesis. The null hypothesis is retained, and the alternative hypothesis rejected.
+##      - https://www.simplypsychology.org/p-value.html#:~:text=A%20p%2Dvalue%20less%20than,and%20accept%20the%20alternative%20hypothesis.
+##      - https://blog.minitab.com/en/understanding-statistics/what-can-you-say-when-your-p-value-is-greater-than-005
+
+## The summary statistics to compare for globals
+summary_statistics_globals: list[str] = ["QL_SCORE", "TI_SCORE", "GRADE"]
+summary_statistics_cat_plans: list[str] = ["GT", "ST", "OT", "GT_POTT", "ST_POTT", "OT_POTT", "TT", "LT", "CT"]
+
+## The row indices for all tables are all the possible combined configurations
 rows_index = pandas.MultiIndex.from_tuples(data_sets.keys(), names=configuration_headers)
-score_medians = pandas.DataFrame(index=rows_index, columns=compare_statistics)
-score_IQR = pandas.DataFrame(index=rows_index, columns=compare_statistics)
-score_IQR_percent = pandas.DataFrame(index=rows_index, columns=compare_statistics)
+
+## Construct dataframes including the medians and IQR for all data sets (combined configurations)
+score_medians = pandas.DataFrame(index=rows_index, columns=summary_statistics_globals)
+score_IQR = pandas.DataFrame(index=rows_index, columns=summary_statistics_globals)
+score_IQR_percent = pandas.DataFrame(index=rows_index, columns=summary_statistics_globals)
 for configuration, data_set in data_sets.items():
-    score_medians.loc[configuration,:] = collated_globals.loc[(*configuration, 0.5),compare_statistics]
-    score_IQR.loc[configuration,:] = collated_globals.loc[(*configuration, "IQR"),compare_statistics]
+    score_medians.loc[configuration,:] = quantiles_globals.loc[(*configuration, 0.5),summary_statistics_globals]
+    score_IQR.loc[configuration,:] = quantiles_globals.loc[(*configuration, "IQR"),summary_statistics_globals]
     score_IQR_percent.loc[configuration,:] = (score_IQR.loc[configuration,:] / score_medians.loc[configuration,:])
 
-## Construct a dataframe that acts as a matrix of all compared configurations;
+summary_globals: pandas.DataFrame = pandas.concat([score_medians, score_IQR, score_IQR_percent],
+                                                  keys=["Median", "IQR", "IQR%"], names=["Statistic", *configuration_headers])
+summary_globals = summary_globals.reorder_levels(["Statistic", *HEADER_ORDER])
+summary_globals = summary_globals.sort_index(level=cli_args.sort_index_values)
+summary_globals.to_latex(f"{cli_args.output_path}_Globals_Summary.tex")
+
+## Global comparisons (comparisons simultaneously over all data sets)
+
+
+
+## Construct a dataframe that acts as a matrix of all possible pair-wise configuration comparisons;
 ##      - There is a multi-index on both the rows and columns to compare all pair-wise differences,
 ##      - Result sets that are combined are dropped from both rows and columns and are taken as the mean over all results in those sets.
+pair_wise_comparison_statistics = {"Score Ranksums" : ranksums,
+                                   "Score Mannwhitheyu" : mannwhitneyu,
+                                   "Score Wilcoxon" : functools.partial(wilcoxon, zero_method="zsplit", mode="approx")}
+rows_index = pandas.MultiIndex.from_tuples(((*configuration, comparison)
+                                            for configuration in data_sets.keys()
+                                            for comparison in pair_wise_comparison_statistics.keys()),
+                                           names=(configuration_headers + ["comparison"]))
 columns_index = pandas.MultiIndex.from_tuples(((*configuration, statistic)
                                                for configuration in data_sets.keys()
-                                               for statistic in compare_statistics),
+                                               for statistic in summary_statistics_globals),
                                               names=(configuration_headers + ["result"]))
-score_ranksums = pandas.DataFrame(index=rows_index, columns=columns_index)
-score_ranksums = score_ranksums.sort_index(level=cli_args.group_by)
+pair_wise_data_set_comparison_matrix = pandas.DataFrame(index=rows_index, columns=columns_index)
+pair_wise_data_set_comparison_matrix = pair_wise_data_set_comparison_matrix.sort_index(level=cli_args.sort_index_values)
 
-print("\nProcessing ranksums...")
+## Make a list of all the desired pair-wise configuration comparisons
+compare_configurations: list[tuple[tuple[str, ...], tuple[str, ...]]] = []
 for row_configuration, column_configuration in itertools.permutations(data_sets.keys(), r=2):
     ignore: bool = False
     for index, level_name in enumerate(configuration_headers):
-        if level_name in cli_args.compare_only_different:
-            if row_configuration[index] == column_configuration[index]:
-                ignore = True
-                break
-        if level_name in cli_args.compare_only_same:
-            if row_configuration[index] != column_configuration[index]:
-                ignore = True
-                break
-    if ignore: continue
+        if ((level_name in cli_args.compare_only_different
+             and row_configuration[index] == column_configuration[index])
+            or (level_name in cli_args.compare_only_same
+                and row_configuration[index] != column_configuration[index])):
+            ignore = True; break
+    if not ignore:
+        compare_configurations.append((row_configuration, column_configuration))
+
+## For each comparison statistic...
+for comparison_statistic, comparison_function in pair_wise_comparison_statistics.items():
+    print(f"\nProcessing {comparison_statistic}...")
     
-    for statistic in compare_statistics:
-        ranksum = ranksums(data_sets[row_configuration]["Globals"][statistic].values,
-                           data_sets[column_configuration]["Globals"][statistic].values)
-        score_ranksums.loc[row_configuration, (*column_configuration, statistic)] = ranksum.pvalue
-    score_ranksums.reorder_levels(configuration_headers)
+    ## For each pair-wise configuration comparison...
+    for row_configuration, column_configuration in compare_configurations:
+        
+        ## Compare all the summary statistics
+        for statistic in summary_statistics_globals:
+            comparison = comparison_function(combined_data_sets[row_configuration]["Globals"][statistic].to_list(),
+                                             combined_data_sets[column_configuration]["Globals"][statistic].to_list())
+            pair_wise_data_set_comparison_matrix.loc[(*row_configuration, comparison_statistic), (*column_configuration, statistic)] = comparison.pvalue
+
+
 
 ## Calculate fitness to exponential trends for step-wise
 
@@ -342,24 +498,34 @@ for row_configuration, column_configuration in itertools.permutations(data_sets.
 
 
 
-## Collate and compare the data
-## https://pbpython.com/excel-file-combine.html
-collated_globals.to_excel(writer, sheet_name="Globals Comparison", merge_cells=False)
+#########################################################################################################################################################################################
+######## Excel Outputs
+#########################################################################################################################################################################################
+
+## Collate and compare the data to excel...
+##      - https://pbpython.com/excel-file-combine.html
+quantiles_globals.to_excel(writer, sheet_name="Globals Comparison", merge_cells=False)
+quantiles_cat_plans.to_excel(writer, sheet_name="Cat Plan Comparison", merge_cells=False)
 worksheet_globals = writer.sheets["Globals Comparison"]
 
 ## TODO The graph should probably be of the medians, with IQR as error bars
 ## TODO Put conditional formatting for scores with coloured bar
+#  {"type" : "3_color_scale",
+#   "max_value" : 1.0,
+#   "min_value" : 0.0,
+#   "max_color" : "red",
+#   "min_color" : "green"})
 ## Create a chart object
 chart = out_workbook.add_chart({"type" : "column"})
 
 ## Get the dimensions of the dataframe
-max_row, max_col = collated_globals.shape
+max_row, max_col = quantiles_globals.shape
 
-index_levels: int = collated_globals.index.nlevels
+index_levels: int = quantiles_globals.index.nlevels
 last_index_cell: str = chr(ord('@') + index_levels)
-ql_score: str = chr(ord('@') + (index_levels + collated_globals.columns.get_loc("QL_SCORE") + 1))
-ti_score: str = chr(ord('@') + (index_levels + collated_globals.columns.get_loc("TI_SCORE") + 1))
-grade: str = chr(ord('@') + (index_levels + collated_globals.columns.get_loc("GRADE") + 1))
+ql_score: str = chr(ord('@') + (index_levels + quantiles_globals.columns.get_loc("QL_SCORE") + 1))
+ti_score: str = chr(ord('@') + (index_levels + quantiles_globals.columns.get_loc("TI_SCORE") + 1))
+grade: str = chr(ord('@') + (index_levels + quantiles_globals.columns.get_loc("GRADE") + 1))
 
 ## Configure the series of the chart from the dataframe data
 chart.add_series({"values" : f"='Globals Comparison'!${ql_score}$2:${ql_score}${max_row}",
@@ -381,50 +547,63 @@ score_medians.to_excel(writer, sheet_name="Score Medians")
 score_IQR.to_excel(writer, sheet_name="Score IQR")
 score_IQR_percent.to_excel(writer, sheet_name="Score IQR Percent")
 
-score_ranksums.to_excel(writer, sheet_name="Score Ranksums")
-if (cli_args.send_to_dsv is not None
-    and "Score Ranksums" in cli_args.send_to_dsv):
-    ## TODO Statistics_sets["Score Ranksums"]
-    score_ranksums.to_csv(cli_args.send_to_dsv["Score Ranksums"], sep=",", na_rep=" ", line_terminator="\n", index=True)
-worksheet = writer.sheets["Score Ranksums"]
+pair_wise_data_set_comparison_matrix.to_excel(writer, sheet_name="Pair-wise Comparisons")
+worksheet = writer.sheets["Pair-wise Comparisons"]
 
 ## Get the dimensions of the dataframe
-min_row, min_col = len(configuration_headers) + 2, len(configuration_headers)
-max_row, max_col = score_ranksums.shape
+min_row, min_col = len(configuration_headers) + 2, len(configuration_headers) + 1
+max_row, max_col = pair_wise_data_set_comparison_matrix.shape
 
-## https://xlsxwriter.readthedocs.io/workbook.html#add_format
-## https://xlsxwriter.readthedocs.io/format.html#format
+## Add formatting to the excel spreadsheet;
+##      - Colour green iff the p value is less than 0.05 (indicating the difference between the compared combined data sets is statistically significant),
+##      - Colour red iff the p value is less than 0.05 (indicating the difference between the compared combined data sets is not statistically significant),
+##      - conditional_format(first_row, first_col, last_row, last_col, options)
+##          - https://xlsxwriter.readthedocs.io/format.html#format
+##          - https://xlsxwriter.readthedocs.io/workbook.html#add_format
+##          - https://xlsxwriter.readthedocs.io/working_with_conditional_formats.html#working-with-conditional-formats
 significant = out_workbook.add_format({"bg_color" : "#37FF33"})
 insignificant = out_workbook.add_format({"bg_color" : "#FF294A"})
-
-## https://xlsxwriter.readthedocs.io/working_with_conditional_formats.html#working-with-conditional-formats
-## conditional_format(first_row, first_col, last_row, last_col, options)
 worksheet.conditional_format(min_row, min_col, min_row + max_row - 1, min_col + max_col - 1,
-                             {"type" : "cell",
-                              "criteria" : "less than",
-                              "value" : 0.05,
-                              "format" : significant})
+                             {"type" : "cell", "criteria" : "less than",
+                              "value" : 0.05, "format" : significant})
 worksheet.conditional_format(min_row, min_col, min_row + max_row - 1, min_col + max_col - 1,
-                             {"type" : "cell",
-                              "criteria" : "greater than",
-                              "value" : 0.05,
-                              "format" : insignificant})
-                            #  {"type" : "3_color_scale",
-                            #   "max_value" : 1.0,
-                            #   "min_value" : 0.0,
-                            #   "max_color" : "red",
-                            #   "min_color" : "green"})
-
-
-
-collated_cat_plans.to_excel(writer, sheet_name="Cat Plan Comparison")
-
-## Graphs
-# Plan quality histogram, the x axis in the columns of ranksums matrix
-# Time score histogram
-# Grade histogram
-# Three-dimensional comparison diagram
-
-
+                             {"type" : "cell", "criteria" : "greater than",
+                              "value" : 0.05, "format" : insignificant})
 
 writer.save()
+
+#########################################################################################################################################################################################
+######## DSV Outputs
+#########################################################################################################################################################################################
+
+# ## For each comparison statistic...
+# for comparison_statistic, comparison_set in pair_wise_comparison_sets.items():
+#     ## Save to a dsv as desired
+#     if (cli_args.send_to_dsv is not None and comparison_statistic in cli_args.send_to_dsv):
+#         comparison_set.to_csv(cli_args.send_to_dsv[comparison_statistic], sep=",", na_rep=" ", line_terminator="\n", index=True)
+
+#########################################################################################################################################################################################
+######## Pgf plot graph outputs
+#########################################################################################################################################################################################
+
+# # update latex preamble
+# pyplot.rcParams.update({
+#     "font.family": "serif",
+#     "text.usetex": True,
+#     "pgf.rcfonts": False,
+#     "pgf.texsystem": 'pdflatex', # default is xetex
+#     "pgf.preamble": [
+#          r"\usepackage[T1]{fontenc}",
+#          r"\usepackage{mathpazo}"
+#          ]
+# })
+
+# figure, axis = pyplot.subplots(3, 3)
+
+configuration = next(iter(combined_data_sets))
+time_score = combined_data_sets[configuration]["Globals"]["HA_T"]
+pyplot.hist(time_score, 50, (0.0, 15.0))
+
+## https://github.com/texworld/tikzplotlib
+tikzplotlib.clean_figure()
+tikzplotlib.save(f"{cli_args.output_path}_Globals_Plot.tex")

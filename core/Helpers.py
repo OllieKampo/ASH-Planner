@@ -5,17 +5,10 @@ from typing import Generic, ItemsView, Iterator, Optional, TypeVar, final
 
 import _collections_abc
 
-
 def center_text(text: str, prefix_blank_line: bool = False, append_blank_line: bool = False,
                 framing_width: int = 0, frame_before: bool = True, frame_after: bool = True, framing_char: str = '=',
                 vbar_left: str = '', vbar_right: str = '', centering_width: int = 120, terminal_width: int = 160) -> str:
-    """
-    Function for generating centered text for printing to the console.
-    
-    Parameters
-    ----------
-    
-    """
+    "Function for generating centered text for printing to the console."
     centered_text: str = ""
     free_space: int = framing_width - (len(vbar_left) + len(vbar_right))
     line_iter = itertools.chain(*[textwrap.wrap(f"{vbar_left + (' ' * ((free_space - len(part)) // 2)):>s}{part}{(' ' * ((free_space - len(part)) // 2)) + vbar_right:<s}",

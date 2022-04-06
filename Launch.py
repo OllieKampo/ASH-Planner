@@ -620,11 +620,17 @@ def __main() -> int:
             bar_width: float = (1.0 / bars) - (padding / bars)
             
             def set_bars(bars: int) -> None:
+                "Set the number of bars in the current plot."
                 bars = bars
                 nonlocal bar_width
                 bar_width = (1.0 / bars) - (padding / bars)
             
             def get_std(name: str) -> Optional[pandas.Series]:
+                """
+                Get the standard deviation of a statistic safely,
+                if there is no deviation (because only one run was done)
+                then None is returned instead.
+                """
                 if not std[name].isnull().any():
                     return std[name]
                 return None
@@ -779,11 +785,11 @@ def __main() -> int:
                 if namespace.config_file_naming:
                     figure_file = figure_file.split(".png")[0] + f"_{config_file_name}" + ".png"
                 _Launcher_logger.info(f"Saving results to figure file: {figure_file}")
-                pyplot.pause(1)
-                figure.set_size_inches(16, 9.8)
+                pyplot.pause(1) # This is needed for some strange reason
+                figure.set_size_inches(16, 9.8) # Set to a fixed size so the output looks clean
                 pyplot.savefig(figure_file, bbox_inches="tight", dpi=120)
             
-            ## Display the plots
+            ## Display the plots maximised on the screen
             if namespace.display_figure:
                 figure_manager: FigureManagerBase = pyplot.get_current_fig_manager()
                 figure_manager.window.showMaximized()
@@ -1093,7 +1099,7 @@ def __setup() -> argparse.Namespace:
         if namespace.config_file_naming:
             log_file_name = log_file_name.split(".log")[0] + f"_{config_file_name}" + ".log"
         
-        ## Use a rotating log file hangler that starts a new file when the current reaches 95 MBs in size
+        ## Use a rotating log file handler, that generates up to 10 log files, each of which are at most 95 MBs in size
         logging.basicConfig(handlers=[logging.handlers.RotatingFileHandler(log_file_name, mode="w",
                                                                            maxBytes=(95 * (1024 ** 2)),
                                                                            backupCount=10, encoding="utf-8")],

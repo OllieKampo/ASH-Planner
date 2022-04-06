@@ -2647,8 +2647,10 @@ class HierarchicalPlanner(AbstractionHierarchy):
         
         Parameters
         ----------
+        
         The search space is how many potential plans might satisfy the solution constraints on the next step.
         The solution space is how many valid plans actually satisfy the solution constraint of the current step.
+        
         In planning mode, a constraint requires that all included goals are minimally achieved up to the current step, one plan is generated if the constraint can be satisfied.
         In search space generation mode, a maximal number of included goals are achieved up to the previous step, every potential plan that satisfies this is generated.
         """
@@ -2687,25 +2689,10 @@ class HierarchicalPlanner(AbstractionHierarchy):
                           f"The level must be an integer in the range; [1-{tl}] : {tl} = top_level.",
                           logger=self.__logger)
         
-        # ## Check time limit is valid
-        # if time_limit is not None and not isinstance(time_limit, int):
-        #     log_and_raise(ASH_InvalidInputError,
-        #                   f"Time out must be either; None or an integer. Got {time_limit} of type {type(time_limit)}.",
-        #                   logger=self.__logger)
-        # if time_limit is not None and time_limit <= 0:
-        #     log_and_raise(ASH_InvalidInputError,
-        #                   f"Time out of {time_limit} is invalid, it must be either; None or an integer greater than zero.",
-        #                   logger=self.__logger)
-        
         ## Check that the subgoal stage range to refine is valid
         if first_sgoals is not None and last_sgoals is not None and last_sgoals < first_sgoals:
             self.__logger.warn(f"The maximum value of the refined subgoal stage range {last_sgoals}, "
                                f"is less than the minimum value {first_sgoals}.")
-        
-        ## If concurrency is enabled but optimisation of actions is disabled or vice versa
-        if minimise_actions is not None and (concurrency and not minimise_actions) or (not concurrency and minimise_actions):
-            self.__logger.warn(f"Action minimisation is only necessary when concurrency is enabled. "
-                               f"Got concurrency = {concurrency}, action minimisation = {minimise_actions}")
         
         #############################################################################
         #### Obtain the problem specification

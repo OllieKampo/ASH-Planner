@@ -316,7 +316,7 @@ max_order(M) :- M = #max { ORDER : goal_order(AL, F, V, B, ORDER), final_goal(AL
 #heuristic occurs(AL, ROBOT, A, step) : action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V, step), final_goal(AL, F, V, false),
                                         fluent(AL, inertial, F, V), pl(AL), step > start, preempt_neg_fgoals = true, preempt_mode = heuristic. [10 @ 0, false]
 
-%% Final-goal pre-emptive achievement optimisations based enforcement
+%% Final-goal pre-emptive achievement optimisation based enforcement
 :~ occurs(AL, ROBOT, A, step), action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V), final_goal(AL, F, V, true),
    fluent(AL, inertial, F, V), pl(AL), step > start, preempt_pos_fgoals = true, preempt_mode = optimise. [-1 @ 1, AL, ROBOT, A, F, V, step]
 :~ occurs(AL, ROBOT, A, step), action(AL, _, _, ROBOT, A), effect(AL, ROBOT, A, F, V, step), final_goal(AL, F, V, true),
