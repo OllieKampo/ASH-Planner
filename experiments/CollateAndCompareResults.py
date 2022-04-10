@@ -421,7 +421,7 @@ rows_index = pandas.MultiIndex.from_tuples(data_sets.keys(), names=configuration
 score_medians = pandas.DataFrame(index=rows_index, columns=summary_statistics_globals)
 score_IQR = pandas.DataFrame(index=rows_index, columns=summary_statistics_globals)
 score_IQR_percent = pandas.DataFrame(index=rows_index, columns=summary_statistics_globals)
-for configuration, data_set in data_sets.items():
+for configuration in data_sets.keys():
     score_medians.loc[configuration,:] = quantiles_globals.loc[(*configuration, 0.5),summary_statistics_globals]
     score_IQR.loc[configuration,:] = quantiles_globals.loc[(*configuration, "IQR"),summary_statistics_globals]
     score_IQR_percent.loc[configuration,:] = (score_IQR.loc[configuration,:] / score_medians.loc[configuration,:])
