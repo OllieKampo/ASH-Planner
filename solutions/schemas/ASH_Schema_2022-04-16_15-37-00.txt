@@ -1,0 +1,611 @@
+{
+    "sub_goal_stages": {
+        "1": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "move(hallway)",
+                "F": "in(talos)",
+                "V": "hallway",
+                "I": 1
+            }
+        ],
+        "2": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "configure(manipulator_arm_1,extended)",
+                "F": "configuration(manipulator_arm_1)",
+                "V": "extended",
+                "I": 2
+            }
+        ],
+        "3": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "grasp(manipulator_arm_1,store_room_door_handle_outer)",
+                "F": "grasping(manipulator_arm_1)",
+                "V": "store_room_door_handle_outer",
+                "I": 3
+            }
+        ],
+        "4": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "actuate(manipulator_arm_1,store_room_door)",
+                "F": "configuration(store_room_door)",
+                "V": "open",
+                "I": 4
+            }
+        ],
+        "5": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "release(manipulator_arm_1,store_room_door_handle_outer)",
+                "F": "grasping(manipulator_arm_1)",
+                "V": "nothing",
+                "I": 5
+            }
+        ],
+        "6": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "grasp(manipulator_arm_1,puzzle_room_door_handle_outer)",
+                "F": "grasping(manipulator_arm_1)",
+                "V": "puzzle_room_door_handle_outer",
+                "I": 6
+            }
+        ],
+        "7": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "actuate(manipulator_arm_1,puzzle_room_door)",
+                "F": "configuration(puzzle_room_door)",
+                "V": "open",
+                "I": 7
+            }
+        ],
+        "8": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "release(manipulator_arm_1,puzzle_room_door_handle_outer)",
+                "F": "grasping(manipulator_arm_1)",
+                "V": "nothing",
+                "I": 8
+            }
+        ],
+        "9": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "configure(manipulator_arm_1,retracted)",
+                "F": "configuration(manipulator_arm_1)",
+                "V": "retracted",
+                "I": 9
+            }
+        ],
+        "10": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "move(puzzle_room)",
+                "F": "in(talos)",
+                "V": "puzzle_room",
+                "I": 10
+            }
+        ],
+        "11": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "configure(manipulator_arm_2,extended)",
+                "F": "configuration(manipulator_arm_2)",
+                "V": "extended",
+                "I": 11
+            }
+        ],
+        "12": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "grasp(manipulator_arm_2,(block,9))",
+                "F": "grasping(manipulator_arm_2)",
+                "V": "(block,9)",
+                "I": 12
+            }
+        ],
+        "13": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "put(manipulator_arm_2,(block,9),puzzle_room_table)",
+                "F": "on((block,9))",
+                "V": "puzzle_room_table",
+                "I": 13
+            }
+        ],
+        "14": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "release(manipulator_arm_2,(block,9))",
+                "F": "grasping(manipulator_arm_2)",
+                "V": "nothing",
+                "I": 14
+            }
+        ],
+        "15": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "configure(manipulator_arm_2,retracted)",
+                "F": "configuration(manipulator_arm_2)",
+                "V": "retracted",
+                "I": 15
+            }
+        ],
+        "16": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "move(hallway)",
+                "F": "in(talos)",
+                "V": "hallway",
+                "I": 16
+            }
+        ],
+        "17": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "move(store_room)",
+                "F": "in(talos)",
+                "V": "store_room",
+                "I": 17
+            }
+        ],
+        "18": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "configure(manipulator_arm_1,extended)",
+                "F": "configuration(manipulator_arm_1)",
+                "V": "extended",
+                "I": 18
+            }
+        ],
+        "19": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "grasp(manipulator_arm_1,(block,8))",
+                "F": "grasping(manipulator_arm_1)",
+                "V": "(block,8)",
+                "I": 19
+            }
+        ],
+        "20": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "configure(manipulator_arm_2,extended)",
+                "F": "configuration(manipulator_arm_2)",
+                "V": "extended",
+                "I": 20
+            }
+        ],
+        "21": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "grasp(manipulator_arm_2,(block,6))",
+                "F": "grasping(manipulator_arm_2)",
+                "V": "(block,6)",
+                "I": 21
+            }
+        ],
+        "22": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "configure(manipulator_arm_1,retracted)",
+                "F": "configuration(manipulator_arm_1)",
+                "V": "retracted",
+                "I": 22
+            }
+        ],
+        "23": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "configure(manipulator_arm_2,retracted)",
+                "F": "configuration(manipulator_arm_2)",
+                "V": "retracted",
+                "I": 23
+            }
+        ],
+        "24": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "move(hallway)",
+                "F": "in(talos)",
+                "V": "hallway",
+                "I": 24
+            }
+        ],
+        "25": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "move(puzzle_room)",
+                "F": "in(talos)",
+                "V": "puzzle_room",
+                "I": 25
+            }
+        ],
+        "26": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "configure(manipulator_arm_2,extended)",
+                "F": "configuration(manipulator_arm_2)",
+                "V": "extended",
+                "I": 26
+            }
+        ],
+        "27": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "configure(manipulator_arm_1,extended)",
+                "F": "configuration(manipulator_arm_1)",
+                "V": "extended",
+                "I": 27
+            }
+        ],
+        "28": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "put(manipulator_arm_1,(block,8),(block,9))",
+                "F": "on((block,8))",
+                "V": "(block,9)",
+                "I": 28
+            }
+        ],
+        "29": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "release(manipulator_arm_1,(block,8))",
+                "F": "grasping(manipulator_arm_1)",
+                "V": "nothing",
+                "I": 29
+            }
+        ],
+        "30": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "put(manipulator_arm_2,(block,6),puzzle_room_table)",
+                "F": "on((block,6))",
+                "V": "puzzle_room_table",
+                "I": 30
+            }
+        ],
+        "31": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "grasp(manipulator_arm_1,(block,7))",
+                "F": "grasping(manipulator_arm_1)",
+                "V": "(block,7)",
+                "I": 31
+            }
+        ],
+        "32": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "put(manipulator_arm_1,(block,7),(block,8))",
+                "F": "on((block,7))",
+                "V": "(block,8)",
+                "I": 32
+            }
+        ],
+        "33": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "release(manipulator_arm_2,(block,6))",
+                "F": "grasping(manipulator_arm_2)",
+                "V": "nothing",
+                "I": 33
+            }
+        ],
+        "34": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "configure(manipulator_arm_2,retracted)",
+                "F": "configuration(manipulator_arm_2)",
+                "V": "retracted",
+                "I": 34
+            }
+        ],
+        "35": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "release(manipulator_arm_1,(block,7))",
+                "F": "grasping(manipulator_arm_1)",
+                "V": "nothing",
+                "I": 35
+            }
+        ],
+        "36": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "configure(manipulator_arm_1,retracted)",
+                "F": "configuration(manipulator_arm_1)",
+                "V": "retracted",
+                "I": 36
+            }
+        ],
+        "37": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "move(hallway)",
+                "F": "in(talos)",
+                "V": "hallway",
+                "I": 37
+            }
+        ],
+        "38": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "move(store_room)",
+                "F": "in(talos)",
+                "V": "store_room",
+                "I": 38
+            }
+        ],
+        "39": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "configure(manipulator_arm_2,extended)",
+                "F": "configuration(manipulator_arm_2)",
+                "V": "extended",
+                "I": 39
+            }
+        ],
+        "40": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "configure(manipulator_arm_1,extended)",
+                "F": "configuration(manipulator_arm_1)",
+                "V": "extended",
+                "I": 40
+            }
+        ],
+        "41": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "grasp(manipulator_arm_2,(block,4))",
+                "F": "grasping(manipulator_arm_2)",
+                "V": "(block,4)",
+                "I": 41
+            }
+        ],
+        "42": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "grasp(manipulator_arm_1,(block,5))",
+                "F": "grasping(manipulator_arm_1)",
+                "V": "(block,5)",
+                "I": 42
+            }
+        ],
+        "43": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "configure(manipulator_arm_2,retracted)",
+                "F": "configuration(manipulator_arm_2)",
+                "V": "retracted",
+                "I": 43
+            }
+        ],
+        "44": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "configure(manipulator_arm_1,retracted)",
+                "F": "configuration(manipulator_arm_1)",
+                "V": "retracted",
+                "I": 44
+            }
+        ],
+        "45": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "move(hallway)",
+                "F": "in(talos)",
+                "V": "hallway",
+                "I": 45
+            }
+        ],
+        "46": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "move(puzzle_room)",
+                "F": "in(talos)",
+                "V": "puzzle_room",
+                "I": 46
+            }
+        ],
+        "47": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "configure(manipulator_arm_1,extended)",
+                "F": "configuration(manipulator_arm_1)",
+                "V": "extended",
+                "I": 47
+            }
+        ],
+        "48": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "put(manipulator_arm_1,(block,5),(block,6))",
+                "F": "on((block,5))",
+                "V": "(block,6)",
+                "I": 48
+            }
+        ],
+        "49": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "release(manipulator_arm_1,(block,5))",
+                "F": "grasping(manipulator_arm_1)",
+                "V": "nothing",
+                "I": 49
+            }
+        ],
+        "50": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "grasp(manipulator_arm_1,(block,3))",
+                "F": "grasping(manipulator_arm_1)",
+                "V": "(block,3)",
+                "I": 50
+            }
+        ],
+        "51": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "configure(manipulator_arm_2,extended)",
+                "F": "configuration(manipulator_arm_2)",
+                "V": "extended",
+                "I": 51
+            }
+        ],
+        "52": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "put(manipulator_arm_1,(block,3),puzzle_room_table)",
+                "F": "on((block,3))",
+                "V": "puzzle_room_table",
+                "I": 52
+            }
+        ],
+        "53": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "release(manipulator_arm_1,(block,3))",
+                "F": "grasping(manipulator_arm_1)",
+                "V": "nothing",
+                "I": 53
+            }
+        ],
+        "54": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "grasp(manipulator_arm_1,(block,2))",
+                "F": "grasping(manipulator_arm_1)",
+                "V": "(block,2)",
+                "I": 54
+            }
+        ],
+        "55": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "put(manipulator_arm_1,(block,2),(block,3))",
+                "F": "on((block,2))",
+                "V": "(block,3)",
+                "I": 55
+            }
+        ],
+        "56": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "release(manipulator_arm_1,(block,2))",
+                "F": "grasping(manipulator_arm_1)",
+                "V": "nothing",
+                "I": 56
+            }
+        ],
+        "57": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "grasp(manipulator_arm_1,(block,1))",
+                "F": "grasping(manipulator_arm_1)",
+                "V": "(block,1)",
+                "I": 57
+            }
+        ],
+        "58": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "put(manipulator_arm_1,(block,1),(block,2))",
+                "F": "on((block,1))",
+                "V": "(block,2)",
+                "I": 58
+            }
+        ],
+        "59": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "put(manipulator_arm_2,(block,4),(block,5))",
+                "F": "on((block,4))",
+                "V": "(block,5)",
+                "I": 59
+            }
+        ],
+        "60": [
+            {
+                "L": 2,
+                "R": "talos",
+                "A": "release(manipulator_arm_2,(block,4))",
+                "F": "grasping(manipulator_arm_2)",
+                "V": "nothing",
+                "I": 60
+            }
+        ]
+    },
+    "problem_divisions": [
+        "DivisionPoint(index=0, blend=Blend(left=0, right=0), inherited=True, reactive=None, interrupting=False, preemptive=0, committed_index=-1, committed_step=-1)",
+        "DivisionPoint(index=21, blend=Blend(left=0, right=0), inherited=True, reactive=None, interrupting=False, preemptive=0, committed_index=-1, committed_step=-1)",
+        "DivisionPoint(index=33, blend=Blend(left=0, right=0), inherited=True, reactive=None, interrupting=False, preemptive=0, committed_index=-1, committed_step=-1)",
+        "DivisionPoint(index=50, blend=Blend(left=0, right=0), inherited=True, reactive=None, interrupting=False, preemptive=0, committed_index=-1, committed_step=-1)",
+        "DivisionPoint(index=60, blend=Blend(left=0, right=0), inherited=True, reactive=None, interrupting=False, preemptive=0, committed_index=-1, committed_step=-1)"
+    ]
+}

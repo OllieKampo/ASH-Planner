@@ -599,7 +599,8 @@ class Results:
                     if len(divisions_per_scenario) >= 2:
                         stdev_divisions = statistics.stdev(divisions_per_scenario)
                     else: stdev_divisions = 0.0
-                    bal_divisions = stdev_divisions / mean_divisions
+                    if mean_divisions != 0.0:
+                        bal_divisions = stdev_divisions / mean_divisions
                     quantiles_divisions = Quantiles(*numpy.quantile(divisions_per_scenario, [0.0, 0.25, 0.5, 0.75, 1.0]))
                     
                     mean_size = statistics.mean(sizes_per_scenario)
@@ -1127,13 +1128,23 @@ class Experiment:
         ## Do experimental runs
         for run in tqdm.tqdm(range(1, self.__experimental_runs + 1), desc="Experimental runs completed", disable=not self.__enable_tqdm, leave=False, ncols=180, colour="white", unit="run"):
             hierarchical_plan, planning_time = self.__run()
+            
             if (success := hierarchical_plan is not None):
                 results.add(hierarchical_plan)
                 successful_runs += 1
             else: failed_runs += 1
+            
             _EXP_logger.log(logging.DEBUG if self.__enable_tqdm else logging.INFO,
                             "\n\n" + center_text(f"Experimental run {run} : {'SUCCESSFUL' if success else 'FAILED'} : Time {planning_time:.6f}s",
                                                  framing_width=54, centering_width=60))
+            
+            if successful_runs == 0 and failed_runs > 10:
+                _EXP_logger.info("\n\n" + center_text(f"Experiment abandoned after all of first 10 runs failed : "
+                                                      f"Real time {experiment_real_total_time:.6f}s, "
+                                                      f"Proccess time {experiment_process_total_time:.6f}s",
+                                                      framing_width=96, centering_width=100, framing_char="#"))
+                return results
+        
         results.runs_completed(successful_runs, failed_runs)
         
         experiment_real_total_time: float = time.perf_counter() - experiment_real_start_time
