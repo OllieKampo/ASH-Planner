@@ -42,6 +42,9 @@ def generate_configurations(file_name: str, input_path: str, output_path: str,
         else: combined_combinations = primary_combinations
         
         for combination in combined_combinations:
+            if any((index != 0 and float(bound) > min(map(float, combination[:index])))
+                   for index, bound in enumerate(combination)):
+                continue
             # if math.prod(int(b) for b in combination) < 4:
             #     continue
             # if math.prod(int(b) for b in combination) > 40:
@@ -59,7 +62,7 @@ def generate_configurations(file_name: str, input_path: str, output_path: str,
                 
                 _combination: tuple[str, ...] = combination
                 if not absolute_bounds:
-                    _combination = tuple(str(100 * float(bound)) for bound in combination)
+                    _combination = tuple(str(int(100.0 * float(bound))) for bound in combination)
                 
                 new_file_name = f"{split_file_name[0]}{bound_type}{'_'.join(_combination)}{split_file_name[1]}"
             

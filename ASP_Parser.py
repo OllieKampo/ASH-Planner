@@ -984,18 +984,26 @@ class Model(_collections_abc.Set):
         
         return atoms
     
-    def regex_parse(self, regex: re.Pattern, parse_mode: ParseMode, return_as_strings: bool = True) -> set[ASP_Symbol]:
+    def regex_parse(self,
+                    regex: Union[re.Pattern, str],
+                    parse_mode: Optional[ParseMode] = None,
+                    return_as_strings: bool = True
+                    ) -> set[ASP_Symbol]:
         """
-        Parse over each atom in the model using a regular expression and according to the given parsing mode.
-        Those atoms who match the expression are returned in a set as their string representation.
+        Parse over each atom in the model using a regular expression.
+        Those atoms who match the expression according to the given parsing mode are returned.
         
         Parameters
         ----------
+        `regex: re.Pattern | str` -
         
+        `parse_mode: ParseMode | None = None` -
+        
+        `return_as_strings: bool = True` -
         
         Returns
         -------
-        
+        `set[str | clingo.Symbol]` -
         
         Example Usage
         -------------
@@ -1004,11 +1012,17 @@ class Model(_collections_abc.Set):
         atoms: set[str] = set()
         for atom in self.symbols:
             str_atom: str = str(atom)
-            if parse_mode.value[0](regex, str_atom) is not None:
-                atoms.add(str_atom)
+            if ((parse_mode is None
+                 and re.match(regex, str_atom) is not None)
+                or parse_mode.value[0](regex, str_atom) is not None):
+                 atoms.add(str_atom if return_as_strings else atom)
         return atoms
     
-    def func_parse(self, callback_function: Callable[[ASP_Symbol], bool], callback_as_strings: bool = True, return_as_strings: bool = True) -> set[ASP_Symbol]:
+    def func_parse(self,
+                   callback_function: Callable[[ASP_Symbol], bool],
+                   callback_as_strings: bool = True,
+                   return_as_strings: bool = True
+                   ) -> set[ASP_Symbol]:
         """
         Parse over each atom in the model using a callback function.
         The callback function is called on each atom in the model.
@@ -1016,21 +1030,25 @@ class Model(_collections_abc.Set):
         
         Parameters
         ----------
+        `callback_function: Callable[[ASP_Symbol], bool]` -
         
+        `callback_as_strings: bool = True` -
+        
+        `return_as_strings: bool = True` -
         
         Returns
         -------
-        
+        `set[str | clingo.Symbol]` -
         
         Example Usage
         -------------
         
         """
-        atoms: set[str] = set()
+        atoms: set[ASP_Symbol] = set()
         for atom in self.symbols:
             str_atom: str = str(atom)
-            if callback_function(str_atom):
-                atoms.add(str_atom)
+            if callback_function(str_atom if callback_as_strings else atom):
+                atoms.add(str_atom if return_as_strings else atom)
         return atoms
     
     def evaluate(self, rule: str, solver_options: Iterable[str] = [], assumptions: Iterable[clingo.Symbol] = [], context: Iterable[Callable[..., clingo.Symbol]] = []) -> "Answer":
