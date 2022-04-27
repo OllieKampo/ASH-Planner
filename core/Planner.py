@@ -1334,15 +1334,15 @@ class Verbosity(enum.Enum):
     
     Items
     -----
-    Verbose = 4 - Log everything to the CLI
+    Verbose = 4 - Log everything to the CLI.
     
-    Standard = 3 - Log planned actions
+    Standard = 3 - Log planned actions.
     
-    Simple = 2 - Do no print out plans or problem specifics
+    Simple = 2 - Do no print out plans or problem specifics.
     
-    Minimal = 1 - Only progress bars and statistics
+    Minimal = 1 - Only progress bars and statistics.
     
-    Disable = 0 - Log nothing
+    Disable = 0 - Log nothing.
     """
     Verbose = VerbosityValue(4, logging.INFO)
     Standard = VerbosityValue(3, logging.INFO)
@@ -1691,11 +1691,11 @@ class HierarchicalPlanner(AbstractionHierarchy):
         `domain : {PlanningDomain, list[str]}` - Either a pre-constructed planning domain (see ASH.PlanningDomain) which the planner makes a copy of,
         or a list of strings defining the file paths of domain files to load, from which the planner will construct its own planning domain.
         
-        `name : Optional[str] = None` - 
+        `name : Optional[str] = None` - An arbitrary name for the planner instance.
         
-        `threads : int = 1` -
+        `threads : int = 1` - The number of solver threads to use.
         
-        `verbosity : Verbosity = Verbosity.Standard` -
+        `verbosity : Verbosity = Verbosity.Standard` - A verbosity mode defining the output format from this planner to the CLI, see (ASH.Planner.Verbosity).
         
         `silence_clingo : bool` - A Boolean, True to disable all output from Clingo, False otherwise.
         
@@ -1756,10 +1756,12 @@ class HierarchicalPlanner(AbstractionHierarchy):
     
     @property
     def name(self) -> str:
+        "The planner's name."
         return self.__name
     
     @property
     def domain(self) -> PlanningDomain:
+        "The currently loaded planning domain."
         return self.__domain
     
     @property
@@ -1768,9 +1770,17 @@ class HierarchicalPlanner(AbstractionHierarchy):
     
     @property
     def problem_initialised(self) -> bool:
+        "A Boolean, True iff the planner contains an initialised problem instance, False otherwise."
         return bool(self.__initial_states) and bool(self.__final_goals)
     
     def set_thread_count(self, threads: int) -> None:
+        """
+        Set the number of solver threads used by the underlying Clingo ASP system.
+        
+        Parameters
+        ----------
+        `threads : int` - The number of solver threads to use.
+        """
         if not isinstance(threads, int):
             log_and_raise(TypeError, f"Thread count value must be an integer. Got {threads} of type {type(threads)}.", logger=self.__logger)
         if threads > os.cpu_count(): # type: ignore
@@ -1784,7 +1794,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
         
         Parameters
         ----------
-        `verbosity : Verbosity` - A verbosity mode defining the output format from this planner to the CLI.
+        `verbosity : Verbosity` - A verbosity mode defining the output format from this planner to the CLI, see (ASH.Planner.Verbosity).
         
         `silence_clingo : bool` - A Boolean, True to disable all output from Clingo, False otherwise.
         
@@ -2343,11 +2353,11 @@ class HierarchicalPlanner(AbstractionHierarchy):
         
         Parameters
         ----------
-        
+        TODO
         
         Returns
         -------
-        
+        TODO
         """
         self.__logger.log(self.__verbosity.value.log, "Generating final-goals...")
         
@@ -2647,6 +2657,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
         
         Parameters
         ----------
+        TODO
         
         The search space is how many potential plans might satisfy the solution constraints on the next step.
         The solution space is how many valid plans actually satisfy the solution constraint of the current step.
@@ -3634,27 +3645,27 @@ class HierarchicalPlanner(AbstractionHierarchy):
         
         Parameters
         ----------
-        solve_signal: ASP.SolveSignal
+        `solve_signal: ASP.SolveSignal`
         
-        level: int
+        `level: int`
         
-        start_step: int = 0
+        `start_step: int = 0`
         
-        first_sgoals: int = 1
+        `first_sgoals: int = 1`
         
-        last_sgoals: int = 1
+        `last_sgoals: int = 1`
         
-        finalise: bool = True
+        `finalise: bool = True`
         
-        sequential_yield: bool = False
+        `sequential_yield: bool = False`
         
-        detect_interleaving: bool = False
+        `detect_interleaving: bool = False`
         
-        generate_search_space: bool = False
+        `generate_search_space: bool = False`
         
-        make_observable: bool = False
+        `make_observable: bool = False`
         
-        division_strategy: Optional[DivisionStrategy] = None
+        `division_strategy: Optional[DivisionStrategy] = None`
         """
         self.__logger.debug("Starting search:\n\t" + "\n\t".join(map(str, locals().items())))
         
