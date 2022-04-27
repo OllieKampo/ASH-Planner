@@ -336,13 +336,14 @@ max_order(M) :- M = #max { ORDER : goal_order(AL, F, V, B, ORDER), final_goal(AL
 %% Solution checking constraint;
 %%      - The problem is satisfiable only iff;
 %%          - All currently included goals are achieved,
-%%          - or the current step is less than the minimum search length bound.
+%%          - or the current step is less than the minimum search length bound minus one
+%%            (the minus one is important since the initial state is at step zero, but the first plan step is step one).
 %%      - There is no need to make the program unsatisfiable below the minimum search length bound,
 %%        since the program is never solved below that step, and thus an answer set can only be found
 %%        when the solver finds a plan that achieves all included goals beyond the minimum search length bound.
 #external query(step).
 #const minimum_search_length_bound = -1.
-:- step > minimum_search_length_bound, incomplete_plan(step), query(step).
+:- step > (minimum_search_length_bound - 1), incomplete_plan(step), query(step).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
