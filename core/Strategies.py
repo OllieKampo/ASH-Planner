@@ -216,12 +216,31 @@ class DivisionScenario(_collections_abc.Sequence):
                  "__division_points",
                  "__previously_solved_problems")
     
-    def __init__(self, abstract_plan: Optional["Planner.MonolevelPlan"], division_points: Iterable[DivisionPoint], previously_solved_problems: int = 0) -> None:
+    def __init__(self,
+                 abstract_plan: Optional["Planner.MonolevelPlan"],
+                 division_points: Iterable[DivisionPoint],
+                 previously_solved_problems: int = 0
+                 ) -> None:
+        """
+        Create a divisio scenario from a sequence of division points,
+        which blueprints a sequence of partial conformance refinement planning problems, over an abstract plan.
+        
+        Parameters
+        ----------
+        `abstract_plan: {Planner.MonolevelPlan | None}` - The abstract plan that the scenario divides the refinement problem of.
+        This can be None, but it is recommended that it is always given.
+        
+        `division_points: Iterable[DivisionPoint]` - A sequence of division points that define the scenario.
+        
+        `previously_solved_problems: int = 0` - The number of partial refinement problems that have already been solved
+        (or have already been blueprinted by an existing division scenario) at the original level.
+        """
         if abstract_plan.plan_length <= 0:
             raise ValueError
         self.__abstract_plan: Planner.MonolevelPlan = abstract_plan
+        ## The maximum number of division points that can be placed over an abstract plan is equal to one less than the plan length.
         if (len(division_points) + 1) > abstract_plan.plan_length:
-            raise ValueError
+            raise ValueError(f"Too many division points. Got; {len(division_points)} division points, over abstract plan of length {abstract_plan.plan_length}.")
         self.__division_points: list[DivisionPoint] = list(division_points)
         self.__division_points.sort()
         if previously_solved_problems < 0:
