@@ -1,0 +1,5 @@
+This does not appear to cause much issue in terms of plan quality, as it does not require the planner to find a low quality plan.
+It is however, not the desired behaviour, and shows that the guidance provided by the conformance constraint, in terms of how well the sub-goal stages guide planning at the original level through an optimal sequence or path of states.
+On the other hand, it is good that the conformance constraint is sufficiently flexible to avoid this clearly non-optimal abstract plan from refining to a highly non-optimal original level plan, after all, the abstract planning is far from omniscient, and this may happen often.
+It remains to be seen where the line between strictness and flexibility on the constraint stands, where do get the most retriction on the search space/time, with the least loss in plan quality in general.
+This will require much more extensive testing of a larger number of domains and hierarchical conformance refinement planning problems.

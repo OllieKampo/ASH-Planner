@@ -1,4 +1,6 @@
 
+This is an example of the dependency that can occur from having two blocks in hand when reaching the hallway and the puzzle room door is still closed.
+
 On line 373379 of file ASH_Log_PS3_hcr_online_6_6.log.1
 
           ========================================          
