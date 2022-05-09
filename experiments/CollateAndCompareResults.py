@@ -2,9 +2,10 @@ from collections import defaultdict
 import functools
 import itertools
 import os
-from typing import Optional, Sequence
+from typing import Any, Optional, Sequence
 import numpy
 import pandas
+import pandas.io.formats.style as pandas_style
 import glob
 import argparse
 import tqdm
@@ -13,8 +14,8 @@ import subprocess
 import matplotlib
 from matplotlib import pyplot
 import tikzplotlib
-import warnings
-warnings.simplefilter(action='ignore', category=pandas.errors.PerformanceWarning)
+# import warnings
+# warnings.simplefilter(action='ignore', category=pandas.errors.PerformanceWarning)
 
 ## Global data set comparison statistics;
 ##      - Problem with global comparisons, are that affect of one sample is not being seperable may make two others, that are statistically significant, seem like they are not.
@@ -27,10 +28,13 @@ from scipy.stats import kruskal, friedmanchisquare, fligner
 ##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ranksums.html
 ##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.mannwhitneyu.html
 ##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html
+##      - https://stats.stackexchange.com/questions/558814/actual-difference-between-the-statistic-results-from-scipy-stats-ranksums-and-sc
 ##      - https://stats.stackexchange.com/questions/91034/what-is-the-difference-between-the-wilcoxon-srank-sum-test-and-the-wilcoxons-s
-from scipy.stats import ranksums, mannwhitneyu, wilcoxon
+##          - Use the Mann-Whitney-Wilcoxon ranked sum test (ranksums) when the data are not paired (independent), e.g. comparing performance of differnt configurations on different problems.
+##          - Use the Mann-Whitney-Wilcoxon signed rank test (wilcoxon) when the data are paired/related, e.g. comparing performance of different configurations on the same problem, or the same configuration for different problems.
+from scipy.stats import ranksums, wilcoxon
 
-## Data set-wise statistics;
+## Individual data set statistics;
 ##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.normaltest.html
 ##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.skewtest.html
 ##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kurtosis.html
@@ -52,7 +56,7 @@ def mapping_argument_factory(key_choices: Optional[list[str]] = None, allow_mult
                 key, value = key_value.split('=', 1)
                 if (self.__class__.key_choices is not None
                     and key not in self.__class__.key_choices):
-                    error_string: str = f"Error during parsing filter argument '{option_string}' for key-value mapping {key_value}, key {key} not allowed."
+                    error_string: str = f"Error during parsing filter argument '{option_string}' for key-value mapping {key_value}, the key {key} is not allowed."
                     print(error_string)
                     raise RuntimeError(error_string)
                 if ',' in value:
@@ -66,19 +70,13 @@ def mapping_argument_factory(key_choices: Optional[list[str]] = None, allow_mult
                         _values[key] = [value]
                     else: _values[key] = value
         except ValueError as error:
-            print(f"Error during parsing filter argument '{option_string}' for key-value mapping {key_value}, {error}.")
+            print(f"Error during parsing filter argument '{option_string}' for key-value mapping {key_value}: {error}.")
             raise error
         setattr(namespace, self.dest, _values)
     
     return type("StoreMappingArgument", (argparse.Action,), {"__call__" : __call__,
                                                              "key_choices" : key_choices.copy() if key_choices is not None else None,
                                                              "allow_multiple_values" : allow_multiple_values})
-
-__STATISTICS_SETS: list[str] = ["Score Summary",
-                                "Globals Comparison",
-                                "Level-wise Summary",
-                                "Cat Plans Comparison",
-                                "Score Ranksums"]
 
 ## Command line arguments parser
 parser = argparse.ArgumentParser()
@@ -91,8 +89,6 @@ parser.add_argument("-order", "--order_index_headers", nargs="*", default=[], ty
 parser.add_argument("-sort", "--sort_index_values", nargs="*", default=[], type=str)
 parser.add_argument("-diff", "--compare_only_different", nargs="*", default=[], type=str)
 parser.add_argument("-same", "--compare_only_same", nargs="*", default=[], type=str)
-parser.add_argument("-send_to_dsv", nargs="+", default=None, action=mapping_argument_factory(key_choices=__STATISTICS_SETS, allow_multiple_values=False), type=str,
-                    metavar="statistics_set=file_path")
 cli_args: argparse.Namespace = parser.parse_args()
 
 def get_option_list(option_list: list[str]) -> str:
@@ -187,6 +183,8 @@ def extract_configuration(excel_file_name: str) -> Optional[list[str]]:
         
         if configuration_dict["planning_mode"] == "online":
             configuration_dict["strategy"] = get_term(["basic", "hasty", "steady", "jumpy", "impetuous", "relentless"], "basic")
+            configuration_dict["division_commit_type"] = get_term(["con", "rup", "comb"], "rup")
+            configuration_dict["prediv"] = get_term(["prediv", "childdiv"], "childdiv")
             configuration_dict["bound_type"] = get_term(["abs", "per", "sl", "inct", "dift", "intt"], "abs")
             for rel_index, term in enumerate(terms[(index := index + 1):]):
                 if not term.isdigit():
@@ -243,27 +241,31 @@ data_sets: dict[tuple[str, ...], dict[str, list[pandas.DataFrame]]] = defaultdic
 files_loaded: int = 0
 for path in cli_args.input_paths:
     print(f"\nLoading files from path {path} ...")
+    
     for excel_file_name in tqdm.tqdm(glob.glob(f"{path}/*.xlsx")):
         
-        ## Extract the configuration from the file name,
-        ## if a matching configuration exists, load the data, otherwise ignore the file.
+        ## Extract the configuration from the file name;
+        ##  - If a matching configuration exists, then load the data,
+        ##  - Otherwise, ignore the file.
         configuration: Optional[list[str]] = extract_configuration(excel_file_name)
         if configuration is None:
             continue
         files_loaded += 1
         
         ## Open each excel workbook and extract its data
-        ## https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html#excelfile-class
+        ##  - https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html#excelfile-class
         # print(f"Opening excel file {excel_file_name} :: Matching Data Set Configuration {configuration}")
         with pandas.ExcelFile(excel_file_name, engine="openpyxl") as excel_file:
             ## Read globals and concatenated plans
             worksheets: dict[str, pandas.DataFrame] = pandas.read_excel(excel_file, ["Globals", "Cat Plans"])
             
-            ## Globals is not nicely formatted so some extra work is needed to extract it
+            ## Globals is not nicely formatted so some extra work is needed to extract it;
+            ##      - Get the rows were all the entries are null,
+            ##      - Get the index over those rows,
+            ##      - Clip the dataframe to include only elements up to but excluding the first null row.
             null_rows: pandas.Series = worksheets["Globals"].isnull().all(axis=1)
-            null_rows_index: pandas.Int64Index = worksheets["Globals"].index[null_rows]
-            last_data_row: int = null_rows_index.values[0]
-            worksheets["Globals"] = worksheets["Globals"][:last_data_row]
+            null_rows_index: pandas.Index = worksheets["Globals"].index[null_rows]
+            worksheets["Globals"] = worksheets["Globals"][:null_rows_index.values[0]]
             
             ## Some of the early classical planning files don't have the time score in globals
             if "TI_SCORE" not in worksheets["Globals"]:
@@ -271,7 +273,7 @@ for path in cli_args.input_paths:
                                              "TI_SCORE", worksheets["Globals"]["HA_SCORE"])
             
             ## Calculate the percentage of the total time spent in grounding, solving, and overhead;
-            ##      - These define the Relative complexity of;
+            ##      - These define the relative complexity of;
             ##          - Grounding the logic program (complexity of representing the size of the problem),
             ##          - Solving the logic program (complexity of searching for a solution to the problem of minimal length),
             ##          - The overhead in terms of the time taken to make reactive decisions during search.
@@ -306,6 +308,9 @@ for configuration in data_sets:
 configuration_headers = new_configuration_headers
 data_sets = new_data_sets
 
+## Set the order of the configuration headers across the top of the row indices;
+##      - Any headers requested to be ordered come first in the header list,
+##      - Any headers that are part of set of headers but are not in the order list come after.
 HEADER_ORDER: list[str] = []
 for header in cli_args.order_index_headers:
     if header in configuration_headers:
@@ -316,7 +321,6 @@ for header in configuration_headers:
 
 print(f"\nA total of {files_loaded} matching files were loaded.")
 print(f"A total of {len(data_sets)} combined data sets were obtained.\n")
-
 print(f"Configuration headers:\n\t{configuration_headers}")
 print("Data sets:\n\t" + "\n\t".join(repr(configuration) for configuration in data_sets))
 
@@ -387,28 +391,18 @@ for configuration, combined_data_set in tqdm.tqdm(data_sets.items()):
             quantiles_for_data_set[sheet_name].append(data_quantiles)
         
         ## Take the average of the quantiles over the all the individual data sets in the combined data set
-        combined_data_sets[configuration][sheet_name] = pandas.concat(data_set[sheet_name])
-        combined_data_sets_quantiles[sheet_name].append(pandas.concat(quantiles_for_data_set[sheet_name]).groupby(index_for_data_set).mean())
+        combined_data_sets[configuration][sheet_name] = pandas.concat(data_set[sheet_name]).astype(float)
+        combined_data_sets_quantiles[sheet_name].append(pandas.concat(quantiles_for_data_set[sheet_name]).astype(float).groupby(index_for_data_set).mean())
 
 ## Concatenate all the individual quantile data set frames into single dataframes
 quantiles_globals: pandas.DataFrame = pandas.concat(combined_data_sets_quantiles["Globals"])
 quantiles_cat_plans: pandas.DataFrame = pandas.concat(combined_data_sets_quantiles["Cat Plans"])
-# quantiles_globals.describe()
-# quantiles_cat_plans.groupby("AL").describe().stack()
+# quantiles_globals.describe() TODO
+# quantiles_cat_plans.groupby("AL").describe().stack() TODO
 
 #########################################################################################################################################################################################
 ######## Process the scores and grades
 #########################################################################################################################################################################################
-
-## Tests of statistical significance;
-##      - The p-value, is a measure of the significance or confidence in the difference between the measurements in two different samples (data sets).
-##        If the p-value is statistically significant, the values in one sample are more likely to be larger than the values in the other sample.
-##          - A p-value less than 0.05 is statistically significant, and indicates strong evidence against the null hypothesis.
-##            Therefore, the null hypothesis (that there's no difference between the medians of the samples) is rejected, and significant support for the alternative hypothesis (that a significant difference does exist) exists.
-##            Note that this does not mean that the alternative is accepted, i.e. it does not prove that the data are different, only that there is a sufficiently low chance (less than 5%) that the difference in the data was caused by random chance.
-##          - A p-value greater than 0.05 is not statistically significant, and indicates evidence for the null hypothesis. The null hypothesis is retained, and the alternative hypothesis rejected.
-##      - https://www.simplypsychology.org/p-value.html#:~:text=A%20p%2Dvalue%20less%20than,and%20accept%20the%20alternative%20hypothesis.
-##      - https://blog.minitab.com/en/understanding-statistics/what-can-you-say-when-your-p-value-is-greater-than-005
 
 ## The summary statistics to compare for globals
 summary_statistics_globals: list[str] = ["QL_SCORE", "TI_SCORE", "GRADE"]
@@ -426,20 +420,38 @@ for configuration in data_sets.keys():
     score_IQR.loc[configuration,:] = quantiles_globals.loc[(*configuration, "IQR"),summary_statistics_globals]
     score_IQR_percent.loc[configuration,:] = (score_IQR.loc[configuration,:] / score_medians.loc[configuration,:])
 
+## Construct a dataframe containing the minimal possible description of the collated data:
+##      - The column headers are the "global summary statistics"; quality score, time score, and grade,
+##      - The row index headers are the "minimal descriptive statistic aggregates" and the combined configuration headers,
+##      - Configuration headers are sorted according to user input.
 summary_globals: pandas.DataFrame = pandas.concat([score_medians, score_IQR, score_IQR_percent],
                                                   keys=["Median", "IQR", "IQR%"], names=["Statistic", *configuration_headers])
 summary_globals = summary_globals.reorder_levels(["Statistic", *HEADER_ORDER])
-summary_globals = summary_globals.sort_index(level=cli_args.sort_index_values)
+summary_globals = summary_globals.sort_index(axis=0, level=cli_args.sort_index_values)
+summary_globals = summary_globals.sort_index(axis=1, level=cli_args.sort_index_values)
+
+#########################################################################################################################################################################################
+######## Tests of statistical significance
+#########################################################################################################################################################################################
+##      - The p-value, is a measure of the significance or confidence in the difference between the measurements in two different samples (data sets).
+##        If the p-value is statistically significant, the values in one sample are more likely to be larger than the values in the other sample.
+##          - A p-value less than 0.05 is statistically significant, and indicates strong evidence against the null hypothesis.
+##            Therefore, the null hypothesis (that there's no difference between the medians of the samples) is rejected, and significant support for the alternative hypothesis (that a significant difference does exist) exists.
+##            Note that this does not mean that the alternative is accepted, i.e. it does not prove that the data are different, only that there is a sufficiently low chance (less than 5%) that the difference in the data was caused by random chance.
+##          - A p-value greater than 0.05 is not statistically significant, and indicates evidence for the null hypothesis. The null hypothesis is retained, and the alternative hypothesis rejected.
+##      - https://www.simplypsychology.org/p-value.html#:~:text=A%20p%2Dvalue%20less%20than,and%20accept%20the%20alternative%20hypothesis.
+##      - https://blog.minitab.com/en/understanding-statistics/what-can-you-say-when-your-p-value-is-greater-than-005
 
 ## Global comparisons (comparisons simultaneously over all data sets)
-
+global_comparison_statistics = {"Score Kruskal" : kruskal,
+                                "Score Friedman Chi-Square" : friedmanchisquare,
+                                "Fligner" : fligner}
 
 
 ## Construct a dataframe that acts as a matrix of all possible pair-wise configuration comparisons;
 ##      - There is a multi-index on both the rows and columns to compare all pair-wise differences,
 ##      - Result sets that are combined are dropped from both rows and columns and are taken as the mean over all results in those sets.
 pair_wise_comparison_statistics = {"Score Ranksums" : ranksums,
-                                   "Score Mannwhitheyu" : mannwhitneyu,
                                    "Score Wilcoxon" : functools.partial(wilcoxon, zero_method="zsplit", mode="approx")}
 rows_index = pandas.MultiIndex.from_tuples(((*configuration, comparison)
                                             for configuration in data_sets.keys()
@@ -450,7 +462,8 @@ columns_index = pandas.MultiIndex.from_tuples(((*configuration, statistic)
                                                for statistic in summary_statistics_globals),
                                               names=(configuration_headers + ["result"]))
 pair_wise_data_set_comparison_matrix = pandas.DataFrame(index=rows_index, columns=columns_index)
-pair_wise_data_set_comparison_matrix = pair_wise_data_set_comparison_matrix.sort_index(level=cli_args.sort_index_values)
+pair_wise_data_set_comparison_matrix = pair_wise_data_set_comparison_matrix.sort_index(axis=0, level=cli_args.sort_index_values)
+pair_wise_data_set_comparison_matrix = pair_wise_data_set_comparison_matrix.sort_index(axis=1, level=cli_args.sort_index_values)
 
 ## Make a list of all the desired pair-wise configuration comparisons
 compare_configurations: list[tuple[tuple[str, ...], tuple[str, ...]]] = []
@@ -478,9 +491,16 @@ for comparison_statistic, comparison_function in pair_wise_comparison_statistics
                                              combined_data_sets[column_configuration]["Globals"][statistic].to_list())
             pair_wise_data_set_comparison_matrix.loc[(*row_configuration, comparison_statistic), (*column_configuration, statistic)] = comparison.pvalue
 
+#########################################################################################################################################################################################
+######## Tests of trends
+#########################################################################################################################################################################################
+
+## Calculate fitness to linear trend for step-wise grounding time and exponential trend for step-wise solving and total time
+##      - This should be split for multiple partial problems.
 
 
-## Calculate fitness to exponential trends for step-wise
+
+## Calculate fitness to linear trend for index-wise total number of achieved sub-goal stages
 
 
 
@@ -496,56 +516,50 @@ for comparison_statistic, comparison_function in pair_wise_comparison_statistics
 ######## Excel Outputs
 #########################################################################################################################################################################################
 
-## Open a new output excel file to save the collated data to;
+## Open a new output excel workbook to save the collated data to;
 ##      - https://pbpython.com/excel-file-combine.html
 ##      - https://xlsxwriter.readthedocs.io/working_with_pandas.html
 writer = pandas.ExcelWriter(f"{cli_args.output_path}.xlsx", engine="xlsxwriter") # pylint: disable=abstract-class-instantiated
 out_workbook: xlsxwriter.Workbook = writer.book
 
-quantiles_globals.to_excel(writer, sheet_name="Globals Comparison", merge_cells=False)
-quantiles_cat_plans.to_excel(writer, sheet_name="Cat Plan Comparison", merge_cells=False)
-worksheet_globals = writer.sheets["Globals Comparison"]
+################################################################
+######## Summary tables
 
-summary_globals.to_latex(f"{cli_args.output_path}_Globals_Summary.tex")
-
+summary_globals.to_excel(writer, sheet_name="Globals Summary")
+summary_cat_plans.to_excel(writer, sheet_name="Cat Plan Summary")
 ## TODO The graph should probably be of the medians, with IQR as error bars
+# worksheet_globals = writer.sheets["Globals Comparison"]
+
+# ## Create a chart object
+# chart = out_workbook.add_chart({"type" : "column"})
+
+# ## Get the dimensions of the dataframe
+# max_row, max_col = quantiles_globals.shape
+
+# index_levels: int = quantiles_globals.index.nlevels
+# last_index_cell: str = chr(ord('@') + index_levels)
+# ql_score: str = chr(ord('@') + (index_levels + quantiles_globals.columns.get_loc("QL_SCORE") + 1))
+# ti_score: str = chr(ord('@') + (index_levels + quantiles_globals.columns.get_loc("TI_SCORE") + 1))
+# grade: str = chr(ord('@') + (index_levels + quantiles_globals.columns.get_loc("GRADE") + 1))
+
+# ## Configure the series of the chart from the dataframe data
+# chart.add_series({"values" : f"='Globals Comparison'!${ql_score}$2:${ql_score}${max_row}",
+#                   "categories" : f"='Globals Comparison'!$A$2:${last_index_cell}${max_row + 1}",
+#                   "name" : f"='Globals Comparison'!${ql_score}$1:${ql_score}$1"})
+
+# ## Insert the chart into the worksheet
+# chart.set_size(1000, 1000) ## TODO Calculate a reasonable chart size
+# worksheet_globals.insert_chart(max_col + 2, 2, chart)
+
 ## TODO Put conditional formatting for scores with coloured bar
 #  {"type" : "3_color_scale",
 #   "max_value" : 1.0,
 #   "min_value" : 0.0,
 #   "max_color" : "red",
 #   "min_color" : "green"})
-## Create a chart object
-chart = out_workbook.add_chart({"type" : "column"})
 
-## Get the dimensions of the dataframe
-max_row, max_col = quantiles_globals.shape
-
-index_levels: int = quantiles_globals.index.nlevels
-last_index_cell: str = chr(ord('@') + index_levels)
-ql_score: str = chr(ord('@') + (index_levels + quantiles_globals.columns.get_loc("QL_SCORE") + 1))
-ti_score: str = chr(ord('@') + (index_levels + quantiles_globals.columns.get_loc("TI_SCORE") + 1))
-grade: str = chr(ord('@') + (index_levels + quantiles_globals.columns.get_loc("GRADE") + 1))
-
-## Configure the series of the chart from the dataframe data
-chart.add_series({"values" : f"='Globals Comparison'!${ql_score}$2:${ql_score}${max_row}",
-                  "categories" : f"='Globals Comparison'!$A$2:${last_index_cell}${max_row + 1}",
-                  "name" : f"='Globals Comparison'!${ql_score}$1:${ql_score}$1"})
-# chart.add_series({"values" : "='Globals Comparison'!$V$2:$V$43",
-#                   "categories" : "='Globals Comparison'!$A$2:$F$43",
-#                   "name" : "='Globals Comparison'!$V$1:$V$1"})
-# chart.add_series({"values" : "='Globals Comparison'!$AC$2:$AC$43",
-#                   "categories" : "='Globals Comparison'!$A$2:$F$43",
-#                   "name" : "='Globals Comparison'!$AC$1:$AC$1"})
-
-## Insert the chart into the worksheet
-worksheet_globals.insert_chart(1, 3, chart)
-
-
-
-score_medians.to_excel(writer, sheet_name="Score Medians")
-score_IQR.to_excel(writer, sheet_name="Score IQR")
-score_IQR_percent.to_excel(writer, sheet_name="Score IQR Percent")
+################################################################
+######## Tests of significant differences between data sets
 
 pair_wise_data_set_comparison_matrix.to_excel(writer, sheet_name="Pair-wise Comparisons")
 worksheet = writer.sheets["Pair-wise Comparisons"]
@@ -570,22 +584,39 @@ worksheet.conditional_format(min_row, min_col, min_row + max_row - 1, min_col + 
                              {"type" : "cell", "criteria" : "greater than",
                               "value" : 0.05, "format" : insignificant})
 
+################################################################
+######## Overall quantiles over combined data sets
+
+quantiles_globals.to_excel(writer, sheet_name="Globals Comparison", merge_cells=False)
+quantiles_cat_plans.to_excel(writer, sheet_name="Cat Plan Comparison", merge_cells=False)
+
+## Save the workbook
 writer.save()
-
-#########################################################################################################################################################################################
-######## DSV Outputs
-#########################################################################################################################################################################################
-
-# ## For each comparison statistic...
-# for comparison_statistic, comparison_set in pair_wise_comparison_sets.items():
-#     ## Save to a dsv as desired
-#     if (cli_args.send_to_dsv is not None and comparison_statistic in cli_args.send_to_dsv):
-#         comparison_set.to_csv(cli_args.send_to_dsv[comparison_statistic], sep=",", na_rep=" ", line_terminator="\n", index=True)
 
 #########################################################################################################################################################################################
 ######## Latex table and pgfplots graph outputs
 #########################################################################################################################################################################################
-######## All results are given as medians, with IQR used as represenation of variance
+######## All results are given as medians, with IQR used as represenation of variance.
+
+################################################################
+######## Summary tables
+
+summary_globals.to_latex(f"{cli_args.output_path}_Globals_Summary.tex")
+summary_cat_plans.to_latex(f"{cli_args.output_path}_CatPlan_Summary.tex")
+pair_wise_data_set_comparison_matrix.to_latex(f"{cli_args.output_path}_TestOfSignificance.tex")
+
+################################################################
+######## Graph plotting setup
+
+bars: int = 1
+padding: float = 0.10
+bar_width: float = (1.0 / bars) - (padding / bars)
+
+def set_bars(bars: int) -> None:
+    "Set the number of bars in the current plot."
+    bars = bars
+    global bar_width
+    bar_width = (1.0 / bars) - (padding / bars)
 
 ################################################################
 ######## Bar charts for plan quality
@@ -600,13 +631,20 @@ figure_time_raw_bars, axis_time_raw_bars = pyplot.subplots() # Cat plans
 figure_time_agg_bars, axis_time_agg_bars = pyplot.subplots() # Globals
 figure_time_score_bars, axis_time_score_bars = pyplot.subplots() # Globals
 
+def get_cat_plans(statistic: str) -> dict[str, Any]:
+    return {"height" : quantiles_cat_plans[0.5, statistic],
+            "yerr" : (quantiles_cat_plans[0.25, statistic], quantiles_cat_plans[0.75, statistic]),
+            "capsize" : 5} 
+
 ## Raw planning time per abstraction level;
 ##      - Solving time, grounding time, total time, yield time, completion time.
 set_bars(5)
-axis_time_raw_bars.bar(al_range - (bar_width * 2), means["GT"], bar_width, yerr=get_std("GT"), capsize=5, label="Median Grounding Time")
-axis_time_raw_bars.bar(al_range - bar_width, means["ST"], bar_width, yerr=get_std("ST"), capsize=5, label="Median Solving")
-axis_time_raw_bars.bar(al_range - bar_width, means["ST"], bar_width, yerr=get_std("ST"), capsize=5, label="Median Solving")
+# axis_time_raw_bars.bar(al_range - (bar_width * 2), quantiles_cat_plans[0.5, "GT"], bar_width, yerr=(quantiles_cat_plans[0.25, "GT"], quantiles_cat_plans[0.75, "GT"]), capsize=5, label="Mean Grounding Time")
+axis_time_raw_bars.bar(al_range - (bar_width * 2), width=bar_width, **get_cat_plans("GT"), label="Median Grounding Time")
+axis_time_raw_bars.bar(al_range - bar_width, quantiles_cat_plans["ST"], bar_width, yerr=get_std("ST"), capsize=5, label="Mean Solving")
 axis_time_raw_bars.bar(al_range, means["TT"], bar_width, yerr=get_std("TT"), capsize=5, label="Mean Total")
+axis_time_raw_bars.bar(al_range + bar_width, quantiles_cat_plans["LT"], bar_width, yerr=get_std("LT"), capsize=5, label="Mean Latency")
+axis_time_raw_bars.bar(al_range + (bar_width * 2), quantiles_cat_plans["CT"], bar_width, yerr=get_std("CT"), capsize=5, label="Mean Completion")
 
 ## Aggregate ground-level planning times;
 ##      - Latency time, absolution time, average non-initial wait time, average minimum execution time per action.
