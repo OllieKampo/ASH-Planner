@@ -110,7 +110,6 @@ print("Order of index headers:\n\t" + get_option_list(cli_args.order_index_heade
 print("Sort index values by:\n\t" + get_option_list(cli_args.sort_index_values), end="\n\n")
 print("Compare only data sets with different:\n\t" + get_option_list(cli_args.compare_only_different), end="\n\n")
 print("Compare only data sets with same:\n\t" + get_option_list(cli_args.compare_only_same), end="\n\n")
-print("Send statistics to dsv file:\n\t" + get_option_list((f"{key} : {value}" for key, value in cli_args.send_to_dsv.items()) if cli_args.send_to_dsv is not None else None), end="\n\n")
 
 print("Your original files will NOT be modified.")
 input_: str = input("\nProceed? [(y)/n]: ")
@@ -354,7 +353,7 @@ for configuration, combined_data_set in tqdm.tqdm(data_sets.items()):
             
             if sheet_name == "Cat Plans":
                 data_quantiles = individual_data_set.groupby("AL").quantile([0.0, 0.25, 0.50, 0.75, 1.0])
-                data_quantiles.index = data_quantiles.index.set_levels(data_quantiles.index.levels[1].astype(str), level=1)
+                data_quantiles.index = data_quantiles.index.set_levels(data_quantiles.index.levels[1].astype(float), level=1)
                 data_quantiles = data_quantiles.rename_axis(["AL", "statistic"])
                 
                 ## Data quantiles is a multi-index, with the abstraction level (level 0) and the quantiles (level 1)
@@ -363,8 +362,8 @@ for configuration, combined_data_set in tqdm.tqdm(data_sets.items()):
                     ## Need to use a tuple to get the index to .loc as Pandas interprets tuple entries as levels and list entries as items in a level
                     ##      - DataFrame.loc[rowId,colId]
                     ##      - https://pandas.pydata.org/pandas-docs/stable/user_guide/advanced.html#advanced-indexing-with-hierarchical-index
-                    data_quantiles.loc[(abstraction_level, "IQR"),:] = (data_quantiles.loc[(abstraction_level, "0.75")] - data_quantiles.loc[(abstraction_level, "0.25")]).values
-                    data_quantiles.loc[(abstraction_level, "Range"),:] = (data_quantiles.loc[(abstraction_level, "1.0")] - data_quantiles.loc[(abstraction_level, "0.0")]).values
+                    data_quantiles.loc[(abstraction_level, "IQR"),:] = (data_quantiles.loc[(abstraction_level, 0.75)] - data_quantiles.loc[(abstraction_level, 0.25)]).values
+                    data_quantiles.loc[(abstraction_level, "Range"),:] = (data_quantiles.loc[(abstraction_level, 1.0)] - data_quantiles.loc[(abstraction_level, 0.0)]).values
                 data_quantiles = data_quantiles.sort_index()
                 
             else:
@@ -397,8 +396,7 @@ for configuration, combined_data_set in tqdm.tqdm(data_sets.items()):
 ## Concatenate all the individual quantile data set frames into single dataframes
 quantiles_globals: pandas.DataFrame = pandas.concat(combined_data_sets_quantiles["Globals"])
 quantiles_cat_plans: pandas.DataFrame = pandas.concat(combined_data_sets_quantiles["Cat Plans"])
-# quantiles_globals.describe() TODO
-# quantiles_cat_plans.groupby("AL").describe().stack() TODO
+al_range = range(1, quantiles_cat_plans.index.get_level_values("AL").max() + 1)
 
 #########################################################################################################################################################################################
 ######## Process the scores and grades
@@ -409,26 +407,40 @@ summary_statistics_globals: list[str] = ["QL_SCORE", "TI_SCORE", "GRADE"]
 summary_statistics_cat_plans: list[str] = ["GT", "ST", "OT", "GT_POTT", "ST_POTT", "OT_POTT", "TT", "LT", "CT"]
 
 ## The row indices for all tables are all the possible combined configurations
-rows_index = pandas.MultiIndex.from_tuples(data_sets.keys(), names=configuration_headers)
+globals_rows_index = pandas.MultiIndex.from_tuples(data_sets.keys(), names=configuration_headers)
+cat_plans_rows_index = pandas.MultiIndex.from_tuples(((*configuration, al) for configuration in data_sets.keys() for al in al_range), names=(*configuration_headers, "AL"))
 
 ## Construct dataframes including the medians and IQR for all data sets (combined configurations)
-score_medians = pandas.DataFrame(index=rows_index, columns=summary_statistics_globals)
-score_IQR = pandas.DataFrame(index=rows_index, columns=summary_statistics_globals)
-score_IQR_percent = pandas.DataFrame(index=rows_index, columns=summary_statistics_globals)
+score_medians = pandas.DataFrame(index=globals_rows_index, columns=summary_statistics_globals)
+score_IQR = pandas.DataFrame(index=globals_rows_index, columns=summary_statistics_globals)
 for configuration in data_sets.keys():
     score_medians.loc[configuration,:] = quantiles_globals.loc[(*configuration, 0.5),summary_statistics_globals]
     score_IQR.loc[configuration,:] = quantiles_globals.loc[(*configuration, "IQR"),summary_statistics_globals]
-    score_IQR_percent.loc[configuration,:] = (score_IQR.loc[configuration,:] / score_medians.loc[configuration,:])
 
 ## Construct a dataframe containing the minimal possible description of the collated data:
 ##      - The column headers are the "global summary statistics"; quality score, time score, and grade,
-##      - The row index headers are the "minimal descriptive statistic aggregates" and the combined configuration headers,
+##      - The row index headers are the; median and IQR, and the combined configuration headers,
 ##      - Configuration headers are sorted according to user input.
-summary_globals: pandas.DataFrame = pandas.concat([score_medians, score_IQR, score_IQR_percent],
-                                                  keys=["Median", "IQR", "IQR%"], names=["Statistic", *configuration_headers])
-summary_globals = summary_globals.reorder_levels(["Statistic", *HEADER_ORDER])
-summary_globals = summary_globals.sort_index(axis=0, level=cli_args.sort_index_values)
-summary_globals = summary_globals.sort_index(axis=1, level=cli_args.sort_index_values)
+summary_globals: pandas.DataFrame = pandas.concat([score_medians, score_IQR],
+                                                  keys=["Median", "IQR"], names=["Statistic", *configuration_headers])
+summary_globals = summary_globals.reorder_levels([*HEADER_ORDER, "Statistic"])
+summary_globals.sort_index(axis=0, level=cli_args.sort_index_values, inplace=True)
+summary_globals.sort_index(axis=1, level=cli_args.sort_index_values, inplace=True)
+
+## Construct dataframes including the medians and IQR for all data sets (combined configurations)
+cat_plans_score_medians = pandas.DataFrame(index=cat_plans_rows_index, columns=summary_statistics_cat_plans)
+cat_plans_score_IQR = pandas.DataFrame(index=cat_plans_rows_index, columns=summary_statistics_cat_plans)
+for configuration in data_sets.keys():
+    for al in al_range:
+        cat_plans_score_medians.loc[(*configuration, al),:] = quantiles_cat_plans.loc[(*configuration, al, 0.5),summary_statistics_cat_plans]
+        cat_plans_score_IQR.loc[(*configuration, al),:] = quantiles_cat_plans.loc[(*configuration, al, "IQR"),summary_statistics_cat_plans]
+
+## TODO
+summary_cat_plans: pandas.DataFrame = pandas.concat([cat_plans_score_medians, cat_plans_score_IQR],
+                                                    keys=["Median", "IQR"], names=["Statistic", *configuration_headers, "AL"])
+summary_cat_plans = summary_cat_plans.reorder_levels([*HEADER_ORDER, "AL", "Statistic"])
+summary_cat_plans.sort_index(axis=0, level=cli_args.sort_index_values, inplace=True)
+summary_cat_plans.sort_index(axis=1, level=cli_args.sort_index_values, inplace=True)
 
 #########################################################################################################################################################################################
 ######## Tests of statistical significance
@@ -446,6 +458,7 @@ summary_globals = summary_globals.sort_index(axis=1, level=cli_args.sort_index_v
 global_comparison_statistics = {"Score Kruskal" : kruskal,
                                 "Score Friedman Chi-Square" : friedmanchisquare,
                                 "Fligner" : fligner}
+## TODO
 
 
 ## Construct a dataframe that acts as a matrix of all possible pair-wise configuration comparisons;
@@ -527,6 +540,7 @@ out_workbook: xlsxwriter.Workbook = writer.book
 
 summary_globals.to_excel(writer, sheet_name="Globals Summary")
 summary_cat_plans.to_excel(writer, sheet_name="Cat Plan Summary")
+
 ## TODO The graph should probably be of the medians, with IQR as error bars
 # worksheet_globals = writer.sheets["Globals Comparison"]
 
