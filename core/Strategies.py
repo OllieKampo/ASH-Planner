@@ -19,15 +19,6 @@ Bound = Union[Optional[Number], dict[int, Optional[Number]]]
 Horizon = Bound
 Bounds = dict[str, Bound]
 
-class Predictor:
-    pass
-
-class ProblemComplexityPredictor(Predictor):
-    pass
-
-class ProblemDependencyPredictor(Predictor):
-    pass
-
 @dataclass(frozen=True)
 class Blend:
     left: Number = 0
@@ -784,10 +775,6 @@ class DivisionStrategy(metaclass=ABCMeta):
         
         return division_points
 
-
-
-# Naive proactive strategies
-
 @final
 class Basic(DivisionStrategy):
     """
@@ -948,8 +935,6 @@ class NaiveProactive(DivisionStrategy):
             if isinstance(size_bound, float) and not (0.0 < size_bound <= 1.0):
                 raise ValueError(f"A floating point size bound value for naive proactive strategies must be in the range (0.0-1.0] Got {size_bound}.")
         return None
-
-
 
 class Hasty(NaiveProactive):
     """
