@@ -1038,8 +1038,8 @@ class Jumpy(NaiveProactive):
         
         ## Get the size bound
         plan_length: int = len(abstract_plan)
+        if plan_length == 1: return DivisionScenario(abstract_plan, [], previously_solved_problems)
         true_size_bound: int = self.get_true_size_bound(abstract_plan.level, plan_length)
-        
         return DivisionScenario(abstract_plan, [DivisionPoint(true_size_bound + abstract_plan.state_start_step)], previously_solved_problems)
     
     def total_increments_prediction(self, planning_domain: "Planner.PlanningDomain", online_method: "Planner.OnlineMethod") -> Optional[int]:
@@ -1062,8 +1062,6 @@ class Jumpy(NaiveProactive):
                 raise ValueError("Jumpy requires a size bound of 0.5 or less.")
         return super().validate_bounds(bounds)
 
-
-
 class ReactiveBoundType(enum.Enum):
     """
     `SearchLength = "search_length"` - The current search length.
@@ -1075,20 +1073,12 @@ class ReactiveBoundType(enum.Enum):
     `Integral = "integral_time_bound"` - The sum of the total incremental planning times (seconds) over the moving range.
     
     `Cumulative = "cumulative_time_bound"` - The sum of all total incremental planning times (seconds) since the last reactive division.
-    
-    `IncrementalPredictive = "predictive_time_bound"` - The predicted total incremental planning time of the next search step (seconds/step).
-    
-    `CumulativePredictive = "predictive_time_bound"` - The sum of all total incremental planning times including the predicted total incremental planning time of the next search step (seconds) since the last reactive division.
     """
     SearchLength = "search_length_bound"
     Incremental = "incremental_time_bound"
     Differential = "differential_time_bound"
     Integral = "integral_time_bound"
     Cumulative = "cumulative_time_bound"
-    # IncrementalPredictive = "incremental_time_bound"
-    # CumulativePredictive = "cumulative_time_bound"
-
-
 
 class Reactive(DivisionStrategy):
     """
@@ -1269,29 +1259,12 @@ class Reactive(DivisionStrategy):
             ## The differential is the average gradient over the moving range
             if bound_type == ReactiveBoundType.Differential:
                 return statistics.mean(gradients)
-            
-            # ## At least two gradients are needed to calculate the rate of change
-            # if len(gradients) < 2: return 0.0
-            
-            # ## The rate of change is the average increase in gradient per search step
-            # rate_of_change: float = statistics.mean(gradients[-(index + 1)] - gradients[-(index + 2)] for index in range(len(gradients) - 1))
-            
-            # ## The predictive forms a basic naive prediction of what;
-            # ##      - The incremental planning time at the next step will be or,
-            # ##      - The cumulative planning times inclusive of the next step will be.
-            # ##      - This is the sum of;
-            # ##          - The incremental or cumulative time respectively,
-            # ##          - The gradient between the previous two steps,
-            # ##          - The average rate of change of the gradient over the moving range.
-            # if bound_type == ReactiveBoundType.IncrementalPredictive:
-            #     return usable_times[-1] + gradients[-1] + rate_of_change
-            # elif bound_type == ReactiveBoundType.CumulativePredictive:
-            #     return sum(valid_times) + gradients[-1] + rate_of_change
         
         return 0.0
     
     @property
     def preemptive(self) -> bool:
+        "Whether pre-emptive division is enabled for this strategy."
         return self.__preemptive
     
     @preemptive.setter
@@ -1302,6 +1275,7 @@ class Reactive(DivisionStrategy):
     
     @property
     def interrupting(self) -> bool:
+        "Whether interrupting division is enabled for this strategy."
         return self.__interrupting
     
     @interrupting.setter
@@ -1318,10 +1292,11 @@ class Reactive(DivisionStrategy):
         return self.__last_division_index.get(level, 0)
     
     def get_last_division_step(self, level: int) -> int:
-        "The last reactive division index made by this strategy at a given abstraction level."
+        "The planning step at which the last reactive division made by this strategy at a given abstraction level."
         return self.__last_division_step.get(level, 0)
     
     def reset(self) -> None:
+        "Reset this strategies' internal variables for tracking planning progression, should be called after the planner returns an absolute hierarchical plan."
         self.__last_division_index: dict[int, int] = {}
         self.__last_division_step: dict[int, int] = {}
     
@@ -1557,12 +1532,6 @@ class Rapid(Relentless):
     def proact(self, abstract_plan: "Planner.MonolevelPlan", previously_solved_problems: int) -> DivisionScenario:
         return self.__proactive_basis.proact(abstract_plan, previously_solved_problems)
 
-class Cautious(Steady):
-    pass
-
-class Audacious(Impetuous):
-    pass
-
 @enum.unique
 class GetStrategy(enum.Enum):
     ## Basic
@@ -1579,9 +1548,3 @@ class GetStrategy(enum.Enum):
     
     ## Naive adaptive
     rapid = Rapid
-    
-    ## Informed proactive
-    cautious = Cautious
-    
-    ## Informed adaptive
-    audacious = Audacious
