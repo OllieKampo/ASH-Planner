@@ -22,24 +22,24 @@
 import argparse
 import datetime
 import functools
+import json
 import logging
 import logging.handlers
 import os
 import sys
-from typing import Any, Optional, Sequence, Type, Union
 import time
-import json
-from matplotlib.backend_bases import FigureManagerBase
+from typing import Any, Optional, Sequence, Type, Union
+
 import numpy
-from matplotlib import pyplot
-from pandas import isnull
 import pandas
+from matplotlib import pyplot
+from matplotlib.backend_bases import FigureManagerBase
 from pandas.core.frame import DataFrame
 
 import core.Planner as Planner
 import core.Strategies as Strategies
-from core.Helpers import center_text
 import Experiment
+from core.Helpers import center_text
 
 ## Main module logger
 _Launcher_logger: logging.Logger = logging.getLogger(__name__)
@@ -109,18 +109,6 @@ An increment can involve at most one partial problem per level, but might not in
 For example, in complete-first divided planning, there is only one partial problem per increment, whereas ground-first usually involves a hierarchy of partial problems per increment.
 """
 
-def get_hierarchical_arg(dict_or_number: Union[Number, dict[int, Number]], level: int, default: Optional[Number] = None) -> Optional[Number]:
-    """
-    Get the value of a hierarchical argument at a given abstraction level.
-    """
-    if isinstance(dict_or_number, dict):
-        if (arg := dict_or_number.get(level, default)) is not None:
-            return arg
-        else: return default
-    return dict_or_number
-
-
-
 def __main() -> int:
     "Main method which creates a console session, runs the planner, and returns 0 if the console returns cleanly."
     
@@ -172,7 +160,20 @@ def __main() -> int:
     if namespace.conformance_type is not None:
         conformance_type = Planner.ConformanceType(namespace.conformance_type)
     
-    def get_hierarchical_args(dict_or_number: Union[Number, dict[int, Number]], default: Optional[Number] = None) -> Optional[Union[Number, dict[int, Number]]]:
+    def get_hierarchical_arg(dict_or_number: Union[Number, dict[int, Number]],
+                         level: int,
+                         default: Optional[Number] = None
+                         ) -> Optional[Number]:
+        "Get the value of a single hierarchical argument at a given abstraction level."
+        if isinstance(dict_or_number, dict):
+            if (arg := dict_or_number.get(level, default)) is not None:
+                return arg
+            else: return default
+        return dict_or_number
+    
+    def get_hierarchical_args(dict_or_number: Union[Number, dict[int, Number]],
+                              default: Optional[Number] = None
+                              ) -> Optional[Union[Number, dict[int, Number]]]:
         if isinstance(dict_or_number, dict):
             hierarchical_args: dict[int, Number] = {}
             for level in planner.domain.level_range:
@@ -182,7 +183,7 @@ def __main() -> int:
             return hierarchical_args
         return dict_or_number
     
-    ## If problem space generation or dependency detection is enabled then attempt to load a schema
+    ## If problem space generation or dependency detection is enabled then attempt to load a schema TODO remove
     if namespace.problem_space is not None:
         
         if not namespace.load_schema is not None:
@@ -402,8 +403,6 @@ def __main() -> int:
         if namespace.display_figure:
             
             bar_width: float
-            # def bar_width(bar: int, tbars: int, pad: float) -> float:
-            #     return ((1.0 / tbars) - pad) * (-((tbars/2) - 0.5 + 1) + bar)
             
             ## Find the regression plots for each partial plan
             regression_lines: dict[int, dict[str, Any]] = {"total" : {}, "ground" : {}, "search" : {}}
@@ -434,15 +433,12 @@ def __main() -> int:
             concat_subplan_length_deviation, concat_subplan_actions_deviation = [], []
             concat_subplan_length_balance, concat_subplan_actions_balance = [], []
             
-            # problems, average_yield_times, par_deviation, par_balance = [], [], [], []
-            
             for level in reversed(hierarchical_plan.level_range):
                 overall_totals = hierarchical_plan.get_grand_totals(level)
                 
                 grounding_times.append(overall_totals.grounding_time)
                 solving_times.append(overall_totals.solving_time)
                 total_times.append(overall_totals.total_time)
-                # average_yield_times.append(hierarchical_plan.get_average_yield_time(level))
                 latency_times.append(hierarchical_plan.get_latency_time(level))
                 completion_times.append(hierarchical_plan.get_completion_time(level))
                 
@@ -462,13 +458,9 @@ def __main() -> int:
                 concat_subplan_actions_deviation.append(deviation.action)
                 concat_subplan_length_balance.append(balance.length)
                 concat_subplan_actions_balance.append(balance.action)
-                
-                # problems.append(len(hierarchical_plan.partial_plans[level]))
-                # par_deviation.append(hierarchical_plan.get_partial_plan_expansion_deviation())
-                # par_balance.append(hierarchical_plan.get_partial_plan_balance())
             
             ## Hierarchical grand total planning time statistics
-            bar_width = 0.19 # bar_width(bars=5, pad=0.01)
+            bar_width = 0.19
             axes[0, 0].bar(x - (bar_width * 2.0), grounding_times, bar_width, label="Grounding Time (s)")
             axes[0, 0].bar(x - (bar_width * 1.0), solving_times, bar_width, label="Solving Time (s)")
             axes[0, 0].bar(x, total_times, bar_width, label="Total Time (s)")
@@ -494,7 +486,6 @@ def __main() -> int:
             bar_width = 0.45
             axes[1, 0].bar(x - (bar_width * 0.5), concat_length, bar_width, label="Concatenated Length")
             axes[1, 0].bar(x + (bar_width * 0.5), concat_actions, bar_width, label="Concatenated Actions")
-            ## TODO Trailing plan length?
             axes[1, 0].set_xticks(x)
             axes[1, 0].set_xticklabels(xlabels)
             axes[1, 0].set_ylabel("Plan Quality")
@@ -502,10 +493,6 @@ def __main() -> int:
             axes[1, 0].legend()
             
             ## Problems per level
-            # axes[1, 1].bar(x - (bar_width * 1.5), problems, bar_width, label="Partial Problems")
-            # axes[1, 1].bar(x - (bar_width * 0.5), average_yield_times, bar_width, label="Resident Set Size")
-            # axes[1, 1].bar(x + (bar_width * 0.5), par_deviation, bar_width, label="Resident Set Size")
-            # axes[1, 1].bar(x + (bar_width * 1.5), par_balance, bar_width, label="Resident Set Size")
             bar_width = 0.15
             axes[1, 1].bar(x - (bar_width * 2.5), concat_length_expansion, bar_width, label="Concatenated length expansion")
             axes[1, 1].bar(x - (bar_width * 1.5), concat_actions_expansion, bar_width, label="Concatenated action expansion")
@@ -516,51 +503,8 @@ def __main() -> int:
             axes[1, 1].set_xticks(x)
             axes[1, 1].set_xticklabels(xlabels)
             axes[1, 1].set_ylabel("Plan Refinement Expansion")
-            # axes[1, 1].set_ylabel("Partial Problems/Plans")
             axes[1, 1].set_xlabel("Abstraction level")
             axes[1, 1].legend()
-            
-            # # Display the division points applied to this level;
-            # #   - highlight proactively chosen division points in yellow,
-            # #   - highlight reactively chosen division points in orange,
-            # #   - highlight inherited divisions in red (the start and end of each division scenario).
-            # division_points: list[Strategies.DivisionPoint] = hierarchical_plan.get_division_points(bottom_level + 1)
-            
-            # bottom_level_plan: Planner.MonolevelPlan = hierarchical_plan[bottom_level]
-            
-            # ## TODO add sequential yield steps
-            # for time_type in regression_lines:
-            #     for increment, line in regression_lines[time_type].items():
-            #         axes[1, 0].plot(line["x_points"], line["y_points"], "green")
-            #         axes[1, 0].plot(line["x_points"], line["func"](line["x_points"], *line["popt"]), color="red")
-            
-            # matching_child_steps: list[int] = []
-            # if bottom_level_plan.conformance_mapping is not None:
-            #     for step in bottom_level_plan:
-            #         if bottom_level_plan.conformance_mapping.sgoals_achieved_at.reversed_get(step) is not None:
-            #             matching_child_steps.append(step) 
-            
-            # max_y_points: int = max(y_points)
-            
-            # axes[1, 0].bar(bottom_level_plan.keys(), [max_y_points if step in matching_child_steps else 0 for step in bottom_level_plan],
-            #             width=0.30, color="cyan", label="Matching children")
-            # axes[1, 0].bar(bottom_level_plan.keys(), [max(y_points) if any(step == bottom_level_plan.conformance_mapping.sgoals_achieved_at.get(point.index, -1) and point.proactive and not point.inherited for point in division_points) else 0 for step in bottom_level_plan],
-            #             width=0.30, color="yellow", label="Proactive divisions")
-            # axes[1, 0].bar(bottom_level_plan.keys(), [max(y_points) if any(step == bottom_level_plan.conformance_mapping.sgoals_achieved_at.get(point.index, -1) - point.preemptive and point.reactive for point in division_points) else 0 for step in bottom_level_plan],
-            #             width=0.30, color="blue", label="Reactive divisions")
-            # axes[1, 0].bar(bottom_level_plan.keys(), [max(y_points) if any(step == bottom_level_plan.conformance_mapping.sgoals_achieved_at.get(point.index, -1) and point.inherited for point in division_points) else 0 for step in bottom_level_plan],
-            #             width=0.30, color="red", label="Inherited divisions")
-            # axes[1, 0].set_ylabel("Time (s)")
-            # axes[1, 0].set_xlabel("Search length")
-            # axes[1, 0].legend()
-            
-            # axes[1, 1].plot(bottom_level_plan.keys(), list(itertools.accumulate(1 if step in matching_child_steps else 0 for step in bottom_level_plan)),
-            #                 color="cyan", label="Goal Progression (total achieved sub-goal stages)")
-            # axes[1, 1].plot(bottom_level_plan.keys(), list(itertools.accumulate(((bottom_level_plan.conformance_mapping.get_subplan_length(index), index) if (index := bottom_level_plan.conformance_mapping.sgoals_achieved_at.reversed_get(step)[0]) is not None else None for step in bottom_level_plan),
-            #                                                                     func=lambda value, init: ((init * (value[1] - 1)) + value[0]) / value[1] if value is not None else init)),
-            #                 color="red", label="Expansion Factor (goal-wise)")
-            # axes[1, 1].plot(bottom_level_plan.keys(), list(itertools.accumulate(1 if bottom_level_plan.conformance_mapping.sgoals_achieved_at.reversed_get(step) is not None else 0 for step in bottom_level_plan)),
-            #                 width=bar_width, color="magenta", label="Expansion Deviation (goal-wise)")
             
             pyplot.show()
     
@@ -808,7 +752,10 @@ def __setup() -> argparse.Namespace:
                                                  "Copyright (C) 2021 Oliver Michael Kamperis.")
     
     ## Inner function for creating options for Boolean arguments
-    def bool_options(default: Optional[bool], const: Optional[bool] = True, add_none: bool = False) -> dict[str, Any]:
+    def bool_options(default: Optional[bool],
+                     const: Optional[bool] = True,
+                     add_none: bool = False
+                     ) -> dict[str, Any]:
         """
         Create a Boolean argument.
         
@@ -859,8 +806,11 @@ def __setup() -> argparse.Namespace:
     
     ## Special action for storing arguments of parameters that can have a different values for each abstraction level in the hierarchy
     class StoreHierarchicalArguments(argparse.Action):
-        def __call__(self, parser: argparse.ArgumentParser, namespace: argparse.Namespace,
-                     values: Sequence[str], option_string: Optional[str] = None):
+        def __call__(self,
+                     parser: argparse.ArgumentParser,
+                     namespace: argparse.Namespace,
+                     values: Sequence[str],
+                     option_string: Optional[str] = None):
             
             _values: Union[Number, dict[int, Number]] = {}
             
@@ -977,7 +927,7 @@ def __setup() -> argparse.Namespace:
                         help="whether to make the plan that minimally achieves the previous in sequence sub-goal stage observable in sequential yield mode, "
                              "this is an expensive operation and ASH currently only uses this for debugging purposes, by default False, as standard True")
     
-    ## Problem space generation options
+    ## Problem space generation options ## TODO remove
     parser.add_argument("-space", "--problem_space", choices=["None", "search", "solution"], default=None, type=optional_str,
                         help="the type of problem space to generate; None (disable problem space generation), 'search' (the number of potential plans that may lead to a solution), "
                              "'solution' (the number of valid solutions), by default None (In order to generate problem spaces a refinement schema must be loaded)") ## Not the true search space
