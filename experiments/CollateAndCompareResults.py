@@ -393,54 +393,37 @@ for configuration, combined_data_set in tqdm.tqdm(data_sets.items()):
         combined_data_sets[configuration][sheet_name] = pandas.concat(data_set[sheet_name]).astype(float)
         combined_data_sets_quantiles[sheet_name].append(pandas.concat(quantiles_for_data_set[sheet_name]).astype(float).groupby(index_for_data_set).mean())
 
+#########################################################################################################################################################################################
+######## Generate the seven-number summaries for plotting results - (all the quantiles, the IQR and the range)
+#########################################################################################################################################################################################
+
 ## Concatenate all the individual quantile data set frames into single dataframes
 quantiles_globals: pandas.DataFrame = pandas.concat(combined_data_sets_quantiles["Globals"])
 quantiles_cat_plans: pandas.DataFrame = pandas.concat(combined_data_sets_quantiles["Cat Plans"])
 al_range = range(1, quantiles_cat_plans.index.get_level_values("AL").max() + 1)
 
 #########################################################################################################################################################################################
-######## Process the scores and grades
+######## Generate the two-number summaries for tabulating results - (The Median and the IQR)
 #########################################################################################################################################################################################
 
-## The summary statistics to compare for globals
+## The minimal summary statistics to compare for globals
 summary_statistics_globals: list[str] = ["QL_SCORE", "TI_SCORE", "GRADE"]
 summary_statistics_cat_plans: list[str] = ["GT", "ST", "OT", "GT_POTT", "ST_POTT", "OT_POTT", "TT", "LT", "CT"]
 
-## The row indices for all tables are all the possible combined configurations
-globals_rows_index = pandas.MultiIndex.from_tuples(data_sets.keys(), names=configuration_headers)
-cat_plans_rows_index = pandas.MultiIndex.from_tuples(((*configuration, al) for configuration in data_sets.keys() for al in al_range), names=(*configuration_headers, "AL"))
+## Construct a dataframe including just the medians and IQR for all data sets (combined configurations);
+##      - The outer columns headers are the median and IQR,
+##      - The inner column headers are the "global summary statistics"; (quality score, time score, and grade),
+##      - The row index headers are the combined configuration headers, sorted according to user input.
+summary_globals: pandas.DataFrame = quantiles_globals.query("statistic in ['IQR', 0.5]")[summary_statistics_globals].unstack("statistic").stack(0).unstack(-1) # quantiles_globals.loc[(*tuple(slice(None) for _ in range(quantiles_globals.index.nlevels - 1)), ["IQR", 0.5]),:][summary_statistics_globals]
+summary_cat_plans: pandas.DataFrame = quantiles_cat_plans.query("statistic in ['IQR', 0.5]")[summary_statistics_cat_plans].unstack("statistic").stack(0).unstack(-1)
 
-## Construct dataframes including the medians and IQR for all data sets (combined configurations)
-score_medians = pandas.DataFrame(index=globals_rows_index, columns=summary_statistics_globals)
-score_IQR = pandas.DataFrame(index=globals_rows_index, columns=summary_statistics_globals)
-for configuration in data_sets.keys():
-    score_medians.loc[configuration,:] = quantiles_globals.loc[(*configuration, 0.5),summary_statistics_globals]
-    score_IQR.loc[configuration,:] = quantiles_globals.loc[(*configuration, "IQR"),summary_statistics_globals]
+## Reorder the values in the summary statistic level of the columns index
+##      - https://stackoverflow.com/questions/11194610/how-can-i-reorder-multi-indexed-dataframe-columns-at-a-specific-level
+summary_globals = summary_globals.reindex(columns=summary_globals.columns.reindex(summary_statistics_globals, level=1)[0])
+summary_cat_plans = summary_cat_plans.reindex(columns=summary_cat_plans.columns.reindex(summary_statistics_cat_plans, level=1)[0])
 
-## Construct a dataframe containing the minimal possible description of the collated data:
-##      - The column headers are the "global summary statistics"; quality score, time score, and grade,
-##      - The row index headers are the; median and IQR, and the combined configuration headers,
-##      - Configuration headers are sorted according to user input.
-summary_globals: pandas.DataFrame = pandas.concat([score_medians, score_IQR],
-                                                  keys=["Median", "IQR"], names=["Statistic", *configuration_headers])
-summary_globals = summary_globals.reorder_levels([*HEADER_ORDER, "Statistic"])
-summary_globals.sort_index(axis=0, level=cli_args.sort_index_values, inplace=True)
-summary_globals.sort_index(axis=1, level=cli_args.sort_index_values, inplace=True)
-
-## Construct dataframes including the medians and IQR for all data sets (combined configurations)
-cat_plans_score_medians = pandas.DataFrame(index=cat_plans_rows_index, columns=summary_statistics_cat_plans)
-cat_plans_score_IQR = pandas.DataFrame(index=cat_plans_rows_index, columns=summary_statistics_cat_plans)
-for configuration in data_sets.keys():
-    for al in al_range:
-        cat_plans_score_medians.loc[(*configuration, al),:] = quantiles_cat_plans.loc[(*configuration, al, 0.5),summary_statistics_cat_plans]
-        cat_plans_score_IQR.loc[(*configuration, al),:] = quantiles_cat_plans.loc[(*configuration, al, "IQR"),summary_statistics_cat_plans]
-
-## TODO
-summary_cat_plans: pandas.DataFrame = pandas.concat([cat_plans_score_medians, cat_plans_score_IQR],
-                                                    keys=["Median", "IQR"], names=["Statistic", *configuration_headers, "AL"])
-summary_cat_plans = summary_cat_plans.reorder_levels([*HEADER_ORDER, "AL", "Statistic"])
-summary_cat_plans.sort_index(axis=0, level=cli_args.sort_index_values, inplace=True)
-summary_cat_plans.sort_index(axis=1, level=cli_args.sort_index_values, inplace=True)
+summary_globals = summary_globals.reorder_levels(HEADER_ORDER, axis=0)
+summary_cat_plans = summary_cat_plans.reorder_levels((*HEADER_ORDER, "AL"), axis=0)
 
 #########################################################################################################################################################################################
 ######## Tests of statistical significance
@@ -458,8 +441,23 @@ summary_cat_plans.sort_index(axis=1, level=cli_args.sort_index_values, inplace=T
 global_comparison_statistics = {"Score Kruskal" : kruskal,
                                 "Score Friedman Chi-Square" : friedmanchisquare,
                                 "Fligner" : fligner}
-## TODO
+global_comparison_matrix = pandas.DataFrame(index=list(global_comparison_statistics.keys()),
+                                            columns=["result"])
 
+## TODO The rows should have the compare only same on them;
+##      - So we can say, for configurations with the same X, then there is a significant difference between different Y,
+##      - For a given problem, there is a significant difference in the performance by changing search mode
+
+
+
+for comparison_statistic, comparison_function in global_comparison_statistics.items():
+    print(f"\nProcessing {comparison_statistic}...")
+    
+    for statistic in summary_statistics_globals:
+        comparison = comparison_function(*[combined_data_sets[configuration]["Globals"][statistic].to_list() for configuration in combined_data_sets])
+        global_comparison_matrix.loc[comparison_statistic,"result"] = comparison.pvalue
+
+print(global_comparison_matrix)
 
 ## Construct a dataframe that acts as a matrix of all possible pair-wise configuration comparisons;
 ##      - There is a multi-index on both the rows and columns to compare all pair-wise differences,
@@ -469,14 +467,13 @@ pair_wise_comparison_statistics = {"Score Ranksums" : ranksums,
 rows_index = pandas.MultiIndex.from_tuples(((*configuration, comparison)
                                             for configuration in data_sets.keys()
                                             for comparison in pair_wise_comparison_statistics.keys()),
-                                           names=(configuration_headers + ["comparison"]))
+                                           names=(*configuration_headers, "comparison"))
 columns_index = pandas.MultiIndex.from_tuples(((*configuration, statistic)
                                                for configuration in data_sets.keys()
                                                for statistic in summary_statistics_globals),
-                                              names=(configuration_headers + ["result"]))
+                                              names=(*configuration_headers, "result"))
 pair_wise_data_set_comparison_matrix = pandas.DataFrame(index=rows_index, columns=columns_index)
-pair_wise_data_set_comparison_matrix = pair_wise_data_set_comparison_matrix.sort_index(axis=0, level=cli_args.sort_index_values)
-pair_wise_data_set_comparison_matrix = pair_wise_data_set_comparison_matrix.sort_index(axis=1, level=cli_args.sort_index_values)
+pair_wise_data_set_comparison_matrix = pair_wise_data_set_comparison_matrix.sort_index(axis=0, level=cli_args.sort_index_values).sort_index(axis=1, level=cli_args.sort_index_values)
 
 ## Make a list of all the desired pair-wise configuration comparisons
 compare_configurations: list[tuple[tuple[str, ...], tuple[str, ...]]] = []
@@ -503,6 +500,8 @@ for comparison_statistic, comparison_function in pair_wise_comparison_statistics
             comparison = comparison_function(combined_data_sets[row_configuration]["Globals"][statistic].to_list(),
                                              combined_data_sets[column_configuration]["Globals"][statistic].to_list())
             pair_wise_data_set_comparison_matrix.loc[(*row_configuration, comparison_statistic), (*column_configuration, statistic)] = comparison.pvalue
+
+pair_wise_data_set_comparison_matrix = pair_wise_data_set_comparison_matrix.reorder_levels((*HEADER_ORDER, "comparison"), axis=0)
 
 #########################################################################################################################################################################################
 ######## Tests of trends
@@ -615,16 +614,21 @@ writer.save()
 ################################################################
 ######## Summary tables
 
-summary_globals.to_latex(f"{cli_args.output_path}_Globals_Summary.tex")
-summary_cat_plans.to_latex(f"{cli_args.output_path}_CatPlan_Summary.tex")
+summary_globals.to_latex(f"{cli_args.output_path}_Globals_2NSummary.tex")
+summary_cat_plans.to_latex(f"{cli_args.output_path}_CatPlan_2NSummary.tex")
 pair_wise_data_set_comparison_matrix.to_latex(f"{cli_args.output_path}_TestOfSignificance.tex")
 
 ################################################################
 ######## Graph plotting setup
 
+als = numpy.arange(al_range.stop)
 bars: int = 1
 padding: float = 0.10
 bar_width: float = (1.0 / bars) - (padding / bars)
+
+bar_width = 0.19 # bar_width(bars=5, pad=0.01)
+# def bar_width(bar: int, tbars: int, pad: float) -> float:
+#     return ((1.0 / tbars) - pad) * (-((tbars/2) - 0.5 + 1) + bar)
 
 def set_bars(bars: int) -> None:
     "Set the number of bars in the current plot."
@@ -632,29 +636,38 @@ def set_bars(bars: int) -> None:
     global bar_width
     bar_width = (1.0 / bars) - (padding / bars)
 
+def get_cat_plans(statistic: str) -> dict[str, Any]:
+    return {"height" : quantiles_cat_plans.query("statistic == 0.5")[statistic],
+            "yerr" : (quantiles_cat_plans.query("statistic == 0.25")[statistic], quantiles_cat_plans.query("statistic == 0.75")[statistic]),
+            "capsize" : 5}
+
+## This would have to be done with a sub-plot for each of the configuration;
+##      - Add options;
+##          - Seperate onto different plots,
+# quantiles_cat_plans.loc[quantiles_cat_plans.index.get_level_values("statistic") == 0.5,"GT"].unstack(level=configuration_headers).plot(kind="bar", subplots=True, rot=0, figsize=(9, 7), layout=(6, 6))
+
 ################################################################
 ######## Bar charts for plan quality
-figure_quality_abs_bars, axis_quality_abs_bars = pyplot.subplots() # Cat plans
-figure_quality_score_bars, axis_quality_score_bars = pyplot.subplots() # Globals
+figure_quality_abs_bars, axis_quality_abs_bars = pyplot.subplots() # Median of cat plans
+figure_quality_score_bars, axis_quality_score_bars = pyplot.subplots() # Median of globals
+figure_quality_score_histogram, axis_quality_score_histogram = pyplot.subplots() # All of globals
 
 
 
 ################################################################
 ######## Bar charts for planning time
-figure_time_raw_bars, axis_time_raw_bars = pyplot.subplots() # Cat plans
-figure_time_agg_bars, axis_time_agg_bars = pyplot.subplots() # Globals
-figure_time_score_bars, axis_time_score_bars = pyplot.subplots() # Globals
-
-def get_cat_plans(statistic: str) -> dict[str, Any]:
-    return {"height" : quantiles_cat_plans[0.5, statistic],
-            "yerr" : (quantiles_cat_plans[0.25, statistic], quantiles_cat_plans[0.75, statistic]),
-            "capsize" : 5} 
+figure_time_raw_bars, axis_time_raw_bars = pyplot.subplots() # Median of cat plans
+figure_time_scatter, axis_time_scatter = pyplot.subplots() # Median of cat plans, show contribution of solving and grounding time to total time in percent
+figure_time_agg_bars, axis_time_agg_bars = pyplot.subplots() # Median of globals
+figure_time_score_bars, axis_time_score_bars = pyplot.subplots() # Median of globals
+figure_quality_score_histogram, axis_quality_score_histogram = pyplot.subplots() # All of globals
 
 ## Raw planning time per abstraction level;
 ##      - Solving time, grounding time, total time, yield time, completion time.
 set_bars(5)
-# axis_time_raw_bars.bar(al_range - (bar_width * 2), quantiles_cat_plans[0.5, "GT"], bar_width, yerr=(quantiles_cat_plans[0.25, "GT"], quantiles_cat_plans[0.75, "GT"]), capsize=5, label="Mean Grounding Time")
-axis_time_raw_bars.bar(al_range - (bar_width * 2), width=bar_width, **get_cat_plans("GT"), label="Median Grounding Time")
+##          - Combine as series on same plot.
+gt = get_cat_plans("GT")["height"]
+axis_time_raw_bars.bar(als - (bar_width * 2), width=bar_width, **get_cat_plans("GT"), label="Median Grounding Time")
 axis_time_raw_bars.bar(al_range - bar_width, quantiles_cat_plans["ST"], bar_width, yerr=get_std("ST"), capsize=5, label="Mean Solving")
 axis_time_raw_bars.bar(al_range, means["TT"], bar_width, yerr=get_std("TT"), capsize=5, label="Mean Total")
 axis_time_raw_bars.bar(al_range + bar_width, quantiles_cat_plans["LT"], bar_width, yerr=get_std("LT"), capsize=5, label="Mean Latency")
@@ -672,14 +685,14 @@ axis_time_raw_bars.bar(al_range + (bar_width * 2), quantiles_cat_plans["CT"], ba
 
 ################################################################
 ######## Bar charts for required memory
-figure_memory_bars, axis_memory_bars = pyplot.subplots()
+# figure_memory_bars, axis_memory_bars = pyplot.subplots()
 
 
 
 ################################################################
 ######## Bar charts for expansion factors and sub/partial-plan balance
-figure_expansion_raw_bars, axis_expansion_raw_bars = pyplot.subplots() # Cat plans
-figure_spbalance_raw_bars, axis_spbalance_raw_bars = pyplot.subplots() # Cat plans
+# figure_expansion_raw_bars, axis_expansion_raw_bars = pyplot.subplots() # Cat plans
+# figure_spbalance_raw_bars, axis_spbalance_raw_bars = pyplot.subplots() # Cat plans
 
 ## Raw sub/partial-plan expansions;
 ##      - Expansion factor per level, sub-plan expansion deviation, sub-plan expansion balance, partial-plan expansion deviation, partial-plan expansion balance.
@@ -701,5 +714,6 @@ figure_spbalance_raw_bars, axis_spbalance_raw_bars = pyplot.subplots() # Cat pla
 # axis.hist(time_score, 50, (0.0, 15.0))
 
 ## https://github.com/texworld/tikzplotlib
-tikzplotlib.clean_figure()
-tikzplotlib.save(f"{cli_args.output_path}_Globals_Plot.tex")
+pyplot.show()
+# tikzplotlib.clean_figure()
+# tikzplotlib.save(f"{cli_args.output_path}_Globals_Plot.tex")
