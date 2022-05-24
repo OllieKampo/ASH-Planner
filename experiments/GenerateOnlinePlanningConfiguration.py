@@ -14,6 +14,7 @@ parser.add_argument("-als", "--abstraction_levels", required=True, type=int)
 parser.add_argument("-type", "--strategy_type", required=True, choices=["proactive", "reactive"], type=str)
 parser.add_argument("-pbounds", "--primary_bounds", nargs="*", default=[], type=str)
 parser.add_argument("-sbounds", "--secondary_bounds", nargs="*", default=[], type=str)
+parser.add_argument("-smaller", "--lower_only_smaller", action="store_true", default=False)
 cli_args: argparse.Namespace = parser.parse_args()
 
 def get_combinations(bounds: list[str], abstraction_levels: int) -> list[tuple[str, ...]]:
@@ -24,7 +25,8 @@ def get_combinations(bounds: list[str], abstraction_levels: int) -> list[tuple[s
 
 def generate_configurations(file_name: str, input_path: str, output_path: str,
                             abstraction_levels: int, proactive: bool,
-                            primary_bounds: list[str], secondary_bounds: list[str]) -> None:
+                            primary_bounds: list[str], secondary_bounds: list[str],
+                            lower_only_smaller: bool = True) -> None:
     print(f"Generating configurations for template file '{file_name}' over {abstraction_levels} "
           f"abstraction levels by combining bounds primary={primary_bounds}, secondary={secondary_bounds}.")
     
@@ -42,12 +44,13 @@ def generate_configurations(file_name: str, input_path: str, output_path: str,
         else: combined_combinations = primary_combinations
         
         for combination in combined_combinations:
-            if any((index != 0 and float(bound) > min(map(float, combination[:index])))
-                   for index, bound in enumerate(combination)):
-                continue
-            # if math.prod(int(b) for b in combination) < 4:
+            if lower_only_smaller:
+                if any((index != 0 and float(bound) > min(map(float, combination[:index])))
+                    for index, bound in enumerate(combination)):
+                    continue
+            # if math.prod(int(b) for b in combination) < bound_sum_min:
             #     continue
-            # if math.prod(int(b) for b in combination) > 40:
+            # if math.prod(int(b) for b in combination) > bound_sum_max:
             #     continue
             
             new_file_name: str
@@ -85,12 +88,13 @@ abstraction_levels: int = cli_args.abstraction_levels
 proactive: bool = cli_args.strategy_type == "proactive"
 primary_bounds: list[str] = cli_args.primary_bounds
 secondary_bounds: list[str] = cli_args.secondary_bounds
+lower_only_smaller: bool = cli_args.lower_only_smaller
 
 paths: str = cli_args.input_paths
 for path in paths:
     if path.endswith(".config"):
-        generate_configurations(path.split("\\")[-1], path, output_path, abstraction_levels, proactive, primary_bounds, secondary_bounds)
+        generate_configurations(path.split("\\")[-1], path, output_path, abstraction_levels, proactive, primary_bounds, secondary_bounds, lower_only_smaller)
     else:
         for file_name in listdir(path):
             if isfile(input_path := join(path, file_name)):
-                generate_configurations(file_name, input_path, output_path, abstraction_levels, proactive, primary_bounds, secondary_bounds)
+                generate_configurations(file_name, input_path, output_path, abstraction_levels, proactive, primary_bounds, secondary_bounds, lower_only_smaller)
