@@ -19,8 +19,6 @@
 ###########################################################################
 ###########################################################################
 
-
-
 import contextlib
 import enum
 import functools
@@ -64,8 +62,6 @@ class SubscriptableDataClass(_collections_abc.Sequence):
     def __len__(self) -> int:
         return len(fields(self))
 
-
-
 #############################################################################################################################################
 #############################################################################################################################################
 #########################   █████  ███    ██ ███████ ██     ██ ███████ ██████      ███████ ███████ ████████ ███████ #########################
@@ -75,8 +71,6 @@ class SubscriptableDataClass(_collections_abc.Sequence):
 #########################  ██   ██ ██   ████ ███████  ███ ███  ███████ ██   ██     ███████ ███████    ██    ███████ #########################
 #############################################################################################################################################
 #############################################################################################################################################
-
-
 
 ## ASP symbol type
 ASP_Symbol = Union[str, clingo.Symbol]
@@ -194,7 +188,10 @@ class Atom(UserDict):
     
     @classmethod
     def default_cast(cls) -> Optional[dict[str, Callable[[clingo.Symbol], Any]]]:
-        "The default types to cast parameters of this atom to, given as a mapping between parameter names and callables that take the respective argument for that parameter as its only argument and returns some casted version of it to any desired type."
+        """
+        The default types to cast parameters of this atom to, given as a mapping between parameter names and callables
+        that take the respective argument for that parameter as its only argument and returns some casted version of it to any desired type.
+        """
         return None
     
     @classmethod
@@ -408,6 +405,7 @@ class IncrementalStatistics(Statistics):
                                      incremental=incremental)
 
 ParameterConstraint = Union[str, int, tuple[Pattern, "Model.ParseMode"], Callable[[clingo.Symbol], bool]]
+
 @dataclass(frozen=True)
 class Model(_collections_abc.Set):
     """
@@ -668,7 +666,7 @@ class Model(_collections_abc.Set):
         `truth : {bool | None}` - The classical truth of the atoms to extract.
         True to extract only positive atoms, False to extract only negative atoms, or None to extract all atoms regardless of their truth.
         
-        `param_constrs : Mapping[int, {str | int | (re.Pattern, ParseMode)}] = {}` - TODO A mapping whose keys are integers defining parameter indices in the range [0-arity] and whose values are either strings or two-tuples.
+        `param_constrs : Mapping[int, {str | int | (re.Pattern, ParseMode)}] = {}` - A mapping whose keys are integers defining parameter indices in the range [0-arity] and whose values are either strings, integers, or two-tuples.
         If a two-tuple, its first item is a regular expression and its second item is an entry from the `ParseMode` enum defining how to match the regular expression.
         The values define constraints for the arguments of the parameter of that key, only atoms whose arguments match all parameter constraints will be returned.
         
@@ -677,9 +675,10 @@ class Model(_collections_abc.Set):
         `sort_by : Sequence[int] = []` - The sorting priority of arguments for the parameters of the list of returned atoms.
         A sequence of integers defining parameter indices in the range [0-arity] specifying.
         
-        `group_by : Sequence[int] = []` - TODO
+        `group_by : Sequence[int] = []` - Group the returned atoms according to those which have the same arguments for the given parameters.
+        If given and not None, then the atoms will be returned as a parameter index to atom list mapping, where all atoms in a list have the same argument for the given parameter index.
         
-        `convert_keys : Mapping[int, Any] = []` - TODO
+        `convert_keys : Mapping[int, Any] = []` - Convert the keys of a grouped mapping of atoms to the given types.
         
         `as_strings : bool = False` - A Boolean, True to return the extracted atoms as strings, otherwise False (the default) to return them as raw clingo symbols.
         
@@ -812,8 +811,6 @@ class Model(_collections_abc.Set):
         `truth : {bool | None}` - The classical truth value of the atoms to extract.
         Given as either a Boolean or None, True extracts only positive atoms, False extracts only negative, and None extracts all atoms regardless of truth value.
         
-        Keyword Parameters
-        ------------------
         `param_constrs : Mapping[str, {str, int, Tuple[Pattern, ParseMode], Iterable[{str, int, Tuple[Pattern, ParseMode]}]}] = {}`
             - A mapping whose keys are strings defining parameter names from `atom_params` and whose values are constraints for those parameters.
               The parameters constraints are applied at atoms such that; the atoms' arguments for the parameters given as the mapping keys must satisfy the respective constraint given as the mapping value.
@@ -821,26 +818,23 @@ class Model(_collections_abc.Set):
               If a two-tuple, its first item is a regular expression and its second item is an entry from the `Model.ParseMode` enum defining how to match the regular expression.
               If an iterable, the constraints contained are applied disjunctively such that, the argument for the given parameter must satisfy at least one of the constraints.
         
-        `sort_by : Sequence[str] = []`
-            - A sequence of strings defining parameter names from `atom_params` specifying the sorting priority of arguments of those parameters of the list of returned atoms.
+        Keyword Parameters
+        ------------------
+        `sort_by : Sequence[str] = []` - A sequence of strings defining parameter names from `atom_params` specifying the sorting priority of arguments of those parameters of the list of returned atoms.
         
-        `group_by : Sequence[str] = []`
-            - 
+        `group_by : Sequence[str] = []` - Group the returned atoms according to those which have the same arguments for the given parameters.
+        If given and not None, then the atoms will be returned as a parameter name to atom list mapping, where all atoms in a list have the same argument for the given parameter name.
         
-        `add_truth : bool = False`
-            - A Boolean, True to include the classical truth of returned atoms under key "TRUTH", otherwise False (the default).
+        `convert_keys : Mapping[int, Any] = []` - Convert the keys of a grouped mapping of atoms to the given types.
         
-        `add_name : bool = False`
-            - A Boolean, True to include the name of returned atoms under key "NAME", otherwise False (the default).
+        `add_truth : bool = False` - A Boolean, True to include the classical truth of returned atoms under key "TRUTH", otherwise False (the default).
         
-        `as_strings : bool = False`
-            - A Boolean, True to return the arguments of extracted atoms as strings, otherwise False (the default) to return them as raw clingo symbols.
+        `add_name : bool = False` - A Boolean, True to include the name of returned atoms under key "NAME", otherwise False (the default).
         
         Returns
         -------
-        `list[dict[str, {str, clingo.Symbol}]]`
-            - A list of dictionaries containing the parameter-argument mappings of unique atoms from this model.
-              The dictionary keys are strings from `atom_params` (insertion order is preserved) and their values are the arguments for those parameters as either strings or Clingo symbols.
+        `list[dict[str, {str, clingo.Symbol}]]` - A list of dictionaries containing the parameter-argument mappings of unique atoms from this model.
+        The dictionary keys are strings from `atom_params` (insertion order is preserved) and their values are the arguments for those parameters as either strings or Clingo symbols.
         
         Example Usage
         -------------
@@ -1004,10 +998,6 @@ class Model(_collections_abc.Set):
         Returns
         -------
         `set[str | clingo.Symbol]` -
-        
-        Example Usage
-        -------------
-        
         """
         atoms: set[str] = set()
         for atom in self.symbols:
@@ -1039,10 +1029,6 @@ class Model(_collections_abc.Set):
         Returns
         -------
         `set[str | clingo.Symbol]` -
-        
-        Example Usage
-        -------------
-        
         """
         atoms: set[ASP_Symbol] = set()
         for atom in self.symbols:
@@ -1151,8 +1137,6 @@ class Answer(NamedTuple):
         "Constructs an empty answer. Useful as a default 'dummy' argument."
         return Answer(Result(False, False), Statistics(0.0, 0.0), Model([]))
 
-
-
 #############################################################################################################################################
 #############################################################################################################################################
 ################  ██████  ██████   ██████   ██████  ██████   █████  ███    ███     ██████   █████  ██████  ████████ ███████  ################
@@ -1162,8 +1146,6 @@ class Answer(NamedTuple):
 ################  ██      ██   ██  ██████   ██████  ██   ██ ██   ██ ██      ██     ██      ██   ██ ██   ██    ██    ███████  ################
 #############################################################################################################################################
 #############################################################################################################################################
-
-
 
 @dataclass(frozen=True)
 class IncRange(SubscriptableDataClass):
@@ -1354,18 +1336,12 @@ class External(NamedTuple):
 #############################################################################################################################################
 #############################################################################################################################################
 
-
-
 class SolveSignal:
     """
     Solve signals are used to control incremental solve calls.
     They are returned from logic programs when calling:
         - LogicProgram.start(...)
         - LogicProgram.resume(...)
-    
-    Properties
-    ----------
-    
     """
     
     __slots__ = ("__program",       # {LogicProgram | None}
@@ -1404,7 +1380,10 @@ class SolveSignal:
     
     @property
     def holding(self) -> bool:
-        """If the solve signal is holding, when its context is left, and the signal is expended, the logic program will hold a saved grounding, from which a new signal can be spawned to continue the incremental solve."""
+        """
+        If the solve signal is holding, when its context is left, and the signal is expended,
+        the logic program will hold a saved grounding, from which a new signal can be spawned to continue the incremental solve.
+        """
         return self.__holding
     
     @holding.setter
@@ -1555,8 +1534,6 @@ class SolveSignal:
                 self.__halt_reason = HaltReason.get_halt_reason(self.__program.incrementor, increments, feedback)
             self.__running = False
 
-
-
 @enum.unique
 class SolveResult(enum.Enum):
     """
@@ -1614,21 +1591,21 @@ class SolveIncrementor:
     
     Fields
     ------
-    `step_start : int = 0` - 
+    `step_start : int = 0` - The initial step to start incrementing from.
     
-    `step_increase : int = 1` - 
+    `step_increase : int = 1` - The number of steps to increase by on each increment.
     
-    `step_increase_initial : int = 1` - 
+    `step_increase_initial : int = 1` - An override for the number of steps to increase by on the initial increment.
     
-    `step_end_min : {int | None} = None` - 
+    `step_end_min : {int | None} = None` - The minimum step value that must be reached before returning from an incremental solve call.
     
-    `step_end_max : {int | None} = None` - 
+    `step_end_max : {int | None} = None` - The maximum step value that can not be exceeded during an incremental solve call.
     
-    `stop_condition : {SolveResult | None} = SolveResult.Satisfiable` - 
+    `stop_condition : {SolveResult | None} = SolveResult.Satisfiable` - The stop condition of the solve call, return when this is satisfied and the minimum step bound is reached.
     
-    `increment_limit : {int | None} = None` - 
+    `increment_limit : {int | None} = None` - The maximum number of solver increments.
     
-    `increment_time_limit : {int | None} = None` - 
+    `increment_time_limit : {int | None} = None` - The maximum time limit in seconds of a single incremental solve call.
     
     `cumulative_time_limit : {int | None} = None` - The time limit in seconds on the total cumulative computation time summed over all incremental solve calls.
     
@@ -1685,7 +1662,7 @@ class HaltReason(enum.Enum):
     The reasons are resolved in the order given below.
     If multiple reasons are satisfied, only the first will be returned.
     
-    TODO If the time limit is reached before the minimum step limit is reached and the program is satisfiable,
+    If the time limit is reached before the minimum step limit is reached and the program is satisfiable,
     it will erroneously report "stop condition reached", whereas it should return "cumulative/incremental time limit reached".
     
     Items
@@ -1742,21 +1719,8 @@ class Bounds:
 class LogicProgram:
     """
     An ASP non-monotonic logic program.
-    
-    Properties
-    ----------
-    
-    
-    Example Usage
-    -------------
-    
-    
-    Also See
-    --------
-    `ASP_Parser.Answer` - Answer contain the answer sets of logic programs returned from solve calls.
-    
-    `ASP_Parser.SolveSignal` - Solve signals are used for controlling incremental solve calls.
     """
+    
     __slots__ = (## The program's AST itself
                  "__program",               # list[clingo.ast.AST]
                  
@@ -1944,8 +1908,6 @@ class LogicProgram:
         program_string: str = "\n".join(map(str, self.__program))
         return f"{self.__class__.__name__}({program_string}, {self.__name})"
     
-    
-    
     @property
     def program(self) -> list[clingo.ast.AST]:
         """Get the abstract syntax tree of this logic program."""
@@ -2023,8 +1985,6 @@ class LogicProgram:
                                                       if inc is not None}
         return Answer(result, statistics, base_models, inc_models)
     
-    
-    
     def free(self) -> bool:
         """
         Free the program's held incremental grounding.
@@ -2078,10 +2038,6 @@ class LogicProgram:
     def modify_program_parts(self, add: Union[IncPart, Iterable[IncPart]], remove: Union[IncPart, Iterable[IncPart]] = []) -> None:
         """
         Modify the program parts of a held grounding.
-        
-        Parameters
-        ----------
-        TODO
         """
         if not self.holding:
             raise RuntimeError("Cannot modify the program parts of a logic program that is not holding a saved grounding.")
@@ -2125,10 +2081,6 @@ class LogicProgram:
         Finds and saves the time limit in the list of solver options.
         
         Internal used only, this method should not be called from outside this class.
-        
-        Parameters
-        ----------
-        TODO
         """
         args: list[str] = [f"{key} = {item}" for key, item in locals().items() if key != "self"]
         self.__logger.debug("Setting input storing variables:\n\t" + "\n\t".join(args))
@@ -2155,14 +2107,6 @@ class LogicProgram:
         Set the program parts to be grounded by the current solve call.
         
         Internal used only, this method should not be called from outside this class.
-        
-        Parameters
-        ----------
-        TODO
-        
-        Raises
-        ------
-        `ValueError` - If the program parts are not of the correct type. 
         """
         PT = TypeVar("PT", bound=BasePart)
         def to_list(parts: Union[PT, Iterable[PT]], type_: Type[PT]) -> list[PT]:
@@ -2203,8 +2147,6 @@ class LogicProgram:
         
         self.__logger.debug("Output storing variables reset.")
     
-    
-    
     def add_rules(self, rules: Union[ASP_Symbol, Atom, Iterable[Union[ASP_Symbol, Atom]]], program_part: Optional[str] = "base", context: Iterable[Callable[..., clingo.Symbol]] = [], permanent: bool = False) -> int:
         """
         Extend this logic program with the specified rule or iterable of rules given either as; strings, clingo symbols, or Atom objects, and return the number of rules added.
@@ -2231,15 +2173,6 @@ class LogicProgram:
             - The program part is not None and, is either empty or has invalid syntax,
             - A rule is not a string, clingo symbol or Atom,
             - A rule has invalid syntax according to Gringo's term parser.
-        
-        Example Usage
-        -------------
-        Add rules is useful when;
-            - Creating multiple similar programs with the same core rules but different set of facts,
-            - Inserting the solution of one solve call to another,
-            - Dynamically changing the program according to an external python based algorithm.
-        
-        TODO
         """
         if self.__running:
             raise RuntimeError("Cannot add rules to a logic program that is running.")
@@ -2313,11 +2246,9 @@ class LogicProgram:
         ## Return the quantity of rules added to the program
         return quantity
     
-    
-    
     def __create_control(self, solver_options: Iterable[str]) -> None:
         """
-        
+        Create a clingo control instance.
         """
         try:
             self.__control = clingo.control.Control(solver_options,
@@ -2341,7 +2272,7 @@ class LogicProgram:
         ----------
         `solver_options : Iterable[str]` - An iterable of strings defining options for clingo.
         
-        `assumptions : Iterable[clingo.Symbol] = []` -
+        `assumptions : Iterable[clingo.Symbol] = []` - An iterable of clingo symbols given as assumptions to the solver.
         
         `context : Any = None` - Should contain functions of the form Callable[[Any], clingo.Symbol]
         
@@ -2349,9 +2280,9 @@ class LogicProgram:
         If not given or None, then a standard one-shot solve call of only the base program parts is run.
         Otherwise, if given, the one-shot solve of the base parts is made, then the incremental parts are solved incrementally according to the solve incrementor.
         
-        `base_parts : Iterable[BasePart] = [BasePart(name="base", args=[])]` -
+        `base_parts : Iterable[BasePart] = [BasePart(name="base", args=[])]` - An iterable of base parts to solve.
         
-        `inc_parts : Iterable[IncPart] = [IncPart(name="step", args=["#inc"], range_=None)]` -
+        `inc_parts : Iterable[IncPart] = [IncPart(name="step", args=["#inc"], range_=None)]` - An iterable of incremental program parts to solve on every solver increment.
         
         Returns
         -------
@@ -2427,7 +2358,7 @@ class LogicProgram:
         
         Parameters
         ----------
-        
+        See `LogicProgram.solve` for parameter descriptions.
         
         Yields
         ------
@@ -2491,7 +2422,9 @@ class LogicProgram:
         
         Parameters
         ----------
+        `solve_incrementor: {SolveIncrementor | None}` - If given and not None, specifies a new solve incrementor to be used on the resumed program.
         
+        `maintain_step: bool = True` - Whether to continue incrementing from the previously reached step when the program was paused, or to start from the initial step again.
         
         Yields
         ------
@@ -2546,8 +2479,6 @@ class LogicProgram:
         solve_signal = SolveSignal(self, self.__control, self.__inc_run)
         self.__logger.debug(f"Solve signal created:\n{solve_signal!s}")
         return solve_signal
-    
-    
     
     def __build(self) -> None:
         """
@@ -2871,8 +2802,6 @@ class LogicProgram:
             ## Incremental result also has stop_condition: Optional[StopCondition] which was the requested stop condition
             self.__logger.log(self.__verbosity, f"Incremental ground and solve completed in {total_cumulative_time:.6f}s due to: {halt_reason_description}.")
     
-    
-    
     def __catch_clingo_log(self, code: clingo.MessageCode, message: str) -> None:
         """
         Intercepts error messages from clingo and sends them to this program's logger.
@@ -2936,8 +2865,6 @@ class LogicProgram:
         self.__satisfiable = self.__satisfiable or result.satisfiable
         self.__exhausted = result.exhausted
 
-
-
 #############################################################################################################################################
 #############################################################################################################################################
 ##############  ███████  ██████  ██     ██    ██ ███████ ██████       ██████  ██████  ████████ ██  ██████  ███    ██ ███████  ###############
@@ -2947,8 +2874,6 @@ class LogicProgram:
 ##############  ███████  ██████  ███████  ████   ███████ ██   ██      ██████  ██         ██    ██  ██████  ██   ████ ███████  ###############
 #############################################################################################################################################
 #############################################################################################################################################
-
-
 
 class Options:
     @staticmethod
@@ -3015,7 +2940,6 @@ class Options:
         
         `calls : PrintMode` - Whether details about each individual solver call are printed.
         """
-        ## TODO Allow integer arguments as well, according to user preference
         return f"--quiet={models.value},{costs.value},{calls.value}"
     
     @enum.unique
