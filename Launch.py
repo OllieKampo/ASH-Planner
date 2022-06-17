@@ -97,18 +97,6 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
-_ASH_INSTRUCTIONS: str = """
-
-Onine Planning
---------------
-
-If the division strategy is 'none' then no divisions are made, making all monolevel planning problems complete, entering the planner into offline planning mode.
-In offline mode, all monolevel planning problems are complete, and solved prior to yielding anything (execution).
-
-An increment can involve at most one partial problem per level, but might not include all levels in each increment.
-For example, in complete-first divided planning, there is only one partial problem per increment, whereas ground-first usually involves a hierarchy of partial problems per increment.
-"""
-
 def __main() -> int:
     "Main method which creates a console session, runs the planner, and returns 0 if the console returns cleanly."
     
@@ -121,9 +109,6 @@ def __main() -> int:
         print(center_text(_ASH_WARRANTY, framing_width=80, append_blank_line=True))
     if namespace.conditions:
         print(center_text(_ASH_CONDITIONS, framing_width=80, append_blank_line=True))
-    if namespace.instructions:
-        print(center_text(_ASH_INSTRUCTIONS, framing_width=80, append_blank_line=True))
-        return 0
     
     ## Pause to let the user read the headers
     if not namespace.disable_pause_on_start:
@@ -183,40 +168,8 @@ def __main() -> int:
             return hierarchical_args
         return dict_or_number
     
-    ## If problem space generation or dependency detection is enabled then attempt to load a schema TODO remove
-    if namespace.problem_space is not None:
-        
-        if not namespace.load_schema is not None:
-            raise RuntimeError("Cannot generate problem spaces or detect dependencies without a refinement schema.")
-        if namespace.operation != "standard":
-            raise RuntimeError("Can only generate problem spaces or detect dependencies in standard operation mode.")
-        
-        with open(namespace.load_schema, 'r') as file_reader:
-            json_dict = json.loads(file_reader.read())
-        schema = Planner.RefinementSchema.from_json(json_dict)
-        planner.load_schema(schema, False, False)
-        
-        planning_function = functools.partial(planner.monolevel_plan,
-                                              1, # schema.level - 1,
-                                              namespace.enable_concurrency,
-                                              False, # True
-                                              
-                                              conformance_type=conformance_type,
-                                              sequential_yield=False,
-                                              use_minimum_search_length_bound=False,
-                                              
-                                              minimise_actions=namespace.minimise_actions,
-                                              preempt_pos_fgoals=namespace.positive_final_goal_preemptive_achievement_heuristic,
-                                              preempt_neg_fgoals=namespace.negative_final_goal_preemptive_achievement_heuristic,
-                                              
-                                              generate_search_space=namespace.problem_space == "search",
-                                              generate_solution_space=namespace.problem_space == "solution",
-                                            
-                                              time_limit=get_hierarchical_arg(namespace.planning_time_limit, bottom_level),
-                                              length_limit=get_hierarchical_arg(namespace.search_length_limit, bottom_level))
-    
     ## Planning mode is hierarchical (conformance refinement or classical)
-    elif namespace.planning_mode in ["hcr", "hcl"]:
+    if namespace.planning_mode in ["hcr", "hcl"]:
         
         ## Determine division strategy for conformance refinement planning
         refinement_planning: bool = namespace.planning_mode == "hcr"
@@ -300,8 +253,10 @@ def __main() -> int:
                         raise ValueError("The impetuous division strategy requires exactly two bounds per level.")
                     
                     division_strategy = division_strategy_class(top_level=top_level,
-                                                                cumulative_time_bound={level : bound[0] if bound is not None else None for level, bound in bounds.items()},
-                                                                continuous_time_bound={level : bound[1] if bound is not None else None for level, bound in bounds.items()},
+                                                                cumulative_time_bound={level : bound[0] if bound is not None else None
+                                                                                       for level, bound in bounds.items()},
+                                                                continuous_time_bound={level : bound[1] if bound is not None else None
+                                                                                       for level, bound in bounds.items()},
                                                                 continuous_bound_type=reactive_bound_type,
                                                                 backwards_horizon=horizon,
                                                                 moving_average=moving_average,
@@ -312,8 +267,10 @@ def __main() -> int:
                 if issubclass(division_strategy_class, Strategies.Rapid):
                     division_strategy = division_strategy_class(top_level=top_level,
                                                                 proactive_basis=proactive_basis,
-                                                                size_bound={level : bound[0] if bound is not None else None for level, bound in bounds.items()},
-                                                                reactive_time_bound={level : bound[1] if bound is not None else None for level, bound in bounds.items()},
+                                                                size_bound={level : bound[0] if bound is not None else None
+                                                                            for level, bound in bounds.items()},
+                                                                reactive_time_bound={level : bound[1] if bound is not None else None
+                                                                                     for level, bound in bounds.items()},
                                                                 reactive_bound_type=reactive_bound_type,
                                                                 backwards_horizon=horizon,
                                                                 moving_average=moving_average,
@@ -867,7 +824,6 @@ def __setup() -> argparse.Namespace:
     parser.add_argument("-v", "--version", action="version", version=f"ASH - The ASP based Hierarchical Conformance Refinement Planner :: {_ASH_VERSION}")
     parser.add_argument("-w", "--warranty", action="store_true", help="show the program's warranty information on launch")
     parser.add_argument("-c", "--conditions", action="store_true", help="show the program's warranty conditions on launch")
-    parser.add_argument("-i", "--instructions", action="store_true", help="show the program's instructions on launch and exit")
     
     ## Launcher options
     parser.add_argument("-ao", "--ash_output", choices=["verbose", "standard", "simple", "experiment"], default="standard", type=str,
@@ -926,13 +882,6 @@ def __setup() -> argparse.Namespace:
     parser.add_argument("-obs", "--make_observable", **bool_options(default=False),
                         help="whether to make the plan that minimally achieves the previous in sequence sub-goal stage observable in sequential yield mode, "
                              "this is an expensive operation and ASH currently only uses this for debugging purposes, by default False, as standard True")
-    
-    ## Problem space generation options ## TODO remove
-    parser.add_argument("-space", "--problem_space", choices=["None", "search", "solution"], default=None, type=optional_str,
-                        help="the type of problem space to generate; None (disable problem space generation), 'search' (the number of potential plans that may lead to a solution), "
-                             "'solution' (the number of valid solutions), by default None (In order to generate problem spaces a refinement schema must be loaded)") ## Not the true search space
-    parser.add_argument("--problem_space_level", default=1, type=int,
-                        help="the level to generate the problem spaces at, by default 1 (the ground level)")
     
     ## Hierarchical planning options
     parser.add_argument("-top", "--top_level", default=None, type=optional_int,
