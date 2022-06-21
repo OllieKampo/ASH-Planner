@@ -5,7 +5,7 @@ import os
 from typing import Any, Optional, Sequence
 import numpy
 import pandas
-import pandas.io.formats.style as pandas_style
+# import pandas.io.formats.style as pandas_style
 import glob
 import argparse
 import tqdm
@@ -664,9 +664,8 @@ figure_quality_score_histogram, axis_quality_score_histogram = pyplot.subplots()
 
 ## Raw planning time per abstraction level;
 ##      - Solving time, grounding time, total time, yield time, completion time.
+##      - Combine as series on same plot.
 set_bars(5)
-##          - Combine as series on same plot.
-gt = get_cat_plans("GT")["height"]
 axis_time_raw_bars.bar(als - (bar_width * 2), width=bar_width, **get_cat_plans("GT"), label="Median Grounding Time")
 axis_time_raw_bars.bar(al_range - bar_width, quantiles_cat_plans["ST"], bar_width, yerr=get_std("ST"), capsize=5, label="Mean Solving")
 axis_time_raw_bars.bar(al_range, means["TT"], bar_width, yerr=get_std("TT"), capsize=5, label="Mean Total")

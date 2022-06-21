@@ -64,7 +64,7 @@ class ASH_InvalidInputError(ASH_Error):
 def log_and_raise(exception_type: type[BaseException],
                   *args: object, from_exception: Optional[BaseException] = None,
                   logger: logging.Logger = _planner_logger) -> None:
-    "Commit a log (at debug level) and then raise an exception from a sequence of arbitrary arguments."
+    """Commit a log (at debug level) and then raise an exception from a sequence of arbitrary arguments."""
     logger.debug(*args, exc_info=(from_exception is not None))
     raise exception_type(*args) from from_exception
 
@@ -85,12 +85,16 @@ class ActionType(enum.Enum):
     
     Items
     -----
-    `Locomotion = "locomotion"` - A locomotion action is one that changes the robot's location, and possibly the location of entities currently being grasped or transported by the robot.
+    `Locomotion = "locomotion"` - A locomotion action is one that changes the robot's location,
+    and possibly the location of entities currently being grasped or transported by the robot.
     
-    `Manipulation = "manipulation"` - A manipulation action is one that allows the robot to move, place, or grasp an entity.
+    `Manipulation = "manipulation"` - A manipulation action is one that allows the robot to move,
+    place, or grasp an entity.
     
-    `Configuration = "configuration"` - A configuration action is one that changes the robot's own physical state, or the physical state of its component parts, without changing the wider system state.
+    `Configuration = "configuration"` - A configuration action is one that changes the robot's own
+    physical state, or the physical state of its component parts, without changing the wider system state.
     """
+    
     Locomotion = "locomotion"
     Manipulation = "manipulation"
     Configuration = "configuration"
@@ -98,6 +102,7 @@ class ActionType(enum.Enum):
 class Fluent(ASP.Atom):
     """
     Represents a fluent literal.
+    
     Fluent literals are fluent function literals defining the current value of a state variable at a given time step.
     
     Fields
@@ -241,10 +246,12 @@ class FinalGoal(ASP.Atom):
     def predicate_name(cls) -> str:
         return "final_goal"
 
-
-
 @dataclass(frozen=True)
 class ASH_Statistics(ASP.Statistics):
+    """
+    Extension of ASP statistic to contain overhead time (the time spent reasoning
+    about reaction problem divisions in sequential yield planning mode).
+    """
     overhead_time: float = 0.0
 
 @dataclass(frozen=True)
@@ -253,7 +260,7 @@ class ASH_IncrementalStatistics(ASP.IncrementalStatistics):
     
     @property
     def grand_totals(self) -> ASH_Statistics:
-        "The grand total times and maximum memory usage, the sum of the base and all incremental times."
+        """The grand total times and maximum memory usage, the sum of the base and all incremental times."""
         statistics: ASP.Statistics = super().grand_totals
         return ASH_Statistics(grounding_time=statistics.grounding_time,
                               solving_time=statistics.solving_time,
@@ -270,21 +277,29 @@ class ASH_IncrementalStatistics(ASP.IncrementalStatistics):
 @dataclass(frozen=True)
 class ConformanceMapping:
     """
-    Represents a conformance mapping between a contiguous sequence of sub-goal stages produced from an abstract monolevel plan and an original level monolevel plan.
-    A conformance mapping represents how adjacent levels of a refinement diagram are linked by defining the descending refined plan's child sub-plans and the matching child unique achievement steps for each sub-goal stage.
+    Represents a conformance mapping between a contiguous sequence of sub-goal stages
+    produced from an abstract monolevel plan and an original level monolevel plan.
     
-    The mapping also contains the greedy minimal unique sequential yield achievement steps of each sub-goal stage iff the plan was generated in sequential yield mode.
+    A conformance mapping represents how adjacent levels of a refinement diagram are linked
+    by defining the descending refined plan's child sub-plans and the matching child unique
+    achievement steps for each sub-goal stage.
+    
+    The mapping also contains the greedy minimal unique sequential yield achievement steps
+    of each sub-goal stage iff the plan was generated in sequential yield mode.
     
     Fields
     ------
-    `constraining_sgoals : dict[int, list[SubGoal]]` -
+    `constraining_sgoals : dict[int, list[SubGoal]]` - A list of sub-goal stages forming the constraint.
     
-    `current_sgoals : ReversableDict[int, int]` -
+    `current_sgoals : ReversableDict[int, int]` - The current sub-goal stage at each plan step mapping,
+    the reverse of this mapping is the sub-goal stage to refining sub-plan mapping.
     
-    `sgoals_achieved_at : ReversableDict[int, int]` -
+    `sgoals_achieved_at : ReversableDict[int, int]` - The sub-goal stage achievement step mapping.
     
-    `sequential_yield_steps : {dict[int, int] | None} = None` -
+    `sequential_yield_steps : {dict[int, int] | None} = None` - The steps at which actions were
+    yielded in sequential yield planning mode (used for calculating interleaving quantities).
     """
+    
     ## The conformance mapping itself;
     ##      - The conformance constraint,
     ##      - The descending child sub-plans,
@@ -627,7 +642,11 @@ class MonolevelPlan(_collections_abc.Mapping):
     
     @property
     def interleaving(self) -> tuple[tuple[int, float], tuple[int, float]]:
-        "Calculate and return the interleaving quantities and score as a tuple of two-tuples, number of interleaved sub-plans - percentage of interleaved sub-plans and number of interleaved plan steps - percentage of interleaved steps."
+        """
+        Calculate and return the interleaving quantities and score as a tuple of two-tuples;
+            - number of interleaved sub-plans, percentage of interleaved sub-plans
+            - number of interleaved plan steps, percentage of interleaved steps.
+        """
         total_interleaved_sub_plans: int = 0
         total_interleaving_quantity: int = 0
         if (self.is_refined
@@ -667,9 +686,11 @@ class MonolevelPlan(_collections_abc.Mapping):
                     and not cls.__matches(action, ActionType.Configuration))
     
     def get_action_type(self, step: int) -> ActionType:
+        """Get the most common action type in the action set planned at the given time step."""
         return statistics.mode([action.type for action in self[step]])
     
     def get_sub_plan_type(self, index: int) -> ActionType:
+        """The most common action type in the sub-plan that refines the sub-goal stage at the given index."""
         if not self.is_refined:
             raise RuntimeError("Cannot get sub-plan types of classical plan.")
         return statistics.mode([self.get_action_type(step) for step in self.conformance_mapping.current_sgoals(index)])
@@ -707,19 +728,16 @@ class MonolevelPlan(_collections_abc.Mapping):
                              matching_actions / self.conformance_mapping.total_sgoal_producing_actions)
         return Expansion(1.0, 1.0)
     
-    def get_expansion_factor(self, indices: Optional[Union[int, range]] = None, action_type: Optional[ActionType] = None, accu_step: Optional[int] = None) -> Expansion:
+    def get_expansion_factor(self,
+                             indices: Optional[Union[int, range]] = None,
+                             action_type: Optional[ActionType] = None,
+                             accu_step: Optional[int] = None
+                             ) -> Expansion:
         """
         Get the expansion factor of a given conformance constraining sub-goal stage index refined by this plan.
+        Returns 1.0 if the plan is classical.
         
         This method is a proxy for the method of the same name provided by the conformance mapping class.
-        
-        Parameters
-        ----------
-        `index : int` - The sub-goal stage index to get the expansion factor for.
-        
-        Returns
-        -------
-        `float` - The expansion factor for the given sub-goal stage index if the plan is refined, otherwise 1.0 if the plan is classical.
         """
         if self.is_refined:
             if (isinstance(indices, int) and indices not in self.conformance_mapping.constraining_sgoals):
@@ -742,8 +760,10 @@ class MonolevelPlan(_collections_abc.Mapping):
                 steps.extend([step for step in range(max(steps), self.end_step)])
             
             if action_type is None:
-                return Expansion(len([step for step in self.conformance_mapping.current_sgoals(indices) if accu_step is None or step <= accu_step]),
-                                 sum(len(self[step]) for step in self.conformance_mapping.current_sgoals(indices) if accu_step is None or step <= accu_step) / len(self.conformance_mapping.constraining_sgoals[indices]))
+                return Expansion(len([step for step in self.conformance_mapping.current_sgoals(indices)
+                                      if accu_step is None or step <= accu_step]),
+                                 sum(len(self[step]) for step in self.conformance_mapping.current_sgoals(indices)
+                                     if accu_step is None or step <= accu_step) / len(self.conformance_mapping.constraining_sgoals[indices]))
             
             return Expansion(len([step for step in self.conformance_mapping.current_sgoals(indices)
                                   if any(self.__matches(action, action_type) for action in self.get(step, []))]),
@@ -752,7 +772,11 @@ class MonolevelPlan(_collections_abc.Mapping):
         
         return Expansion(1.0, 1.0)
     
-    def get_expansion_deviation(self, indices: Optional[Union[int, range]] = None, action_type: Optional[ActionType] = None, accu_step: Optional[int] = None) -> Expansion:
+    def get_expansion_deviation(self,
+                                indices: Optional[Union[int, range]] = None,
+                                action_type: Optional[ActionType] = None,
+                                accu_step: Optional[int] = None
+                                ) -> Expansion:
         """
         The expansion factor standard deviation over all conformance constraining sub-goal stages refined by this plan.
         
@@ -802,6 +826,7 @@ class RefinementSchema:
     
     `problem_divisions: list[DivisionPoint] = []`
     """
+    
     constraining_sgoals: dict[int, list[SubGoal]]
     problem_divisions: list[DivisionPoint] = field(default_factory=list)
     
@@ -910,7 +935,11 @@ class HierarchicalPlan(_collections_abc.Mapping, AbstractionHierarchy):
     ## Hierarchical plan statistics
     
     def get_minimum_execution_time(self, level: int, problem_number: int, per_action: bool = False) -> float:
-        "The minimum required execution time for non-final partial plans, that would allow the robot to continue without ever pausing, based on the wait time until the next partial plan at the given level is yielded."
+        """
+        The minimum required execution time for non-final partial plans,
+        that would allow the robot to continue without ever pausing,
+        based on the wait time until the next partial plan at the given level is yielded.
+        """
         if not self.is_hierarchical_refinement:
             return 0.0
         if problem_number == len(self.partial_plans[level]):
@@ -921,6 +950,7 @@ class HierarchicalPlan(_collections_abc.Mapping, AbstractionHierarchy):
         return raw_wait_time
     
     def get_average_minimum_execution_time(self, level: int, per_action: bool = False) -> float:
+        """The mean minimum exectuion time over all partial problems."""
         if not self.is_hierarchical_refinement:
             return 0.0
         if len(self.partial_plans[level]) == 1:
@@ -934,7 +964,8 @@ class HierarchicalPlan(_collections_abc.Mapping, AbstractionHierarchy):
         """
         The yield time of the partial plan that solves a given problem number at a given level in this hierarchical plan.
         If this hierarchical plan was not generated by the hierarchical conformance refinement planning algorithm,
-        then if the plan at the given level exists, it was generated as a independent classical plan, and its yield time is identical to completion time.
+        then if the plan at the given level exists, it was generated as a independent classical plan,
+        and its yield time is identical to completion time.
         """
         if not self.is_hierarchical_refinement:
             return self.concatenated_plans[level].grand_totals.total_time
@@ -986,7 +1017,10 @@ class HierarchicalPlan(_collections_abc.Mapping, AbstractionHierarchy):
         return self.concatenated_plans[level].planning_statistics.grand_totals
     
     def get_hierarchical_problem_sequence(self) -> list[tuple[int, int, int, int]]:
-        "An ordered list of (sequence number - level - increment - problem number) four-tuples, defining the problem sequence ordering over the hierarchy, useful when constructing an online planning diagram."
+        """
+        An ordered list of (sequence number - level - increment - problem number) four-tuples,
+        defining the problem sequence ordering over the hierarchy, useful when constructing an online planning diagram.
+        """
         problem_sequence: list[tuple[int, int, int, int]] = []
         if self.is_hierarchical_refinement:
             for iteration in range(1, max(self.partial_plans[self.bottom_level]) + 1):
@@ -1104,12 +1138,8 @@ class HierarchicalPlan(_collections_abc.Mapping, AbstractionHierarchy):
                     _dict[level][step]["achieved_sgoals_index"] = str(plan.conformance_mapping.sgoals_achieved_at.get(current_sgoals))
         return _dict
 
-
-
 def format_actions(actions: dict[int, list[Action]], current_sub_goals: dict[int, list[SubGoal]]) -> list[str]:
-    """
-    Function used to verbose format actions and the current sub-goals of the conformance mapping.
-    """
+    """Function used to verbose format actions and the current sub-goals of the conformance mapping."""
     output: list[str] = []
     for step in set(current_sub_goals.keys()) | set(actions.keys()):
         output.append(f"Step {step}:")
@@ -1128,23 +1158,27 @@ def format_actions(actions: dict[int, list[Action]], current_sub_goals: dict[int
             output.append(f"        {action['R']} : {action['A']}")
     return output
 
-
-
 #############################################################################################################################################
 #############################################################################################################################################
-#   █████  ███████ ██   ██               ██████   ██████  ███    ███  █████  ██ ███    ██ ███████ 
-#  ██   ██ ██      ██   ██               ██   ██ ██    ██ ████  ████ ██   ██ ██ ████   ██ ██      
-#  ███████ ███████ ███████     █████     ██   ██ ██    ██ ██ ████ ██ ███████ ██ ██ ██  ██ ███████ 
-#  ██   ██      ██ ██   ██               ██   ██ ██    ██ ██  ██  ██ ██   ██ ██ ██  ██ ██      ██ 
-#  ██   ██ ███████ ██   ██               ██████   ██████  ██      ██ ██   ██ ██ ██   ████ ███████
+####################   █████  ███████ ██   ██               ██████   ██████  ███    ███  █████  ██ ███    ██ ███████ ########################
+####################  ██   ██ ██      ██   ██               ██   ██ ██    ██ ████  ████ ██   ██ ██ ████   ██ ██      ########################
+####################  ███████ ███████ ███████     █████     ██   ██ ██    ██ ██ ████ ██ ███████ ██ ██ ██  ██ ███████ ########################
+####################  ██   ██      ██ ██   ██               ██   ██ ██    ██ ██  ██  ██ ██   ██ ██ ██  ██ ██      ██ ########################
+####################  ██   ██ ███████ ██   ██               ██████   ██████  ██      ██ ██   ██ ██ ██   ████ ███████ ########################
 #############################################################################################################################################
 #############################################################################################################################################
-
-
 
 ## Constants defining the program parts in domain files
-_DOMAIN_PROGRAM_PARTS: Final[frozenset[str]] = {"domain_sorts", "action_effects(t)", "action_preconditions(t)", "variable_relations(t)", "abstraction_mappings(t)"}
-_PROBLEM_PROGRAM_PARTS: Final[frozenset[str]] = {"entities", "static_state", "initial_state", "goal_state"}
+_DOMAIN_PROGRAM_PARTS: Final[set[str]] = {"domain_sorts",
+                                          "action_effects(t)",
+                                          "action_preconditions(t)",
+                                          "variable_relations(t)",
+                                          "abstraction_mappings(t)"}
+
+_PROBLEM_PROGRAM_PARTS: Final[set[str]] = {"entities",
+                                           "static_state",
+                                           "initial_state",
+                                           "goal_state"}
 
 @enum.unique
 class DomainModelType(enum.Enum):
@@ -1169,9 +1203,13 @@ class DomainModelType(enum.Enum):
 class PlanningDomain(AbstractionHierarchy):
     """
     Represents a hierarchical planning domain definition used by ASH.
-    This is a two-tuple of: TODO
-        - Domain Definition = {classes, sorts = {fluents, actions, statics}, rules = {effects, preconditions, relations}, abstraction mappings}
-        - World Structure = {static state, entity declarations, ancestry relation declarations}
+    This is a two-tuple of:
+        - Domain Definition = {classes,
+                               sorts = {fluents, actions, statics},
+                               rules = {effects, preconditions, relations}, abstraction mappings}
+        - World Structure = {static state,
+                             entity declarations,
+                             ancestry relation declarations}
     
     Properties
     ----------
@@ -1180,8 +1218,10 @@ class PlanningDomain(AbstractionHierarchy):
 
     `domain_files : list[str]` - A list of strings defining the files from which this domain was loaded.
     
-    `optional_parts : list[str]` - A list of strings defining names of optional program parts from `ASH.OPTIONAL_PROGRAM_PARTS` that this planning domain contains.
-    If the planning domain does not contain an optional part, it will need to be provided explicitly so solve a planning problem with this domain.
+    `optional_parts : list[str]` - A list of strings defining names of optional
+    program parts from `ASH.OPTIONAL_PROGRAM_PARTS` that this planning domain contains.
+    If the planning domain does not contain an optional part, it will need to be provided
+    explicitly so solve a planning problem with this domain.
     
     `top_level : int` - An integer defining the maximum abstraction level of this planning domain.
     The abstraction range is [1-top_level].
@@ -1312,8 +1352,6 @@ class PlanningDomain(AbstractionHierarchy):
             raise ValueError(f"Abstraction level {level} is not in the range of {self}.")
         return self.__model_types[level]
 
-
-
 #############################################################################################################################################
 #############################################################################################################################################
 #######################   █████  ███████ ██   ██         ██████  ██       █████  ███    ██ ███    ██ ███████ ██████  ########################
@@ -1323,8 +1361,6 @@ class PlanningDomain(AbstractionHierarchy):
 #######################  ██   ██ ███████ ██   ██         ██      ███████ ██   ██ ██   ████ ██   ████ ███████ ██   ██ ########################
 #############################################################################################################################################
 #############################################################################################################################################
-
-
 
 VerbosityValue = NamedTuple("VerbosityValue", (("level", int), ("log", int)))
 @enum.unique
@@ -1355,7 +1391,8 @@ class OnlineMethod(enum.Enum):
     """
     Enumeration defining the two types of online method used in refinement planning.
     
-    The top-level of the current increment's level range must be between the highest and lowest valid planning levels (inclusive), and the bottom-level is between the top-level and ground level.
+    The top-level of the current increment's level range must be between the highest and lowest valid
+    planning levels (inclusive), and the bottom-level is between the top-level and ground level.
     
     Items
     -----
@@ -1390,6 +1427,7 @@ class StateRepresentation(enum.Enum):
     This is used to generate complete conforming initial states and final-goals over the entire hierarchy prior to planning.
     Thus, it is used to ensure that plans at every level in the hierarchy, start and end in states that are conforming, i.e. they map to each other.
     """
+    
     Classical = "classical"
     Refinement = "refinement"
     Hierarchical = "hierarchical"
@@ -1406,6 +1444,7 @@ class ConformanceType(enum.Enum):
     
     `SimultaneousAchievement = "simultaneous"` - All sub-goals of a stage must be achieved in the matching child of the refined sub-plan of a sub-goal producing abstract action.
     """
+    
     SequentialAchievement = "sequential"
     SimultaneousAchievement = "simultaneous"
 
@@ -1424,16 +1463,15 @@ class PreemptMode(enum.Enum):
     This affects only the generation/selection of the optimal answer sets of the program at the end of search.
     This avoids affecting the ASP based heuristic, but there is an additional overhead on generating the final answer set.
     """
+    
     Heuristic = "heuristic"
     Optimise = "optimise"
 
-
-
 class ConsistencyCheck(NamedTuple):
+    """Used for hierarchical problem consistency checks."""
+    
     consistent: StateVariableMapping
     inconsistent: StateVariableMapping
-
-
 
 @dataclass(frozen=True)
 class Solution:
@@ -1456,8 +1494,6 @@ class Solution:
     overhead_time: float = 0.0
     sequential_yield_steps: Optional[dict[int, int]] = None
     reactive_divisions: list[DivisionPoint] = field(default_factory=list)
-
-
 
 @dataclass
 class MonolevelProblem:
@@ -1498,6 +1534,7 @@ class MonolevelProblem:
     ----------
     `sgoals_range : range` - The contiguous sub-goal stage indices range of the problem, equivalent to [first_sgoals-last_sgoals].
     """
+    
     ## Basic parameters
     level: int
     concurrency: bool
@@ -1527,7 +1564,8 @@ class MonolevelProblem:
     def problem_description(self) -> str:
         "A formatted multi-line description of the monolevel problem specification."
         if self.conformance:
-            conformance_description: str = f"{'complete' if self.complete_planning else 'partial'} conformance refinement ({self.conformance_type.value}) with sgoals range [{self.first_sgoals}-{self.last_sgoals}]"
+            conformance_description: str = (f"{'complete' if self.complete_planning else 'partial'} conformance refinement "
+                                            f"({self.conformance_type.value}) with sgoals range [{self.first_sgoals}-{self.last_sgoals}]")
         return (f"[Level = {self.level}] {conformance_description if self.conformance else 'classical'} : "
                 f"Concurrency {'enabled' if self.concurrency else 'disabled'} : "
                 f"Minimum search length bound {'enabled' if self.use_search_length_bound else 'disabled'} with value {self.search_length_bound}")
@@ -1610,7 +1648,8 @@ class MonolevelProblem:
                      ASP.IncPart(name="abstraction_mappings")]
         
         if self.conformance:
-            ## Add the conformance module iff conformance is enabled and a saved grounding is unavailable (we wouldn't be creating program parts if there was a saved grounding being used);
+            ## Add the conformance module iff conformance is enabled and a saved grounding is unavailable
+            ## (we wouldn't be creating program parts if there was a saved grounding being used);
             ##      - Give the sub-goal stage range to refine;
             ##          - The first index is always given,
             ##          - The last index is given only if the grounding will not be saved such that this index will never be changed,
@@ -1631,16 +1670,10 @@ class MonolevelProblem:
 @final
 class HierarchicalPlanner(AbstractionHierarchy):
     """
-    Hierarchical planners use conformance refinement to generate plans over an abstraction hierarchy according to a given planning domain and problem.
-    
-    Properties
-    ----------
-    
-    
-    Example Usage
-    -------------
-    
+    Hierarchical planners use conformance refinement to generate plans over
+    an abstraction hierarchy according to a given planning domain and problem.
     """
+    
     __slots__ = (## Variables for logging
                  "__name",                      # str
                  "__logger",                    # logging.Logger
@@ -1667,7 +1700,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
                  "__current_sgoals",            # dict[int, ReversableDict[int, int]]       :: maps: level x step -> index
                  "__sgoals_achieved_at",        # dict[int, ReversableDict[int, int]]       :: maps: level x index -> step
                  "__sequential_yield_steps",    # dict[int, dict[int, int]]                 :: maps: level x index -> step
-                 "__division_scenarios",        # dict[int, list[DivisionScenario]]         :: maps: level x increment -> scenario that divides the plan (the problem including that plan's sub-goal stages) generated on that increment
+                 "__division_scenarios",        # dict[int, list[DivisionScenario]]         :: maps: level x increment -> scenario that divides the refinement of the plan generated on that increment
                  
                  ## Miscellaneous
                  "__threads",                   # int
@@ -2196,21 +2229,8 @@ class HierarchicalPlanner(AbstractionHierarchy):
         return self.__final_goals.copy()
     
     def initialise_problem(self, find_inconsistencies: bool = False) -> None:
-        """
-        Initialise the currently loaded planning problem.
+        """Initialise the currently loaded planning problem."""
         
-        Parameters
-        ----------
-        `find_inconsistencies : bool = False` - Whether to find inconsistencies in the specificcation of the initial state and final-goals.
-        
-        Returns
-        -------
-        Something that can be used to save to a file? TODO
-        
-        Raises
-        ------
-        
-        """
         self.__logger.log(self.__log_level(Verbosity.Simple),
                           "Attempting to initialise hierarchical planning problem...")
         
@@ -2262,17 +2282,8 @@ class HierarchicalPlanner(AbstractionHierarchy):
                             file_writer.write(json.dumps(variable_mappings, indent=4))
     
     def __generate_initial_states(self, find_inconsistencies: Union[bool, str] = False) -> tuple[bool, bool, ConsistencyCheck]:
-        """
-        Generate the problem's initial states.
+        """Generate the problem's initial states."""
         
-        Parameters
-        ----------
-        
-        
-        Returns
-        -------
-        
-        """
         self.__logger.log(self.__verbosity.value.log, "Generating initial states...")
         
         ## Create a local copy of the logic program
@@ -2322,12 +2333,6 @@ class HierarchicalPlanner(AbstractionHierarchy):
                     self.__logger.log(self.__log_level(Verbosity.Standard),
                                       f"\n\n{header}\n\n" + "\n".join(map(str, self.__initial_states[level])))
                 
-                # import re
-                # print(*answer.fmodel.get_atoms("is", 2, True, as_strings=True, sort_by=[0, 1], param_constrs={1 : (re.compile(r"connected"), ASP.Model.ParseMode.Search)}), sep="\n")
-                # print(*answer.fmodel.get_atoms("desce_of", 3, True, as_strings=True, sort_by=[0, 1, 2]), sep="\n")
-                # print(*answer.fmodel.get_atoms("insta_of", 3, True, as_strings=True, sort_by=[0, 1, 2], param_constrs={1 : "location"}), sep="\n")
-                # input()
-                
                 is_unique = len(answer.base_models) == 1
             
             else:
@@ -2348,17 +2353,8 @@ class HierarchicalPlanner(AbstractionHierarchy):
         return is_valid, is_unique, consistency
     
     def __generate_final_goals(self, find_inconsistencies: bool = False) -> tuple[bool, bool, ConsistencyCheck]:
-        """
-        Generate the problem's initial states.
+        """Generate the problem's final-goals."""
         
-        Parameters
-        ----------
-        TODO
-        
-        Returns
-        -------
-        TODO
-        """
         self.__logger.log(self.__verbosity.value.log, "Generating final-goals...")
         
         ## Create a local copy of the logic program
@@ -2657,13 +2653,47 @@ class HierarchicalPlanner(AbstractionHierarchy):
         
         Parameters
         ----------
-        TODO
+        `level: int` - The abstraction level of the problem.
         
-        The search space is how many potential plans might satisfy the solution constraints on the next step.
-        The solution space is how many valid plans actually satisfy the solution constraint of the current step.
+        `concurrency: bool` - Whether action concurrency should be enabled, if disabled actions can only be planned sequentially.
         
-        In planning mode, a constraint requires that all included goals are minimally achieved up to the current step, one plan is generated if the constraint can be satisfied.
-        In search space generation mode, a maximal number of included goals are achieved up to the previous step, every potential plan that satisfies this is generated.
+        `conformance: bool` - Whether to apply conformance constraints, enabling conformance refinement planning mode.
+        
+        `conformance_type: ConformanceType` - The conformance constraint application type; simultaneous or sequential sub-goal stage achievement.
+        
+        `first_sgoals: int` - The requested first in sequence sub-goal stage index value (inclusive) of a conformance refinement planning problem.
+        
+        `last_sgoals: int`- The requested last in sequence sub-goal stage index value (inclusive) of a conformance refinement planning problem.
+        
+        `sequential_yield: bool` - Whether the conformance refinement planning problem should be solved in sequential yield mode.
+        
+        `division_strategy : {DivisionStrategy | None}` - The division strategy being used to divide the planning problem.
+        
+        `save_grounding : bool` - Whether the logic program's grounding will be saved.
+        
+        `use_search_length_bound: bool` - Whether to use the minimum search length bound.
+        
+        `make_observable: bool = False` - Deprecated, to be removed.
+        
+        `minimise_actions : bool` - Whether to enable the action minimisation statement.
+        
+        `order_fgoal_achievement : bool` - Whether to enable the final-goal intermediate achievement ordering preference optimisation statement.
+        
+        `preempt_pos_fgoals : bool` - Whether to enable positive final-goal preemptive achievement.
+        
+        `preempt_neg_fgoals : bool` - Whether to enable negative final-goal preemptive achievement.
+        
+        `preempt_mode : PreemptMode` - The mode by which the final-goal preemptive achievement is applied.
+        
+        `detect_interleaving : bool = False` - Deprecated, to be removed.
+        
+        `generate_search_space : bool = False` - Deprecated, to be removed.
+        
+        `generate_solution_space : bool = False` - Deprecated, to be removed.
+        
+        `time_limit: {int | None} = None` - The search time limit in seconds, if reached cancels search.
+        
+        `length_limit: {int | None} = None` - The search length limit, if reached cancels search.
         """
         
         ## Log the function call and input arguments for debugging purposes
@@ -3135,8 +3165,6 @@ class HierarchicalPlanner(AbstractionHierarchy):
         ## Return the plan
         return monolevel_plan
     
-    
-    
     def hierarchical_plan(
                           ## Required arguments
                           self,
@@ -3178,6 +3206,59 @@ class HierarchicalPlanner(AbstractionHierarchy):
                           pause_on_increment_change: bool = False
                           
                           ) -> HierarchicalPlan:
+        """
+        Generate a hierarchical plan that solves the current hierarchical conformance refinement planning problem.
+        
+        Parameters
+        ----------
+        `bottom_level: int` - The abstraction level of the hierarchical problem.
+        
+        `top_level: int` - The abstraction level of the hierarchical problem.
+        
+        `concurrency: bool` - Whether action concurrency should be enabled, if disabled actions can only be planned sequentially.
+        
+        `conformance: bool` - Whether to apply conformance constraints, enabling conformance refinement planning mode.
+        
+        `conformance_type: ConformanceType` - The conformance constraint application type; simultaneous or sequential sub-goal stage achievement.
+        
+        `sequential_yield: bool` - Whether the conformance refinement planning problem should be solved in sequential yield mode.
+        
+        `division_strategy : {DivisionStrategy | None}` - The division strategy being used to divide the planning problem.
+        
+        `online_method: OnlineMethod = OnlineMethod.GroundFirst` - The online planning method used to traverse the problem division tree.
+        
+        `save_grounding : bool` - Whether the logic program's grounding will be saved.
+        
+        `use_search_length_bound: bool` - Whether to use the minimum search length bound.
+        
+        `avoid_refining_sgoals_marked_for_blending: bool = True` - Deprecated, to be removed.
+        
+        `make_observable: bool = False` - Deprecated, to be removed.
+        
+        `minimise_actions : bool` - Whether to enable the action minimisation statement.
+        
+        `order_fgoal_achievement : bool` - Whether to enable the final-goal intermediate achievement ordering preference optimisation statement.
+        
+        `preempt_pos_fgoals : bool` - Whether to enable positive final-goal preemptive achievement.
+        
+        `preempt_neg_fgoals : bool` - Whether to enable negative final-goal preemptive achievement.
+        
+        `preempt_mode : PreemptMode` - The mode by which the final-goal preemptive achievement is applied.
+        
+        `detect_interleaving : bool = False` - Deprecated, to be removed.
+        
+        `generate_search_space : bool = False` - Deprecated, to be removed.
+        
+        `generate_solution_space : bool = False` - Deprecated, to be removed.
+        
+        `time_limit: {int | None} = None` - The search time limit in seconds, if reached cancels search.
+        
+        `length_limit: {int | None} = None` - The search length limit, if reached cancels search.
+        
+        `pause_on_level_change: bool = False` - Whether to pause until user input on a hierarchical level change.
+        
+        `pause_on_increment_change: bool = False` - Whether to pause until user input on a online planning increment change.
+        """
         
         self.__logger.debug("Arguments:\n\t" + "\n\t".join([str(local) for local in locals().items()]))
         
@@ -3465,8 +3546,10 @@ class HierarchicalPlanner(AbstractionHierarchy):
                     ##          - Do not divide the plan at the current level that will be revised by the left blend of the next partial problem,
                     ##          - This avoids refining those sub-goal stages multiple times, since they will be revised by blending and must be refined again anyway,
                     ##              - Start from the step that the left blend point of the right division point of the current partial problem was achieved,
-                    ##              - All indices less than that point cannot be revised by blending so can only ever be refined once, avoiding refining them multiple times, but giving us smaller problems at the lower levels, which may make those plans greedy in the long run,
-                    ##      - This does avoid re-refining plans at the next level, that achieve sub-goal stages that descend from those in the left blend of the next problem at the current level, but also has a significant impact on the hierarchical progression and problem division process.
+                    ##              - All indices less than that point cannot be revised by blending so can only ever be refined once, avoiding refining them multiple times,
+                    ##                but giving us smaller problems at the lower levels, which may make those plans greedy in the long run,
+                    ##      - This does avoid re-refining plans at the next level, that achieve sub-goal stages that descend from those in the left blend of the
+                    ##        next problem at the current level, but also has a significant impact on the hierarchical progression and problem division process.
                     if avoid_refining_sgoals_marked_for_blending: ## TODO or level == bottom_level:
                         if (right_point := division_points.right) is not None:
                             problem_size: int = dividing_scenario.get_subgoals_indices_range(problems[level], ignore_blend=True).problem_size
@@ -3478,7 +3561,8 @@ class HierarchicalPlanner(AbstractionHierarchy):
                     
                     ## Otherwise, re-refine any sub-goal stages revised by blending;
                     ##      - Start from the step that achieved the sub-goal stage immediately preceeding that of the left-blend index of the current monolevel problem,
-                    ##      - Ensure that we still divide over any sub-goal stages that are yet to be achieved, i.e. parts of the plan at this level that have not been refined yet (this can happen in complete-first or hybrid mode).
+                    ##      - Ensure that we still divide over any sub-goal stages that are yet to be achieved, i.e. parts of the
+                    ##        plan at this level that have not been refined yet (this can happen in complete-first or hybrid mode).
                     else:
                         start_step = min(start_step, self.__sgoals_achieved_at[level].get(first_sgoals - 1, 0))
                         self.__logger.debug(f"Value of start step of abstract plan to divide adjusted for left blend of current problem: {start_step=}")
@@ -3517,8 +3601,10 @@ class HierarchicalPlanner(AbstractionHierarchy):
                                       "Preparing to invoke division strategy...")
                     
                     ## Proactively divide the abstract plan at the current level iff either;
-                    ##      - Ground first planning is enabled (since the next level requires a new scenario since this one was the lowest unsolved problem so it is not possible for a scenario that divides it to exist),
-                    ##      - Complete first planning is enabled and the level is complete (since we only move to the next level once the current level is complete, and we only ever generate one scenario per level, so this is the first and only time we generate a scenario).
+                    ##      - Ground first planning is enabled (since the next level requires a new scenario since this one
+                    ##        was the lowest unsolved problem so it is not possible for a scenario that divides it to exist),
+                    ##      - Complete first planning is enabled and the level is complete (since we only move to the next level once the current level is complete,
+                    ##        and we only ever generate one scenario per level, so this is the first and only time we generate a scenario).
                     if ((online_method == OnlineMethod.GroundFirst
                          or (online_method == OnlineMethod.Hybrid
                              and increments == 1))
@@ -3586,14 +3672,14 @@ class HierarchicalPlanner(AbstractionHierarchy):
                           f"Length = {hierarchical_plan[min(level_range)].plan_length}, Actions = {hierarchical_plan[min(level_range)].total_actions}")
         self.__logger.log(self.__log_level(Verbosity.Standard),
                           "Hierarchical planning summary: "
-                          f"(Execution latency = {hierarchical_plan.execution_latency_time}, Average ground wait time = {hierarchical_plan.get_average_wait_time(hierarchical_plan.bottom_level)}, Absolution time = {hierarchical_plan.absolution_time})\n"
+                          f"(Execution latency = {hierarchical_plan.execution_latency_time}, "
+                          f"Average ground wait time = {hierarchical_plan.get_average_wait_time(hierarchical_plan.bottom_level)}, "
+                          f"Absolution time = {hierarchical_plan.absolution_time})\n"
                           + center_text("\n".join(str(hierarchical_plan[level]) for level in reversed(level_range)),
                                         prefix_blank_line=True, vbar_left= "| ", vbar_right=" |",
                                         framing_width=200, centering_width=210, terminal_width=220))
         
         return hierarchical_plan
-    
-    
     
     def load_schema(self, schema: RefinementSchema, init_problem: bool = True, purge_solutions: bool = True) -> None:
         self.__logger.log(self.__log_level(Verbosity.Simple),
@@ -3645,27 +3731,27 @@ class HierarchicalPlanner(AbstractionHierarchy):
         
         Parameters
         ----------
-        `solve_signal: ASP.SolveSignal`
+        `solve_signal: ASP.SolveSignal` - An ASP solve signal to be used to handle the search.
         
-        `level: int`
+        `level: int` - The abstraction level of the problem.
         
-        `start_step: int = 0`
+        `start_step: int = 0` - The start step of the problem.
         
-        `first_sgoals: int = 1`
+        `first_sgoals: int` - The requested first in sequence sub-goal stage index value (inclusive) of a conformance refinement planning problem.
         
-        `last_sgoals: int = 1`
+        `last_sgoals: int`- The requested last in sequence sub-goal stage index value (inclusive) of a conformance refinement planning problem.
         
-        `finalise: bool = True`
+        `finalise: bool = True` - Whether the problem is final, i.e. it achieves the final-goal at the given level.
         
-        `sequential_yield: bool = False`
+        `sequential_yield: bool` - Whether the conformance refinement planning problem should be solved in sequential yield mode.
         
-        `detect_interleaving: bool = False`
+        `detect_interleaving: bool = False` - Deprecated, to be removed.
         
-        `generate_search_space: bool = False`
+        `generate_search_space: bool = False` - Deprecated, to be removed.
         
-        `make_observable: bool = False`
+        `make_observable: bool = False` - Deprecated, to be removed.
         
-        `division_strategy: Optional[DivisionStrategy] = None`
+        `division_strategy: Optional[DivisionStrategy] = None` - The reactive division strategy being used to divide the planning problem.
         """
         self.__logger.debug("Starting search:\n\t" + "\n\t".join(map(str, locals().items())))
         
@@ -3931,7 +4017,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
                         fix_until_index: int = max(first_sgoals, current_last_sgoals - backwards_horizon - 1)
                         fix_until_step: int = feedback.end_step
                         if backwards_horizon != 0:
-                            fix_until_step = sequential_yield_steps.get(current_last_sgoals - backwards_horizon - 1, start_step) ## TODO use the conformance mapping
+                            fix_until_step = sequential_yield_steps.get(current_last_sgoals - backwards_horizon - 1, start_step) ## TODO use the conformance mapping.
                         
                         ## Record the continuous division for the purpose of studying its affect on planning
                         reactive_divisions.append(DivisionPoint(fix_until_index, reactive=fix_until_step,

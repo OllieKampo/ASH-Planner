@@ -6,15 +6,21 @@ ASH is a general framework, that does not require any prescriptive knowledge fro
 ASH can find and yield only a partial plan initially, allowing the robot(s) to begin execution exponentially sooner than generating a complete plan prior to execution.
 ASH then maintains and extends this partial solution over time, progressively yielding further contiguous partial solutions, towards eventual achievement of the final-goal.
 
+## Structure
+
+[ASH Components Dependency Diagram]
+
+https://guides.github.com/features/mastering-markdown/
+
+## Hierarchical Conformance Refinement Planning Problems
+
 Conformance refinement planning problems are characterised by three aspects:
 * An initial state - 
 * A final-goal test - A set of positive and negative fluent state literals that must be simultaneously satisfied in the goal state,
 * A sequence of sub-goal stages - 
 
-Three domains have been developed to test the proposed approach and its implementation.
-* __The Blocks World Plus (BWP)__ - An extension of the classic blocks world domain. A single robot named Talos must solve block world puzzles, in a combined logistics and manipulation planning domain.
-
-## Conformance Refinement Domain Models
+A planning domains has been developed to test the proposed approach and its implementation.
+__The Blocks World Plus (BWP)__ - An extension of the classic blocks world domain. A single robot named Talos must solve block world puzzles, in a combined logistics and manipulation planning domain.
 
 Abstraction hierarchies are built by removing, generalising, or redefining system laws, in order to obtain simplified abstract models of the domain and problem.
 There are three such abstract models currently supported by our theory and implementation.
@@ -49,52 +55,21 @@ IMPORTANT: Due to an oversight, in all results, action expansion factors, deviat
 
 ## Installation
 
+The frozen version of ASH has not been published as a python package.
+This is because this version is only a prototype, and in the future a full version will be published.
+Instead, to install ASH, you will need to download the repository.
+
 ASH requires Python version 3.9.5, there is no guarantee it will be compatible on later versions, it is incompatible on 3.8.X or below.
 It is dependent upon the following packages:
 1. clingo
 2. pandas
 3. matplotlib
 4. tqdm
-These should be installed in order using the anaconda installer (not pip).
-
-ASH is available via the conda package manager.
-Doing this will also install all its dependencies automatically.
-Simply use the following in the desired anaconda environment:
-```
-conda activate <desired_virtual_environment>
-conda install ASH
-```
-
-Congratualations, you now have ASH installed, and you are ready to start planning.
-To test your install you can run the following command to run the easiest problem instance in the BWP planning domain (it should take no more than a few seconds to complete).
-
-```
-python ASH_Launch.py "./test_domains/blocks_world_plus/BWP_loader.json" --laws=simple --world=small --prob=easy
-```
-
-Alternatively, you can simply clone this repository.
-Please note the copyright notice attached to this repository.
-
-## Example Usage
-
-```
-import ASH
-
-planner = ASH.Planning.Planner.HierarchicalPlanner(silent=True)
-planner.tmol_load("./domains/blocks_world_plus/BWP_loader.json", system_laws="simple", world_structure="small", problem_instance="easy")
-
-plan: ASH.Planning.Plans.HierarchicalPlan = planner.generate_hierarchical_plan(strategy=ASH.Planning.Strategies.Steady(bound=5))
-plan.pretty_print()
-```
+These should be installed in order using pip or anaconda.
 
 ## Disclaimer
 
-Should features of the planner are incomplete or untested.
-Unfortunately, some features were cut from the thesis due to time constraints.
-These were removed from the implementation, but some supporting code still remains.
-
-## Structure
-
-[ASH Components Dependency Diagram]
-
-https://guides.github.com/features/mastering-markdown/
+Some features of the planner are incomplete or not fully tested,
+as they were cut from the thesis due to time constraints.
+These were mostly removed from the implementation,
+but some supporting code and documentation may still remain.
