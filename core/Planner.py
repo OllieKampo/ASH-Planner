@@ -70,11 +70,11 @@ def log_and_raise(exception_type: type[BaseException],
 
 #############################################################################################################################################
 #############################################################################################################################################
-#   █████  ███████ ██   ██               ██████  ██       █████  ███    ██ ███████ 
-#  ██   ██ ██      ██   ██               ██   ██ ██      ██   ██ ████   ██ ██      
-#  ███████ ███████ ███████     █████     ██████  ██      ███████ ██ ██  ██ ███████ 
-#  ██   ██      ██ ██   ██               ██      ██      ██   ██ ██  ██ ██      ██ 
-#  ██   ██ ███████ ██   ██               ██      ███████ ██   ██ ██   ████ ███████ 
+###############################   █████  ███████ ██   ██               ██████  ██       █████  ███    ██ ███████  ###########################
+###############################  ██   ██ ██      ██   ██               ██   ██ ██      ██   ██ ████   ██ ██       ###########################
+###############################  ███████ ███████ ███████     █████     ██████  ██      ███████ ██ ██  ██ ███████  ###########################
+###############################  ██   ██      ██ ██   ██               ██      ██      ██   ██ ██  ██ ██      ██  ###########################
+###############################  ██   ██ ███████ ██   ██               ██      ███████ ██   ██ ██   ████ ███████  ###########################
 #############################################################################################################################################
 #############################################################################################################################################
 
@@ -192,11 +192,11 @@ class SubGoal(ASP.Atom):
     
     `R : str` - A non-empty string defining the name of the executing robot of the action literal.
     
-    `A : str` - A non-empty string defining the action itself, usually a function symbol of the form `name(arg_1, arg_2, ... arg_n)`.
+    `A : str` - A non-empty string defining the action which created the sub-goal literal, usually a function symbol of the form `name(arg_1, arg_2, ... arg_n)`.
     
-    `F : str` -
+    `F : str` - A non-empty string defining the fluent symbol affected by the given action, usually a function symbol of the form `name(arg_1, arg_2, ... arg_n)`.
     
-    `V : str` -
+    `V : str` - A non-empty string defining the value assigned to the fluent by the effect of the given action.
     
     `I : int` - An integer, greater than zero, defining the discrete time step the action is planned to occur at.
     """
@@ -224,11 +224,11 @@ class FinalGoal(ASP.Atom):
     ------
     `L : int` - An integer, greater than zero, defining the abstraction level of the action literal.
     
-    `F : str` -
+    `F : str` - A non-empty string defining the goal-fluent symbol, usually a function symbol of the form `name(arg_1, arg_2, ... arg_n)`.
     
-    `V : str` -
+    `V : str` - A non-empty string defining the final-goal literal value of the goal-fluent.
     
-    `T : bool` -
+    `T : bool` - The truth of the goal, either; true or false, if true then the value must hold in the final-goal state, if false it must not.
     """
     @classmethod
     def default_params(cls) -> Optional[tuple[str]]:
