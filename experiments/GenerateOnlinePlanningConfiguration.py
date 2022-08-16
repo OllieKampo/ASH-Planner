@@ -57,10 +57,11 @@ def generate_configurations(file_name: str, input_path: str, output_path: str,
             if isinstance(combination, list):
                 new_file_name = f"{split_file_name[0]}{'_'.join(combination[0])}{split_file_name[1]}{'_'.join(combination[1])}{split_file_name[2]}"
             else:
-                absolute_bounds: bool = '.' not in combination[0]
+                absolute_bounds: bool = True
                 
                 bound_type: str = ""
                 if any(proactive_strategy in file_name for proactive_strategy in ["hasty", "steady", "jumpy"]):
+                    absolute_bounds = '.' not in combination[0]
                     bound_type = "abs_" if absolute_bounds else "per_"
                 
                 _combination: tuple[str, ...] = combination

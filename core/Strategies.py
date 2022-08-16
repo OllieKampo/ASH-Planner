@@ -1058,6 +1058,7 @@ class Steady(NaiveProactive):
 class Jumpy(NaiveProactive):
     """
     The jumpy naive proactive heterogenous division strategy.
+    
     Jumpy favours low execution latency and plan quality, by making one division only such that the size of the first partial problem is kept below a minimum size bound.
     
     Notes

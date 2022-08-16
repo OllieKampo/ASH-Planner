@@ -1,6 +1,6 @@
 ###########################################################################
 ###########################################################################
-## Interactive terminal script for ASH                                   ##
+## Interactive terminal script for ASH.                                  ##
 ## Copyright (C)  2021  Oliver Michael Kamperis                          ##
 ## Email: o.m.kamperis@gmail.com                                         ##
 ##                                                                       ##
@@ -18,6 +18,8 @@
 ## along with this program. If not, see <https://www.gnu.org/licenses/>. ##
 ###########################################################################
 ###########################################################################
+
+"""Interactive terminal script for ASH."""
 
 import argparse
 import datetime
@@ -65,7 +67,7 @@ and you are welcome to redistribute it under certain conditions; use `--conditio
 For help and usage instructions use `--help' and `--instructions' respectively.
 """
 
-_ASH_VERSION: str = "PROTOTYPE v0.4.2"
+_ASH_VERSION: str = "PROTOTYPE v0.5.0"
 
 _ASH_WARRANTY: str = """
 THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
@@ -98,7 +100,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
 def __main() -> int:
-    "Main method which creates a console session, runs the planner, and returns 0 if the console returns cleanly."
+    """Main method which creates a console session, runs the planner, and returns 0 if the console returns cleanly."""
     
     ## Run initial setup and get CLI arguments
     namespace: argparse.Namespace = __setup()
@@ -528,8 +530,9 @@ def __main() -> int:
             
             def get_std(name: str) -> Optional[pandas.Series]:
                 """
-                Get the standard deviation of a statistic safely,
-                if there is no deviation (because only one run was done)
+                Get the standard deviation of a statistic safely.
+                
+                If there is no deviation (because only one run was done)
                 then None is returned instead.
                 """
                 if not std[name].isnull().any():
@@ -752,7 +755,7 @@ def __setup() -> argparse.Namespace:
         try:
             return int(value)
         except ValueError as error:
-            print(f"Cannot parse {value} as a float or int: {error}")
+            print(f"Cannot parse {value} as int: {error}")
             raise error
     
     ## Inner function for processing optional string arguments types
@@ -949,7 +952,7 @@ def __setup() -> argparse.Namespace:
                         help="whether to enable negative final-goal preemptive achievement, this prefers choosing actions whose effects preemptively achieve negative final-"
                              "goal literals, when there is an arbitrary choice available in non-final partial problems, by default None, as standard True")
     parser.add_argument("-preempt_mode", "--final_goal_preemptive_achievement_mode", choices=["heuristic", "optimise"], default="heuristic", type=str,
-                        help="The final-goal preemptive achievement enforcement mode; 'heuristic' (preemptive achievement is applied as a domain heuristic to the ASP solver, affecting solving at all search steps in the planning progression),"
+                        help="the final-goal preemptive achievement enforcement mode; 'heuristic' (preemptive achievement is applied as a domain heuristic to the ASP solver, affecting solving at all search steps in the planning progression),"
                              "'optimise' (preemptive achievement is applied as a model optimisation process, affecting the generation of optimal answer sets at the end of search), by default 'heuristic'")
     
     ## Search for a configuration file in the argument list

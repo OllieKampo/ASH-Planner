@@ -115,6 +115,7 @@ class Fluent(ASP.Atom):
     
     `S : int` - An integer, greater than or equal to zero, defining the discrete time step the fluent holds the given value at.
     """
+    
     @classmethod
     def default_params(cls) -> tuple[str]:
         return ('L', 'F', 'V', 'S')
@@ -152,6 +153,7 @@ class Action(ASP.Atom):
     
     `S : int` - An integer, greater than zero, defining the discrete time step the action is planned to occur at.
     """
+    
     @classmethod
     def default_params(cls) -> Optional[tuple[str]]:
         return ('L', 'R', 'A', 'S')
@@ -170,7 +172,7 @@ class Action(ASP.Atom):
     
     @property
     def type(self) -> "ActionType":
-        "The action's type; locomotion, configuration, or manipulation."
+        """The action's type; locomotion, configuration, or manipulation."""
         if str(self['A']).startswith("move"):
             return ActionType.Locomotion
         elif str(self['A']).startswith("configure"):
@@ -200,6 +202,7 @@ class SubGoal(ASP.Atom):
     
     `I : int` - An integer, greater than zero, defining the discrete time step the action is planned to occur at.
     """
+    
     @classmethod
     def default_params(cls) -> Optional[tuple[str]]:
         return ('L', 'R', 'A', 'F', 'V', 'I')
@@ -230,6 +233,7 @@ class FinalGoal(ASP.Atom):
     
     `T : bool` - The truth of the goal, either; true or false, if true then the value must hold in the final-goal state, if false it must not.
     """
+    
     @classmethod
     def default_params(cls) -> Optional[tuple[str]]:
         return ('L', 'F', 'V', 'T')
@@ -272,8 +276,6 @@ class ASH_IncrementalStatistics(ASP.IncrementalStatistics):
     def from_incremental_statistic(cls, incremental_statistic: ASP.IncrementalStatistics, overhead_time: float) -> "ASH_IncrementalStatistics":
         return cls(*(getattr(incremental_statistic, field.name) for field in fields(incremental_statistic)), overhead_time)
 
-
-
 @dataclass(frozen=True)
 class ConformanceMapping:
     """
@@ -313,9 +315,7 @@ class ConformanceMapping:
     
     @classmethod
     def from_answer(cls, constraining_sgoals: dict[int, list[SubGoal]], answer: ASP.Answer, sequential_yield_steps: Optional[dict[int, int]] = None) -> "ConformanceMapping":
-        """
-        Construct a conformance mapping for a given sequence of sub-goal stages from an answer set.
-        """
+        """Construct a conformance mapping for a given sequence of sub-goal stages from an answer set."""
         query: dict[int, list[dict[str, int]]]
         
         ## Find the steps upon which each sub-goal stage was current and was achieved (i.e. construct the refinement diagram)
@@ -1389,18 +1389,34 @@ class Verbosity(enum.Enum):
 @enum.unique
 class OnlineMethod(enum.Enum):
     """
-    Enumeration defining the two types of online method used in refinement planning.
+    Enumeration defining the types of online planning method used in conformance refinement planning.
     
-    The top-level of the current increment's level range must be between the highest and lowest valid
-    planning levels (inclusive), and the bottom-level is between the top-level and ground level.
+    The online planning method defines how the planner traverses the problem division tree by deciding
+    what the level range for the current planning increment is. The following constraints apply:
+        - The top-level of the current increment's level range must be between the highest and lowest valid
+    planning levels (inclusive),
+        - and the bottom-level is between the top-level and ground-level.
+    
+    Where the highest planning level is the highest abstraction level which has not yet been finalised,
+    and the lowest planning level is the lowest abstraction level which has been initialised.
+    
+    This is of course because planning cannot occur at a level n until the level n+1 has been
+    initialised and that a level n-1 cannot be finalised until the level n has been finalised.
     
     Items
     -----
-    `GroundFirst = "ground-first"` -
+    `GroundFirst = "ground-first"` - Solve only the initial partial problem at each level on the first online planning
+    increment, propagating directly down to the ground level as fast as possible, then on all further planning increments
+    solve the lowest level (deepest in the problem division tree) unsolved partial problem until the ground level is complete.
+    The incremental level range is always [lowest unsolved level, ground level].
     
-    `CompleteFirst = "complete-first"` -
+    `CompleteFirst = "complete-first"` - Solve all partial problems at a given level before moving to the next level,
+    successively completing each level until the ground is reached and completed (no planning occurs at a level n-1 until level n is complete).
+    The incremental level range is always [highest non-finalised level, highest non-finalised level] (always just one level at a time).
     
-    `Hybrid = "hybrid"` -
+    `Hybrid = "hybrid"` - Uses a hybrid combination of ground-first and complete-first, solve only the initial partial
+    problems first, propagating directly down to the ground level as fast as possible, then successively complete each level.
+    The incremental level range is [lowest unsolved level, ground level] on the initial increment and [highest non-finalised level, highest non-finalised level] otherwise.
     """
     GroundFirst = "ground-first"
     CompleteFirst = "complete-first"
@@ -2142,18 +2158,29 @@ class HierarchicalPlanner(AbstractionHierarchy):
         """
         Determine the highest or lowest valid abstraction level that can currently be planned at.
         
-        A level can be planned at if both;
-                - It is incomplete such that the final-goal has not been achieved,
-                - It is the top-level or there are unachieved sub-goal stages at the previous level.
+        A level is valid to plan at if both;
+        - It is incomplete such that the final-goal has not been achieved,
+        - It is the top-level or there are unachieved sub-goal stages at the previous level.
+        
+        Checking if a level meets these constraints can be reduced to checking;
+        - If it is the top-level and it is non-finalised,
+        - There are unachieved sub-goal stages at the previous level
+          (because if there are unachieved sub-goal stages at the previous level,
+          then the given level cannot possibly have been finalised yet).
+        
+        This means that;
+        - The highest valid planning level is the highest non-finalised level,
+        - The lowest valid planning level is the lowest level with unachieved sub-goal stages at the previous level.
         
         Parameters
         ----------
         `highest : bool` - Whether to search for the highest or lowest planning level.
         True to search for the highest planning level, False to search for the lowest.
         
-        `bottom_level : int = 1` - TODO
+        `bottom_level : int = 1` - The bottom-level of abstraction hierarchy to search over.
         
-        `top_level : {int | None} = None` - TODO
+        `top_level : {int | None} = None` - The top level of abstraction hierarchy to search over.
+        None sets the top level to the highest level in the hierarchy.
         
         Returns
         -------
@@ -3320,8 +3347,8 @@ class HierarchicalPlanner(AbstractionHierarchy):
                               f"Current valid planning levels: Lowest = {lowest_planning_level}, Highest = {highest_planning_level}.")
             
             ## Determine the level range for the current planning increment as defined by the given online planning method;
-            ##      - Ground-first solves downwards from the lowest planning level to the ground level,
-            ##      - Complete-first solves only the highest planning level,
+            ##      - Ground-first solves downwards from the lowest valid planning level to the ground level,
+            ##      - Complete-first solves only the highest valid planning level,
             ##      - Hybrid uses ground-first one the first increment only and the complete-first thereafter.
             if (online_method == OnlineMethod.GroundFirst
                 or (online_method == OnlineMethod.Hybrid
@@ -4064,7 +4091,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
         """
         ## Encode and insert the actions and fluents into the logic program;
         ##      - They cannot be inserted directly as occurs/holds statements as this would cause an atom redefinition error,
-        ##      - So we enclosed them in a special predicate and add a constraint that ensures that the fixed actions must be planned.
+        ##      - So we enclose them in a special predicate and add a constraint that ensures that the fixed actions must be planned.
         encoded_actions: str = "\n".join(f"fix_action({action})." for action in actions)
         encoded_actions += "\n:- not occurs(L, R, A, S), fix_action(occurs(L, R, A, S)), pl(L)."
         solve_signal.online_extend_program(ASP.BasePart("base"), encoded_actions)
@@ -4076,6 +4103,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
     def __handle_groundings(self, solve_signal: ASP.SolveSignal, program: ASP.LogicProgram, level: int, save_grounding: bool, finalise: bool) -> None:
         """
         Handle the groundings of a given logic program used for planning at a given abstraction level via its solve signal.
+        
         The grounding is saved iff; requested and the problem is not final, otherwise the grounding is deleted.
         
         Internal use only, this method should not be called from outside this class.

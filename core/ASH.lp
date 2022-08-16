@@ -355,34 +355,38 @@ max_order(M) :- M = #max { ORDER : goal_order(AL, F, V, B, ORDER), final_goal(AL
 %%%%    step: int - A natural number defining the current planning horizon.
 %%%%    start: int - A natural number defining the step to begin planning from.
 %%%%    first: int - A natural number defining the first inclusive in sequence sub-goal stage index of the current conformance refinement planning problem.
-%%%%    last: int - A natural number defining the last inclusive in sequence sub-goal stage index of the current conformance refinement planning problem.
+%%%%    last: int | none - A natural number defining the last inclusive in sequence sub-goal stage index of the current conformance refinement planning problem.
+%%%%                       If none, then the last sub-goal stage index must be provided by the @get_total_last_sgoals external context function.
 %%%%    type: {simultaneous, sequential} - A string defining the sub-goal stage achievement type of subgoal stages.
 %%%%    yield: bool - A Boolean, True to enable sequential yield planning mode, False to use standard planning mode.
 %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% External atom defining the current last in sequence sub-goal stage being enforced by the conformance constraint
-%% and the step it was first commited at during sequential yield planning progression through the goal sequence.
-#external current_last_sgoals(I, step) : sgoals_index(I), yield = true.
-
-%% Include sub-goal stages as such;
-%%      - Up to the current last in sequence sub-goal stage index in sequential yield planning mode,
-%%      - Include all sub-goal stages simultaneously in standard planning mode,
-%%      - The term "step >= S" is needed because "current_last_sgoals(I_L, S)" is only inserted once, where S is the achievement step of the previous sub-goal stage index "I_L - 1".
-include_sgoals(I, step) :- I <= I_L, step >= S, current_last_sgoals(I_L, S), sgoals_index(I).
-include_sgoals(I, step) :- sgoals_index(I), yield = false.
-
-%% Define the available sub-goal stage index range;
+%% Define the sub-goal stage index range available for the current conforament refinement planning problem;
 %%      - The first index is always given (regardless of saved groundings),
 %%      - The last is given;
 %%          - Explicitly and fixed iff this program grounding will not be saved,
 %%          - By a dynamic external context function (allowing it to be modified) if this program
-%%            grounding will be saved and resumed to continue its refinement goal progression.
+%%            grounding will be saved and resumed to continue its progression along the goal sequence.
 sgoals_index(first..last) :- last != none.
 sgoals_index(first..L) :- last = none, L = @get_total_last_sgoals(PL), pl(PL).
 
-%% The current sub-goal stage is initially that with whose sequence index is equal to the first included index
+%% External atom defining the current last in sequence sub-goal stage being enforced by the conformance constraint
+%% and the step it was first commited at during sequential yield planning progression through the goal sequence.
+#external current_last_sgoals(I, step) : sgoals_index(I), yield = true.
+
+%% Include sub-goal stages in the conformance constraint as such;
+%%      - Up to the current last in sequence sub-goal stage index in sequential yield planning mode,
+%%        (the term `step >= S` is needed because `current_last_sgoals(I_L, S)` external atom assigned
+%%         only once, where `S` is the achievement step of the previous sub-goal stage at index `I_L - 1`).
+%%          - This includes all sub-goal stages at index less than or equal to the current last in sequence sub-goal stage index at
+%%            all steps greater than or equal to the step at which the previous last in sequence sub-goal stage was first achieved at.
+%%      - Include all sub-goal stages simultaneously in standard planning mode.
+include_sgoals(I, step) :- I <= I_L, step >= S, current_last_sgoals(I_L, S), sgoals_index(I).
+include_sgoals(I, step) :- sgoals_index(I), yield = false.
+
+%% The current sub-goal stage is initially that whose sequence index is equal to the first included index
 current_sub_goal(AL + 1, ROBOT, A, F, V, first, start + 1) :- sub_goal(AL + 1, ROBOT, A, F, V, first),
                                                               action(AL + 1, _, _, ROBOT, A), fluent(AL + 1, inertial, F, V),
                                                               pl(AL).
