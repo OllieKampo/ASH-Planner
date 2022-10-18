@@ -1,6 +1,6 @@
 ###########################################################################
 ###########################################################################
-## Python script for generating plans with ASH                           ##
+## Module defining core planning algorithms for ASH.                     ##
 ## Copyright (C)  2021  Oliver Michael Kamperis                          ##
 ## Email: o.m.kamperis@gmail.com                                         ##
 ##                                                                       ##
@@ -18,6 +18,8 @@
 ## along with this program. If not, see <https://www.gnu.org/licenses/>. ##
 ###########################################################################
 ###########################################################################
+
+"""Module defining core planning algorithms for ASH."""
 
 from dataclasses import dataclass, field, fields
 from functools import cached_property
@@ -1492,6 +1494,7 @@ class ConsistencyCheck(NamedTuple):
 @dataclass(frozen=True)
 class Solution:
     """
+    Class defining 'raw' solutions returned by the HierarchicalPlanner.search() method for solving monolevel planning problems.
     
     Fields
     ------
@@ -1680,8 +1683,6 @@ class MonolevelProblem:
                                                 str(self.sequential_yield).lower()))])
         
         return ASP.ProgramParts(base_parts, inc_parts)
-
-
 
 @final
 class HierarchicalPlanner(AbstractionHierarchy):

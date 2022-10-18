@@ -212,7 +212,7 @@ fluent(AL_1, inertial, configuration(D), STATE) :- state_of(AL_1, D, STATE),
                                                    AL_1 < reduc, AL_2 < reduc,
                                                    sl(AL_1), sl(AL_2), AL_2 >= AL_1.
 
-%% In the redefined model robots can be transporting objects
+%% In the tasking model robots can be transporting objects
 fluent(AL_1, inertial, transporting(ROBO, OBJ), B) :- insta_of(AL_2, armed_robot, ROBO),
                                                       insta_of(AL_1, graspable, OBJ), OBJ != nothing,
                                                       AL_1 >= TL, model_type(TL, tasking),
@@ -300,21 +300,21 @@ action(AL, concurrent, manipulation, ROBO, actuate(DESC, D)) :- insta_of(AL, arm
                                                                 insta_of(AL, door, D),
                                                                 AL < TL, model_type(TL, tasking), AL < reduc, sl(AL).
 
-%% In the redefined model robots can collect objects
+%% In the tasking model robots can collect objects
 action(AL, concurrent, manipulation, ROBO, collect(OBJ)) :- insta_of(AL, armed_robot, ROBO),
-                                              insta_of(AL, graspable, OBJ), OBJ != nothing,
-                                              AL >= TL, model_type(TL, tasking), sl(AL).
+                                                            insta_of(AL, graspable, OBJ), OBJ != nothing,
+                                                            AL >= TL, model_type(TL, tasking), sl(AL).
 
-%% In the redefined model robots can deposit objects
+%% In the tasking model robots can deposit objects
 action(AL, concurrent, manipulation, ROBO, deposit(OBJ)) :- insta_of(AL, armed_robot, ROBO),
-                                              insta_of(AL, graspable, OBJ), OBJ != nothing,
-                                              AL >= TL, model_type(TL, tasking), sl(AL).
+                                                            insta_of(AL, graspable, OBJ), OBJ != nothing,
+                                                            AL >= TL, model_type(TL, tasking), sl(AL).
 
-%% In the redefined model robots can pick up and put down objects with a single action
+%% In the tasking model robots can place objects on a surface with a single action
 action(AL, concurrent, manipulation, ROBO, place_upon(OBJ, SURFACE)) :- insta_of(AL, armed_robot, ROBO),
-                                                          insta_of(AL, placeable, OBJ),
-                                                          insta_of(AL, surface, SURFACE),
-                                                          AL >= TL, model_type(TL, tasking), sl(AL).
+                                                                        insta_of(AL, placeable, OBJ),
+                                                                        insta_of(AL, surface, SURFACE),
+                                                                        AL >= TL, model_type(TL, tasking), sl(AL).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -416,28 +416,28 @@ effect(AL, ROBO, actuate(DESC, D), configuration(D), STATE_1, t) :- holds(AL, co
                                                                     STATE_1 != STATE_2,
                                                                     AL < reduc, pl(AL).
 
-%% In the redefined model, when a robot collects an object it is transporting that object
+%% In the tasking model, when a robot collects an object it is transporting that object
 effect(AL, ROBO, collect(OBJ), transporting(ROBO, OBJ), true) :- action(AL, _, _, ROBO, collect(OBJ)),
                                                                  fluent(AL, inertial, transporting(ROBO, OBJ), true),
                                                                  insta_of(AL, armed_robot, ROBO),
                                                                  insta_of(AL, graspable, OBJ),
                                                                  AL >= TL, model_type(TL, tasking), pl(AL).
 
-%% In the redefined model, when a robot collects an object the object is on nothing
+%% In the tasking model, when a robot collects an object the object is on nothing
 effect(AL, ROBO, collect(OBJ), on(OBJ), nothing) :- action(AL, _, _, ROBO, collect(OBJ)),
                                                     fluent(AL, inertial, on(OBJ), nothing),
                                                     insta_of(AL, armed_robot, ROBO),
                                                     insta_of(AL, graspable, OBJ),
                                                     AL >= TL, model_type(TL, tasking), pl(AL).
 
-%% In the redefined model, when a robot deposits an object it is no longer transporting that object
+%% In the tasking model, when a robot deposits an object it is no longer transporting that object
 effect(AL, ROBO, deposit(OBJ), transporting(ROBO, OBJ), false) :- action(AL, _, _, ROBO, deposit(OBJ)),
                                                                   fluent(AL, inertial, transporting(ROBO, OBJ), false),
                                                                   insta_of(RL, armed_robot, ROBO),
                                                                   insta_of(RL, graspable, OBJ),
                                                                   AL >= TL, model_type(TL, tasking), pl(AL).
 
-%% In the redefined model, when a robot places an object upon a surface the object is on that surface
+%% In the tasking model, when a robot places an object upon a surface the object is on that surface
 effect(AL, ROBO, place_upon(OBJ, SURFACE), on(OBJ), SURFACE) :- action(AL, _, _, ROBO, place_upon(OBJ, SURFACE)),
                                                                 fluent(AL, inertial, on(OBJ), SURFACE),
                                                                 OBJ != SURFACE, SURFACE != nothing,
@@ -446,7 +446,7 @@ effect(AL, ROBO, place_upon(OBJ, SURFACE), on(OBJ), SURFACE) :- action(AL, _, _,
                                                                 insta_of(AL, surface, SURFACE),
                                                                 AL >= TL, model_type(TL, tasking), pl(AL).
 
-%% In the redefined model, when a robot places an object upon a surface
+%% In the tasking model, when a robot places an object upon a surface it is no longer transporting that object
 effect(AL, ROBO, place_upon(OBJ, SURFACE), transporting(ROBO, OBJ), false) :- action(AL, _, _, ROBO, place_upon(OBJ, SURFACE)),
                                                                               fluent(AL, inertial, transporting(ROBO, OBJ), false),
                                                                               OBJ != SURFACE, SURFACE != nothing,
@@ -492,7 +492,7 @@ precond(AL, ROBO, move(L_2), configuration(D), open, true, t) :- holds(AL, in(RO
                                                                  insta_of(AL, door, D),
                                                                  AL < reduc, pl(AL).
 
-%% An armed robot can only open a door if it is grasping at least one of its handles
+%% An armed robot can only open a door if it is grasping at least one of its handles (this can only be done with a disjunctive precondition)
 { precond(AL, ROBO, actuate(COMP, D), grasping(COMP), H, true, t) : desce_of(AL, D, H),
                                                                     insta_of(AL, handle, H),
                                                                     action(AL, _, _, ROBO, actuate(COMP, D)),
@@ -501,16 +501,6 @@ precond(AL, ROBO, move(L_2), configuration(D), open, true, t) :- holds(AL, in(RO
                                                                                                                      insta_of(AL, grasper, COMP),
                                                                                                                      insta_of(AL, door, D),
                                                                                                                      AL < reduc, pl(AL).
-
-% %% An armed robot can only open a door if it is grasping at least one of its handles
-% not occurs(AL, ROBO, actuate(DESC, D), t) :- not { holds(AL, grasping(DESC), H, t - 1) : desce_of(AL, D, H),
-%                                                                     insta_of(AL, handle, H),
-%                                                                     action(AL, _, _, ROBO, actuate(DESC, D)),
-%                                                                     fluent(AL, inertial, grasping(DESC), H) } = 1, desce_of(AL, ROBO, DESC),
-%                                                                                                                      insta_of(AL, robot, ROBO),
-%                                                                                                                      insta_of(AL, grasper, DESC),
-%                                                                                                                      insta_of(AL, door, D),
-%                                                                                                                      AL < reduc, pl(AL).
 
 %% An armed robot can only grasp a grounded object when it is in the same location as it
 precond(AL, ROBO, grasp(DESC, OBJ), in(ROBO), L, true) :- is(AL, in(OBJ, L)),

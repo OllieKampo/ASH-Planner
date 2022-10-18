@@ -151,7 +151,7 @@ def __main() -> int:
                          level: int,
                          default: Optional[Number] = None
                          ) -> Optional[Number]:
-        "Get the value of a single hierarchical argument at a given abstraction level."
+        """Get the value of a single hierarchical argument at a given abstraction level."""
         if isinstance(dict_or_number, dict):
             if (arg := dict_or_number.get(level, default)) is not None:
                 return arg
@@ -209,7 +209,7 @@ def __main() -> int:
                     ##      - In particular, if the right blend of problem X overlaps with the left blend of problem X + 2, then problem X + 1
                     if ((isinstance((left := blend[level].left), float) and left > 0.5)
                         or isinstance((right := blend[level].right), float) and right > 0.5):
-                        _Launcher_logger.warn("Blend quantities of greater than 0.5 are generally detrimental to performance.")
+                        _Launcher_logger.warn("Blend quantities of greater than 0.5 can be detrimental to performance.")
                     
                     ## Ensure that there is not a left blend requiring revision of a refined plan on a saved grounding;
                     ##      - It is not possible to do this since it is not possible to change any sub-goal stages that have already been committed.

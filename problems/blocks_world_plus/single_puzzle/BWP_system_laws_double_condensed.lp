@@ -426,7 +426,7 @@ precond(AL, ROBO, move(L_2), configuration(D), open, true, t) :- holds(AL, in(RO
                                                                  insta_of(AL, door, D),
                                                                  AL < reduc, pl(AL).
 
-%% An armed robot can only open a door if it is grasping at least one of its handles
+%% An armed robot can only open a door if it is grasping at least one of its handles (this can only be done with a disjunctive precondition)
 { precond(AL, ROBO, actuate(COMP, D), grasping(COMP), H, true, t) : desce_of(AL, D, H),
                                                                     insta_of(AL, handle, H),
                                                                     action(AL, _, _, ROBO, actuate(COMP, D)),
@@ -435,16 +435,6 @@ precond(AL, ROBO, move(L_2), configuration(D), open, true, t) :- holds(AL, in(RO
                                                                                                                      insta_of(AL, grasper, COMP),
                                                                                                                      insta_of(AL, door, D),
                                                                                                                      AL < reduc, pl(AL).
-
-% %% An armed robot can only open a door if it is grasping at least one of its handles
-% not occurs(AL, ROBO, actuate(DESC, D), t) :- not { holds(AL, grasping(DESC), H, t - 1) : desce_of(AL, D, H),
-%                                                                     insta_of(AL, handle, H),
-%                                                                     action(AL, _, _, ROBO, actuate(DESC, D)),
-%                                                                     fluent(AL, inertial, grasping(DESC), H) } = 1, desce_of(AL, ROBO, DESC),
-%                                                                                                                      insta_of(AL, robot, ROBO),
-%                                                                                                                      insta_of(AL, grasper, DESC),
-%                                                                                                                      insta_of(AL, door, D),
-%                                                                                                                      AL < reduc, pl(AL).
 
 %% An armed robot can only grasp a grounded object when it is in the same location as it
 precond(AL, ROBO, grasp(DESC, OBJ), in(ROBO), L, true) :- is(AL, in(OBJ, L)),

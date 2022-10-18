@@ -1,3 +1,26 @@
+###########################################################################
+###########################################################################
+## Module defining problem division strategies for ASH.                  ##
+## Copyright (C)  2021  Oliver Michael Kamperis                          ##
+## Email: o.m.kamperis@gmail.com                                         ##
+##                                                                       ##
+## This program is free software: you can redistribute it and/or modify  ##
+## it under the terms of the GNU General Public License as published by  ##
+## the Free Software Foundation, either version 3 of the License, or     ##
+## any later version.                                                    ##
+##                                                                       ##
+## This program is distributed in the hope that it will be useful,       ##
+## but WITHOUT ANY WARRANTY; without even the implied warranty of        ##
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the          ##
+## GNU General Public License for more details.                          ##
+##                                                                       ##
+## You should have received a copy of the GNU General Public License     ##
+## along with this program. If not, see <https://www.gnu.org/licenses/>. ##
+###########################################################################
+###########################################################################
+
+"""Module defining problem division strategies for ASH."""
+
 import enum
 import logging
 import math
@@ -216,8 +239,9 @@ class DivisionScenario(_collections_abc.Sequence):
                  previously_solved_problems: int = 0
                  ) -> None:
         """
-        Create a divisio scenario from a sequence of division points,
-        which blueprints a sequence of partial conformance refinement planning problems, over an abstract plan.
+        Create a division scenario from a sequence of division points.
+        
+        This blueprints a sequence of partial conformance refinement planning problems, over an abstract plan.
         
         Parameters
         ----------
@@ -270,37 +294,38 @@ class DivisionScenario(_collections_abc.Sequence):
     
     @property
     def divided_abstract_plan(self) -> "Planner.MonolevelPlan":
+        """The abstract monolevel plan that is divided by this scenario."""
         return self.__abstract_plan
     
     @property
     def previously_solved_problems(self) -> int:
-        "The number of problems at the next level that were solve prior to generating this division scenario."
+        """The number of problems at the next level that were solve prior to generating this division scenario."""
         return self.__previously_solved_problems
     
     @property
     def total_problems(self) -> int:
-        "The total number of partial planning problems templated by this scenario."
+        """The total number of partial planning problems templated by this scenario."""
         return self.get_total_divisions() + 1
     
     @property
     def problem_range(self) -> range:
-        "The partial problem number range templated by this scenario."
+        """The partial problem number range templated by this scenario."""
         return range(self.__previously_solved_problems + 1,
                      self.__previously_solved_problems + self.total_problems + 1)
     
     @property
     def size(self) -> int:
-        "The total number of sub-goal stages in the (sub-)sequence of sub-goal stages from the (partial-)plan divided by this scenario."
+        """The total number of sub-goal stages in the (sub-)sequence of sub-goal stages from the (partial-)plan divided by this scenario."""
         return (self.last_index - self.first_index) + 1
     
     @property
     def first_index(self) -> int:
-        "The first sub-goal stage index of the (sub-)sequence of sub-goal stages from the (partial-)plan divided by this scenario."
+        """The first sub-goal stage index of the (sub-)sequence of sub-goal stages from the (partial-)plan divided by this scenario."""
         return self.__abstract_plan.state_start_step + 1
     
     @property
     def last_index(self) -> int:
-        "The last sub-goal stage index of the (sub-)sequence of sub-goal stages from the (partial-)plan divided by this scenario."
+        """The last sub-goal stage index of the (sub-)sequence of sub-goal stages from the (partial-)plan divided by this scenario."""
         return self.__abstract_plan.end_step
     
     ####################
@@ -308,13 +333,15 @@ class DivisionScenario(_collections_abc.Sequence):
     
     def get_total_divisions(self, shifting_only: bool = True) -> int:
         """
-        The total number of problem division points contained in this division scenario.
+        Get the total number of problem division points contained in this division scenario.
         
         Parameters
         ----------
-        `shifting_only : bool` - A Boolean defining, True to count only shifting divisions, False to also count continuous divisions.
-        A shifting division is one that defines a seperate (partial) monolevel planning problem, when the last index of which is achieved yields its partial plan as safe to execute.
-        A continuous division is one commited inside a monolevel planning problem but which does not interrupt it, and thus does not change its size.
+        `shifting_only : bool` - Whether to count only shifting divisions, or also count continuous divisions.
+        A shifting division is one that defines a seperate (partial) monolevel planning problem,
+        when the last index of which is achieved yields its partial plan as safe to execute.
+        A continuous division is one commited inside a monolevel planning problem but which
+        does not interrupt it, and thus does not change its size.
         
         Returns
         -------
@@ -327,13 +354,19 @@ class DivisionScenario(_collections_abc.Sequence):
                             fabricate_inherited: bool = False
                             ) -> list[DivisionPoint]:
         """
-        Get all the division points in this division scenario as an ordered list.
+        Get an ordered list of all division points in this division scenario.
         
         Parameters
         ----------
-        `shifting_only : bool = True` - True to include only problem shifting (proactive and interrupting reactive) divisions, False to also include non-shifting continuous reactive divisions.
+        `shifting_only : bool = True` - True to include only problem shifting (proactive and
+        interrupting reactive) divisions, False to also include non-shifting continuous reactive divisions.
         
-        `fabricate_inherited : bool = False` - True to fabricate division points for the first and last boundary sub-goal stage indices of this scenario's sub-goal stage range.
+        `fabricate_inherited : bool = False` - True to fabricate division points for the first
+        and last boundary sub-goal stage indices of this scenario's sub-goal stage range.
+        
+        Returns
+        -------
+        `list[DivisionPoint]` - A list of the scenario's division points.
         """
         division_points: list[DivisionPoint] = []
         
@@ -352,7 +385,20 @@ class DivisionScenario(_collections_abc.Sequence):
                                 problem_number: int,
                                 fabricate_inherited: bool = False
                                 ) -> DivisionPointPair:
+        """
+        Get the division point pair for the given problem number.
         
+        Parameters
+        ----------
+        `problem_number : int` - The number of the problem to get the division point pair for.
+        
+        `fabricate_inherited : bool = False` - True to fabricate division points for the first
+        and last boundary sub-goal stage indices of this scenario's sub-goal stage range.
+        
+        Returns
+        -------
+        `DivisionPointPair` - The division point pair for the given problem number.
+        """
         problem_range: range = self.problem_range
         
         ## Check the problem number is valid
@@ -379,7 +425,23 @@ class DivisionScenario(_collections_abc.Sequence):
                                    problem_number: int,
                                    ignore_blend: bool = False
                                    ) -> SubGoalRange:
+        """
+        Get the sub-goal stage indices range of the given problem number.
         
+        The range is inclusive of both the first and last sub-goal stage indices.
+        
+        This method does not return detailed information about the division point that defines the range.
+        
+        Parameters
+        ----------
+        `problem_number : int` - The problem number to get the sub-goal stage indices range of.
+        
+        `ignore_blend : bool = False` - Whether to ignore the blend quantity of the division point pair that defined the range.
+        
+        Returns
+        -------
+        `SubGoalRange` - A tuple of two integers defining the first and last sub-goal stage indices of the range (inclusive).
+        """
         problem_range: range = self.problem_range
         
         ## Check the problem number is valid
@@ -403,19 +465,22 @@ class DivisionScenario(_collections_abc.Sequence):
             left_point: DivisionPoint = division_points[problem_number - min(problem_range) - 1]
             if ignore_blend:
                 first_index = left_point.index_when_left_point(ignore_blend=True)
-            else: first_index = left_point.index_when_left_point(self.get_subgoals_indices_range(problem_number - 1, ignore_blend=True).problem_size)
+            else: first_index = left_point.index_when_left_point( \
+                self.get_subgoals_indices_range(problem_number - 1, ignore_blend=True).problem_size)
         
         if problem_number < max(problem_range):
             right_point: DivisionPoint = division_points[problem_number - min(problem_range)]
             if ignore_blend:
                 last_index = right_point.index_when_right_point(ignore_blend=True)
-            else: last_index = right_point.index_when_right_point(self.get_subgoals_indices_range(problem_number + 1, ignore_blend=True).problem_size)
+            else: last_index = right_point.index_when_right_point( \
+                self.get_subgoals_indices_range(problem_number + 1, ignore_blend=True).problem_size)
         
         return SubGoalRange(first_index, last_index)
     
     def update_reactively(self, new_point: DivisionPoint) -> None:
         """
         Update this division scenario with a reactive division point.
+        
         The blend quantities of the scenario are updated such that the left blend of the left point does not cross the reactive division point.
         If the reactive division was interrupting and the point is inside the right blend of the right point of the requested problem, then the reactive division becomes the left point of the next problem and that next problem no longer has a blend (or the blend is updated and shifted onto the reactive division??).
         """

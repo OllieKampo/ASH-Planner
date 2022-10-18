@@ -244,9 +244,9 @@ class Results:
         data_dict: dict[str, dict[str, list[float]]] = defaultdict(lambda: defaultdict(list))
         
         ## Constants for calculating time scores
-        acceptable_lag_time: float = 5.0
-        acceptable_action_minimum_execution_time: float = 1.0
-        max_time: float = 1800.0
+        acceptable_lag_time: float = 5.0 # Regardless of number of actions, we don't want to wait longer than this to generate any partial-plan, and we don't partial-plans to have to take more time than this is execute to avoid downtime.
+        acceptable_action_minimum_execution_time: float = 1.0 # We don't want actions to have to take more time than this to execute to avoid downtime.
+        max_time: float = 1800.0 # We don't ever want to be planning for longer than this.
         
         ## Constant for calculating ground plan quality
         ground_optimum: int = 0
@@ -426,6 +426,7 @@ class Results:
                 data_dict["CAT"]["SIZE"].append(problem_size)
                 data_dict["CAT"]["SGLITS_T"].append(sgoal_literals_total)
                 
+                ## TODO: This can be extracted out and calculated once for each level.
                 optimum: int = 0
                 if (self.__optimums is not None
                     and level in self.__optimums
@@ -477,7 +478,6 @@ class Results:
                 data_dict["CAT"]["LT_GRADE"].append(latency_grade := quality_score * latency_score)
                 data_dict["CAT"]["CT_GRADE"].append(completion_grade := quality_score * completion_score)
                 
-                ## TODO Add average wait time non-initial? This would be less affected by the execution latency time?
                 data_dict["CAT"]["AW_GRADE"].append(quality_score * wait_score)
                 data_dict["CAT"]["AW_PA_GRADE"].append(quality_score * wait_pa_score)
                 
