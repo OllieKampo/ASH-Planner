@@ -10,17 +10,90 @@ This directory contains the results from all experimental trials.
 
 ## Raw Results Format and Column Headers
 
+The following are the column headers for all data in the raw results.
+For columns headers for aggregate results, see the `aggregate` sub-directory.
+
+__IMPORTANT:__ Due to a bug in the experiment system;
+- The globals for the initial and improved initial experiments, the average wait time per action is erroneously small. The time scores and grades are still correct, as the average wait time per action is not used for calculating those statistics.
+- The concatenated plans for the initial and improved initial experiments, the average wait time per action, and the average minimum execution time per action are all erroneously small. Therefore, the concatenated plan time scores and grades for all online experiments under these categories may be incorrect and must be ignored, and only the global time scores and grades are valid.
+- In all results, action expansion factors, deviations, and balance may have small errors. These has resultantly been omitted from the thesis.
+
+### Globals
+
+| Header | Name | Description | Unit |
+|:-:|:-:|:-:|:-:|
+| RU |  |  |  |
+| BL_LE |  |  |  |
+| BL_AC |  |  |  |
+| EX_T | Execution latency time | Yield time of the initial partial-plan |  |
+| HA_T | Hierarchical absolution time | The time to generate an absolute hierarchical plan, for monolevel classical problems this is the ground-level monolevel planning time |  |  |
+| AW_T |  |  |  |
+| AW_T_PA |  |  |  |
+| AME_T |  |  |  |
+| AME_T_PA |  |  |  |
+| QL_SCORE |  |  |  |
+| EX_SCORE |  |  |  |
+| HA_SCORE |  |  |  |
+| AW_SCORE |  |  |  |
+| AW_PA_SCORE |  |  |  |
+| AME_SCORE |  |  |  |
+| AME_PA_SCORE |  |  |  |
+| TI_SCORE |  |  |  |
+| EX_GRADE |  |  |  |
+| HA_GRADE |  |  |  |
+| AW_GRADE |  |  |  |
+| AW_PA_GRADE |  |  |  |
+| AME_GRADE |  |  |  |
+| AME_PA_GRADE |  |  |  |
+| GRADE |  |  |  |
+
+### Problem Sequence
+
 | Header | Name | Description | Unit |
 |:-:|:-:|:-:|:-:|
 | RU | Run number | Ordinal number of the experimental run | Integer |
-| AL | Abstraction level | The abstraction level of the plan, step, or index | Integer |
+| SN | The hierarchical problem sequence number |  |  |
+| AL | Abstraction level | The abstraction level of the monolevel plan | Integer |
+| IT |  |  |  |
+| PN | The monolevel problem sequence number |  |  |
+| START_S |  |  |  |
+| IS_INITIAL |  |  |  |
+| IS_FINAL |  |  |  |
+| SIZE |  |  |  |
+| SGLITS_T |  |  |  |
+| FIRST_I |  |  |  |
+| LAST_I |  |  |  |
+
+### Division Points
+
+| Header | Name | Description | Unit |
+|:-:|:-:|:-:|:-:|
+| RU | Run number | Ordinal number of the experimental run | Integer |
+| AL | Abstraction level | The abstraction level of the problem division | Integer |
+| DN | Division sequence number | Ordinal number of the problem division | Integer |
+| APP_INDEX | The index the division is applied at | This is the actual index of the division | Integer |
+| COM_INDEX | The index a reactive division was committed at | This is always the same as APP_INDEX, and was included to support a feature that was never used, for proactive division this is undefined taking a value of -1 | Integer |
+| COM_STEP | The step a reactive division was committed at | This is the plan step at which the reactive division was committed during monolevel planning, for proactive division this is undefined taking a value of -1 | Integer |
+| L_BLEND | The left blend quantity | This is the number of sub-goal stages that the true division index is extended to the left, the partial-problem to the right of the division revises the existing plan that refined the sub-goal stages in the left blend, this keeps their achievement non-greedy with respect to the sub-goal stages in the right problem | Integer |
+| R_BLEND | The right blend quantity | This is the number of sub-goal stages that the true division index is extended to the right, the partial-problem to the left of the division is solved inclusive of the sub-goal stages in the right blend, this keeps the achievement of the sub-goal stages in the left problem non-greedy with respect the sub-goal stages in the right blend | Integer |
+| IS_INHERITED | Whether the division is inherited | An inherited division is a division that is propagated from the previous abstraction level due to the effect of the online planning method on the construction and traversal of the problem division tree | Boolean |
+| IS_PROACTIVE | Whether the division was committed proactively | A proactive division is committed over the combined refinement problem of an abstract plan immediately after the plan is generated and beofre it is refined, otherwise the division is reactive and was committed during refinement planning | Boolean |
+| IS_INTERRUPT | Whether the division was an interrupting reactive division | An interrupting reactive division causes the monolevel planning algorithm to return when committed, affecting the hierarchical planning algorithm and the problem division tree, otherwise the division was continuous and is dealt with entirely within the monolevel planning algorithm, this will be false if the division was proactive | Boolean |
+| PREEMPTIVE | Whether the reactive division was committed pre-emptively | A pre-emptive reactive division is one that is not committed on a step at which a sub-goal stage was minimally uniquely achieved | Boolean |
+
+### Concatenated Plans (Cat Plans)
+
+| Header | Name | Description | Unit |
+|:-:|:-:|:-:|:-:|
+| RU | Run number | Ordinal number of the experimental run | Integer |
+| AL | Abstraction level | The abstraction level of the monolevel plan | Integer |
 | GT | Grounding time | Time taken to ground the logic program | Seconds |
 | ST | Solving time | Time taken to solve the logic program | Seconds |
 | OT | Overhead time | Time taken operate the sequential yield planning algorithm | Seconds |
-| TT | Total time | Sum of all; grounding, solving, and overhead times | Seconds |
-| LT | Latency time | The execution latency, yield time of the initial partial-plan | Seconds |
+| TT | Total time | The total planning time, sum of all; grounding, solving, and overhead times | Seconds |
+| LT | Latency time | The execution latency time, the yield time of the initial partial-plan | Seconds |
 | CT | Completion time | The completion time, yield time of the final partial-plan | Seconds |
-| WT | Wait time | The average wait time per partial-plan | Seconds |
+| WT | Wait time | The average wait time per partial-plan, the average over all partial-plans, of the time difference between the yield time of the given partial-plan minus the yield time of the previous | Seconds |
 | WT_PA | Wait time per action | The average wait time per action | Seconds |
 | MET | Minimum execution time | The average minimum execution time per partial-plan | Seconds |
 | MET_PA | Minimum execution time per action | The average minimum execution time per action | Seconds |
@@ -32,47 +105,47 @@ This directory contains the results from all experimental trials.
 | PSG | Total produced sub-goals | The total number of sub-goal literals produced from the plan | Integer |
 | SIZE | Problem size | The number of goals the problem achieves (number of sub-goal stages for refinement problems) | Integer |
 | SGLITS_T | Total sub-goal literals | Total number of sub-goal literals in the plan's conformance constraint | Integer |
-| QL_SCORE | Quality score |  |  |
-| LT_SCORE | Latency score |  |  |
-| CT_SCORE | Completion score |  |  |
-| AW_SCORE | Average wait score |  |  |
-| AW_PA_SCORE | Average wait per action score |  |  |
-| AME_SCORE | Average minimum execution score |  |  |
-| AME_PA_SCORE | Average minimum execution per action score |  |  |
-| TI_SCORE | Overall time score |  |  |
-| LT_GRADE | Latency grade |  |  |
-| CT_GRADE | Completion grade |  |  |
-| AW_GRADE | Average wait grade |  |  |
-| AW_PA_GRADE | Average wait per action grade |  |  |
-| AME_GRADE | Average minimum execution grade |  |  |
-| AME_PA_GRADE | Average minimum execution per action grade |  |  |
-| GRADE | Overall grade |  |  |
-| HAS_TRAILING | Whether the (partial) monolevel plan has a trailing sub-plan |  |  |
-| TOT_CHOICES | Total choices |  |  |
-| PRE_CHOICES | Total pre-emptive final-goal achievement heuristic choices |  |  |
-| FGOALS_ORDER | Whether the final-goal intermediate ordering preference was achieved |  |  |
-| CP_EF_L | Complete plan length expansion factor |  |  |
-| CP_EF_A | Complete plan action expansion factor |  |  |
-| SP_ED_L | Sub-plan length expansion deviation |  |  |
-| SP_ED_A | Sub-plan action expansion deviation |  |  |
-| SP_EB_L | Sub-plan length expansion balance |  |  |
-| SP_EB_A | Sub-plan action expansion balance |  |  |
-| SP_EBS_L | Sub-plan length expansion balance score |  |  |
-| SP_EBS_A | Sub-plan action expansion balance score |  |  |
-| SP_MIN_L | Minimum sub-plan length |  |  |
-| SP_MIN_A | Minimum sub-plan actions |  |  |
-| SP_LOWER_L | Lower quartile sub-plan length |  |  |
-| SP_LOWER_A | Lower quartile sub-plan actions |  |  |
-| SP_MED_L | Median sub-plan length |  |  |
-| SP_MED_A | Median sub-plan actions |  |  |
-| SP_UPPER_L | Upper quartile sub-plan length |  |  |
-| SP_UPPER_A | Upper quartile sub-plan actions |  |  |
-| SP_MAX_L | Maximum sub-plan length |  |  |
-| SP_MAX_A | Maximum sub-plan actions |  |  |
-| T_INTER_SP | Total interleaved sub-plans |  |  |
-| P_INTER_SP | Percentage of interleaved sub-plans |  |  |
-| T_INTER_Q | Total interleaved plan steps |  |  |
-| P_INTER_Q | Percentage interleaved plan steps |  |  |
+| QL_SCORE | Quality score | The ratio of the classical optimal number of actions over the number of actions in the given monolevel plan | Ratio |
+| LT_SCORE | Latency score | The execution latency time score, between 1.0 and 0.0; 1.0 if LT is less than 5.0 seconds, otherwise 1.0 - (log(LT - 4.0) / log(3600.0)) | Ratio |
+| CT_SCORE | Completion score | The execution completion time score, between 1.0 and 0.0; 1.0 if CT is less than 5.0 seconds, otherwise 1.0 - (log(CT - 4.0) / log(3600.0)) | Ratio |
+| AW_SCORE | Average wait score | The average wait time score, between 1.0 and 0.0; 1.0 if WT is less than 5.0 seconds, otherwise 1.0 - (log(WT - 4.0) / log(3600.0)) | Ratio |
+| AW_PA_SCORE | Average wait per action score | The average wait time per action score, between 1.0 and 0.0; 1.0 if WT_PA is less than 1.0 seconds, otherwise 1.0 - (log(WT_PA - 1.0) / log(3600.0)) | Ratio |
+| AME_SCORE | Average minimum execution score | The average minimum execution time score, between 1.0 and 0.0; 1.0 if MET is less than 5.0 seconds, otherwise 1.0 - (log(MET - 4.0) / log(3600.0)) | Ratio |
+| AME_PA_SCORE | Average minimum execution per action score | The average minimum execution time per action score, between 1.0 and 0.0; 1.0 if MET_PA is less than 1.0 seconds, otherwise 1.0 - (log(MET_PA - 4.0) / log(3600.0)) | Ratio |
+| TI_SCORE | Overall time score | For classical plans, this is the completion time score, for conformance refinement plans, this is the mean of the; latency, average non-initial wait time, and average minimum execution time per action scores | Ratio |
+| LT_GRADE | Latency grade | The latency time score multiplied by the quality score | Ratio |
+| CT_GRADE | Completion grade | The completion time score multiplied by the quality score | Ratio |
+| AW_GRADE | Average wait grade | The average wait time score multiplied by the quality score | Ratio |
+| AW_PA_GRADE | Average wait per action grade | The average wait time per action score multiplied by the quality score | Ratio |
+| AME_GRADE | Average minimum execution grade | The average minimum execution time score multiplied by the quality score | Ratio |
+| AME_PA_GRADE | Average minimum execution per action grade | The average minimum execution time per action score multiplied by the quality score | Ratio |
+| GRADE | Overall grade | The overall time score multiplied by the quality score | Ratio |
+| HAS_TRAILING | Whether the (partial) monolevel plan has a trailing sub-plan | A trailing sub-plan, is a sub-plan that extends beyond the achievement of the final sub-goal stage, needed to achieve a more specific final-goal when refining from an abstract model that uses a state abstraction | Boolean |
+| TOT_CHOICES | Total choices | The total choices the ASP solver made when selecting the truth values for atoms during search | Integer |
+| PRE_CHOICES | Total final-goal pre-emptive achievement choices | The total number of choices made according to the final-goal pre-emptive achievement domain heuristics | Integer |
+| FGOALS_ORDER | Whether the final-goal intermediate achievement ordering preference were satisfied | If the final-goal literals in the final-goal intermediate achievement ordering preferences where actually achieved in the preferred order | Boolean |
+| CP_EF_L | Complete plan length expansion factor | The factor by which the length of the refined plan expands over the abstract (partial) plan it refines | Ratio |
+| CP_EF_A | Complete plan action expansion factor | The factor by which the total number of actions in the refined plan expands over the abstract (partial) plan it refines | Ratio |
+| SP_ED_L | Sub-plan length expansion deviation | The standard deviation in the lengths of the sub-plans that form the monolevel plan | Ratio |
+| SP_ED_A | Sub-plan action expansion deviation | The standard deviation in the number of actions in the sub-plans that form the monolevel plan | Ratio |
+| SP_EB_L | Sub-plan length expansion balance | The normalised length expansion deviation, the length expansion deviation as a factor of the expansion factor, this is the same as the coefficient of deviation | Ratio |
+| SP_EB_A | Sub-plan action expansion balance | The normalised action expansion deviation | Ratio |
+| SP_EBS_L | Sub-plan length expansion balance score | The reciprocal exponential of the length expansion balance, 1.0 when the expansion balance is 0.0 and rapidly approaches 0.0 as the expansion balance increases | Ratio |
+| SP_EBS_A | Sub-plan action expansion balance score | The reciprocal exponential of the action expansion balance | Ratio |
+| SP_MIN_L | Minimum sub-plan length |  | Integer |
+| SP_MIN_A | Minimum sub-plan actions |  | Integer |
+| SP_LOWER_L | Lower quartile sub-plan length |  | Integer |
+| SP_LOWER_A | Lower quartile sub-plan actions |  | Integer |
+| SP_MED_L | Median sub-plan length |  | Integer |
+| SP_MED_A | Median sub-plan actions |  | Integer |
+| SP_UPPER_L | Upper quartile sub-plan length |  | Integer |
+| SP_UPPER_A | Upper quartile sub-plan actions |  | Integer |
+| SP_MAX_L | Maximum sub-plan length |  | Integer |
+| SP_MAX_A | Maximum sub-plan actions |  | Integer |
+| T_INTER_SP | Total interleaved sub-plans | The quantity of sub-plans whose length increased from the minimal unique achievement of its sub-goal stage after the achievement of a following sub-goal stages as a result of interleaving delaying the achievement of the earlier sub-goal stage to better prepare for achieving one of the following and therefore reduce the overall plan length | Integer |
+| P_INTER_SP | Percentage of interleaved sub-plans | The ratio of the number of interleaved sub-plans to the total number of sub-plans | Ratio |
+| T_INTER_Q | Total interleaved plan steps | The sum over all sub-plans, of the increase in their length caused by interleaving | Integer |
+| P_INTER_Q | Percentage interleaved plan steps | The ratio of the interleaving plan steps to the monolevel plan length | Ratio |
 | M_CHILD_RMSE | Root-mean-squared-error of matching child steps |  |  |
 | M_CHILD_RMSE_SCORE | RMSE score |  |  |
 | M_CHILD_NRMSE | Normalised RMSE of matching child steps |  |  |
@@ -157,10 +230,107 @@ This directory contains the results from all experimental trials.
 | PP_EF_LE_MAX |  |  |  |
 | PP_EF_AC_MAX |  |  |  |
 
-## Aggregate Results Format
+### Partial Plans
 
+| Header | Name | Description | Unit |
+|:-:|:-:|:-:|:-:|
+| RU |  |  |  |
+| AL |  |  |  |
+| IT | Online increment number |  | Integer |
+| PN | Problem sequence number |  | Integer |
+| GT |  |  |  |
+| ST |  |  |  |
+| OT |  |  |  |
+| TT |  |  |  |
+| YT |  |  |  |
+| WT |  |  |  |
+| ET |  |  |  |
+| RSS |  |  |  |
+| VMS |  |  |  |
+| LE |  |  |  |
+| AC |  |  |  |
+| CF |  |  |  |
+| PSG |  |  |  |
+| START_S | Problem start step |  |  |
+| END_S | Problem end step |  |  |
+| SIZE |  |  |  |
+| SGLITS_T |  |  |  |
+| FIRST_I | First sub-goal stage index |  |  |
+| LAST_I | Last sub-goal stagey |  |  |
+| PP_EF_L |  |  |  |
+| PP_EF_A |  |  |  |
+| SP_ED_L |  |  |  |
+| SP_ED_A |  |  |  |
+| SP_EB_L |  |  |  |
+| SP_EB_A |  |  |  |
+| SP_EBS_L |  |  |  |
+| SP_EBS_A |  |  |  |
+| TOT_CHOICES |  |  |  |
+| PRE_CHOICES |  |  |  |
 
+### Concatenated Plan Step-Wise (Concat Step-Wise)
 
-## Generating Aggregate Result Sets
+| Header | Name | Description | Unit |
+|:-:|:-:|:-:|:-:|
+| RU |  |  |  |
+| AL |  |  |  |
+| SL |  |  |  |
+| S_GT |  |  |  |
+| S_ST |  |  |  |
+| S_TT |  |  |  |
+| C_GT |  |  |  |
+| C_ST |  |  |  |
+| C_TT |  |  |  |
+| T_RSS |  |  |  |
+| T_VMS |  |  |  |
+| M_RSS |  |  |  |
+| M_VMS |  |  |  |
+| C_TACHSGOALS |  |  |  |
+| S_SGOALI |  |  |  |
+| IS_MATCHING |  |  |  |
+| IS_TRAILING |  |  |  |
+| C_CP_EF_L |  |  |  |
+| C_CP_EF_A |  |  |  |
+| C_SP_ED_L |  |  |  |
+| C_SP_ED_A |  |  |  |
+| C_SP_EB_L |  |  |  |
+| C_SP_EB_A |  |  |  |
+| C_SP_EBS_L |  |  |  |
+| C_SP_EBS_A |  |  |  |
+| IS_DIV_APP |  |  |  |
+| IS_INHERITED |  |  |  |
+| IS_PROACTIVE |  |  |  |
+| IS_INTERRUPT |  |  |  |
+| PREEMPTIVE |  |  |  |
+| IS_DIV_COM |  |  |  |
+| DIV_COM_APP_AT |  |  |  |
+| IS_LOCO |  |  |  |
+| IS_MANI |  |  |  |
+| IS_CONF |  |  |  |
 
+### Concatenated Plan Index-Wise (Concat Index-Wise)
 
+| Header | Name | Description | Unit |
+|:-:|:-:|:-:|:-:|
+| RU |  |  |  |
+| AL |  |  |  |
+| INDEX |  |  |  |
+| NUM_SGOALS |  |  |  |
+| ACH_AT |  |  |  |
+| YLD_AT |  |  |  |
+| IS_DIV |  |  |  |
+| IS_INHERITED |  |  |  |
+| IS_PROACTIVE |  |  |  |
+| IS_INTERRUPT |  |  |  |
+| PREEMPTIVE |  |  |  |
+| SP_RE_GT |  |  |  |
+| SP_RE_ST |  |  |  |
+| SP_RE_TT |  |  |  |
+| SP_START_S |  |  |  |
+| SP_END_S |  |  |  |
+| SP_L |  |  |  |
+| SP_A |  |  |  |
+| INTER_Q |  |  |  |
+| IS_LOCO |  |  |  |
+| IS_MANI |  |  |  |
+| IS_CONF |  |  |  |
