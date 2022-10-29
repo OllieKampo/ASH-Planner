@@ -294,7 +294,7 @@ for path in cli_args.input_paths:
         # print(f"Opening excel file {excel_file_name} :: Matching Data Set Configuration {configuration}")
         with pandas.ExcelFile(excel_file_name, engine="openpyxl") as excel_file:
             ## Read globals and concatenated plans
-            worksheets: dict[str, pandas.DataFrame] = pandas.read_excel(excel_file, ["Globals", "Cat Plans"])
+            worksheets: dict[str, pandas.DataFrame] = pandas.read_excel(excel_file, ["Globals", "Cat Plans", "Partial Plans", "Concat Step-wise", "Concat Index-wise"])
             
             ## Globals is not nicely formatted so some extra work is needed to extract it;
             ##      - Get the rows were all the entries are null,
@@ -315,13 +315,14 @@ for path in cli_args.input_paths:
             ##          - Solving the logic program (complexity of searching for a solution to the problem of minimal length),
             ##          - The overhead in terms of the time taken to make reactive decisions during search.
             time_types: list[str] = ["GT", "ST", "OT"]
-            for time_type in reversed(time_types):
-                worksheets["Cat Plans"].insert(worksheets["Cat Plans"].columns.get_loc("OT") + 1,
-                                               f"{time_type}_POTT", worksheets["Cat Plans"][time_type] / worksheets["Cat Plans"]["TT"])
+            for sheet_name in ["Cat Plans", "Partial Plans"]:
+                for time_type in reversed(time_types):
+                    worksheets[sheet_name].insert(worksheets[sheet_name].columns.get_loc("OT") + 1,
+                                                  f"{time_type}_POTT", worksheets[sheet_name][time_type] / worksheets[sheet_name]["TT"])
             
             for sheet_name in worksheets:
                 ## Get rid of old index data
-                worksheets[sheet_name] = worksheets[sheet_name].drop(["Unnamed: 0", "RU"], axis="columns")
+                worksheets[sheet_name] = worksheets[sheet_name].drop(["Unnamed: 0"], axis="columns")
                 
                 ## Convert the data types to those pandas thinks is best
                 worksheets[sheet_name] = worksheets[sheet_name].convert_dtypes()
@@ -340,7 +341,8 @@ for index, header in enumerate(configuration_headers):
     else: none_header_indices.append(index)
 
 for configuration in data_sets:
-    new_data_sets[tuple(header for index, header in enumerate(configuration) if index not in none_header_indices)] = data_sets[configuration]
+    new_configuration = tuple(header for index, header in enumerate(configuration) if index not in none_header_indices)
+    new_data_sets[new_configuration] = data_sets[configuration]
 
 configuration_headers = new_configuration_headers
 data_sets = new_data_sets
@@ -370,6 +372,7 @@ if cli_args.pause:
 #########################################################################################################################################################################################
 
 combined_data_sets: dict[tuple[str, ...], dict[str, pandas.DataFrame]] = defaultdict(dict)
+fully_combined_data_sets: dict[str, pandas.DataFrame] = {}
 combined_data_sets_quantiles: dict[str, list[pandas.DataFrame]] = defaultdict(list)
 
 ## For each data set, add a row to the dataframe with column entries for each comparison level for that set
@@ -382,17 +385,19 @@ for configuration, combined_data_set in tqdm.tqdm(data_sets.items()):
     for sheet_name in combined_data_set:
         
         index_for_data_set: list[str]
-        if sheet_name == "Cat Plans":
+        if sheet_name == ["Cat Plans", "Partial Plans"]:
             index_for_data_set = configuration_headers + ["AL", "statistic"]
-        else: index_for_data_set = configuration_headers + ["statistic"]
+        elif sheet_name == "Globals":
+            index_for_data_set = configuration_headers + ["statistic"]
         
+        ## For each individual data set in this configuration...
         individual_data_set: pandas.DataFrame
         for individual_data_set in combined_data_set[sheet_name]:
-            individual_data_set_copy: pandas.DataFrame = individual_data_set.copy(deep=True)
-            data_quantiles: pandas.DataFrame
             
-            if sheet_name == "Cat Plans":
-                data_quantiles = individual_data_set.groupby("AL").quantile([0.0, 0.25, 0.50, 0.75, 1.0])
+            ## Calculate the quantiles for this data set
+            data_quantiles: pandas.DataFrame
+            if sheet_name in ["Cat Plans", "Partial Plans"]:
+                data_quantiles = individual_data_set.drop(["RU"], axis="columns").groupby("AL").quantile([0.0, 0.25, 0.50, 0.75, 1.0])
                 data_quantiles.index = data_quantiles.index.set_levels(data_quantiles.index.levels[1].astype(float), level=1)
                 data_quantiles = data_quantiles.rename_axis(["AL", "statistic"])
                 
@@ -405,9 +410,9 @@ for configuration, combined_data_set in tqdm.tqdm(data_sets.items()):
                     data_quantiles.loc[(abstraction_level, "IQR"),:] = (data_quantiles.loc[(abstraction_level, 0.75)] - data_quantiles.loc[(abstraction_level, 0.25)]).values
                     data_quantiles.loc[(abstraction_level, "Range"),:] = (data_quantiles.loc[(abstraction_level, 1.0)] - data_quantiles.loc[(abstraction_level, 0.0)]).values
                 data_quantiles = data_quantiles.sort_index()
-                
-            else:
-                data_quantiles = individual_data_set.quantile([0.0, 0.25, 0.50, 0.75, 1.0])
+               
+            elif sheet_name == "Globals":
+                data_quantiles = individual_data_set.drop(["RU"], axis="columns").quantile([0.0, 0.25, 0.50, 0.75, 1.0])
                 data_quantiles = data_quantiles.rename_axis("statistic")
                 data_quantiles.loc["IQR",:] = (data_quantiles.loc[0.75] - data_quantiles.loc[0.25]).values
                 data_quantiles.loc["Range",:] = (data_quantiles.loc[1.0] - data_quantiles.loc[0.0]).values
@@ -415,18 +420,18 @@ for configuration, combined_data_set in tqdm.tqdm(data_sets.items()):
             ## Insert columns to define the configurations,
             ## then append those columns to the index (the abstraction level and aggregate statistic is also part of the index)
             for index, level_name in enumerate(configuration_headers):
-                individual_data_set_copy.insert(index, level_name, configuration[index])
+                individual_data_set.insert(index, level_name, configuration[index])
                 data_quantiles.insert(index, level_name, configuration[index])
-            individual_data_set_copy = individual_data_set_copy.set_index(configuration_headers)
+            individual_data_set = individual_data_set.set_index(configuration_headers)
             data_quantiles = data_quantiles.set_index(configuration_headers, append=True)
             
             ## Set the order of the index levels;
             ##      - Configurations comes first, then abstraction level for concatenated plans, then the statistic.
-            individual_data_set_copy = individual_data_set_copy.reorder_levels(configuration_headers)
+            individual_data_set = individual_data_set.reorder_levels(configuration_headers)
             data_quantiles = data_quantiles.reorder_levels(index_for_data_set)
             
             ## Append the data quantiles for the current data set to the list
-            data_set[sheet_name].append(individual_data_set_copy)
+            data_set[sheet_name].append(individual_data_set)
             quantiles_for_data_set[sheet_name].append(data_quantiles)
         
         ## Concatenate (combine) all the data sets for the current configuration
@@ -435,8 +440,7 @@ for configuration, combined_data_set in tqdm.tqdm(data_sets.items()):
         ## Take the average of the quantiles over the all the individual data sets for the current configuration
         combined_data_sets_quantiles[sheet_name].append(pandas.concat(quantiles_for_data_set[sheet_name]).astype(float).groupby(index_for_data_set).mean())
 
-fully_combined_data_sets: dict[str, pandas.DataFrame] = {}
-for sheet_name in ["Globals", "Cat Plans"]:
+for sheet_name in ["Globals", "Cat Plans", "Partial Plans", "Concat Step-wise", "Concat Index-wise"]:
     fully_combined_data_sets[sheet_name] = pandas.concat(combined_data_sets[configuration][sheet_name] for configuration in combined_data_sets).reset_index()
 
 #########################################################################################################################################################################################
@@ -467,8 +471,10 @@ summary_cat_plans: pandas.DataFrame = quantiles_cat_plans.query("statistic in ['
 
 ## Reorder the values in the summary statistic level of the columns index
 ##      - https://stackoverflow.com/questions/11194610/how-can-i-reorder-multi-indexed-dataframe-columns-at-a-specific-level
-summary_globals = summary_globals.reindex(columns=summary_globals.columns.reindex(summary_statistics_globals, level=1)[0])
-summary_cat_plans = summary_cat_plans.reindex(columns=summary_cat_plans.columns.reindex(summary_statistics_cat_plans, level=1)[0])
+summary_globals = summary_globals.reindex(columns=pandas.MultiIndex.from_product([summary_statistics_globals, ["IQR", 0.5]]))
+summary_cat_plans = summary_cat_plans.reindex(columns=pandas.MultiIndex.from_product([summary_statistics_globals, ["IQR", 0.5]]))
+# summary_globals = summary_globals.reindex(columns=summary_globals.columns.reindex(summary_statistics_globals, level=1)[0]) TODO
+# summary_cat_plans = summary_cat_plans.reindex(columns=summary_cat_plans.columns.reindex(summary_statistics_cat_plans, level=1)[0])
 
 summary_globals = summary_globals.reorder_levels(HEADER_ORDER, axis=0)
 summary_cat_plans = summary_cat_plans.reorder_levels((*HEADER_ORDER, "AL"), axis=0)
@@ -560,20 +566,12 @@ pair_wise_data_set_comparison_matrix = pair_wise_data_set_comparison_matrix.reor
 
 
 
-## Calculate fitness to linear trend for step-wise grounding time and exponential trend for step-wise solving and total time
+## Calculate fitness to linear trend for step-wise grounding time and exponential trend for step-wise solving and total time;
 ##      - This should be split for multiple partial problems.
 
 
 
-## Calculate fitness to linear trend for index-wise total number of achieved sub-goal stages
-
-
-
-## Calculate sub-plan/refinement tree balancing; NAE of spread of matching child steps, expansion deviation and balance, balance score
-
-
-
-## Calculate partial problem balancing; NAE of spread of division steps and variance in length of partial plans
+## Calculate fitness to linear trend for index-wise total number of achieved sub-goal stages.
 
 
 
@@ -590,16 +588,19 @@ out_workbook: xlsxwriter.Workbook = writer.book
 ################################################################
 ######## Summary tables
 
-summary_globals.to_excel(writer, sheet_name="Globals 2N Minimal Summary")
+summary_globals.to_excel(writer, sheet_name="Globals 2N Score Summary")
 summary_cat_plans.to_excel(writer, sheet_name="Cat-Plan 2N Minimal Summary")
 
-## TODO Put conditional formatting for scores with coloured bar
-# worksheet_globals = writer.sheets["Globals 2N Summary"]
-#  {"type" : "3_color_scale",
-#   "max_value" : 1.0,
-#   "min_value" : 0.0,
-#   "max_color" : "red",
-#   "min_color" : "green"})
+## Put conditional formatting on the scores
+worksheet = writer.sheets["Globals 2N Score Summary"]
+min_row, min_col = 2, len(configuration_headers) + 1
+max_row, max_col = summary_globals.shape
+worksheet.condition_format(min_row, min_col, min_row + max_row - 1, min_col + max_col - 1,
+                           {"type" : "3_color_scale",
+                            "max_value" : 1.0,
+                            "min_value" : 0.0,
+                            "max_color" : "red",
+                            "min_color" : "green"})
 
 ################################################################
 ######## Overall quantiles over combined data sets for each configuration
@@ -610,30 +611,35 @@ quantiles_cat_plans.to_excel(writer, sheet_name="Cat Plan 5N Full Summary", merg
 ################################################################
 ######## Tests of significant differences between data sets
 
-global_comparison_matrix.to_excel(writer, sheet_name="Globals Significance")
+global_comparison_matrix.to_excel(writer, sheet_name="Global Score Sig-Diff")
+pair_wise_data_set_comparison_matrix.to_excel(writer, sheet_name="Pair-wise Score Sig-Diff")
 
-pair_wise_data_set_comparison_matrix.to_excel(writer, sheet_name="Pair-wise Significance")
-worksheet = writer.sheets["Pair-wise Significance"]
-
-## Get the dimensions of the dataframe
-min_row, min_col = len(configuration_headers) + 2, len(configuration_headers) + 1
-max_row, max_col = pair_wise_data_set_comparison_matrix.shape
-
-## Add formatting to the excel spreadsheet;
-##      - Colour green iff the p value is less than 0.05 (indicating the difference between the compared combined data sets is statistically significant),
-##      - Colour red iff the p value is less than 0.05 (indicating the difference between the compared combined data sets is not statistically significant),
-##      - conditional_format(first_row, first_col, last_row, last_col, options)
-##          - https://xlsxwriter.readthedocs.io/format.html#format
-##          - https://xlsxwriter.readthedocs.io/workbook.html#add_format
-##          - https://xlsxwriter.readthedocs.io/working_with_conditional_formats.html#working-with-conditional-formats
-significant = out_workbook.add_format({"bg_color" : "#37FF33"})
-insignificant = out_workbook.add_format({"bg_color" : "#FF294A"})
-worksheet.conditional_format(min_row, min_col, min_row + max_row - 1, min_col + max_col - 1,
-                             {"type" : "cell", "criteria" : "less than",
-                              "value" : 0.05, "format" : significant})
-worksheet.conditional_format(min_row, min_col, min_row + max_row - 1, min_col + max_col - 1,
-                             {"type" : "cell", "criteria" : "greater than",
-                              "value" : 0.05, "format" : insignificant})
+for sheet_name in ["Global Score Sig-Diff", "Pair-wise Score Sig-Diff"]:
+    worksheet = writer.sheets[sheet_name]
+    
+    ## Get the dimensions of the dataframe
+    if sheet_name == "Global Score Sig-Diff":
+        min_row, min_col = 1, 1
+        max_row, max_col = global_comparison_matrix.shape
+    elif sheet_name == "Pair-wise Score Sig-Diff":
+        min_row, min_col = len(configuration_headers) + 2, len(configuration_headers) + 1
+        max_row, max_col = pair_wise_data_set_comparison_matrix.shape
+    
+    ## Add formatting to the excel spreadsheet;
+    ##      - Colour green iff the p value is less than 0.05 (indicating the difference between the compared combined data sets is statistically significant),
+    ##      - Colour red iff the p value is less than 0.05 (indicating the difference between the compared combined data sets is not statistically significant),
+    ##      - conditional_format(first_row, first_col, last_row, last_col, options)
+    ##          - https://xlsxwriter.readthedocs.io/format.html#format
+    ##          - https://xlsxwriter.readthedocs.io/workbook.html#add_format
+    ##          - https://xlsxwriter.readthedocs.io/working_with_conditional_formats.html#working-with-conditional-formats
+    significant = out_workbook.add_format({"bg_color" : "#37FF33"})
+    insignificant = out_workbook.add_format({"bg_color" : "#FF294A"})
+    worksheet.conditional_format(min_row, min_col, min_row + max_row - 1, min_col + max_col - 1,
+                                 {"type" : "cell", "criteria" : "less than",
+                                  "value" : 0.05, "format" : significant})
+    worksheet.conditional_format(min_row, min_col, min_row + max_row - 1, min_col + max_col - 1,
+                                 {"type" : "cell", "criteria" : "greater than",
+                                  "value" : 0.05, "format" : insignificant})
 
 ################################################################
 ######## Full data sets
@@ -653,6 +659,21 @@ writer.save()
 #########################################################################################################################################################################################
 #########################################################################################################################################################################################
 
+## Balance of sub-plans (refinement trees);
+##      - NAE of matching child steps, sub-plan expansion deviation, balance, and balance score.
+
+
+
+## Balance of partial-plans;
+##      - Partial plan expansion deviation, balance, and balance score.
+
+
+
+## Balance of partial problems;
+##      - NAE division index and step, standard deviation and coefficient of deviation (same as balance) in size of problems.
+
+
+
 ################################################################################################################################
 ################################################################################################################################
 ######## Summary tables - All combined data sets in one table.
@@ -663,37 +684,12 @@ pair_wise_data_set_comparison_matrix.to_latex(f"{cli_args.output_path}_TestOfSig
 
 ################################################################################################################################
 ################################################################################################################################
-######## Graph plotting setup
+######## Score summary scatter graphs
+# x axis is time score, y axis in quality score
+# Points colour for planning mode
+# Points marker type for problem number
 
-als = numpy.arange(al_range.stop)
-bars: int = 1
-padding: float = 0.10
-bar_width: float = (1.0 / bars) - (padding / bars)
 
-bar_width = 0.19 # bar_width(bars=5, pad=0.01)
-# def bar_width(bar: int, tbars: int, pad: float) -> float:
-#     return ((1.0 / tbars) - pad) * (-((tbars/2) - 0.5 + 1) + bar)
-
-def set_bars(bars: int) -> None:
-    "Set the number of bars in the current plot."
-    bars = bars
-    global bar_width
-    bar_width = (1.0 / bars) - (padding / bars)
-
-def get_cat_plans(statistic: str) -> dict[str, Any]:
-    return {"height" : quantiles_cat_plans.query("statistic == 0.5")[statistic],
-            "yerr" : (quantiles_cat_plans.query("statistic == 0.25")[statistic], quantiles_cat_plans.query("statistic == 0.75")[statistic]),
-            "capsize" : 5}
-
-## Plotting with pandas:
-##      - https://pandas.pydata.org/docs/getting_started/intro_tutorials/04_plotting.html
-##      - https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.plot.html#pandas.DataFrame.plot
-##      - The unstack defines the breaking over the sub-plots by moving the index levels onto the column levels, i.e. these are the sub-plot titles,
-##      - The x axis labels are then the abstraction levels for level-wise results and the break-on-x-globals header for global results, this is the index of the dataframe,
-##      - If there are multiple levels then each x axis label will be a tuple of the index levels,
-##      - The bars are the break-on-bars header values, pandas will automatically add these along with legend entries for each bar, if they are seperate columns BUT this will put them in seperate sub-plots.
-# quantiles_cat_plans.loc[quantiles_cat_plans.index.get_level_values("statistic") == 0.5,"GT"].unstack(level=configuration_headers).plot(kind="bar", subplots=True, rot=0, figsize=(9, 7), layout=(6, 6))
-# pyplot.show()
 
 ################################################################################################################################
 ################################################################################################################################
