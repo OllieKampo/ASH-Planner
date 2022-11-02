@@ -952,7 +952,10 @@ class HierarchicalPlan(_collections_abc.Mapping, AbstractionHierarchy):
         return raw_wait_time
     
     def get_average_minimum_execution_time(self, level: int, per_action: bool = False) -> float:
-        """The mean minimum exectuion time over all partial problems."""
+        """
+        The mean minimum exectuion time over all partial problems.
+        This is the same as the mean non-initial wait time.
+        """
         if not self.is_hierarchical_refinement:
             return 0.0
         if len(self.partial_plans[level]) == 1:

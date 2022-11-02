@@ -8,21 +8,21 @@ This directory contains the results from all experimental trials.
 - Sub-directory `aggregate` contains the processed aggregrate results, including all tables and graphs presented in the thesis.
     - The cli command for generating each aggregate result set is given below.
 
+__IMPORTANT:__ Due to a bug in the experiment system;
+- In the globals for the initial and improved initial experiments, the average wait time per action is erroneously small. The time scores and grades are still correct, as the average wait time per action is not used for calculating those statistics.
+- In the concatenated plans for the initial and improved initial experiments, the average wait time per action, and the average minimum execution time per action are all erroneously small. Therefore, the concatenated plan time scores and grades for all online experiments under these categories may be incorrect and must be ignored, and only the global time scores and grades are valid.
+- In all results, action expansion factors, deviations, and balance may have small errors (length expansion factors etc are correct). These has resultantly been omitted from the thesis.
+
 ## Raw Results Format and Column Headers
 
 The following are the column headers for all data in the raw results.
 For columns headers for aggregate results, see the `aggregate` sub-directory.
 
-__IMPORTANT:__ Due to a bug in the experiment system;
-- The globals for the initial and improved initial experiments, the average wait time per action is erroneously small. The time scores and grades are still correct, as the average wait time per action is not used for calculating those statistics.
-- The concatenated plans for the initial and improved initial experiments, the average wait time per action, and the average minimum execution time per action are all erroneously small. Therefore, the concatenated plan time scores and grades for all online experiments under these categories may be incorrect and must be ignored, and only the global time scores and grades are valid.
-- In all results, action expansion factors, deviations, and balance may have small errors. These has resultantly been omitted from the thesis.
-
 ### Globals
 
 | Header | Name | Description | Unit |
 |:-:|:-:|:-:|:-:|
-| RU |  |  |  |
+| RU | Run number | Ordinal number of the experimental run | Integer |
 | BL_LE |  |  |  |
 | BL_AC |  |  |  |
 | EX_T | Execution latency time | Yield time of the initial partial-plan |  |
@@ -146,15 +146,15 @@ __IMPORTANT:__ Due to a bug in the experiment system;
 | P_INTER_SP | Percentage of interleaved sub-plans | The ratio of the number of interleaved sub-plans to the total number of sub-plans | Ratio |
 | T_INTER_Q | Total interleaved plan steps | The sum over all sub-plans, of the increase in their length caused by interleaving | Integer |
 | P_INTER_Q | Percentage interleaved plan steps | The ratio of the interleaving plan steps to the monolevel plan length | Ratio |
-| M_CHILD_RMSE | Root-mean-squared-error of matching child steps |  |  |
+| M_CHILD_RMSE | Root-mean-squared-error of matching child steps | The error between the actual matching child steps (steps upon which a sub-goal stage was uniquely achieved in the monolevel plan) and the theoretically "perfectly" evenly spread matching child steps that would achieve an expansion deviation/balance of 0.0 (i.e. perfectly balanced refinement trees), measured as the root of the mean of the squared differences between each matching child's actual step and the ``perfect'' step, all M_CHILD... measures below are similar |  |
 | M_CHILD_RMSE_SCORE | RMSE score |  |  |
-| M_CHILD_NRMSE | Normalised RMSE of matching child steps |  |  |
+| M_CHILD_NRMSE | Normalised RMSE | The M_CHILD_RMSE as a factor of the ``perfect'' sub-plan length that would achieve perfectly balanced refinement trees, all M_CHILD... normalised measures below are similar |  |
 | M_CHILD_NRMSE_SCORE | NRMSE score |  |  |
-| M_CHILD_MAE |  |  |  |
-| M_CHILD_MAE_SCORE |  |  |  |
-| M_CHILD_NMAE |  |  |  |
-| M_CHILD_NMAE_SCORE |  |  |  |
-| DIV_INDEX_RMSE |  |  |  |
+| M_CHILD_MAE | Mean absolute error of matching child steps |  |  |
+| M_CHILD_MAE_SCORE | MAE score |  |  |
+| M_CHILD_NMAE | Normalised MAE | M_CHILD_MAE |  |
+| M_CHILD_NMAE_SCORE | NMAE score |  |  |
+| DIV_INDEX_RMSE | Root-mean-squared-error of division indices | The error between the actual division indices and the theoretically "perfectly" evenly spread indices that would achieve a perfectly homogenous problem sequence across the combined refinement problem this monolevel plan solves, measured as the root of the mean of the squared differences between each actual division index and the ``perfect'' index, all measures below are similar |  |
 | DIV_INDEX_RMSE_SCORE |  |  |  |
 | DIV_INDEX_NRMSE |  |  |  |
 | DIV_INDEX_NRMSE_SCORE |  |  |  |
@@ -162,7 +162,7 @@ __IMPORTANT:__ Due to a bug in the experiment system;
 | DIV_INDEX_MAE_SCORE |  |  |  |
 | DIV_INDEX_NMAE |  |  |  |
 | DIV_INDEX_NMAE_SCORE |  |  |  |
-| DIV_STEP_RMSE |  |  |  |
+| DIV_STEP_RMSE | Root-mean-squared-error of division steps | The error between the actual division steps (the steps where the division indices were achieved) and the theoretically "perfectly" evenly spread steps that would achieve a perfectly homogenous partial-plan sequence that form this monolevel plan, measured as the root of the mean of the squared differences between each actual achievement steps and the ``perfect'' step, all measures below are similar |  |
 | DIV_STEP_RMSE_SCORE |  |  |  |
 | DIV_STEP_NRMSE |  |  |  |
 | DIV_STEP_NRMSE_SCORE |  |  |  |
@@ -170,72 +170,72 @@ __IMPORTANT:__ Due to a bug in the experiment system;
 | DIV_STEP_MAE_SCORE |  |  |  |
 | DIV_STEP_NMAE |  |  |  |
 | DIV_STEP_NMAE_SCORE |  |  |  |
-| DS_T |  |  |  |
-| DIVS_T |  |  |  |
-| DS_TD_MEAN |  |  |  |
-| DS_TD_STD |  |  |  |
-| DS_TD_CD |  |  |  |
-| DS_TD_MIN |  |  |  |
-| DS_TD_LOWER |  |  |  |
-| DS_TD_MED |  |  |  |
-| DS_TD_UPPER |  |  |  |
-| DS_TD_MAX |  |  |  |
-| DS_TS_MEAN |  |  |  |
-| DS_TS_STD |  |  |  |
-| DS_TS_CD |  |  |  |
+| DS_T | Total division scenarios |  |  |
+| DIVS_T | Total divisions |  |  |
+| DS_TD_MEAN | Mean divisions per scenario |  |  |
+| DS_TD_STD | Standard deviation of divisions per scenario |  |  |
+| DS_TD_CD | Coefficient of deviation of division per scenario |  |  |
+| DS_TD_MIN | Minimum divisions per scenario |  |  |
+| DS_TD_LOWER | Lower-quartile divisions per scenario |  |  |
+| DS_TD_MED | Median divisions per scenario |  |  |
+| DS_TD_UPPER | Upper-quartile divisions per scenario |  |  |
+| DS_TD_MAX | Maximum divisions per scenario |  |  |
+| DS_TS_MEAN | Mean size of division scenarios |  |  |
+| DS_TS_STD | Standard deviation in size of division scenarios |  |  |
+| DS_TS_CD | Coefficient of deviation in size of division scenarios |  |  |
 | DS_TS_MIN |  |  |  |
 | DS_TS_LOWER |  |  |  |
 | DS_TS_MED |  |  |  |
 | DS_TS_UPPER |  |  |  |
 | DS_TS_MAX |  |  |  |
-| PR_T |  |  |  |
-| PR_TS_MEAN |  |  |  |
-| PR_TS_STD |  |  |  |
-| PR_TS_CD |  |  |  |
+| PR_T | Total partial problems |  |  |
+| PR_TS_MEAN | Mean partial-problem size |  |  |
+| PR_TS_STD | Standard deviation in partial-problem size |  |  |
+| PR_TS_CD | Coefficient of deviation in partial-problem size |  |  |
 | PR_TS_MIN |  |  |  |
 | PR_TS_LOWER |  |  |  |
 | PR_TS_MED |  |  |  |
 | PR_TS_UPPER |  |  |  |
 | PR_TS_MAX |  |  |  |
-| PP_LE_MEAN |  |  |  |
-| PP_AC_MEAN |  |  |  |
+| PP_LE_MEAN | Mean length of partial-plans | Meaningful only if multiple partial-plans were concatenated to form this monolevel plan (i.e. if PR_T > 0) |  |
+| PP_AC_MEAN | Mean total actions of partial-plans |  |  |
 | PP_LE_STD |  |  |  |
 | PP_AC_STD |  |  |  |
 | PP_LE_CD |  |  |  |
 | PP_AC_CD |  |  |  |
-| PP_LE_MIN |  |  |  |
-| PP_AC_MIN |  |  |  |
-| PP_LE_LOWER |  |  |  |
-| PP_AC_LOWER |  |  |  |
-| PP_LE_MED |  |  |  |
-| PP_AC_MED |  |  |  |
-| PP_LE_UPPER |  |  |  |
-| PP_AC_UPPER |  |  |  |
-| PP_LE_MAX |  |  |  |
-| PP_AC_MAX |  |  |  |
-| PP_ED_L |  |  |  |
-| PP_ED_A |  |  |  |
-| PP_EB_L |  |  |  |
-| PP_EB_A |  |  |  |
-| PP_EBS_L |  |  |  |
-| PP_EBS_A |  |  |  |
-| PP_EF_LE_MIN |  |  |  |
-| PP_EF_AC_MIN |  |  |  |
-| PP_EF_LE_LOWER |  |  |  |
-| PP_EF_AC_LOWER |  |  |  |
-| PP_EF_LE_MED |  |  |  |
-| PP_EF_AC_MED |  |  |  |
-| PP_EF_LE_UPPER |  |  |  |
-| PP_EF_AC_UPPER |  |  |  |
-| PP_EF_LE_MAX |  |  |  |
-| PP_EF_AC_MAX |  |  |  |
+| PP_LE_MIN |  |  | Integer |
+| PP_AC_MIN |  |  | Integer |
+| PP_LE_LOWER |  |  | Integer |
+| PP_AC_LOWER |  |  | Integer |
+| PP_LE_MED |  |  | Integer |
+| PP_AC_MED |  |  | Integer |
+| PP_LE_UPPER |  |  | Integer |
+| PP_AC_UPPER |  |  | Integer |
+| PP_LE_MAX |  |  | Integer |
+| PP_AC_MAX |  |  | Integer |
+| PP_ED_L | Partial-plan length expansion deviation |  | Ratio |
+| PP_ED_A | Partial-plan action expansion deviation |  | Ratio |
+| PP_EB_L | Partial-plan length expansion balance |  | Ratio |
+| PP_EB_A | Partial-plan action expansion balance |  | Ratio |
+| PP_EBS_L | Partial-plan length expansion balance score |  | Ratio |
+| PP_EBS_A | Partial-plan action expansion balance score |  | Ratio |
+| PP_EF_LE_MIN | Minimum partial-plan length expansion factor |  | Ratio |
+| PP_EF_AC_MIN | Minimum partial-plan action expansion factor |  | Ratio |
+| PP_EF_LE_LOWER | Lower-quartile partial-plan length expansion factor |  | Ratio |
+| PP_EF_AC_LOWER | Lower-quartile partial-plan action expansion factor |  | Ratio |
+| PP_EF_LE_MED | Median partial-plan length expansion factor |  | Ratio |
+| PP_EF_AC_MED | Median partial-plan action expansion factor |  | Ratio |
+| PP_EF_LE_UPPER | Upper-quartile partial-plan length expansion factor |  | Ratio |
+| PP_EF_AC_UPPER | Upper-quartile partial-plan action expansion factor |  | Ratio |
+| PP_EF_LE_MAX | Maximum partial-plan length expansion factor |  | Ratio |
+| PP_EF_AC_MAX | Maximum partial-plan action expansion factor |  | Ratio |
 
 ### Partial Plans
 
 | Header | Name | Description | Unit |
 |:-:|:-:|:-:|:-:|
-| RU |  |  |  |
-| AL |  |  |  |
+| RU | Run number | Ordinal number of the experimental run | Integer |
+| AL | Abstraction level | The abstraction level of the partial-plan | Integer |
 | IT | Online increment number |  | Integer |
 | PN | Problem sequence number |  | Integer |
 | GT |  |  |  |
@@ -272,8 +272,8 @@ __IMPORTANT:__ Due to a bug in the experiment system;
 
 | Header | Name | Description | Unit |
 |:-:|:-:|:-:|:-:|
-| RU |  |  |  |
-| AL |  |  |  |
+| RU | Run number | Ordinal number of the experimental run | Integer |
+| AL | Abstraction level | The abstraction level of the plan | Integer |
 | SL |  |  |  |
 | S_GT |  |  |  |
 | S_ST |  |  |  |
@@ -312,8 +312,8 @@ __IMPORTANT:__ Due to a bug in the experiment system;
 
 | Header | Name | Description | Unit |
 |:-:|:-:|:-:|:-:|
-| RU |  |  |  |
-| AL |  |  |  |
+| RU | Run number | Ordinal number of the experimental run | Integer |
+| AL | Abstraction level | The abstraction level of the plan | Integer |
 | INDEX |  |  |  |
 | NUM_SGOALS |  |  |  |
 | ACH_AT |  |  |  |

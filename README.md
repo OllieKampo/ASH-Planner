@@ -19,6 +19,7 @@ For example, the following linguistic rules can be trivially translated to the l
 * __Action Effect__ - "When a robot moves, its location changes"
 * __Action Precondition__ - "A robot can only grasp objects that share its location"
 * __State Variable Relation__ - "Grasped objects continue to share a robot's location as it moves"
+* __State Variable Constraints__ - "A robot can only grasp one object at a time with each grasper"
 
 Constructing an abstraction hierarchy requires defining a series of abstract domain models.
 An abstract domain model may; remove, generalise, or redefine system laws, in order to obtain a simplified description of the domain and problem.
@@ -29,3 +30,12 @@ There are three such abstract models currently supported by the theory and imple
 * __Condensed Models__ - The state space is reduced, by automatically combining sets of detailed entities into abstract descriptors, this reduces the number of actions and state variables needed to represent the problem, and generalises planning constraints. Abstraction mappings are generated automatically.
 * __Relaxed Models__ - A sub-set of action preconditions are removed, this removes significant constraints on planning. Abstraction mappings are generated automatically.
 * __Tasking Models__ - The system laws are redefined to create a system representation that deals with abstract task descriptions, the resulting plan is a sequence of tasks to be completed in order. Abstraction mappings must be given manually by the designer, and tell the planner how it can complete tasks by reaching states of the original model.
+
+### Known Bugs
+
+1. The hierarchical progression progress bar does not work correctly for the complete-first or hybrid online planning methods.
+2. Action expansion factors, deviations, and balance, are not calculated correctly.
+3. Interleaving detection does not does not correctly calculate the interleaving quantity or score.
+4. Backwards horizon is not applied correctly, since it uses the sequential yield minimal achievement steps, rather than the actual conformance mapping (backwards horizon was not included in the thesis).
+5. The planner reports that concatenated plans (formed by the concatenation of multiple partial-plans) were generated offline by complete refinement.
+6. Regressing the solving time for concatenated plans usually fails, since they (usually) cannot fit to an exponential curve very well.
