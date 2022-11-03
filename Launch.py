@@ -799,7 +799,7 @@ def __setup() -> argparse.Namespace:
     
     ## Output files
     parser.add_argument("-cfn", "--config_file_naming", action="store_true",
-                        help="name output files based on the configuration file name, format ./")
+                        help="name output files based on the configuration file name")
     parser.add_argument("-pf", "--plan_file", default=f"./solutions/plans/ASH_Plan_{output_file_append}.txt", type=str,
                         help="specify a custom file to save the generated plans to during standard operation, "
                              f"by default ./solutions/plans/ASH_Plan_{output_file_append}.txt")

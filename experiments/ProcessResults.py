@@ -117,10 +117,10 @@ parser.add_argument("-order", "--order_index_headers", nargs="*", default=[], ty
 parser.add_argument("-sort", "--sort_index_values", nargs="*", default=[], type=str, help="Sort the data sets by the given values.")
 parser.add_argument("-diff", "--compare_only_different", nargs="*", default=[], type=str, help="Compare only data sets that have different values for the given headers.")
 parser.add_argument("-same", "--compare_only_same", nargs="*", default=[], type=str, help="Compare only data sets that have the same values for the given headers.")
-parser.add_argument("--breakbars", "--break-on-bars", default="planning_mode", type=str, help="Break the bars of all bar charts on the given header. "
-                                                                                              "There will be a bar for each x-axis label for each unique value of the given header.")
-parser.add_argument("-breakx", "--break-on-x-globals", default="problem", type=str, help="Break the x-axis of all globals charts on the given header. " ## Always abstraction level for level-wise results.
+parser.add_argument("-breakf", "--break-first", default="problem", type=str, help="Break the x-axis of all globals charts on the given header. " ## Always abstraction level for level-wise results.
                                                                                          "There will be an x-axis label for each unique value of the given header.")
+parser.add_argument("-breaks", "--break-second", default="planning_mode", type=str, help="Break the bars of all bar charts on the given header. "
+                                                                                              "There will be a bar for each x-axis label for each unique value of the given header.")
 cli_args: argparse.Namespace = parser.parse_args()
 
 def get_option_list(option_list: list[str]) -> str:
@@ -158,7 +158,7 @@ if cli_args.pause:
 ##      - The following are the configuration headers.
 configuration_headers: list[str] = ["problem",          # The problem instance; e.g. PS1, PL2, etc.
                                     "planning_type",    # The planning type; mcl, hcl, hcr.
-                                    "planning_mode",    # The planning mode; offline, online.
+                                    "planning_mode",    # The planning mode; classical, offline, online.
                                     "strategy",         # The division strategy; e.g. basic, hasty, steady, etc.
                                     "bound_type",       # The bound type; abs, per, sl, cumt.
                                     "online_bounds",    # The online bounds; a vector of numbers.
@@ -178,7 +178,7 @@ def extract_configuration(excel_file_name: str) -> Optional[list[str]]:
     """Extract the data set configuration for a given excel file name."""
     
     configuration_dict: dict[str, str] = {}
-    raw_config: str = os.path.basename(excel_file_name).strip("ASH_Excel_").split(".")[0]
+    raw_config: str = os.path.basename(excel_file_name).strip("ASH_Excel_").lower().split(".")[0]
     terms: list[str] = raw_config.split("_")
     
     for index, term in enumerate(terms):
@@ -189,9 +189,10 @@ def extract_configuration(excel_file_name: str) -> Optional[list[str]]:
     configuration_dict["problem"] = "".join(terms[0:planning_type_index])
     configuration_dict["planning_type"] = terms[planning_type_index]
     
-    if configuration_dict["planning_type"] == "hcl":
+    if configuration_dict["planning_type"] in ["mcl", "hcl"]:
+        configuration_dict["planning_mode"] = "classical"
         for header in configuration_headers:
-            if header not in ["problem", "planning_type"]:
+            if header not in ["problem", "planning_type", "planning_mode"]:
                 configuration_dict[header] = "NONE"
         
     else:
@@ -235,7 +236,7 @@ def extract_configuration(excel_file_name: str) -> Optional[list[str]]:
         
         configuration_dict["search_mode"] = get_term(["min", "standard", "yield"], "min")
         if configuration_dict["search_mode"] == "min":
-            configuration_dict["search_mode"] = configuration_dict["search_mode"] + get_term()
+            configuration_dict["search_mode"] = configuration_dict["search_mode"] + get_term("bound")
         configuration_dict["achievement_type"] = get_term(["seqa", "sima"], "seqa")
         
         if get_term(["conc"]) == "conc":
@@ -245,6 +246,7 @@ def extract_configuration(excel_file_name: str) -> Optional[list[str]]:
         if configuration_dict["planning_mode"] == "online":
             if get_term(["preach"]) == "preach":
                 configuration_dict["preach_type"] = get_term(["heur", "opt"], "opt")
+            else: configuration_dict["preach_type"] = "NONE"
             
             if get_term(["blend"]) == "blend":
                 configuration_dict["blend_direction"] = get_term(["left", "right"], "right")
@@ -252,6 +254,10 @@ def extract_configuration(excel_file_name: str) -> Optional[list[str]]:
                 blend: str = get_term()
                 configuration_dict["blend_type"] = blend[0]
                 configuration_dict["blend_quantity"] = int(blend[1:])
+            else:
+                configuration_dict["blend_direction"] = "NONE"
+                configuration_dict["blend_type"] = "NONE"
+                configuration_dict["blend_quantity"] = "NONE"
             
             configuration_dict["online_method"] = get_term(["gf", "cf", "hy"], "gf")
         else:
@@ -279,7 +285,7 @@ files_loaded: int = 0
 for path in cli_args.input_paths:
     print(f"\nLoading files from path {path} ...")
     
-    for excel_file_name in tqdm.tqdm(glob.glob(f"{path}/*.xlsx")):
+    for excel_file_name in tqdm.tqdm(glob.glob(f"{path}/ASH_Excel*.xlsx")):
         
         ## Extract the configuration from the file name;
         ##  - If a matching configuration exists, then load the data,
@@ -294,7 +300,10 @@ for path in cli_args.input_paths:
         # print(f"Opening excel file {excel_file_name} :: Matching Data Set Configuration {configuration}")
         with pandas.ExcelFile(excel_file_name, engine="openpyxl") as excel_file:
             ## Read globals and concatenated plans
-            worksheets: dict[str, pandas.DataFrame] = pandas.read_excel(excel_file, ["Globals", "Cat Plans", "Partial Plans", "Concat Step-wise", "Concat Index-wise"])
+            worksheets: dict[str, pandas.DataFrame]
+            if "classical" in configuration:
+                worksheets = pandas.read_excel(excel_file, ["Globals", "Cat Plans", "Concat Step-wise"])
+            else: worksheets = pandas.read_excel(excel_file, ["Globals", "Cat Plans", "Partial Plans", "Concat Step-wise", "Concat Index-wise"])
             
             ## Globals is not nicely formatted so some extra work is needed to extract it;
             ##      - Get the rows were all the entries are null,
@@ -315,7 +324,7 @@ for path in cli_args.input_paths:
             ##          - Solving the logic program (complexity of searching for a solution to the problem of minimal length),
             ##          - The overhead in terms of the time taken to make reactive decisions during search.
             time_types: list[str] = ["GT", "ST", "OT"]
-            for sheet_name in ["Cat Plans", "Partial Plans"]:
+            for sheet_name in (["Cat Plans", "Partial Plans"] if "classical" not in configuration else ["Cat Plans"]):
                 for time_type in reversed(time_types):
                     worksheets[sheet_name].insert(worksheets[sheet_name].columns.get_loc("OT") + 1,
                                                   f"{time_type}_POTT", worksheets[sheet_name][time_type] / worksheets[sheet_name]["TT"])
@@ -383,9 +392,10 @@ for configuration, combined_data_set in tqdm.tqdm(data_sets.items()):
     data_set: dict[str, list[pandas.DataFrame]] = defaultdict(list)
     
     for sheet_name in combined_data_set:
+        make_quantiles: bool = sheet_name in ["Globals", "Cat Plans", "Partial Plans"]
         
         index_for_data_set: list[str]
-        if sheet_name == ["Cat Plans", "Partial Plans"]:
+        if sheet_name in ["Cat Plans", "Partial Plans", "Concat Step-wise", "Concat Index-wise"]:
             index_for_data_set = configuration_headers + ["AL", "statistic"]
         elif sheet_name == "Globals":
             index_for_data_set = configuration_headers + ["statistic"]
@@ -421,27 +431,32 @@ for configuration, combined_data_set in tqdm.tqdm(data_sets.items()):
             ## then append those columns to the index (the abstraction level and aggregate statistic is also part of the index)
             for index, level_name in enumerate(configuration_headers):
                 individual_data_set.insert(index, level_name, configuration[index])
-                data_quantiles.insert(index, level_name, configuration[index])
+                if make_quantiles: data_quantiles.insert(index, level_name, configuration[index])
             individual_data_set = individual_data_set.set_index(configuration_headers)
-            data_quantiles = data_quantiles.set_index(configuration_headers, append=True)
+            if make_quantiles: data_quantiles = data_quantiles.set_index(configuration_headers, append=True)
             
             ## Set the order of the index levels;
             ##      - Configurations comes first, then abstraction level for concatenated plans, then the statistic.
             individual_data_set = individual_data_set.reorder_levels(configuration_headers)
-            data_quantiles = data_quantiles.reorder_levels(index_for_data_set)
+            if make_quantiles: data_quantiles = data_quantiles.reorder_levels(index_for_data_set)
             
             ## Append the data quantiles for the current data set to the list
             data_set[sheet_name].append(individual_data_set)
-            quantiles_for_data_set[sheet_name].append(data_quantiles)
+            if make_quantiles: quantiles_for_data_set[sheet_name].append(data_quantiles)
         
         ## Concatenate (combine) all the data sets for the current configuration
         combined_data_sets[configuration][sheet_name] = pandas.concat(data_set[sheet_name]).astype(float)
         
         ## Take the average of the quantiles over the all the individual data sets for the current configuration
-        combined_data_sets_quantiles[sheet_name].append(pandas.concat(quantiles_for_data_set[sheet_name]).astype(float).groupby(index_for_data_set).mean())
+        if make_quantiles: combined_data_sets_quantiles[sheet_name].append(pandas.concat(quantiles_for_data_set[sheet_name]).astype(float).groupby(index_for_data_set).mean())
 
 for sheet_name in ["Globals", "Cat Plans", "Partial Plans", "Concat Step-wise", "Concat Index-wise"]:
-    fully_combined_data_sets[sheet_name] = pandas.concat(combined_data_sets[configuration][sheet_name] for configuration in combined_data_sets).reset_index()
+    to_concat = [combined_data_sets[configuration][sheet_name]
+                 for configuration in combined_data_sets
+                 if (sheet_name not in ["Partial Plans", "Concat Index-wise"]
+                     or "classical" not in configuration)]
+    if to_concat:
+        fully_combined_data_sets[sheet_name] = pandas.concat(to_concat).reset_index()
 
 #########################################################################################################################################################################################
 ######## Generate the seven-number summaries for plotting results - (all the quantiles, the IQR and the range)
@@ -466,15 +481,13 @@ summary_statistics_cat_plans: list[str] = ["GT", "ST", "OT",
 ##      - The outer columns headers are the median and IQR,
 ##      - The inner column headers are the "global summary statistics"; (quality score, time score, and grade),
 ##      - The row index headers are the combined configuration headers, sorted according to user input.
-summary_globals: pandas.DataFrame = quantiles_globals.query("statistic in ['IQR', 0.5]")[summary_statistics_globals].unstack("statistic").stack(0).unstack(-1)
-summary_cat_plans: pandas.DataFrame = quantiles_cat_plans.query("statistic in ['IQR', 0.5]")[summary_statistics_cat_plans].unstack("statistic").stack(0).unstack(-1)
+summary_globals: pandas.DataFrame = quantiles_globals.query("statistic in [0.5, 'IQR']")[summary_statistics_globals].unstack("statistic").stack(0).unstack(-1)
+summary_cat_plans: pandas.DataFrame = quantiles_cat_plans.query("statistic in [0.5, 'IQR']")[summary_statistics_cat_plans].unstack("statistic").stack(0).unstack(-1)
 
 ## Reorder the values in the summary statistic level of the columns index
 ##      - https://stackoverflow.com/questions/11194610/how-can-i-reorder-multi-indexed-dataframe-columns-at-a-specific-level
-summary_globals = summary_globals.reindex(columns=pandas.MultiIndex.from_product([summary_statistics_globals, ["IQR", 0.5]]))
-summary_cat_plans = summary_cat_plans.reindex(columns=pandas.MultiIndex.from_product([summary_statistics_globals, ["IQR", 0.5]]))
-# summary_globals = summary_globals.reindex(columns=summary_globals.columns.reindex(summary_statistics_globals, level=1)[0]) TODO
-# summary_cat_plans = summary_cat_plans.reindex(columns=summary_cat_plans.columns.reindex(summary_statistics_cat_plans, level=1)[0])
+summary_globals.columns = summary_globals.columns.swaplevel(0, 1)
+summary_cat_plans.columns = summary_cat_plans.columns.swaplevel(0, 1)
 
 summary_globals = summary_globals.reorder_levels(HEADER_ORDER, axis=0)
 summary_cat_plans = summary_cat_plans.reorder_levels((*HEADER_ORDER, "AL"), axis=0)
@@ -505,9 +518,13 @@ for comparison_statistic, comparison_function in global_comparison_statistics.it
     print(f"\nProcessing {comparison_statistic}...")
     
     for statistic in summary_statistics_globals:
-        comparison = comparison_function(*[combined_data_sets[configuration]["Globals"][statistic].to_list()
-                                           for configuration in combined_data_sets])
-        global_comparison_matrix.loc[comparison_statistic,statistic] = comparison.pvalue
+        try:
+            comparison = comparison_function(*[combined_data_sets[configuration]["Globals"][statistic].to_list()
+                                               for configuration in combined_data_sets])
+            pvalue = comparison.pvalue
+        except ValueError:
+            pvalue = 0.0
+        global_comparison_matrix.loc[comparison_statistic,statistic] = pvalue
 
 ## Construct a dataframe that acts as a matrix of all possible pair-wise configuration comparisons;
 ##      - There is a multi-index on both the rows and columns to compare all pair-wise differences,
@@ -547,9 +564,11 @@ for comparison_statistic, comparison_function in pair_wise_comparison_statistics
         
         ## Compare all the summary statistics
         for statistic in summary_statistics_globals:
-            comparison = comparison_function(combined_data_sets[row_configuration]["Globals"][statistic].to_list(),
-                                             combined_data_sets[column_configuration]["Globals"][statistic].to_list())
-            pair_wise_data_set_comparison_matrix.loc[(*row_configuration, comparison_statistic), (*column_configuration, statistic)] = comparison.pvalue
+            row_ = combined_data_sets[row_configuration]["Globals"][statistic].to_list()
+            column_ = combined_data_sets[column_configuration]["Globals"][statistic].to_list()
+            if len(row_) == len(column_):
+                comparison = comparison_function(row_, column_)
+                pair_wise_data_set_comparison_matrix.loc[(*row_configuration, comparison_statistic), (*column_configuration, statistic)] = comparison.pvalue
 
 pair_wise_data_set_comparison_matrix = pair_wise_data_set_comparison_matrix.reorder_levels((*HEADER_ORDER, "comparison"), axis=0)
 
@@ -595,12 +614,12 @@ summary_cat_plans.to_excel(writer, sheet_name="Cat-Plan 2N Minimal Summary")
 worksheet = writer.sheets["Globals 2N Score Summary"]
 min_row, min_col = 2, len(configuration_headers) + 1
 max_row, max_col = summary_globals.shape
-worksheet.condition_format(min_row, min_col, min_row + max_row - 1, min_col + max_col - 1,
-                           {"type" : "3_color_scale",
-                            "max_value" : 1.0,
-                            "min_value" : 0.0,
-                            "max_color" : "red",
-                            "min_color" : "green"})
+worksheet.conditional_format(min_row, min_col, min_row + max_row - 1, min_col + max_col - 1,
+                             {"type" : "3_color_scale",
+                              "max_value" : 1.0,
+                              "min_value" : 0.0,
+                              "max_color" : "red",
+                              "min_color" : "green"})
 
 ################################################################
 ######## Overall quantiles over combined data sets for each configuration
@@ -682,6 +701,10 @@ summary_globals.to_latex(f"{cli_args.output_path}_Globals_2NSummary.tex")
 summary_cat_plans.to_latex(f"{cli_args.output_path}_CatPlan_2NSummary.tex")
 pair_wise_data_set_comparison_matrix.to_latex(f"{cli_args.output_path}_TestOfSignificance.tex")
 
+summary_globals.to_csv(f"{cli_args.output_path}_Globals_2NSummary.dat", sep=" ", line_terminator="\n", index=True)
+summary_cat_plans.to_csv(f"{cli_args.output_path}_CatPlan_2NSummary.dat", sep=" ", line_terminator="\n", index=True)
+pair_wise_data_set_comparison_matrix.to_csv(f"{cli_args.output_path}_TestOfSignificance.dat", sep=" ", line_terminator="\n", index=True)
+
 ################################################################################################################################
 ################################################################################################################################
 ######## Score summary scatter graphs
@@ -689,43 +712,66 @@ pair_wise_data_set_comparison_matrix.to_latex(f"{cli_args.output_path}_TestOfSig
 # Points colour for planning mode
 # Points marker type for problem number
 
-
+# sns.jointplot(data=fully_combined_data_sets["Globals"], x="TI_SCORE", y="QL_SCORE", hue="planning_mode", xlim=(0, 1), ylim=(0, 1), kind="scatter")
 
 ################################################################################################################################
 ################################################################################################################################
 ######## Graphs defining plan quality
-figure_quality_abs_levelwise_bars, axis_quality_abs_levelwise_bars = pyplot.subplots()          # Median (over all runs) of cat plans TODO Or we box plot.
+figure_quality_abs_levelwise_bars, axis_quality_abs_levelwise_bars = pyplot.subplots()          # Median (over all runs) of cat plans
 figure_quality_score_levelwise_bars, axis_quality_score_levelwise_bars = pyplot.subplots()      # Median (over all runs) of cat plans
 figure_quality_abs_globals_bars, axis_quality_abs_globals_bars = pyplot.subplots()              # Median (over all runs) of globals
 figure_quality_score_globals_bars, axis_quality_score_globals_bars = pyplot.subplots()          # Median (over all runs) of globals
-figure_quality_abs_global_histogram, axis_quality_abs_global_histogram = pyplot.subplots()      # All runs of globals TODO Or we can use kernel density estimation.
+figure_quality_abs_global_histogram, axis_quality_abs_global_histogram = pyplot.subplots()      # All runs of globals
 figure_quality_score_global_histogram, axis_quality_score_global_histogram = pyplot.subplots()  # All runs of globals
+
+cat_plans_length_max = fully_combined_data_sets["Cat Plans"]["LE"].max()
+globals_length_max = fully_combined_data_sets["Globals"]["BL_LE"].max()
 
 ## Absolute plan length and number of actions level-wise bar plot;
 ##      - x axis is the levels (one bar per configuration), y axis is quantity of actions or length of plan (median over all runs).
-
-sns.boxplot(data=fully_combined_data_sets["Cat Plans"], x="AL", y="LE", hue="problem", ax=axis_quality_abs_levelwise_bars)
+##      - The break-on-x-globals has to be a seperate graph for the level-wise plots since we are already using the x-axis for the abstraction level.
+##      - TODO: This just produces way too many graphs if we split each problem onto a different graph.
+sns.barplot(data=fully_combined_data_sets["Cat Plans"],
+            ax=axis_quality_abs_levelwise_bars,
+            x="AL", y="LE", hue=cli_args.break_second)
+axis_quality_abs_levelwise_bars.set_title(f"Average plan length per level for each {cli_args.break_second} over all {cli_args.break_first}s")
+# figure_quality_abs_levelwise_bars.savefig(f"{cli_args.output_path}_AbsolutePlanLengthAndNumberOfActionsLevelWiseBarPlot.png")
 
 ## Plan quality score level-wise bar plot;
 ##      - x axis is the levels (one bar per configuration), y axis is the plan quality score [0.0-1.0] (median over all runs).
-
-
+sns.barplot(data=fully_combined_data_sets["Cat Plans"],
+            ax=axis_quality_score_levelwise_bars,
+            x="AL", y="QL_SCORE", hue=cli_args.break_second)
+axis_quality_score_levelwise_bars.set_title(f"Average plan quality score per level for each {cli_args.break_second} over all {cli_args.break_first}s")
 
 ## Absolute plan length and number of actions global bar plot;
-
-
+sns.barplot(data=fully_combined_data_sets["Globals"],
+            ax=axis_quality_abs_globals_bars,
+            x=cli_args.break_first, y="BL_LE", hue=cli_args.break_second)
+axis_quality_abs_globals_bars.set_title(f"Average ground-plan length for each {cli_args.break_first} and {cli_args.break_second}")
 
 ## Plan quality score global bar plot;
+sns.barplot(data=fully_combined_data_sets["Globals"],
+            ax=axis_quality_score_globals_bars,
+            x=cli_args.break_first, y="QL_SCORE", hue=cli_args.break_second)
+axis_quality_score_globals_bars.set_title(f"Average ground-plan quality score for each {cli_args.break_first} and {cli_args.break_second}")
 
-
+#########################
+## Historgram plots:
+##      - These doen't have a `y` data, since that is the count or percent of each bin.
+##      - https://seaborn.pydata.org/generated/seaborn.histplot.html
 
 ## Absolute plan length and number of actions global histogram plot;
-
-
+sns.histplot(data=fully_combined_data_sets["Globals"],
+             ax=axis_quality_abs_global_histogram,
+             x="BL_LE", hue=cli_args.break_first, stat="percent", element="step", kde=True, cbar=True)
+axis_quality_abs_global_histogram.set_title(f"Average ground-plan length histogram for each {cli_args.break_first} over all {cli_args.break_second}s")
 
 ## Plan quality score global histogram plot;
-
-
+sns.histplot(data=fully_combined_data_sets["Globals"],
+             ax=axis_quality_score_global_histogram,
+             x="QL_SCORE", hue=cli_args.break_first, stat="percent", element="step", kde=True, cbar=True)
+axis_quality_score_global_histogram.set_title(f"Average ground-plan quality score histogram for each {cli_args.break_first} over all {cli_args.break_second}s")
 
 ################################################################################################################################
 ################################################################################################################################
@@ -739,12 +785,15 @@ figure_time_score_histogram, axis_time_score_histogram = pyplot.subplots() # All
 ## Raw planning time per abstraction level;
 ##      - Solving time, grounding time, total time, yield time, completion time (this might need to be logarithmicly scaled).
 ##      - Combine as series on same plot.
-# set_bars(5)
-# axis_time_raw_bars.bar(als - (bar_width * 2), width=bar_width, **get_cat_plans("GT"), label="Median Grounding Time")
-# axis_time_raw_bars.bar(al_range - bar_width, quantiles_cat_plans["ST"], bar_width, yerr=get_std("ST"), capsize=5, label="Mean Solving")
-# axis_time_raw_bars.bar(al_range, means["TT"], bar_width, yerr=get_std("TT"), capsize=5, label="Mean Total")
-# axis_time_raw_bars.bar(al_range + bar_width, quantiles_cat_plans["LT"], bar_width, yerr=get_std("LT"), capsize=5, label="Mean Latency")
-# axis_time_raw_bars.bar(al_range + (bar_width * 2), quantiles_cat_plans["CT"], bar_width, yerr=get_std("CT"), capsize=5, label="Mean Completion")
+sns.barplot(data=fully_combined_data_sets["Cat Plans"],
+            ax=axis_time_raw_bars,
+            x="AL", y="TT", hue=cli_args.break_second, log_scale=True)
+axis_time_raw_bars.set_title(f"Average planning time per level for each {cli_args.break_second} over all {cli_args.break_first}s")
+
+## Time scatter plot;
+sns.jointplot(data=fully_combined_data_sets["Globals"],
+              ax=axis_time_scatter,
+              x="TI_SCORE", y="QL_SCORE", hue="planning_mode", xlim=(0, 1), ylim=(0, 1), kind="scatter")
 
 ## Aggregate ground-level planning times bar chart;
 ##      - Latency time, absolution time, average non-initial wait time, average minimum execution time per action.
