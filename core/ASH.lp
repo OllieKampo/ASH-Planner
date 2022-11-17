@@ -408,7 +408,7 @@ unachieved_sgoals(AL + 1, I_SG, step) :- current_sub_goal_index(AL + 1, I_SG, st
                                          action(AL + 1, _, _, ROBOT, A), fluent(AL + 1, inertial, F, V),
                                          pl(AL).
 
-%% Sequential sub-goal stage achievement: A current sub-goal is propagated to the next time step if it has not yet been satisifed.
+%% Sequential sub-goal stage achievement: A current sub-goal is propagated to the next time step if it has not yet been satisfied.
 current_sub_goal(AL + 1, ROBOT, A, F, V, I_SG, step) :- sub_goal(AL + 1, ROBOT, A, F, V, I_SG),
                                                         current_sub_goal(AL + 1, ROBOT, A, F, V, I_SG, step - 1),
                                                         not sub_goal_satisfied(AL + 1, ROBOT, A, F, V, I_SG, step - 1),
