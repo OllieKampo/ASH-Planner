@@ -823,20 +823,20 @@ precond(AL, ROBO, lift(DESC, OBJ), grasping(DESC), OBJ, true) :- OBJ != SURFACE,
 %%      - On a table,
 %%      - On a descenant surface of a table.
 holds(AL, tower_base(BASE, TABLE), true, t) :- holds(AL, on(BASE), TABLE, t),
-                                        fluent(AL, defined, tower_base(BASE, TABLE), true),
-                                        fluent(AL, inertial, on(BASE), TABLE),
-                                        insta_of(AL, block, BASE),
-                                        insta_of(AL, table, TABLE),
-                                        sl(AL).
+                                               fluent(AL, defined, tower_base(BASE, TABLE), true),
+                                               fluent(AL, inertial, on(BASE), TABLE),
+                                               insta_of(AL, block, BASE),
+                                               insta_of(AL, table, TABLE),
+                                               sl(AL).
 
 holds(AL, tower_base(BASE, TABLE), true, t) :- holds(AL, on(BASE), SURFACE, t),
-                                        fluent(AL, defined, tower_base(BASE, TABLE), true),
-                                        fluent(AL, inertial, on(BASE), SURFACE),
-                                        desce_of(AL, TABLE, SURFACE),
-                                        insta_of(AL, block, BASE),
-                                        insta_of(AL, table, TABLE),
-                                        insta_of(AL, surface, SURFACE),
-                                        sl(AL).
+                                               fluent(AL, defined, tower_base(BASE, TABLE), true),
+                                               fluent(AL, inertial, on(BASE), SURFACE),
+                                               desce_of(AL, TABLE, SURFACE),
+                                               insta_of(AL, block, BASE),
+                                               insta_of(AL, table, TABLE),
+                                               insta_of(AL, surface, SURFACE),
+                                               sl(AL).
 
 %% A block is in a tower if it is either;
 %%      - The base of the tower,
