@@ -26,54 +26,65 @@ import functools
 import itertools
 import os
 import sys
-from typing import Any, Optional, Sequence
-import numpy
+from typing import Any, Optional, Sequence, Union
 import pandas
-# import pandas.io.formats.style as pandas_style
 import glob
 import argparse
 import tqdm
 import xlsxwriter
-import subprocess
-import matplotlib
-from matplotlib import pyplot
-import tikzplotlib
+from matplotlib import pyplot, figure
+import tikzplotlib ## https://github.com/texworld/tikzplotlib
 import seaborn as sns
 import warnings
-warnings.simplefilter(action='ignore', category=pandas.errors.PerformanceWarning)
+warnings.simplefilter(action="ignore", category=pandas.errors.PerformanceWarning)
+warnings.simplefilter(action="ignore", category=FutureWarning)
+warnings.simplefilter(action="ignore", category=UserWarning)
+warnings.filterwarnings(action="error", message=".*catastrophic cancellation.*")
 
 ## Global data set comparison statistics;
 ##      - Problem with global comparisons, are that affect of one sample is not being seperable may make two others, that are statistically significant, seem like they are not.
-##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kruskal.html
-##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.friedmanchisquare.html
-##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.fligner.html
+##      - The Kruskal-Wallis H-test tests the null hypothesis that the population median of all of the groups are equal (it is a non-parametric version of ANOVA): https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kruskal.html
+##      - The Friedman test tests the null hypothesis that repeated samples of the same individuals have the same distribution: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.friedmanchisquare.html
+##      - Fligner’s test tests the null hypothesis that all input samples are from populations with equal variances: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.fligner.html
 from scipy.stats import kruskal, friedmanchisquare, fligner
 
 ## Pair-wise data set comparison statistics;
 ##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ranksums.html
 ##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.mannwhitneyu.html
 ##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html
+##      - Test the null hypothesis that two or more samples come from populations with the same median: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.median_test.html
 ##      - https://stats.stackexchange.com/questions/558814/actual-difference-between-the-statistic-results-from-scipy-stats-ranksums-and-sc
 ##      - https://stats.stackexchange.com/questions/91034/what-is-the-difference-between-the-wilcoxon-srank-sum-test-and-the-wilcoxons-s
 ##          - Use the Mann-Whitney-Wilcoxon ranked sum test (ranksums) when the data are not paired (independent),
 ##            e.g. comparing performance of differnt configurations on different problems.
 ##          - Use the Mann-Whitney-Wilcoxon signed rank test (wilcoxon) when the data are paired/related,
 ##            e.g. comparing performance of different configurations on the same problem, or the same configuration for different problems.
-from scipy.stats import ranksums, wilcoxon
+from scipy.stats import ranksums, wilcoxon, median_test
 
 ## Individual data set statistics;
-##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.normaltest.html
-##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.skewtest.html
-##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kurtosis.html
-##      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kurtosistest.html
-from scipy.stats import normaltest, skewtest, kurtosis, kurtosistest
+##      - Test whether a sample differs from a normal distribution: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.normaltest.html
+##      - Test whether the skew is different from the normal distribution: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.skewtest.html
+##      - Test whether a dataset has normal kurtosis: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kurtosistest.html
+from scipy.stats import normaltest, skewtest, kurtosistest
+
+## Tests of colleration;
+##      - The Pearson correlation coefficient measures the linear relationship between two datasets,
+##        a test of the null hypothesis that the distributions underlying the samples are uncorrelated and normally distributed (the alternative being that the correlation is nonzero assuming alternative="two-sided"):
+##        https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.pearsonr.html
+##      - The Spearman rank-order correlation coefficient is a nonparametric measure of the monotonicity of the relationship between two datasets,
+##        unlike the Pearson correlation, the Spearman correlation does not assume that both datasets are normally distributed:
+##        https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.spearmanr.html
+##      - Use non-linear least squares to fit a function, f, to data:
+##        https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html
+from scipy.stats import pearsonr, spearmanr
+from scipy.optimize import curve_fit
 
 #########################################################################################################################################################################################
 ######## Build the raw data sets
 #########################################################################################################################################################################################
 
 def mapping_argument_factory(key_choices: Optional[list[str]] = None, allow_multiple_values: bool = True) -> type:
-    """Special action for storing arguments of parameters given as a mapping."""   
+    """Construct a special action for storing arguments of parameters given as a mapping."""   
     
     def __call__(self, parser: argparse.ArgumentParser, namespace: argparse.Namespace,
                  values: Sequence[str], option_string: Optional[str] = None):
@@ -97,7 +108,7 @@ def mapping_argument_factory(key_choices: Optional[list[str]] = None, allow_mult
                         _values[key] = [value]
                     else: _values[key] = value
         except ValueError as error:
-            print(f"Error during parsing filter argument '{option_string}' for key-value mapping {key_value}: {error}.")
+            print(f"Error during parsing mapping argument '{option_string}' for key-value mapping '{key_value}': {error}.")
             raise error
         setattr(namespace, self.dest, _values)
     
@@ -107,20 +118,28 @@ def mapping_argument_factory(key_choices: Optional[list[str]] = None, allow_mult
 
 ## Command line arguments parser
 parser = argparse.ArgumentParser()
+bool_options = lambda input: not input.casefold() == "false"
 parser.add_argument("input_paths", nargs="*", default=["./"], type=str, help="Paths to the input directory or file(s).")
 parser.add_argument("-out", "--output_path", required=True, type=str, help="Path to the output directory.")
-parser.add_argument("-p", "--pause", default=True, type=lambda input: not input.casefold() == "false", help="Pause after each phase.")
+parser.add_argument("-p", "--pause", default=True, type=bool_options, help="Pause after each phase.")
 parser.add_argument("-filter", nargs="+", default=None, action=mapping_argument_factory(), type=str,
                     metavar="header=value_1,value_2,[...]value_n", help="Filter the data set by the given header and values.")
-parser.add_argument("-combine", "--combine_on", nargs="*", default=[], type=str, help="Combine data sets that have the same value for the given headers.")
-parser.add_argument("-order", "--order_index_headers", nargs="*", default=[], type=str, help="Order the data sets by the given headers.")
-parser.add_argument("-sort", "--sort_index_values", nargs="*", default=[], type=str, help="Sort the data sets by the given values.")
+parser.add_argument("-combine", "--combine_on", nargs="*", default=[], type=str, help="Combine data sets that have the same value for the given headers, by removing the given headers, the result is an average over the given headers.")
+parser.add_argument("-order", "--order_index_headers", nargs="*", default=[], type=str, help="Specify the order of configuration headers.")
+parser.add_argument("-sort", "--sort_index_values", nargs="*", default=[], type=str, help="Sort the data by the values of the given configuration headers.")
 parser.add_argument("-diff", "--compare_only_different", nargs="*", default=[], type=str, help="Compare only data sets that have different values for the given headers.")
 parser.add_argument("-same", "--compare_only_same", nargs="*", default=[], type=str, help="Compare only data sets that have the same values for the given headers.")
-parser.add_argument("-breakf", "--break-first", default="problem", type=str, help="Break the x-axis of all globals charts on the given header. " ## Always abstraction level for level-wise results.
-                                                                                         "There will be an x-axis label for each unique value of the given header.")
-parser.add_argument("-breaks", "--break-second", default="planning_mode", type=str, help="Break the bars of all bar charts on the given header. "
-                                                                                              "There will be a bar for each x-axis label for each unique value of the given header.")
+parser.add_argument("-graphs", "--make_plots", default=True, type=bool_options, help="Make plots of the data.")
+parser.add_argument("-show", "--show_plots", default=True, type=bool_options, help="Show the plots.")
+parser.add_argument("-breakf", "--break_first", default="planning_mode", type=str, help="Break the style or colour of all chart plots on the given header. "
+                                                                                        "For example, for a bar chart, there will be a bar for each x-axis label for each unique value of the given header.")
+parser.add_argument("-breaks", "--break_second", default="problem", type=str, help="For globals plot the given header over the x-axis."
+                                                                                   "There will be an x-axis label for each unique value of the given header."
+                                                                                   "For level-wise plots, the x-axis is the abstraction level, so the unique values for the header are broken into seperate plots on the same figure.")
+parser.add_argument("-actions", "--include_actions", default=True, type=bool_options, help="Include the actions in the tables and plots.")
+parser.add_argument("-overhead", "--include_overhead", default=True, type=bool_options, help="Include the overhead time in the tables and plots.")
+parser.add_argument("-percent_classical", "--include_percent_classical", default=True, type=bool_options, help="Include the raw time values are a percent of the classical time for the same problem in the tables and plots. This fails if no classical configurations are included or the data is combined on the planning mode or problem.")
+parser.add_argument("-problem_wise", "--include_problem_wise_breakdown", default=True, type=bool_options, help="Include the problem-wise data in the tables and plots. Fails if any data set included is classical and therefore contains no partial-plans.")
 cli_args: argparse.Namespace = parser.parse_args()
 
 def get_option_list(option_list: list[str]) -> str:
@@ -142,6 +161,27 @@ print("Order of index headers:\n\t" + get_option_list(cli_args.order_index_heade
 print("Sort index values by:\n\t" + get_option_list(cli_args.sort_index_values), end="\n\n")
 print("Compare only data sets with different:\n\t" + get_option_list(cli_args.compare_only_different), end="\n\n")
 print("Compare only data sets with same:\n\t" + get_option_list(cli_args.compare_only_same), end="\n\n")
+print("Make plots: " + str(cli_args.make_plots), end="\n\n")
+print("Show plots: " + str(cli_args.show_plots), end="\n\n")
+print("Break first on:\n\t" + cli_args.break_first, end="\n\n")
+print("Break second on:\n\t" + cli_args.break_second, end="\n\n")
+
+if (set(cli_args.order_index_headers) | set(cli_args.sort_index_values)) & set(cli_args.combine_on):
+    print("Error: The headers given for the options 'order_index_headers' or 'sort_index_values' must not be the same as given for the option 'combine_on'.")
+    sys.exit(1)
+elif cli_args.combine_on == ["all"] \
+    and ((set(cli_args.order_index_headers) | set(cli_args.sort_index_values)) \
+         & (set(cli_args.compare_only_different) | set(cli_args.compare_only_same) | {cli_args.break_first, cli_args.break_second})):
+    print("Error: If the option 'combine_on' is set to 'all', the headers given for the options 'order_index_headers' and 'sort_index_values' must be one of those given for 'compare_only_different', 'compare_only_same', 'break_first' or 'break_second'.")
+    sys.exit(1)
+
+if (set(cli_args.compare_only_different) | set(cli_args.compare_only_same)) & set(cli_args.combine_on):
+    print("Error: The headers given for the options 'compare_only_different' or 'compare_only_same' must not be the same as given for the option 'combine_on'.")
+    sys.exit(1)
+
+if {cli_args.break_first, cli_args.break_second} & set(cli_args.combine_on):
+    print("Error: The headers given for the options 'break_first' and 'break_second' must not be the same as given for the option 'combine_on'.")
+    sys.exit(1)
 
 if cli_args.pause:
     print("Your original files will NOT be modified.")
@@ -171,12 +211,19 @@ configuration_headers: list[str] = ["problem",          # The problem instance; 
                                     "blend_quantity",   # The blend quantity; a number.
                                     "online_method"]    # The online method; ground-first, complete-first, hybrid.
 
-for combine in cli_args.combine_on:
-    configuration_headers.remove(combine)
+if cli_args.combine_on == ["all"]:
+    _new_configuration_headers: list[str] = []
+    allowed_headers: set[str] = set(cli_args.compare_only_different) | set(cli_args.compare_only_same) | {cli_args.break_first, cli_args.break_second}
+    for header in configuration_headers:
+        if header in allowed_headers:
+            _new_configuration_headers.append(header)
+    configuration_headers = _new_configuration_headers
+else:
+    for combine in cli_args.combine_on:
+        configuration_headers.remove(combine)
 
 def extract_configuration(excel_file_name: str) -> Optional[list[str]]:
     """Extract the data set configuration for a given excel file name."""
-    
     configuration_dict: dict[str, str] = {}
     raw_config: str = os.path.basename(excel_file_name).strip("ASH_Excel_").lower().split(".")[0]
     terms: list[str] = raw_config.split("_")
@@ -197,9 +244,9 @@ def extract_configuration(excel_file_name: str) -> Optional[list[str]]:
         
     else:
         index: int = 1
+        
         def get_term(matches: Optional[list[str]] = None, default: str = "NONE") -> str:
-            """Function for getting hierarchical conformance refinement planning configuration terms from file names."""
-            
+            """Get a planning configuration term from the file name."""
             ## Move to the next term index
             nonlocal index
             index += 1
@@ -380,6 +427,10 @@ if cli_args.pause:
 ######## Process the raw data sets
 #########################################################################################################################################################################################
 
+## Main dataframes storing the processed data;
+##      - The first combines each data set that fits a given configuration into a single dataframe for each sheet,
+##      - The second combines all the configurations into a single dataframe for each sheet,
+##      - The third takes the mean over all data sets in the configuartion of the quantiles over each run of each data set and makes a list of the different configurations (these are then concatenated below to form the seven-number summaries).
 combined_data_sets: dict[tuple[str, ...], dict[str, pandas.DataFrame]] = defaultdict(dict)
 fully_combined_data_sets: dict[str, pandas.DataFrame] = {}
 combined_data_sets_quantiles: dict[str, list[pandas.DataFrame]] = defaultdict(list)
@@ -450,13 +501,27 @@ for configuration, combined_data_set in tqdm.tqdm(data_sets.items()):
         ## Take the average of the quantiles over the all the individual data sets for the current configuration
         if make_quantiles: combined_data_sets_quantiles[sheet_name].append(pandas.concat(quantiles_for_data_set[sheet_name]).astype(float).groupby(index_for_data_set).mean())
 
+#########################################################################################################################################################################################
+######## Generate the fully combined data sets
+#########################################################################################################################################################################################
+
 for sheet_name in ["Globals", "Cat Plans", "Partial Plans", "Concat Step-wise", "Concat Index-wise"]:
     to_concat = [combined_data_sets[configuration][sheet_name]
                  for configuration in combined_data_sets
-                 if (sheet_name not in ["Partial Plans", "Concat Index-wise"]
-                     or "classical" not in configuration)]
+                 if ("classical" not in configuration
+                     or sheet_name not in ["Partial Plans", "Concat Index-wise"])]
     if to_concat:
         fully_combined_data_sets[sheet_name] = pandas.concat(to_concat).reset_index()
+
+## Calculate "smoothness" of expansion factor across the hierarchy;
+##      - Calculate over "Cat Plans" and insert into "Globals",
+##      - Average expansion factor: af = root(top-level - 1, ground-level plan length / top-level plan length)
+##      - Smoothest descent plan length: sdpl = top-level plan length * af ^ (top-level - level)
+##      - Plan length percentage difference: pld = (plan length / sdpl) - 1
+##      - Hierarchical smoothness score: hs = statistics.mean(abs(pld) for level in levels) / af
+##      - Adjusted depth of plan length per level: adpl = top-level - math.log(plan length at level / top-level plan length, af)
+
+## TODO
 
 #########################################################################################################################################################################################
 ######## Generate the seven-number summaries for plotting results - (all the quantiles, the IQR and the range)
@@ -471,26 +536,36 @@ al_range = range(1, quantiles_cat_plans.index.get_level_values("AL").max() + 1)
 ######## Generate the two-number summaries for tabulating results - (The Median and the IQR)
 #########################################################################################################################################################################################
 
-## The minimal summary statistics to compare for globals
+## The minimal summary statistics to compare
 summary_statistics_globals: list[str] = ["QL_SCORE", "TI_SCORE", "GRADE"]
-summary_statistics_cat_plans: list[str] = ["GT", "ST", "OT",
+summary_statistics_ground_level: list[str] = ["GT", "ST", "LT", "CT", "LE"] ## TODO: This is a 1N summary. Add options: --include_actions, --include_overhead_time
+summary_statistics_cat_plans: list[str] = ["LE", "AC", "CF", "CP_EF_L",
+                                           "GT", "ST", "OT",
                                            "GT_POTT", "ST_POTT", "OT_POTT",
-                                           "TT", "LT", "CT"]
+                                           "TT", "LT", "WT", "MET", "CT"]
 
 ## Construct a dataframe including just the medians and IQR for all data sets (combined configurations);
+##      - The row index headers are the combined configuration headers, sorted according to user input,
 ##      - The outer columns headers are the median and IQR,
-##      - The inner column headers are the "global summary statistics"; (quality score, time score, and grade),
-##      - The row index headers are the combined configuration headers, sorted according to user input.
-summary_globals: pandas.DataFrame = quantiles_globals.query("statistic in [0.5, 'IQR']")[summary_statistics_globals].unstack("statistic").stack(0).unstack(-1)
-summary_cat_plans: pandas.DataFrame = quantiles_cat_plans.query("statistic in [0.5, 'IQR']")[summary_statistics_cat_plans].unstack("statistic").stack(0).unstack(-1)
+##      - For globals; The inner column headers are the "global summary statistics"; (quality score, time score, and grade),
+##      - For cat plans; The inner column headers are the abstraction levels, and the "cat plan summary statistics".
+summary_globals: pandas.DataFrame = quantiles_globals.query("statistic in [0.5, 'IQR']")[summary_statistics_globals].unstack("statistic").reorder_levels(HEADER_ORDER, axis=0)
+summary_cat_plans: pandas.DataFrame = quantiles_cat_plans.query("statistic in [0.5, 'IQR']")[summary_statistics_cat_plans].unstack("statistic").reorder_levels((*HEADER_ORDER, "AL"), axis=0)
+summary_globals_1N_stacked = quantiles_globals.query("statistic == 0.5")[summary_statistics_globals].droplevel("statistic").reorder_levels(HEADER_ORDER, axis=0).unstack(cli_args.break_second).swaplevel(0, 1, axis=1).sort_index(axis=1, level=1)
 
-## Reorder the values in the summary statistic level of the columns index
-##      - https://stackoverflow.com/questions/11194610/how-can-i-reorder-multi-indexed-dataframe-columns-at-a-specific-level
-summary_globals.columns = summary_globals.columns.swaplevel(0, 1)
-summary_cat_plans.columns = summary_cat_plans.columns.swaplevel(0, 1)
+## Construct a dataframe that groups the fully combined data based on the break headers and the run number.
+fully_combined_data_sets_grouped = fully_combined_data_sets["Cat Plans"].groupby([cli_args.break_first, cli_args.break_second, "RU"])
+fully_combined_data_sets_ground_level_grouped = fully_combined_data_sets["Cat Plans"].query("AL == 1").groupby([cli_args.break_first, cli_args.break_second])
 
-summary_globals = summary_globals.reorder_levels(HEADER_ORDER, axis=0)
-summary_cat_plans = summary_cat_plans.reorder_levels((*HEADER_ORDER, "AL"), axis=0)
+## Construct a datafrace containing the sum of the grounding, solving, overhead, and total times to the ground level.
+fully_combined_data_sets_cat_plans_time_sums = fully_combined_data_sets_grouped[["GT", "ST", "OT", "TT"]].sum()
+for time_type in ["GT", "ST", "OT"]:
+    fully_combined_data_sets_cat_plans_time_sums[f"{time_type}_POTT"] = fully_combined_data_sets_cat_plans_time_sums[time_type] / fully_combined_data_sets_cat_plans_time_sums["TT"]
+
+## Construct a dataframge containing the raw ground-level statistics.
+summary_raw_ground_level: pandas.DataFrame = pandas.merge(fully_combined_data_sets_cat_plans_time_sums.droplevel("RU").groupby([cli_args.break_first, cli_args.break_second])[["GT", "ST"]].median(), fully_combined_data_sets_ground_level_grouped[["LT", "WT", "MET", "CT", "LE"]].median(), left_index=True, right_index=True)
+summary_raw_ground_level = summary_raw_ground_level.reorder_levels(HEADER_ORDER, axis=0)
+summary_raw_ground_level_stacked = summary_raw_ground_level[["GT", "ST", "LT", "CT", "LE"]].unstack(cli_args.break_second).swaplevel(0, 1, axis=1).sort_index(axis=1, level=1)
 
 #########################################################################################################################################################################################
 ######## Tests of statistical significance
@@ -504,6 +579,8 @@ summary_cat_plans = summary_cat_plans.reorder_levels((*HEADER_ORDER, "AL"), axis
 ##      - https://www.simplypsychology.org/p-value.html#:~:text=A%20p%2Dvalue%20less%20than,and%20accept%20the%20alternative%20hypothesis.
 ##      - https://blog.minitab.com/en/understanding-statistics/what-can-you-say-when-your-p-value-is-greater-than-005
 
+print("\nProcessing global comparison statistics...")
+
 ## Global comparisons (comparisons simultaneously over all data sets)
 global_comparison_statistics = {"Score Kruskal" : kruskal,
                                 "Score Friedman Chi-Square" : friedmanchisquare,
@@ -511,11 +588,11 @@ global_comparison_statistics = {"Score Kruskal" : kruskal,
 global_comparison_matrix = pandas.DataFrame(index=list(global_comparison_statistics.keys()),
                                             columns=summary_statistics_globals)
 
-## The rows should have the compare only same on them;
+## The rows have the compare only same on them;
 ##      - So we can say, for configurations with the same X, then there is a significant difference between different Y,
 ##      - For a given problem, there is a significant difference in the performance by changing search mode
 for comparison_statistic, comparison_function in global_comparison_statistics.items():
-    print(f"\nProcessing {comparison_statistic}...")
+    print(f"\t- Processing {comparison_statistic}...")
     
     for statistic in summary_statistics_globals:
         try:
@@ -526,21 +603,7 @@ for comparison_statistic, comparison_function in global_comparison_statistics.it
             pvalue = 0.0
         global_comparison_matrix.loc[comparison_statistic,statistic] = pvalue
 
-## Construct a dataframe that acts as a matrix of all possible pair-wise configuration comparisons;
-##      - There is a multi-index on both the rows and columns to compare all pair-wise differences,
-##      - Result sets that are combined are dropped from both rows and columns and are taken as the mean over all results in those sets.
-pair_wise_comparison_statistics = {"Score Ranksums" : ranksums,
-                                   "Score Wilcoxon" : functools.partial(wilcoxon, zero_method="zsplit", mode="approx")}
-rows_index = pandas.MultiIndex.from_tuples(((*configuration, comparison)
-                                            for configuration in combined_data_sets.keys()
-                                            for comparison in pair_wise_comparison_statistics.keys()),
-                                           names=(*configuration_headers, "comparison"))
-columns_index = pandas.MultiIndex.from_tuples(((*configuration, statistic)
-                                               for configuration in combined_data_sets.keys()
-                                               for statistic in summary_statistics_globals),
-                                              names=(*configuration_headers, "result"))
-pair_wise_data_set_comparison_matrix = pandas.DataFrame(index=rows_index, columns=columns_index)
-pair_wise_data_set_comparison_matrix = pair_wise_data_set_comparison_matrix.sort_index(axis=0, level=cli_args.sort_index_values).sort_index(axis=1, level=cli_args.sort_index_values)
+print("\nProcessing pair-wise comparison statistics...")
 
 ## Make a list of all the desired pair-wise configuration comparisons
 compare_configurations: list[tuple[tuple[str, ...], tuple[str, ...]]] = []
@@ -555,9 +618,26 @@ for row_configuration, column_configuration in itertools.permutations(combined_d
     if not ignore:
         compare_configurations.append((row_configuration, column_configuration))
 
+## Construct a dataframe that acts as a matrix of all possible pair-wise configuration comparisons;
+##      - There is a multi-index on both the rows and columns to compare all pair-wise differences,
+##      - Result sets that are combined are dropped from both rows and columns and are taken as the mean over all results in those sets.
+pair_wise_comparison_statistics = {"Score Ranksums" : ranksums,
+                                   "Score Wilcoxon" : functools.partial(wilcoxon, zero_method="zsplit", mode="approx"),
+                                   "Median Test" : median_test}
+rows_index = pandas.MultiIndex.from_tuples(((*configuration, comparison)
+                                            for configuration in combined_data_sets.keys()
+                                            for comparison in pair_wise_comparison_statistics.keys()),
+                                           names=(*configuration_headers, "comparison"))
+columns_index = pandas.MultiIndex.from_tuples(((*configuration, statistic)
+                                               for configuration in combined_data_sets.keys()
+                                               for statistic in summary_statistics_globals),
+                                              names=(*configuration_headers, "result"))
+pair_wise_data_set_comparison_matrix = pandas.DataFrame(index=rows_index, columns=columns_index)
+pair_wise_data_set_comparison_matrix = pair_wise_data_set_comparison_matrix.sort_index(axis=0, level=cli_args.sort_index_values).sort_index(axis=1, level=cli_args.sort_index_values)
+
 ## For each comparison statistic...
 for comparison_statistic, comparison_function in pair_wise_comparison_statistics.items():
-    print(f"\nProcessing {comparison_statistic}...")
+    print(f"\t- Processing {comparison_statistic}...")
     
     ## For each pair-wise configuration comparison...
     for row_configuration, column_configuration in compare_configurations:
@@ -567,32 +647,84 @@ for comparison_statistic, comparison_function in pair_wise_comparison_statistics
             row_ = combined_data_sets[row_configuration]["Globals"][statistic].to_list()
             column_ = combined_data_sets[column_configuration]["Globals"][statistic].to_list()
             if len(row_) == len(column_):
-                comparison = comparison_function(row_, column_)
-                pair_wise_data_set_comparison_matrix.loc[(*row_configuration, comparison_statistic), (*column_configuration, statistic)] = comparison.pvalue
+                try:
+                    comparison = comparison_function(row_, column_)
+                    pvalue = getattr(comparison, "pvalue", getattr(comparison, "p", -1.0))
+                except ValueError:
+                    pvalue = 0.0
+            else: pvalue = -1.0 ## Indicates that the data sets are not the same length
+            pair_wise_data_set_comparison_matrix.loc[(*row_configuration, comparison_statistic), (*column_configuration, statistic)] = pvalue
 
 pair_wise_data_set_comparison_matrix = pair_wise_data_set_comparison_matrix.reorder_levels((*HEADER_ORDER, "comparison"), axis=0)
 
 #########################################################################################################################################################################################
-######## Tests of trends
+######## Tests of normality, skew and kurtosis
 #########################################################################################################################################################################################
 
-## Calculate "smoothness" of expansion factor across the hierarchy.
-##      - Average expansion factor: af = ground-level plan length / (top-level plan length * number of levels)
-##      - Smoothest descent plan length: sdpl = top-level plan length * af ^ (top-level - level)
-##      - Plan length percentage difference: pld = (plan length / sdpl) - 1
-##      - Hierarchical smoothness score: hs = statistics.mean(abs(pld) for level in levels) / af
-##      - Adjusted depth of plan length per level: adpl = top-level - math.log(plan length at level / top-level plan length, af)
+print("\nProcessing normality, skew and kurtosis statistics...")
 
+skew_statistics = {"Normality-test" : normaltest,
+                   "Skew-test" : skewtest,
+                   "Kurtosis-test" : kurtosistest}
+raw_statistics = ["BL_LE", "BL_AC", "EX_T", "HA_T", "AME_T", "AME_T_PA"] + summary_statistics_globals
+rows_index = pandas.MultiIndex.from_tuples(((*configuration, comparison)
+                                            for configuration in combined_data_sets.keys()
+                                            for comparison in skew_statistics.keys()),
+                                           names=(*configuration_headers, "test"))
+skew_test_matrix = pandas.DataFrame(index=rows_index, columns=raw_statistics)
+skew_test_matrix = skew_test_matrix.sort_index(axis=0, level=cli_args.sort_index_values)
 
+## For each skew statistic...
+for skew_statistic, skew_function in skew_statistics.items():
+    print(f"\t- Processing {skew_statistic}...")
+    
+    ## For each configuration...
+    for configuration in combined_data_sets.keys():
+        
+        ## Compare all the raw statistics
+        for raw_statistic in raw_statistics:
+            try:
+                result = skew_function(combined_data_sets[configuration]["Globals"][raw_statistic].to_list())
+                pvalue = result.pvalue
+            except RuntimeWarning:
+                pvalue = -1.0 ## Indicates catastrophic cancellation due to the data being nearly identical
+            skew_test_matrix.loc[(*configuration, skew_statistic), raw_statistic] = pvalue
 
-## Calculate fitness to linear trend for step-wise grounding time and exponential trend for step-wise solving and total time;
+skew_test_matrix = skew_test_matrix.reorder_levels((*HEADER_ORDER, "test"), axis=0)
+
+#########################################################################################################################################################################################
+######## Tests of trends and correlation
+#########################################################################################################################################################################################
+
+## Calculate fitness to linear trend for step-wise grounding time, exponential trend for step-wise solving and total time, and linear trend for index-wise total number of achieved sub-goal stages;
 ##      - This should be split for multiple partial problems.
 
+print("\nProcessing trend and correlation statistics...")
 
+trend_statistics = {"pearson" : pearsonr,
+                    "spearman" : spearmanr}
+step_wise_statistics = ["C_GT", "C_ST", "C_TT", "C_TACHSGOALS", "C_CP_EF_L", "C_SP_ED_L", "C_SP_EB_L", "C_SP_EBS_L"]
+rows_index = pandas.MultiIndex.from_tuples(((*configuration, comparison)
+                                            for configuration in combined_data_sets.keys()
+                                            for comparison in trend_statistics.keys()),
+                                           names=(*configuration_headers, "test"))
+trend_test_matrix = pandas.DataFrame(index=rows_index, columns=step_wise_statistics)
+trend_test_matrix = trend_test_matrix.sort_index(axis=0, level=cli_args.sort_index_values)
 
-## Calculate fitness to linear trend for index-wise total number of achieved sub-goal stages.
+## For each trend statistic...
+for trend_statistic, trend_function in trend_statistics.items():
+    print(f"\t- Processing {trend_statistic}...")
+    
+    ## For each configuration...
+    for configuration in combined_data_sets.keys():
+        
+        ## Compare all the step-wise statistics
+        for step_wise_statistic in step_wise_statistics:
+            result = trend_function(combined_data_sets[configuration]["Concat Step-wise"].query("AL == 1")["SL"].to_list(),
+                                    combined_data_sets[configuration]["Concat Step-wise"].query("AL == 1")[step_wise_statistic].to_list())
+            trend_test_matrix.loc[(*configuration, trend_statistic), step_wise_statistic] = result.pvalue
 
-
+trend_test_matrix = trend_test_matrix.reorder_levels((*HEADER_ORDER, "test"), axis=0)
 
 #########################################################################################################################################################################################
 ######## Excel Outputs
@@ -607,6 +739,13 @@ out_workbook: xlsxwriter.Workbook = writer.book
 ################################################################
 ######## Summary tables
 
+summary_globals_1N_stacked.to_excel(writer, sheet_name="1N Score Summary")
+summary_raw_ground_level_stacked.to_excel(writer, sheet_name="Raw 1N Summary")
+## TODO: summary_raw_ground_level_as_percent_of_classical_stacked.to_excel(writer, sheet_name="1N Summary PC")
+## TODO: Ground-level partial-plans 1N raw summary pivoted
+## TODO: Ground-level partial-plans 1N raw summary pivoted, as percentage of total
+## TODO: Ground-level partial-plans 1N raw summary pivoted, as percentage of offline
+## TODO: Ground-level partial-plans 1N raw summary pivoted, as percentage of classical
 summary_globals.to_excel(writer, sheet_name="Globals 2N Score Summary")
 summary_cat_plans.to_excel(writer, sheet_name="Cat-Plan 2N Minimal Summary")
 
@@ -632,8 +771,10 @@ quantiles_cat_plans.to_excel(writer, sheet_name="Cat Plan 5N Full Summary", merg
 
 global_comparison_matrix.to_excel(writer, sheet_name="Global Score Sig-Diff")
 pair_wise_data_set_comparison_matrix.to_excel(writer, sheet_name="Pair-wise Score Sig-Diff")
+skew_test_matrix.to_excel(writer, sheet_name="Skew Tests")
+trend_test_matrix.to_excel(writer, sheet_name="Trend Tests")
 
-for sheet_name in ["Global Score Sig-Diff", "Pair-wise Score Sig-Diff"]:
+for sheet_name in ["Global Score Sig-Diff", "Pair-wise Score Sig-Diff", "Skew Tests", "Trend Tests"]:
     worksheet = writer.sheets[sheet_name]
     
     ## Get the dimensions of the dataframe
@@ -643,6 +784,12 @@ for sheet_name in ["Global Score Sig-Diff", "Pair-wise Score Sig-Diff"]:
     elif sheet_name == "Pair-wise Score Sig-Diff":
         min_row, min_col = len(configuration_headers) + 2, len(configuration_headers) + 1
         max_row, max_col = pair_wise_data_set_comparison_matrix.shape
+    elif sheet_name == "Normality-Skew-Kurtosis":
+        min_row, min_col = 1, 1
+        max_row, max_col = skew_test_matrix.shape
+    elif sheet_name == "Trend Tests":
+        min_row, min_col = 1, 1
+        max_row, max_col = trend_test_matrix.shape
     
     ## Add formatting to the excel spreadsheet;
     ##      - Colour green iff the p value is less than 0.05 (indicating the difference between the compared combined data sets is statistically significant),
@@ -671,20 +818,431 @@ writer.save()
 
 #########################################################################################################################################################################################
 #########################################################################################################################################################################################
-######## Latex table and pgfplots graph outputs
-#########################################################################################################################################################################################
-#########################################################################################################################################################################################
+######## Tables and Plots
+######## --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ######## All results are given as medians, with IQR used as represenation of variance (i.e. non-parametric representation), since we are not sure if the data is normally distributed.
 #########################################################################################################################################################################################
 #########################################################################################################################################################################################
 
-## Balance of sub-plans (refinement trees);
-##      - NAE of matching child steps, sub-plan expansion deviation, balance, and balance score.
+################################################################################################################################
+################################################################################################################################
+######## Summary tables - All combined data sets in one table.
+
+summary_globals_1N_stacked.to_latex(f"{cli_args.output_path}_1N_Score_Summary.tex", float_format="%.2f")
+summary_raw_ground_level_stacked.to_latex(f"{cli_args.output_path}_1N_Raw_Summary.tex", float_format="%.2f")
+summary_globals.to_latex(f"{cli_args.output_path}_Globals_2NSummary.tex", float_format="%.2f")
+summary_cat_plans.to_latex(f"{cli_args.output_path}_CatPlan_2NSummary.tex", float_format="%.2f")
+pair_wise_data_set_comparison_matrix.to_latex(f"{cli_args.output_path}_TestOfSignificance.tex")
+
+summary_globals_1N_stacked.to_csv(f"{cli_args.output_path}_1N_Score_Summary.dat", sep=" ", line_terminator="\n", index=True)
+summary_raw_ground_level_stacked.to_csv(f"{cli_args.output_path}_1N_Raw_Summary.dat", sep=" ", line_terminator="\n", index=True)
+summary_globals.to_csv(f"{cli_args.output_path}_Globals_2NSummary.dat", sep=" ", line_terminator="\n", index=True)
+summary_cat_plans.to_csv(f"{cli_args.output_path}_CatPlan_2NSummary.dat", sep=" ", line_terminator="\n", index=True)
+pair_wise_data_set_comparison_matrix.to_csv(f"{cli_args.output_path}_TestOfSignificance.dat", sep=" ", line_terminator="\n", index=True)
+
+################################################################################################################################
+################################################################################################################################
+######## Graphs setup
+
+if not cli_args.make_plots:
+    print("Skipping graph generation and exiting.")
+    sys.exit(0)
+print("Generating graphs...")
+
+def set_title_and_labels(fig_or_ax: Union[sns.axisgrid.FacetGrid, sns.axisgrid.JointGrid, pyplot.Axes],
+                         x_label: str, y_label: str, title: str) -> None:
+    """Set the title and axes labels of a figure or axis."""
+    title = title.replace("_", " ")
+    x_label = x_label.replace("_", " ")
+    y_label = y_label.replace("_", " ")
+    if isinstance(fig_or_ax, (sns.axisgrid.FacetGrid, sns.axisgrid.JointGrid)):
+        fig: figure.Figure = fig_or_ax.figure
+        # fig.suptitle(title)
+        fig_or_ax.set_axis_labels(x_label, y_label)
+    else:
+        # fig_or_ax.set_title(title)
+        fig_or_ax.set_xlabel(x_label)
+        fig_or_ax.set_ylabel(y_label)
+
+def save_figure(fig: figure.Figure, filename: str) -> None:
+    """Save a figure to a pdf and tex file."""
+    print(f"\t- Generating figure:  {filename}")
+    fig.subplots_adjust(top=0.95, hspace=0.4)
+    fig.savefig(fname=f"{cli_args.output_path}_{filename}.png", bbox_inches="tight", dpi=600)
+    tikzplotlib.save(figure=fig, filepath=f"{cli_args.output_path}_{filename}.tex", dpi=600, textsize=12, axis_width="\\plotWidth", axis_height="\\plotHeight")
+
+## Max limits for absolute plots.
+cat_plans_length_max = fully_combined_data_sets["Cat Plans"]["LE"].max()
+globals_length_max = fully_combined_data_sets["Globals"]["BL_LE"].max()
+cat_plans_total_time_max = fully_combined_data_sets["Cat Plans"]["TT"].max()
+globals_total_time_max = fully_combined_data_sets["Globals"]["HA_T"].max()
+
+## Facet grids are a grid of multiple sub-plots, each with a different value of a variable.
+fg: sns.FacetGrid
+
+## Joint plots:
+##      - Joint plots have a relational plot in the center and marginal distributions on the top and right.
+##          - Type controlled with kind={"scatter", "reg", "kde", "hist", "hex", "resid"}
+##          - If the plot has a hue, then conditional colors are added to the relational plot,
+##            and kde plots are used for the marginal density distributions, otherwise histograms are used.
+##      - To add more layers onto the plot, use the methods on the JointGrid object that jointplot() returns.
+##      - https://seaborn.pydata.org/generated/seaborn.jointplot.html
+##      - https://seaborn.pydata.org/generated/seaborn.JointGrid.html
+jg: sns.JointGrid
+
+################################################################################################################################
+################################################################################################################################
+######## Relational and distributional plots for performance trade-off between planning time and plan quality scores
+## For score plots, it is reasonable to take the average and variance over all problems (since it is normalised), but for absolute values the average is not meaningful.
+
+## Grade of planner performance for each configuration;
+fg = sns.catplot(
+    data=fully_combined_data_sets["Globals"],
+    x=cli_args.break_second, y="GRADE", hue=cli_args.break_first,
+    kind="box"
+)
+fg.set(ylim=(0, 1))
+set_title_and_labels(fg, cli_args.break_second, "Grade", f"Grade of Planner Performance for each {cli_args.break_first} and {cli_args.break_second}s")
+save_figure(fg.figure, "Grades")
+pyplot.show()
+sys.exit(0)
+
+## Grade of planner perfomance trade-off chart;
+jg = sns.JointGrid(
+    data=fully_combined_data_sets["Globals"],
+    x="TI_SCORE", y="QL_SCORE", hue=cli_args.break_first,
+    xlim=(0, 1), ylim=(0, 1)
+)
+jg.plot_joint(sns.scatterplot); jg.plot_joint(sns.kdeplot, zorder=0, n_levels=6) # zorder=0 plots kde behind scatterplot
+jg.plot_marginals(sns.boxplot); jg.plot_marginals(sns.rugplot, height=0.15, clip_on=False)
+jg.set_axis_labels("Time Score", "Quality Score")
+jg.figure.suptitle(f"Performance Trade-off between Planning Time and Plan Quality for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
+jg.savefig(f"{cli_args.output_path}_Grades_ScoreTradeOff.png")
+tikzplotlib.save(figure=jg.figure, filepath=f"{cli_args.output_path}_Grades_ScoreTradeOff.tex")
+
+################################################################################################################################
+################################################################################################################################
+######## Categorical and distributional plots for plan quality
+
+## TODO: How do we deal with number of actions in a general way? It should be able to fit on the same plot.
+## TODO: Can we use a hierarchical x-axis? Like I did for the original excel; with the achievement type above and the search mode below.
+##       This would also help for the actions, and allow more compact per-abstraction level plots.
+## TODO: Partial problem description headers:
+##      - AL IT PN TT LE AC SIZE
+##      - Make pair-wise plots to show relations between each of these
+##      - For example, TT against LE would show how time tneds to grow with length,
+##        and LE against SIZE would show how length tends to grow with size
+##        (with hue = AL, IT and PN aren't needed).
+
+#########################
+## Bar charts:
+
+## Absolute plan quality level-wise bar plot;
+##      - x axis is the levels (one bar per configuration), y axis is quantity of actions or length of plan (median over all runs).
+g = sns.catplot(
+    data=fully_combined_data_sets["Cat Plans"],
+    x="AL", y="LE", hue=cli_args.break_first, col=cli_args.break_second,
+    kind="bar", height=4, aspect=1.5
+)
+g.set_axis_labels("Abstraction level", "Monolevel plan length")
+g.set_titles("{col_var} {col_name}")
+g.set(ylim=(0, cat_plans_length_max))
+g.figure.suptitle(f"Median plan length per level for each {cli_args.break_first} and {cli_args.break_second}s")
+g.savefig(f"{cli_args.output_path}_AbsolutePlanQuality_LevelWise_BarPlot.png")
+tikzplotlib.clean_figure(fig=g.figure)
+tikzplotlib.save(figure=g.figure, filepath=f"{cli_args.output_path}_AbsolutePlanQuality_LevelWise_BarPlot.tex")
+
+## Plan quality score level-wise bar plot;
+##      - x axis is the levels (one bar per configuration), y axis is the plan quality score [0.0-1.0] (median over all runs).
+figure_quality_score_levelwise_bars, axis_quality_score_levelwise_bars = pyplot.subplots()
+axis_quality_score_levelwise_bars.set(ylim=(0, 1))
+sns.barplot(
+    data=fully_combined_data_sets["Cat Plans"],
+    ax=axis_quality_score_levelwise_bars,
+    x="AL", y="QL_SCORE", hue=cli_args.break_first
+)
+axis_quality_score_levelwise_bars.set_xlabel("Abstraction level")
+axis_quality_score_levelwise_bars.set_ylabel("Plan quality score")
+axis_quality_score_levelwise_bars.set_title(f"Median plan quality score per level for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
+figure_quality_score_levelwise_bars.savefig(f"{cli_args.output_path}_PlanQualityScore_LevelWise_BarPlot.png")
+tikzplotlib.save(figure=figure_quality_score_levelwise_bars, filepath=f"{cli_args.output_path}_PlanQualityScore_LevelWise_BarPlot.tex")
+
+## Absolute plan quality global bar plot;
+figure_quality_abs_globals_bars, axis_quality_abs_globals_bars = pyplot.subplots()
+axis_quality_abs_globals_bars.set(ylim=(0, globals_length_max))
+sns.barplot(
+    data=fully_combined_data_sets["Globals"],
+    ax=axis_quality_abs_globals_bars,
+    x=cli_args.break_second, y="BL_LE", hue=cli_args.break_first
+)
+axis_quality_abs_globals_bars.set_ylabel("Monolevel plan length")
+axis_quality_abs_globals_bars.set_title(f"Median ground-plan length for each {cli_args.break_first} and {cli_args.break_second}")
+figure_quality_abs_globals_bars.savefig(f"{cli_args.output_path}_AbsolutePlanQuality_Global_BarPlot.png")
+tikzplotlib.clean_figure(fig=figure_quality_abs_globals_bars)
+tikzplotlib.save(figure=figure_quality_abs_globals_bars, filepath=f"{cli_args.output_path}_AbsolutePlanQuality_Global_BarPlot.tex")
+
+## Plan quality score global bar plot;
+figure_quality_score_globals_bars, axis_quality_score_globals_bars = pyplot.subplots()
+axis_quality_score_globals_bars.set(ylim=(0, 1))
+sns.barplot(
+    data=fully_combined_data_sets["Globals"],
+    ax=axis_quality_score_globals_bars,
+    x=cli_args.break_second, y="QL_SCORE", hue=cli_args.break_first
+)
+axis_quality_score_globals_bars.set_ylabel("Plan quality score")
+axis_quality_score_globals_bars.set_title(f"Median ground-plan quality score for each {cli_args.break_first} and {cli_args.break_second}") 
+figure_quality_score_globals_bars.savefig(f"{cli_args.output_path}_PlanQualityScore_Global_BarPlot.png")
+tikzplotlib.clean_figure(fig=figure_quality_score_globals_bars)
+tikzplotlib.save(figure=figure_quality_score_globals_bars, filepath=f"{cli_args.output_path}_PlanQualityScore_Global_BarPlot.tex")
+
+#########################
+## Historgram plots:
+
+## Absolute plan length and number of actions global histogram plot;
+g = sns.displot(
+    data=fully_combined_data_sets["Globals"],
+    x="BL_LE", hue=cli_args.break_first, col=cli_args.break_second,
+    kind="hist", kde=True, height=4, aspect=1.5,
+    stat="percent", element="step", # multiple="stack"
+)
+g.set_axis_labels("Monolevel plan length", "Percent of runs achieving length")
+g.set_titles("{col_var} {col_name}")
+g.figure.suptitle(f"Histogram of ground-plan length for each {cli_args.break_first} and {cli_args.break_second}s")
+g.savefig(f"{cli_args.output_path}_AbsolutePlanQuality_Global_HistogramPlot.png")
+tikzplotlib.clean_figure(fig=g.figure)
+tikzplotlib.save(figure=g.figure, filepath=f"{cli_args.output_path}_AbsolutePlanQuality_Global_HistogramPlot.tex")
+
+## Plan quality score global histogram plot;
+g = sns.displot(
+    data=fully_combined_data_sets["Globals"],
+    x="QL_SCORE", hue=cli_args.break_first,
+    kind="hist", kde=True, height=4, aspect=1.5,
+    stat="percent", element="step", # multiple="stack"
+)
+g.set_axis_labels("Plan quality score", "Percent of runs achieving score")
+g.set(xlim=(0, 1))
+g.figure.suptitle(f"Histogram of ground-plan quality score for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
+g.savefig(f"{cli_args.output_path}_PlanQualityScore_Global_HistogramPlot.png")
+tikzplotlib.clean_figure(fig=g.figure)
+tikzplotlib.save(figure=g.figure, filepath=f"{cli_args.output_path}_PlanQualityScore_Global_HistogramPlot.tex")
+
+#########################
+## Box plots:
+
+## Absolute plan quality level-wise box plot;
+g = sns.catplot(
+    data=fully_combined_data_sets["Cat Plans"],
+    x="AL", y="QL_SCORE", hue=cli_args.break_first,
+    kind="box", height=4, aspect=1.5
+)
+g.set_axis_labels("Abstraction level", "Plan quality score")
+g.set(ylim=(0, 1))
+g.figure.suptitle(f"Plan quality score per level for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
+g.savefig(f"{cli_args.output_path}_PlanQualityScore_LevelWise_CatPlot.png")
+tikzplotlib.save(figure=g.figure, filepath=f"{cli_args.output_path}_PlanQualityScore_LevelWise_CatPlot.tex")
+
+## Plan quality score global box plot;
+g = sns.catplot(
+    data=fully_combined_data_sets["Globals"],
+    x=cli_args.break_second, y="QL_SCORE", hue=cli_args.break_first,
+    kind="box", height=4, aspect=1.5
+)
+g.set_axis_labels(cli_args.break_second, "Plan quality score")
+g.figure.suptitle(f"Ground-plan quality score for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
+g.savefig(f"{cli_args.output_path}_PlanQualityScore_Global_CatPlot.png")
+tikzplotlib.save(figure=g.figure, filepath=f"{cli_args.output_path}_PlanQualityScore_Global_CatPlot.tex")
+
+################################################################################################################################
+################################################################################################################################
+######## Categorical and distributional plots for planning time and memory usage
+
+#########################
+## Bar charts:
+
+## TODO: Should we have bar and histogram plots for should we also have a break down of the different time scores, HA_T_SCORE, LT_SCORE, etc?
+## This would show how each contribute to the total time score.
+## Absolution time score, average non-initial wait time, average minimum execution time per action score.
+
+## Absolute total planning time level-wise bar plot;
+g = sns.catplot(
+    data=fully_combined_data_sets["Cat Plans"],
+    x="AL", y="TT", hue=cli_args.break_first, col=cli_args.break_second,
+    kind="bar", height=4, aspect=1.5
+)
+g.set_axis_labels("Abstraction level", "Total planning time (s)")
+g.set_titles("{col_var} {col_name}")
+g.set(ylim=(0, cat_plans_total_time_max))
+g.figure.suptitle(f"Median total planning time per level for each {cli_args.break_first} and {cli_args.break_second}s")
+g.savefig(f"{cli_args.output_path}_AbsolutePlanningTime_LevelWise_BarPlot.png")
+tikzplotlib.save(figure=g.figure, filepath=f"{cli_args.output_path}_AbsolutePlanningTime_LevelWise_BarPlot.tex")
+
+## Plan time score level-wise bar plot;
+figure_time_score_levelwise_bars, axis_time_score_levelwise_bars = pyplot.subplots()
+axis_time_score_levelwise_bars.set(ylim=(0, 1))
+sns.barplot(
+    data=fully_combined_data_sets["Cat Plans"],
+    ax=axis_time_score_levelwise_bars,
+    x="AL", y="TI_SCORE", hue=cli_args.break_first
+)
+axis_time_score_levelwise_bars.set_xlabel("Abstraction level")
+axis_time_score_levelwise_bars.set_ylabel("Planning time score")
+axis_time_score_levelwise_bars.set_title(f"Median planning time score per level for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
+figure_time_score_levelwise_bars.savefig(f"{cli_args.output_path}_PlanTimeScore_LevelWise_BarPlot.png")
+tikzplotlib.save(figure=figure_time_score_levelwise_bars, filepath=f"{cli_args.output_path}_PlanTimeScore_LevelWise_BarPlot.tex")
+
+## Absolute plan time global bar plot;
+figure_time_abs_globals_bars, axis_time_abs_globals_bars = pyplot.subplots()
+axis_time_abs_globals_bars.set(ylim=(0, globals_total_time_max))
+sns.barplot(
+    data=fully_combined_data_sets["Globals"],
+    ax=axis_time_abs_globals_bars,
+    x=cli_args.break_second, y="HA_T", hue=cli_args.break_first
+)
+axis_time_abs_globals_bars.set_ylabel("Hierarchical Absolution Time (s)")
+axis_time_abs_globals_bars.set_title(f"Median Hierarchical Absolution Time for each {cli_args.break_first} and {cli_args.break_second}")
+figure_time_abs_globals_bars.savefig(f"{cli_args.output_path}_AbsolutePlanTime_Global_BarPlot.png")
+tikzplotlib.save(figure=figure_time_abs_globals_bars, filepath=f"{cli_args.output_path}_AbsolutePlanTime_Global_BarPlot.tex")
+
+## Plan time score global bar plot;
+figure_time_score_globals_bars, axis_time_score_globals_bars = pyplot.subplots()
+axis_time_score_globals_bars.set(ylim=(0, 1))
+sns.barplot(
+    data=fully_combined_data_sets["Globals"],
+    ax=axis_time_score_globals_bars,
+    x=cli_args.break_second, y="TI_SCORE", hue=cli_args.break_first
+)
+axis_time_score_globals_bars.set_ylabel("Time score")
+axis_time_score_globals_bars.set_title(f"Median time score for each {cli_args.break_first} and {cli_args.break_second}") 
+figure_time_score_globals_bars.savefig(f"{cli_args.output_path}_PlanTimeScore_Global_BarPlot.png")
+tikzplotlib.save(figure=figure_time_score_globals_bars, filepath=f"{cli_args.output_path}_PlanTimeScore_Global_BarPlot.tex")
+
+## Raw aggreate ground-level planning times bar chart;
+g = sns.catplot(
+    data=summary_raw_ground_level.reset_index(level=[cli_args.break_first, cli_args.break_second]).melt(id_vars=[cli_args.break_first, cli_args.break_second], value_vars=["LT", "WT", "MET", "CT"], var_name="Time type", value_name="Time"),
+    x="Time type", y="Time", hue=cli_args.break_first, col=cli_args.break_second,
+    kind="bar", height=4, aspect=1.5
+)
+g.set_axis_labels("Time type", "Time (s)")
+g.set_titles("{col_var} {col_name}")
+g.figure.suptitle(f"Median hierarchical aggregate planning times for each {cli_args.break_first} and {cli_args.break_second}s")
+g.savefig(f"{cli_args.output_path}_RawAggregatePlanningTime_Global_CatPlot.png")
+tikzplotlib.save(figure=g.figure, filepath=f"{cli_args.output_path}_RawAggregatePlanningTime_Global_CatPlot.tex")
+
+## Score aggreate ground-level planning times bar chart;
+g = sns.catplot(
+    data=summary_raw_ground_level.reset_index(level=[cli_args.break_first, cli_args.break_second]).melt(id_vars=[cli_args.break_first, cli_args.break_second], value_vars=["LT_SCORE", "WT_SCORE", "MET_SCORE", "CT_SCORE"], var_name="Time score type", value_name="Score"),
+    x="Time score type", y="Score", hue=cli_args.break_first, col=cli_args.break_second,
+    kind="bar", height=4, aspect=1.5
+)
+g.set_axis_labels("Time Score Type", "Time Score")
+g.set_titles("{col_var} {col_name}")
+g.figure.suptitle(f"Median hierarchical planning time scores for each {cli_args.break_first} and {cli_args.break_second}s")
+g.savefig(f"{cli_args.output_path}_ScoreAggregatePlanningTime_Global_CatPlot.png")
+tikzplotlib.save(figure=g.figure, filepath=f"{cli_args.output_path}_ScoreAggregatePlanningTime_Global_CatPlot.tex")
+
+## Break down of sums of grounding and solving times over all abstraction levels;
+##      - This needs to be broken down for each break-second since they are not normalised.
+g = sns.catplot(
+    data=fully_combined_data_sets_cat_plans_time_sums.reset_index(level=[cli_args.break_first, cli_args.break_second]).melt(id_vars=[cli_args.break_first, cli_args.break_second], value_vars=["GT", "ST"], var_name="Time type", value_name="Time"),
+    x="Time type", y="Time", hue=cli_args.break_first, col=cli_args.break_second,
+    kind="bar", height=4, aspect=1.5
+)
+g.set_axis_labels("Time type", "Time (s)")
+g.figure.suptitle(f"Median grounding and solving times for each {cli_args.break_first} and {cli_args.break_second}s")
+g.savefig(f"{cli_args.output_path}_GroundSum_PlanningTime_BarPlot.png")
+tikzplotlib.save(figure=g.figure, filepath=f"{cli_args.output_path}_GroundSum_PlanningTime_BarPlot.tex")
+
+## Break down of sums of grounding and solving times as percentage of total-time over all abstraction levels;
+##      - Does not need to be broken down for each break-second since it is normalised.
+g = sns.catplot(
+    data=fully_combined_data_sets_cat_plans_time_sums.reset_index(level=[cli_args.break_first, cli_args.break_second]).melt(id_vars=[cli_args.break_first, cli_args.break_second], value_vars=["GT_POTT", "ST_POTT"], var_name="Time type", value_name="Time"),
+    x="Time type", y="Time", hue=cli_args.break_first,
+    kind="bar", height=4, aspect=1.5
+)
+g.set_axis_labels("Time type", "Percent of total time")
+g.figure.suptitle(f"Median grounding and solving times as percentage of total time for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
+g.savefig(f"{cli_args.output_path}_PercentPlanningTime_BarPlot.png")
+tikzplotlib.save(figure=g.figure, filepath=f"{cli_args.output_path}_GroundSum_PercentPlanningTime_BarPlot.tex")
+
+#########################
+## Historgram plots:
+
+## Absolute planning time and number of actions global histogram plot;
+g = sns.displot(
+    data=fully_combined_data_sets["Globals"],
+    x="HA_T", hue=cli_args.break_first, col=cli_args.break_second,
+    kind="hist", kde=True, height=4, aspect=1.5,
+    stat="percent", element="step", # multiple="stack"
+)
+g.set_axis_labels("Hierarchical Absolution Time (s)", "Percent of runs achieving time")
+g.set_titles("{col_var} {col_name}")
+g.figure.suptitle(f"Histogram of Hierarchical Absolution Time for each {cli_args.break_first} and {cli_args.break_second}s")
+g.savefig(f"{cli_args.output_path}_AbsolutePlanTime_Global_HistogramPlot.png")
+tikzplotlib.clean_figure(fig=g.figure)
+tikzplotlib.save(figure=g.figure, filepath=f"{cli_args.output_path}_AbsolutePlanTime_Global_HistogramPlot.tex")
+
+## Planning time score global histogram plot;
+g = sns.displot(
+    data=fully_combined_data_sets["Globals"],
+    x="QL_SCORE", hue=cli_args.break_first,
+    kind="hist", kde=True, height=4, aspect=1.5,
+    stat="percent", element="step", # multiple="stack"
+)
+g.set_axis_labels("Hierarchical Absolution Time Score", "Percent of runs achieving score")
+g.set(xlim=(0, 1))
+g.figure.suptitle(f"Histogram of Hierarchical Absolution Time Score for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
+g.savefig(f"{cli_args.output_path}_PlanTimeScore_Global_HistogramPlot.png")
+tikzplotlib.clean_figure(fig=g.figure)
+tikzplotlib.save(figure=g.figure, filepath=f"{cli_args.output_path}_PlanTimeScore_Global_HistogramPlot.tex")
+
+#########################
+## Box plots:
 
 
 
-## Balance of partial-plans;
-##      - Partial plan expansion deviation, balance, and balance score.
+#########################
+## Scatter plots:
+
+g = sns.jointplot(
+    data=fully_combined_data_sets_cat_plans_time_sums,
+    x="GT", y="ST",
+    hue=cli_args.break_first, kind="scatter"
+)
+g.set_axis_labels("Grounding time", "Solving time")
+g.figure.suptitle(f"Grounding time vs solving time for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
+g.savefig(f"{cli_args.output_path}_PlanningTimeScatterPlot.png")
+tikzplotlib.save(figure=g.figure, filepath=f"{cli_args.output_path}_GroundSum_PlanningTime_ScatterPlot.tex")
+
+g = sns.jointplot(
+    data=fully_combined_data_sets_cat_plans_time_sums,
+    x="GT_POTT", y="ST_POTT",
+    hue=cli_args.break_first, kind="scatter"
+)
+g.set_axis_labels("Grounding time as percentage of total time", "Solving time as percentage of total time")
+# g.set(xlim=(0, 1), ylim=(0, 1))
+g.figure.suptitle(f"Grounding time vs solving time as percentage of total time for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
+g.savefig(f"{cli_args.output_path}_PlanningTimeScatterPlot.png")
+tikzplotlib.save(figure=g.figure, filepath=f"{cli_args.output_path}_GroundSum_PercentPlanningTime_ScatterPlot.tex")
+
+################################################################################################################################
+################################################################################################################################
+######## Relational plots for step-wise search times, memory, sub-goal achievement, and refinement expansions, and index-wise sub-plan lengths and interleaving quantities.
+
+## TODO: Can use reflines to show for the step-wise plots where the end of each partial-plan and the start of the unconsidered final-goal problem is on average, and on the index-wise plots where the m-children steps are on average.
+
+
+
+################################################################################################################################
+################################################################################################################################
+######## Categorical and distributional plots for expansion factors and sub/partial-plan balance
+
+## Absolute sub/partial-plan expansions;
+##      - Expansion factor per level, sub-plan expansion deviation, sub-plan expansion balance, partial-plan expansion deviation, partial-plan expansion balance.
+
+
+
+## Sub/partial-plan balance/matching child distribution/spread scores;
+##      - NAE of matching child steps, Sub-plan expansion balance score, partial-plan expansion balance score, matching-child step normalised mean absolute error score, division step normalised mean absolute error score
 
 
 
@@ -693,153 +1251,12 @@ writer.save()
 
 
 
-################################################################################################################################
-################################################################################################################################
-######## Summary tables - All combined data sets in one table.
-
-summary_globals.to_latex(f"{cli_args.output_path}_Globals_2NSummary.tex")
-summary_cat_plans.to_latex(f"{cli_args.output_path}_CatPlan_2NSummary.tex")
-pair_wise_data_set_comparison_matrix.to_latex(f"{cli_args.output_path}_TestOfSignificance.tex")
-
-summary_globals.to_csv(f"{cli_args.output_path}_Globals_2NSummary.dat", sep=" ", line_terminator="\n", index=True)
-summary_cat_plans.to_csv(f"{cli_args.output_path}_CatPlan_2NSummary.dat", sep=" ", line_terminator="\n", index=True)
-pair_wise_data_set_comparison_matrix.to_csv(f"{cli_args.output_path}_TestOfSignificance.dat", sep=" ", line_terminator="\n", index=True)
-
-################################################################################################################################
-################################################################################################################################
-######## Score summary scatter graphs
-# x axis is time score, y axis in quality score
-# Points colour for planning mode
-# Points marker type for problem number
-
-# sns.jointplot(data=fully_combined_data_sets["Globals"], x="TI_SCORE", y="QL_SCORE", hue="planning_mode", xlim=(0, 1), ylim=(0, 1), kind="scatter")
-
-################################################################################################################################
-################################################################################################################################
-######## Graphs defining plan quality
-figure_quality_abs_levelwise_bars, axis_quality_abs_levelwise_bars = pyplot.subplots()          # Median (over all runs) of cat plans
-figure_quality_score_levelwise_bars, axis_quality_score_levelwise_bars = pyplot.subplots()      # Median (over all runs) of cat plans
-figure_quality_abs_globals_bars, axis_quality_abs_globals_bars = pyplot.subplots()              # Median (over all runs) of globals
-figure_quality_score_globals_bars, axis_quality_score_globals_bars = pyplot.subplots()          # Median (over all runs) of globals
-figure_quality_abs_global_histogram, axis_quality_abs_global_histogram = pyplot.subplots()      # All runs of globals
-figure_quality_score_global_histogram, axis_quality_score_global_histogram = pyplot.subplots()  # All runs of globals
-
-cat_plans_length_max = fully_combined_data_sets["Cat Plans"]["LE"].max()
-globals_length_max = fully_combined_data_sets["Globals"]["BL_LE"].max()
-
-## Absolute plan length and number of actions level-wise bar plot;
-##      - x axis is the levels (one bar per configuration), y axis is quantity of actions or length of plan (median over all runs).
-##      - The break-on-x-globals has to be a seperate graph for the level-wise plots since we are already using the x-axis for the abstraction level.
-##      - TODO: This just produces way too many graphs if we split each problem onto a different graph.
-sns.barplot(data=fully_combined_data_sets["Cat Plans"],
-            ax=axis_quality_abs_levelwise_bars,
-            x="AL", y="LE", hue=cli_args.break_second)
-axis_quality_abs_levelwise_bars.set_title(f"Average plan length per level for each {cli_args.break_second} over all {cli_args.break_first}s")
-# figure_quality_abs_levelwise_bars.savefig(f"{cli_args.output_path}_AbsolutePlanLengthAndNumberOfActionsLevelWiseBarPlot.png")
-
-## Plan quality score level-wise bar plot;
-##      - x axis is the levels (one bar per configuration), y axis is the plan quality score [0.0-1.0] (median over all runs).
-sns.barplot(data=fully_combined_data_sets["Cat Plans"],
-            ax=axis_quality_score_levelwise_bars,
-            x="AL", y="QL_SCORE", hue=cli_args.break_second)
-axis_quality_score_levelwise_bars.set_title(f"Average plan quality score per level for each {cli_args.break_second} over all {cli_args.break_first}s")
-
-## Absolute plan length and number of actions global bar plot;
-sns.barplot(data=fully_combined_data_sets["Globals"],
-            ax=axis_quality_abs_globals_bars,
-            x=cli_args.break_first, y="BL_LE", hue=cli_args.break_second)
-axis_quality_abs_globals_bars.set_title(f"Average ground-plan length for each {cli_args.break_first} and {cli_args.break_second}")
-
-## Plan quality score global bar plot;
-sns.barplot(data=fully_combined_data_sets["Globals"],
-            ax=axis_quality_score_globals_bars,
-            x=cli_args.break_first, y="QL_SCORE", hue=cli_args.break_second)
-axis_quality_score_globals_bars.set_title(f"Average ground-plan quality score for each {cli_args.break_first} and {cli_args.break_second}")
-
 #########################
-## Historgram plots:
-##      - These doen't have a `y` data, since that is the count or percent of each bin.
-##      - https://seaborn.pydata.org/generated/seaborn.histplot.html
+#########################
+#### EOF
 
-## Absolute plan length and number of actions global histogram plot;
-sns.histplot(data=fully_combined_data_sets["Globals"],
-             ax=axis_quality_abs_global_histogram,
-             x="BL_LE", hue=cli_args.break_first, stat="percent", element="step", kde=True, cbar=True)
-axis_quality_abs_global_histogram.set_title(f"Average ground-plan length histogram for each {cli_args.break_first} over all {cli_args.break_second}s")
+print("\nProcessing complete.")
 
-## Plan quality score global histogram plot;
-sns.histplot(data=fully_combined_data_sets["Globals"],
-             ax=axis_quality_score_global_histogram,
-             x="QL_SCORE", hue=cli_args.break_first, stat="percent", element="step", kde=True, cbar=True)
-axis_quality_score_global_histogram.set_title(f"Average ground-plan quality score histogram for each {cli_args.break_first} over all {cli_args.break_second}s")
-
-################################################################################################################################
-################################################################################################################################
-######## Bar charts for planning time
-figure_time_raw_bars, axis_time_raw_bars = pyplot.subplots() # Median of cat plans
-figure_time_scatter, axis_time_scatter = pyplot.subplots() # Median of cat plans, show contribution of solving and grounding time to total time in percent
-figure_time_agg_bars, axis_time_agg_bars = pyplot.subplots() # Median of globals
-figure_time_score_bars, axis_time_score_bars = pyplot.subplots() # Median of globals
-figure_time_score_histogram, axis_time_score_histogram = pyplot.subplots() # All of globals
-
-## Raw planning time per abstraction level;
-##      - Solving time, grounding time, total time, yield time, completion time (this might need to be logarithmicly scaled).
-##      - Combine as series on same plot.
-sns.barplot(data=fully_combined_data_sets["Cat Plans"],
-            ax=axis_time_raw_bars,
-            x="AL", y="TT", hue=cli_args.break_second, log_scale=True)
-axis_time_raw_bars.set_title(f"Average planning time per level for each {cli_args.break_second} over all {cli_args.break_first}s")
-
-## Time scatter plot;
-sns.jointplot(data=fully_combined_data_sets["Globals"],
-              ax=axis_time_scatter,
-              x="TI_SCORE", y="QL_SCORE", hue="planning_mode", xlim=(0, 1), ylim=(0, 1), kind="scatter")
-
-## Aggregate ground-level planning times bar chart;
-##      - Latency time, absolution time, average non-initial wait time, average minimum execution time per action.
-
-
-
-## Overall time scores bar chart;
-##      - Latency time score, absolution time score, average non-initial wait time score, average minimum execution time per action score.
-
-
-
-## Overall time scores bar chart;
-
-
-
-################################################################
-######## Bar charts for required memory
-# figure_memory_bars, axis_memory_bars = pyplot.subplots()
-
-
-
-################################################################
-######## Bar charts for expansion factors and sub/partial-plan balance
-# figure_expansion_raw_bars, axis_expansion_raw_bars = pyplot.subplots() # Cat plans
-# figure_spbalance_raw_bars, axis_spbalance_raw_bars = pyplot.subplots() # Cat plans
-
-## Raw sub/partial-plan expansions;
-##      - Expansion factor per level, sub-plan expansion deviation, sub-plan expansion balance, partial-plan expansion deviation, partial-plan expansion balance.
-
-
-
-## Sub/partial-plan balance/matching child distribution/spread scores;
-##      - Sub-plan expansion balance score, partial-plan expansion balance score, matching-child step normalised mean absolute error score, division step normalised mean absolute error score
-
-
-
-################################################################
-########
-
-
-
-# configuration = next(iter(combined_data_sets))
-# time_score = combined_data_sets[configuration]["Globals"]["HA_T"]
-# axis.hist(time_score, 50, (0.0, 15.0))
-
-pyplot.show()
-## https://github.com/texworld/tikzplotlib
-# tikzplotlib.clean_figure()
-# tikzplotlib.save(f"{cli_args.output_path}_Globals_Plot.tex")
+if cli_args.show_plots:
+    pyplot.show()
+sys.exit(0)
