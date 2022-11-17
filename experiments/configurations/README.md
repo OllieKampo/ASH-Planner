@@ -4,7 +4,9 @@ This folder contains configuration files for ASH corresponding to each Blocks Wo
 
 ## Directory Structure
 
-- **initial** contains configuration for all experiments used in chapter 3 of the thesis.
+The structure is as follows (see inner readmes for detailed break-down of configurations).
+
+- **initial** contains configurations for all experiments used in chapter 3 of the thesis.
 - **main** contains configurations for all experiments used in chapter 5 of the thesis.
 - **test** contains some basic testing configurations and configurations for running the impetuous and adaptive reactive division strategies, and the multiple-puzzle version of the BWP, which weren't experimentally tested in the thesis due to time and space constraints.
 

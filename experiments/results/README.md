@@ -52,17 +52,17 @@ For columns headers for aggregate results, see the `aggregate` sub-directory.
 | Header | Name | Description | Unit |
 |:-:|:-:|:-:|:-:|
 | RU | Run number | Ordinal number of the experimental run | Integer |
-| SN | The hierarchical problem sequence number |  |  |
+| SN | The hierarchical monolevel-problem sequence number |  | Intger |
 | AL | Abstraction level | The abstraction level of the monolevel plan | Integer |
-| IT |  |  |  |
-| PN | The monolevel problem sequence number |  |  |
-| START_S |  |  |  |
-| IS_INITIAL |  |  |  |
-| IS_FINAL |  |  |  |
-| SIZE |  |  |  |
-| SGLITS_T |  |  |  |
-| FIRST_I |  |  |  |
-| LAST_I |  |  |  |
+| IT | Online increment monolevel-problem sequence number |  | Integer |
+| PN | The monolevel-problem sequence number |  | Integer |
+| START_S | The start step of the monolevel problem (denoted by j) |  | Integer |
+| IS_INITIAL | Whether the problem is initial | An initial-problem starts in the initial-state of the hierarchical planning problem | Boolean |
+| IS_FINAL | Whether the problem is final | A final-problem ends in a state that satisfies the final-goal of the hierarchical planning problem | Boolean |
+| SIZE | The size of the planning problem | The size of a planning problem is the number of goals in the goal sequence, for refinement problems this is the number sub-goal stages it refines, for classical problems it is always 1 indicating the final-goal | Integer |
+| SGLITS_T | The total number of sub-goal stage literals the problem refines | This is always greater than or equal to the problem size, since each sub-goal stage is a non-empty set of sub-goal literals (the set of effects of a set of abstract actions) | Integer |
+| FIRST_I | The first sub-goal stage index (denoted by varphi) |  | Integer |
+| LAST_I | The last sub-goal stasge index (denoted by vartheta) |  | Integer |
 
 ### Division Points
 
@@ -91,7 +91,7 @@ For columns headers for aggregate results, see the `aggregate` sub-directory.
 | ST | Solving time | Time taken to solve the logic program | Seconds |
 | OT | Overhead time | Time taken operate the sequential yield planning algorithm | Seconds |
 | TT | Total time | The total planning time, sum of all; grounding, solving, and overhead times | Seconds |
-| LT | Latency time | The execution latency time, the yield time of the initial partial-plan | Seconds |
+| LT | Latency time | The latency time, the yield time of the initial partial-plan (this is the execution latendcy time if this is a ground-level plan) | Seconds |
 | CT | Completion time | The completion time, yield time of the final partial-plan | Seconds |
 | WT | Wait time | The average wait time per partial-plan, the average over all partial-plans, of the time difference between the yield time of the given partial-plan minus the yield time of the previous | Seconds |
 | WT_PA | Wait time per action | The average wait time per action | Seconds |
