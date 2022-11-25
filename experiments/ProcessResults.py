@@ -571,7 +571,9 @@ al_range = range(1, quantiles_cat_plans.index.get_level_values("AL").max() + 1)
 
 ## The minimal summary statistics to compare
 summary_statistics_globals = ["QL_SCORE", "TI_SCORE", "GRADE"]
-summary_statistics_cat_plans = ["LE", "AC", "CF", "CP_EF_L", "SP_EB_L", "GT", "ST", "OT", "GT_POTT", "ST_POTT", "OT_POTT", "TT", "LT", "WT", "MET", "CT"]
+summary_statistics_cat_plans = ["LE", "AC", "CF", "CP_EF_L", "SP_EB_L", "GT", "ST", "GT_POTT", "ST_POTT", "TT", "LT", "WT", "MET", "CT"]
+if cli_args.include_overhead_time:
+    summary_statistics_cat_plans = ["LE", "AC", "CF", "CP_EF_L", "SP_EB_L", "GT", "ST", "OT", "GT_POTT", "ST_POTT", "OT_POTT", "TT", "LT", "WT", "MET", "CT"]
 summary_statistics_par_plans = ["IT", "PN", "TT", "WT", "SIZE", "LE", "AC", "CF", "PP_EF_L", "SP_EB_L"]
 
 ## Construct a dataframe including just the medians and IQR for all data sets (combined configurations);
@@ -606,14 +608,17 @@ fully_combined_data_sets_partial_plans.loc[:,["WT_POHA", "YT_POHA"]] = fully_com
 fully_combined_data_sets_partial_plans_level_and_problem_grouped = fully_combined_data_sets_partial_plans.groupby([cli_args.break_first, cli_args.break_second, "AL", "PN"])
 
 ## Construct a datafrace containing the sum of the grounding, solving, overhead, and total times to the ground level (these are needed for plotting)
-fully_combined_data_sets_cat_plans_time_sums = fully_combined_data_sets_grouped[["GT", "ST", "OT", "TT"]].sum()
-for time_type in ["GT", "ST", "OT"]:
+time_types = ["GT", "ST"]
+if cli_args.include_overhead_time:
+    time_types.append("OT")
+fully_combined_data_sets_cat_plans_time_sums = fully_combined_data_sets_grouped[[*time_types, "TT"]].sum()
+for time_type in time_types:
     fully_combined_data_sets_cat_plans_time_sums[f"{time_type}_POTT"] = fully_combined_data_sets_cat_plans_time_sums[time_type] / fully_combined_data_sets_cat_plans_time_sums["TT"]
 
 ## Construct a dataframge containing the raw ground-level statistics.
 summary_statistics_ground_level = ["GT", "ST", "LT", "WT", "CT", "LE"]
 if cli_args.include_actions: summary_statistics_ground_level.extend(["AC", "CF"])
-summary_raw_ground_level = pandas.merge(fully_combined_data_sets_cat_plans_time_sums.droplevel("RU").groupby([cli_args.break_first, cli_args.break_second])[["GT", "ST", "OT", "TT"]].median(),
+summary_raw_ground_level = pandas.merge(fully_combined_data_sets_cat_plans_time_sums.droplevel("RU").groupby([cli_args.break_first, cli_args.break_second])[[*time_types, "TT"]].median(),
                                         fully_combined_data_sets_ground_level_grouped[["LT", "WT", "MET", "CT", "LE", "AC", "CF", "LT_SCORE", "AW_SCORE", "AME_SCORE", "CT_SCORE"]].median(), left_index=True, right_index=True)
 summary_raw_ground_level_stacked = summary_raw_ground_level[summary_statistics_ground_level].unstack(cli_args.break_second).swaplevel(0, 1, axis=1).sort_index(axis=1, level=0).reindex(summary_statistics_ground_level, axis=1, level=1)
 
@@ -1409,17 +1414,6 @@ if "time" in cli_args.make_plots:
         x="SL", y="S_TT", hue=cli_args.break_first, style=cli_args.break_first, col=cli_args.break_second,
         kind="line", markers=False, dashes=True
     )
-    # fg = sns.relplot(
-    #     data=step_wise_ground_level_data,
-    #     x="SL", y="S_TT", hue=cli_args.break_first, style=cli_args.break_first, col=cli_args.break_second,
-    #     kind="scatter", markers=True
-    # )
-    # for i, header in enumerate(regression_data[cli_args.break_second].unique()):
-    #     sns.lineplot(
-    #         data=regression_data.query(f"{cli_args.break_second} == '{header}'"),
-    #         x="SL", y="S_TT", hue=cli_args.break_first, style=cli_args.break_first,
-    #         ax=fg.axes[0, i], markers=False, dashes=True
-    #     )
     for i, problem in enumerate(fully_combined_data_sets["Partial Plans"]["problem"].unique()):
         for x in fully_combined_data_sets["Partial Plans"].query(f"AL == 1 and problem == '{problem}'").groupby("PN").median()["LE"]:
             fg.axes[0, i].axvline(x, color="red", linestyle="dashed", linewidth=0.5)
