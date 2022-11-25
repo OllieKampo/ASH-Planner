@@ -29,7 +29,6 @@ import time
 from abc import abstractclassmethod
 from collections import UserDict
 from dataclasses import dataclass, field, fields, is_dataclass
-from functools import cached_property
 from operator import itemgetter
 from typing import (Any, Callable, Generator, Hashable, Iterable, Iterator,
                     Mapping, NamedTuple, Optional, Pattern, Sequence, Tuple,
@@ -77,7 +76,8 @@ ASP_Symbol = Union[str, clingo.Symbol]
 
 def to_clingo_form(symbol: ASP_Symbol) -> clingo.Symbol:
     """
-    Takes an ASP symbol given as a string or clingo Symbol, and retruns a clingo Symbol.
+    Take an ASP symbol given as a string or clingo Symbol, and retruns a clingo Symbol.
+    
     If a string is given as argument, it is converted to clingo form via the gringo term parser and returned
     (gringo errors messages are printed to this solve signal's underlying logic program's logger as warnings).
     Otherwise, if a clingo Symbol is given as argument, the argument itself is returned.
@@ -107,6 +107,7 @@ def to_clingo_form(symbol: ASP_Symbol) -> clingo.Symbol:
 class Atom(UserDict):
     """
     A dictionary class used for representing ASP atoms extracted from ASP models by ASP_Parser.Model.query(...).
+    
     Atoms are plain dictionaries, except when converted to a string, they are formatted to represent clingo ASP symbols of the form
     `name(arg_1, arg_i, ... arg_n)` where the name is the predicate name of this atom, and the args are defined by the values of the atom's dictionary.
     The class requires one additional abstract class method `predicate_name(cls) -> str` to be overridden to define the predicate name of the atom.
@@ -142,8 +143,8 @@ class Atom(UserDict):
     people: list[Person] = answer.fmodel.query(Person)
     print(*people.items(), sep="\\n")
     ```
-    
     """
+    
     def __str__(self) -> str:
         return "{0}{1}({2})".format('' if str(self.get('TRUTH', 'true')).lower() == 'true' else '-',
                                     self.predicate_name(),
@@ -155,17 +156,17 @@ class Atom(UserDict):
     
     @property
     def symbol(self) -> clingo.Symbol:
-        "The clingo symbol object form of this atom."
+        """Get the clingo symbol object form of this atom."""
         return to_clingo_form(str(self))
     
     @property
     def encode(self) -> str:
-        "An encoded string format of this atom that represents a fact statement."
+        """Get an encoded string format of this atom that represents a fact statement."""
         return str(self) + '.'
     
     @property
     def _dict(self) -> dict[str, Any]:
-        "A raw dictionary copy of this atom."
+        """Get a raw dictionary copy of this atom."""
         return {key : value for key, value in self.items()}
     
     @abstractclassmethod
@@ -183,24 +184,25 @@ class Atom(UserDict):
     
     @classmethod
     def default_params(cls) -> Optional[tuple[str]]:
-        "The default parameters of this atom."
+        """Get the default parameters of this atom."""
         return None
     
     @classmethod
     def default_cast(cls) -> Optional[dict[str, Callable[[clingo.Symbol], Any]]]:
         """
-        The default types to cast parameters of this atom to, given as a mapping between parameter names and callables
-        that take the respective argument for that parameter as its only argument and returns some casted version of it to any desired type.
+        Get the default types to cast parameters of this atom to.
+        
+        Given as a mapping between parameter names and callables that take the respective argument for that parameter as its only argument and returns some casted version of it to any desired type.
         """
         return None
     
     @classmethod
     def default_sort(cls) -> Optional[Union[str, tuple[str]]]:
-        "The default parameters of this atom to use for sorting, parameters that occur first are higher priority sort keys."
+        """Get the default parameters of this atom to use for sorting, parameters that occur first are higher priority sort keys."""
         return None
     
     def select(self, *parameters, ignore_missing: bool = False) -> dict[str, Any]:
-        "Select a sub-set of the parameters of this atom and return the parameter-argument mapping as a dictionary."
+        """Select a sub-set of the parameters of this atom and return the parameter-argument mapping as a dictionary."""
         selection: dict[str, Any] = {}
         for parameter in parameters:
             if parameter in self:
@@ -211,9 +213,7 @@ class Atom(UserDict):
     
     @staticmethod
     def nest_grouped_atoms(grouped_atoms: dict[tuple, list[Union["Atom", dict[str, Any]]]], as_standard_dict: bool = False) -> dict:
-        """
-        Nest the keys of a sequence of grouped atoms extracted from a model such that the keys tuple is converted to a nested sequence of dictionaries each with singleton keys.
-        """
+        """Nest the keys of a sequence of grouped atoms extracted from a model such that the keys tuple is converted to a nested sequence of dictionaries each with singleton keys."""
         nested_atoms: dict = {}
         if grouped_atoms and not isinstance(next(iter(grouped_atoms.keys())), tuple):
             raise ValueError("Only atoms grouped with tuple keys can be nested.")
@@ -243,20 +243,24 @@ class Result:
     
     `interrupted : bool` - The negation of the `exhausted` field (if the search space was not exhausted, search must have been interrupted).
     """
+    
     satisfiable: bool
     exhausted: bool
     
     def __str__(self) -> str:
+        """Get a string representation of this result."""
         return (f"{self.__class__.__name__} :: "
                 + " : ".join(["SATISFIABLE" if self.satisfiable else "UNSATISFIABLE",
                               "SEARCH EXHAUSTED" if self.exhausted else "SEARCH INTERRUPTED"]))
     
     @property
     def unsatisfiable(self) -> bool:
+        """Get the negation of the `satisfiable` field (if the program was not satisfiable, it is unsatisfiable, unless search was cancelled)."""
         return not self.satisfiable
     
     @property
     def interrupted(self) -> bool:
+        """Get the negation of the `exhausted` field (if the search space was not exhausted, search must have been interrupted)."""
         return not self.exhausted
 
 @dataclass(frozen=True, order=True)
@@ -270,6 +274,7 @@ class Memory:
     
     `vms : float` - The Virtual Memory Size, the total amount of virtual memory used by the process.
     """
+    
     rss: float
     vms: float
     
@@ -303,6 +308,7 @@ class Statistics:
     floats or nested dictionaries. The dictionary contains statistics returned by the internal Clingo solver.
     It is populated only if the solver was called with option ASP_Parser.Options.statistics() or '--stats' enabled.
     """
+    
     grounding_time: float
     solving_time: float
     total_time: float = -1.0
@@ -343,22 +349,24 @@ class IncrementalStatistics(Statistics):
     
     `incremental_stats_str : str` - A formatted multiple line string of the incremental statistics.
     """
+    
     cumulative: Statistics = Statistics(0.0, 0.0)
     incremental: dict[int, Statistics] = field(default_factory=dict)
     
     def __str__(self):
+        """Get a formatted string of the incremental statistics."""
         return (f"{self.__class__.__name__} :: "
                 + ", ".join([f"Cumulative = ({self.cumulative!s})",
                              f"Calls = {self.calls}"]))
     
     @property
     def calls(self) -> int:
-        "The number of solver calls made to find a solution to the logic program."
+        """Get the number of solver calls made to find a solution to the logic program."""
         return len(self.incremental)
     
     @property
     def grand_totals(self) -> Statistics:
-        "The grand total times and maximum memory usage, the sum of the base and all incremental times."
+        """Get the grand total times and maximum memory usage, the sum of the base and all incremental times."""
         return Statistics(self.grounding_time + self.cumulative.grounding_time,
                           self.solving_time + self.cumulative.solving_time,
                           memory=Memory(max(self.memory.rss, self.cumulative.memory.rss),
@@ -366,12 +374,11 @@ class IncrementalStatistics(Statistics):
     
     @property
     def incremental_stats_str(self) -> str:
-        "Format the incremental statistics into a multiple line string."
+        """Format the incremental statistics into a multiple line string."""
         return "\n".join([f"{step} : {stats}" for step, stats in self.incremental.items()])
     
     def combine_with(self, other: "IncrementalStatistics", shift_increments: int = 0) -> "IncrementalStatistics":
-        "Combine this incremental statistics object with another. Incremental statistics are combined on a increment-wise basis."
-        
+        """Combine this incremental statistics object with another. Incremental statistics are combined on a increment-wise basis."""
         ## Form a merged sequence of incremental statistics
         incremental: dict[int, Statistics] = self.incremental
         
@@ -410,6 +417,7 @@ ParameterConstraint = Union[str, int, tuple[Pattern, "Model.ParseMode"], Callabl
 class Model(_collections_abc.Set):
     """
     Encapsulates a model returned by logic program solve calls.
+    
     A model is an answer set, a finite set of atoms produced by a logic program.
     Models have frozen set semantics; they are immutable, unordered and contain no duplicates.
     Models support all the usual set operations, and also a variety of additional methods for querying the model for the existence and truth of atoms.
@@ -432,6 +440,7 @@ class Model(_collections_abc.Set):
     
     `model_type : {clingo.ModelType, None}` - Clingo model type for this model, None if the program was unsatisfiable.
     """
+    
     symbols: frozenset[clingo.Symbol]
     cost: tuple[int] = field(default_factory=tuple)
     optimality_proven: bool = False
@@ -483,6 +492,7 @@ class Model(_collections_abc.Set):
     def union(self, other: "Model") -> "Model":
         """
         Find the union of this and another model, returning a new model.
+        
         Where the union of two sets is a set containing the elements that occur in either of the originals.
         
         Parameters
@@ -498,6 +508,7 @@ class Model(_collections_abc.Set):
     def intersection(self, other: "Model") -> "Model":
         """
         Find the intersection of this and another model, returning a new model.
+        
         Where the intersection of two sets is a set containing only the elements that occur in both of the originals.
         
         Parameters
@@ -513,6 +524,7 @@ class Model(_collections_abc.Set):
     def difference(self, other: "Model") -> "Model":
         """
         Find the difference between this and another model, returning a new model.
+        
         Where the difference between two sets is a set containing only the elements
         that occur in the first set (this model) and not in the second (other model).
         
@@ -529,6 +541,7 @@ class Model(_collections_abc.Set):
     def symmetric_difference(self, other: "Model") -> "Model":
         """
         Find the symmetric difference between this and another model, returning a new model.
+        
         Where the symmetric difference between two sets is a set containing only the elements that occur in either of the originals but not both.
         
         Parameters
@@ -592,7 +605,8 @@ class Model(_collections_abc.Set):
     @enum.unique
     class ParseMode(enum.Enum):
         """
-        An enumeration defining the three possible regular expression matching modes.
+        Enumeration defining the three possible regular expression matching modes.
+        
         These are used when parsing a model with:
             - `Model.get_atoms(...)`,
             - `Model.query(...)`,
@@ -611,13 +625,14 @@ class Model(_collections_abc.Set):
         `Search = (lambda regex, value: regex.search(value),)` - Match the regular expression anywhere in the string.
         Functionality is defined by re.search(patten: re.Pattern, string: AnyStr).
         """
+        
         Match = (lambda regex, value: regex.match(value),)
         FullMatch = (lambda regex, value: regex.fullmatch(value),)
         Search = (lambda regex, value: regex.search(value),)
     
     @staticmethod
     def __satisfies_constraint(value: clingo.Symbol, constr: ParameterConstraint) -> bool:
-        "Check whether a symbol's argument satisfies a given constraint."
+        """Check whether a symbol's argument satisfies a given constraint."""
         return ((isinstance(constr, tuple)
                  and constr[1].value[0](constr[0], str(value)) is not None)
                 or (isinstance(constr, Callable)
@@ -626,7 +641,7 @@ class Model(_collections_abc.Set):
     
     @staticmethod
     def __group_atoms(sequence: Sequence[clingo.Symbol], key: Callable[[clingo.Symbol], Union[clingo.Symbol, tuple[clingo.Symbol]]]) -> tuple[clingo.Symbol, list[clingo.Symbol]]:
-        "Group a sequence of symbols using a given grouping key function."
+        """Group a sequence of symbols using a given grouping key function."""
         groups: dict[Union[clingo.Symbol, tuple[clingo.Symbol]], list[clingo.Symbol]] = {}
         for item in sequence:
             groups.setdefault(key(item), []).append(item)
@@ -737,11 +752,11 @@ class Model(_collections_abc.Set):
                 atoms.append(symbol)
         
         def keys_for(list_):
-            """Creates functions that extracts atom arguments for sorting and grouping."""
+            """Create a function that extracts atom arguments for sorting and grouping."""
             return lambda item: (tuple(item.arguments[index] for index in list_ if index in range(0, arity)) if isinstance(list_, Iterable) else item.arguments[list_])
         
         def convert(index, key):
-            """Converts individual keys to the desired type."""
+            """Convert an individual key to the desired type."""
             if isinstance(convert_keys, Mapping):
                 return key if index not in convert_keys else convert_keys[index](key)
             else: return convert_keys(key)
@@ -888,10 +903,10 @@ class Model(_collections_abc.Set):
         arity: int = len(_atom_params)
         
         def get_name_checker(name_type: type) -> Callable[[clingo.Symbol], bool]:
-            "Creates a lambda function for checking an atom's name agaist the constraint given."
+            """Creates a lambda function for checking an atom's name agaist the constraint given."""
             if name_type == str:
                 return lambda symbol: symbol.name == _atom_name
-            return lambda symbol: _atom_name[1].value[0](_atom_name[0], symbol.name) is not None ## Change the parsemode enum to just being the standarded regex matching functions.
+            return lambda symbol: _atom_name[1].value[0](_atom_name[0], symbol.name) is not None ## TODO: Change the parsemode enum to just being the standarded regex matching functions.
         name_checker: Callable[[clingo.Symbol], bool] = get_name_checker(type(_atom_name))
         
         constr_params: list[Tuple[str, int]] = []
@@ -952,7 +967,7 @@ class Model(_collections_abc.Set):
                 atoms.append(atom)
         
         def validate_params(params: Optional[Union[str, Sequence[str]]]) -> Optional[tuple[str]]:
-            "Validates sorting and grouping parameters, discarding any that are not in the atom parameter list."
+            """Validates sorting and grouping parameters, discarding any that are not in the atom parameter list."""
             if isinstance(params, str) and params in _atom_params:
                 return (params,)
             elif (isinstance(params, Sequence) and params
@@ -964,7 +979,7 @@ class Model(_collections_abc.Set):
         _group_by: Optional[tuple[str]] = validate_params(group_by)
         
         def keys_for(params: tuple[str]) -> itemgetter:
-            "Creates an item getter for getting keys for sorting and grouping atoms."
+            """Creates an item getter for getting keys for sorting and grouping atoms."""
             return itemgetter(*[param for param in params])
         
         if _sort_by is not None:
@@ -985,15 +1000,16 @@ class Model(_collections_abc.Set):
                     ) -> set[ASP_Symbol]:
         """
         Parse over each atom in the model using a regular expression.
+        
         Those atoms who match the expression according to the given parsing mode are returned.
         
         Parameters
         ----------
-        `regex: re.Pattern | str` -
+        `regex: re.Pattern | str` - A reguler expression pattern or string to match against.
         
-        `parse_mode: ParseMode | None = None` -
+        `parse_mode: ParseMode | None = None` - The parsing mode to use when matching the regular expression.
         
-        `return_as_strings: bool = True` -
+        `return_as_strings: bool = True` - Whether to return the matched atoms as strings or as clingo symbols.
         
         Returns
         -------
@@ -1015,6 +1031,7 @@ class Model(_collections_abc.Set):
                    ) -> set[ASP_Symbol]:
         """
         Parse over each atom in the model using a callback function.
+        
         The callback function is called on each atom in the model.
         If the callback returns True is atom is returned in a set as their string representation.
         
@@ -1038,13 +1055,15 @@ class Model(_collections_abc.Set):
         return atoms
     
     def evaluate(self, rule: str, solver_options: Iterable[str] = [], assumptions: Iterable[clingo.Symbol] = [], context: Iterable[Callable[..., clingo.Symbol]] = []) -> "Answer":
-        ## context_type = type("context", (object,), {func.__name__ : func for func in context})
+        """Evaluate the given rule over the current model."""
         _ASP_logger.debug(f"Evaluating rule '{rule}' over:\n{self}")
         logic_program = LogicProgram(rule, name="Evaluate", silent=True)
         logic_program.add_rules(self.symbols)
         return logic_program.solve(solver_options=solver_options, assumptions=assumptions, context=context)
 
 class ModelCount(NamedTuple):
+    """Tuple the first model and the number of other models that were counted when count multiple models was enabled."""
+    
     model: Model
     count: int
 
@@ -1100,6 +1119,7 @@ class Answer(NamedTuple):
     >>> answer.fmodel
     Model(symbols=frozenset(), cost=[], optimality_proven=False, number=-1, thread_id=-1, model_type=None)
     """
+    
     result: Result ## TODO Change to base_result and inc_result
     statistics: Statistics ## TODO Change to base_statistics and inc_statistics (that means we can get rid of "grand totals" in inc_statistics)
     base_models: Union[list[Model], ModelCount]
@@ -1112,16 +1132,18 @@ class Answer(NamedTuple):
     
     @property
     def models_counted(self) -> bool:
+        """Get the total number of models that were yielded by the solver (not every model is included in the answer if count multiple models was enabled)."""
         return not isinstance(self.base_models, list)
     
     @property
     def total_models(self) -> int:
+        """Get the total number of models in the answer."""
         return (self.base_models.count if self.models_counted else len(self.base_models)
                 + sum(models.count if self.models_counted else len(models) for models in self.inc_models.values()))
     
     @property
     def fmodel(self) -> Model:
-        "Get the final model in the answer, or an empty model (containing no atoms), if no models exist (i.e. the result was unsatisfiable)."
+        """Get the final model in the answer, or an empty model (containing no atoms), if no models exist (i.e. the result was unsatisfiable)."""
         fmodel: Optional[Model] = None
         if self.base_models:
             fmodel = self.base_models[-1]
@@ -1134,7 +1156,7 @@ class Answer(NamedTuple):
     
     @staticmethod
     def dummy_answer() -> "Answer":
-        "Constructs an empty answer. Useful as a default 'dummy' argument."
+        """Constructs an empty answer. Useful as a default 'dummy' argument."""
         return Answer(Result(False, False), Statistics(0.0, 0.0), Model([]))
 
 #############################################################################################################################################
@@ -1151,6 +1173,7 @@ class Answer(NamedTuple):
 class IncRange(SubscriptableDataClass):
     """
     Represents the range of steps over which to ground the incremental program part(s) to which this range is assigned.
+    
     A program part is grounded on every step that falls within the given optional start and end bound values, and is divisible by a given step jump value.
     
     Fields
@@ -1187,6 +1210,7 @@ class IncRange(SubscriptableDataClass):
     >>> range_.in_range(3) or range_.in_range(5)
     False
     """
+    
     start: Optional[int] = None
     end: Optional[int] = None
     step: int = 1
@@ -1234,12 +1258,14 @@ class BasePart:
     
     @property
     def is_valid(self) -> bool:
+        """Get whether the program part's name is valid."""
         return bool(self.name)
     
     @property
     def _clingo_form(self) -> tuple[str, list[Optional[clingo.Symbol]]]:
         """
-        Converts the program part to the form required by Clingo.
+        Convert the program part to the form required by Clingo.
+        
         Incremental arguments with value '#inc' are converted to None and must be manually replaced by a Clingo number before grounding.
         """
         return (self.name, [(clingo.parse_term(str(arg)) if arg != "#inc" else None) for arg in self.args])
@@ -1248,6 +1274,7 @@ class BasePart:
     def from_string(cls, program_part: str) -> "BasePart":
         """
         Convert a string of the form 'name(args_0, args_i, ... args_n)' to a base part object.
+        
         This does not check the validity of the syntax.
         """
         if '(' not in program_part:
@@ -1260,6 +1287,7 @@ class BasePart:
 class IncPart(BasePart):
     """
     Represents an incremental program part as an immutable tuple of; a name, a sequence of arguments, and an optional step range.
+    
     To specify an argumentt to be replaced by an incremental step value specify it as '#inc'.
     
     The program part header is of the form:
@@ -1277,6 +1305,7 @@ class IncPart(BasePart):
     `range_ : {IncRange, None} = None` - An optional incremental step range (see ASP_Parser.IncRange) to use this program part for.
     If not given or None, then the program part is used on all steps. By default None.
     """
+    
     args: tuple[Union[str, int]] = ("#inc",)
     range_: Optional[IncRange] = None
     
@@ -1291,6 +1320,7 @@ class IncPart(BasePart):
 class ProgramParts(SubscriptableDataClass):
     """
     A tuple used to store program parts.
+    
     The program parts are stored in mutable lists that can be modified during solving.
     
     Fields
@@ -1299,6 +1329,7 @@ class ProgramParts(SubscriptableDataClass):
     
     `inc_parts : list[IncPart] = []` - A list of incremental program parts.
     """
+    
     base_parts: list[BasePart]
     inc_parts: list[IncPart] = field(default_factory=list)
     
@@ -1712,14 +1743,13 @@ class HaltReason(enum.Enum):
 @dataclass
 class Bounds:
     """Dataclass for storing the step bounds used in incremental solving."""
+    
     increment: int
     previous_step: int
     current_step: int
 
 class LogicProgram:
-    """
-    An ASP non-monotonic logic program.
-    """
+    """Class defining ASP non-monotonic logic programs."""
     
     __slots__ = (## The program's AST itself
                  "__program",               # list[clingo.ast.AST]
@@ -1925,7 +1955,7 @@ class LogicProgram:
     
     @property
     def bounds(self) -> Bounds:
-        """The current bounds of the held incremental grounding."""
+        """Get the current bounds of the held incremental grounding."""
         return self.__bounds
     
     @property
@@ -1935,7 +1965,8 @@ class LogicProgram:
     @property
     def running(self) -> bool:
         """
-        Whether the program is currently running a solve call.
+        Get whether the program is currently running a solve call.
+        
         A program that is running cannot be solved, started, or resumed.
         """
         return self.__running
@@ -1943,7 +1974,8 @@ class LogicProgram:
     @property
     def holding(self) -> bool:
         """
-        Whether the logic program is currently holding a saved incremental grounding and is not running.
+        Get whether the logic program is currently holding a saved incremental grounding and is not running.
+        
         A program that is holding can be resumed.
         """
         return not self.__running and self.__control is not None
@@ -2418,7 +2450,8 @@ class LogicProgram:
     def resume(self, solve_incrementor: Optional[SolveIncrementor] = None, maintain_step: bool = True) -> "SolveSignal":
         """
         Resume an incremental solve call with this logic program's held grounding.
-        Calling this before any has been started is an error.
+        
+        Calling this before any solve call has been started is an error.
         
         Parameters
         ----------
@@ -2469,6 +2502,7 @@ class LogicProgram:
     def __create_solve_signal(self) -> SolveSignal:
         """
         Create a solve signal object that encapsulates this logic program's currently assigned control object and saved grounding.
+        
         The solve signal can then be used to control incremental solving of this logic program.
         
         Private use only, this method should not be called from outside this class.
@@ -2597,6 +2631,7 @@ class LogicProgram:
     def __inc_run(self, increments: Optional[int] = None) -> Iterator[Feedback]:
         """
         Run an incremental grounding and solving of this logic program with the given clingo Control object.
+        
         This is a generator function, which yields enumerated feedback objects for each incremental solve call.
         
         Protected use only, this method should not be called from outside this module.
@@ -2649,7 +2684,7 @@ class LogicProgram:
         halt_reason_description: Optional[str] = None
         
         def get_step(value: Optional[int]) -> str:
-            "Function for extracting optional incrementor step bounds."
+            """Extract optional incrementor step bounds."""
             return f"{value:>6d}" if value is not None else "  None"
         
         if self.__tqdm:
@@ -2804,7 +2839,7 @@ class LogicProgram:
     
     def __catch_clingo_log(self, code: clingo.MessageCode, message: str) -> None:
         """
-        Intercepts error messages from clingo and sends them to this program's logger.
+        Intercept error messages from clingo and sends them to this program's logger.
         
         Private use only, this method should not be called from outside this class.
         
@@ -2819,7 +2854,7 @@ class LogicProgram:
     
     def __on_model(self, clingo_model: clingo.Model, solve_stage: Optional[int] = None) -> None:
         """
-        Callback method to intercept model objects from Clingo during solving.
+        Intercept model objects from Clingo during solving.
         
         Private use only, this method should not be called from outside this class.
         
@@ -2854,7 +2889,7 @@ class LogicProgram:
     
     def __on_finish(self, result: clingo.SolveResult) -> None:
         """
-        Callback method to intercept solve result objects from the clingo solver.
+        Intercept solve result objects from the clingo solver.
         
         Private use only, this method should not be called from outside this class.
         
@@ -2876,6 +2911,8 @@ class LogicProgram:
 #############################################################################################################################################
 
 class Options:
+    """Class defining options for the clingo ASP solver."""
+    
     @staticmethod
     def models(models: int = 0) -> str:
         return f"--models={models}"
