@@ -100,8 +100,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
 def __main() -> int:
-    """Main method which creates a console session, runs the planner, and returns 0 if the console returns cleanly."""
-    
+    """Start main method which creates a console session, runs the planner, and returns 0 if the console returns cleanly."""
     ## Run initial setup and get CLI arguments
     namespace: argparse.Namespace = __setup()
     
@@ -523,7 +522,7 @@ def __main() -> int:
             bar_width: float = (1.0 / bars) - (padding / bars)
             
             def set_bars(bars: int) -> None:
-                "Set the number of bars in the current plot."
+                """Set the number of bars in the current plot."""
                 bars = bars
                 nonlocal bar_width
                 bar_width = (1.0 / bars) - (padding / bars)

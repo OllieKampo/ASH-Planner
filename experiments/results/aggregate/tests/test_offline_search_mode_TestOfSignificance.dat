@@ -1,0 +1,31 @@
+problem   ps1 ps1 ps1 ps1 ps1 ps1 ps1 ps1 ps1 ps2 ps2 ps2 ps2 ps2 ps2 ps2 ps2 ps2 ps3 ps3 ps3 ps3 ps3 ps3 ps3 ps3 ps3
+search_mode   minbound minbound minbound standard standard standard yield yield yield minbound minbound minbound standard standard standard yield yield yield minbound minbound minbound standard standard standard yield yield yield
+result   GRADE QL_SCORE TI_SCORE GRADE QL_SCORE TI_SCORE GRADE QL_SCORE TI_SCORE GRADE QL_SCORE TI_SCORE GRADE QL_SCORE TI_SCORE GRADE QL_SCORE TI_SCORE GRADE QL_SCORE TI_SCORE GRADE QL_SCORE TI_SCORE GRADE QL_SCORE TI_SCORE
+problem search_mode comparison                           
+ps1 minbound "Median Test"    -1.0 0.0 -1.0 -1.0 0.0 -1.0                  
+ps1 minbound "Score Ranksums"    1.6363478614806142e-11 1.0 1.6363478614806142e-11 9.810817562244509e-17 1.0 9.810817562244509e-17                  
+ps1 minbound "Score Wilcoxon"    8.502529682098662e-09 1.0 8.502529682098662e-09 8.031090907046913e-10 1.0 8.031090907046913e-10                  
+ps1 standard "Median Test" -1.0 0.0 -1.0    -1.0 0.0 -1.0                  
+ps1 standard "Score Ranksums" 1.6363478614806142e-11 1.0 1.6363478614806142e-11    1.5589273043393844e-16 1.0 1.5589273043393844e-16                  
+ps1 standard "Score Wilcoxon" 8.502529682098662e-09 1.0 8.502529682098662e-09    9.06805772149548e-10 1.0 9.06805772149548e-10                  
+ps1 yield "Median Test" -1.0 0.0 -1.0 -1.0 0.0 -1.0                     
+ps1 yield "Score Ranksums" 9.810817562244509e-17 1.0 9.810817562244509e-17 1.5589273043393844e-16 1.0 1.5589273043393844e-16                     
+ps1 yield "Score Wilcoxon" 8.031090907046913e-10 1.0 8.031090907046913e-10 9.06805772149548e-10 1.0 9.06805772149548e-10                     
+ps2 minbound "Median Test"             -1.0 -1.0 -1.0 -1.0 -1.0 -1.0         
+ps2 minbound "Score Ranksums"             6.148503777370468e-13 0.3011020462122582 1.6878587087291283e-15 1.9785617412782813e-10 0.0010582499971310674 3.1772616698753373e-12         
+ps2 minbound "Score Wilcoxon"             9.002403196420849e-09 0.2747878555237676 1.9791055568801153e-09 1.067954707357515e-08 0.0003238647348852595 6.3812412695451034e-09         
+ps2 standard "Median Test"          -1.0 -1.0 -1.0    -1.0 -1.0 -1.0         
+ps2 standard "Score Ranksums"          6.148503777370468e-13 0.3011020462122582 1.6878587087291283e-15    0.00016719972097339384 0.02505903461542356 6.538792711923211e-10         
+ps2 standard "Score Wilcoxon"          9.002403196420849e-09 0.2747878555237676 1.9791055568801153e-09    0.0017911773711392484 0.013892681113409487 1.1299671677369374e-07         
+ps2 yield "Median Test"          -1.0 -1.0 -1.0 -1.0 -1.0 -1.0            
+ps2 yield "Score Ranksums"          1.9785617412782813e-10 0.0010582499971310674 3.1772616698753373e-12 0.00016719972097339384 0.02505903461542356 6.538792711923211e-10            
+ps2 yield "Score Wilcoxon"          1.067954707357515e-08 0.0003238647348852595 6.3812412695451034e-09 0.0017911773711392484 0.013892681113409487 1.1299671677369374e-07            
+ps3 minbound "Median Test"                      -1.0 -1.0 -1.0 -1.0 -1.0 -1.0
+ps3 minbound "Score Ranksums"                      1.342956020251371e-08 0.07197329539460848 1.3640307418482702e-09 0.0038707107148705793 0.013985064622264188 0.007325000570549675
+ps3 minbound "Score Wilcoxon"                      1.1713353361032e-06 0.04468985533297453 5.306705212636559e-07 0.004080760905260814 0.0059073723557853995 0.004470641731807893
+ps3 standard "Median Test"                   -1.0 -1.0 -1.0    -1.0 -1.0 -1.0
+ps3 standard "Score Ranksums"                   1.342956020251371e-08 0.07197329539460848 1.3640307418482702e-09    4.2229777081257955e-05 0.475530006472631 2.4957210253084293e-06
+ps3 standard "Score Wilcoxon"                   1.1713353361032e-06 0.04468985533297453 5.306705212636559e-07    0.00037478144165664385 0.37402638495308527 4.7244338450388704e-05
+ps3 yield "Median Test"                   -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   
+ps3 yield "Score Ranksums"                   0.0038707107148705793 0.013985064622264188 0.007325000570549675 4.2229777081257955e-05 0.475530006472631 2.4957210253084293e-06   
+ps3 yield "Score Wilcoxon"                   0.004080760905260814 0.0059073723557853995 0.004470641731807893 0.00037478144165664385 0.37402638495308527 4.7244338450388704e-05   

@@ -891,7 +891,7 @@ class Model(_collections_abc.Set):
             "Creates a lambda function for checking an atom's name agaist the constraint given."
             if name_type == str:
                 return lambda symbol: symbol.name == _atom_name
-            return lambda symbol: _atom_name[1].value[0](_atom_name[0], symbol.name) is not None
+            return lambda symbol: _atom_name[1].value[0](_atom_name[0], symbol.name) is not None ## Change the parsemode enum to just being the standarded regex matching functions.
         name_checker: Callable[[clingo.Symbol], bool] = get_name_checker(type(_atom_name))
         
         constr_params: list[Tuple[str, int]] = []

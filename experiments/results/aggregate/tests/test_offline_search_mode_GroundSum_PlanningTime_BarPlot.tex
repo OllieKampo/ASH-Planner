@@ -1,0 +1,105 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{groupplot}[group style={group size=3 by 1}]
+\nextgroupplot[
+height=\plotHeight,
+tick align=outside,
+tick pos=left,
+title={problem = ps1},
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={Time type},
+xmin=-0.5, xmax=1.5,
+xtick style={color=black},
+xtick={0,1},
+xticklabels={GT,ST},
+y grid style={darkgray176},
+ylabel={Time (s)},
+ymin=0, ymax=57.4506234458101,
+ytick style={color=black}
+]
+\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:0.4,8.40322940000008);
+\addlegendimage{ybar,ybar legend,draw=none,fill=steelblue49115161}
+\addlegendentry{standard}
+
+\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:1.4,2.83803510399998);
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0 8.3991351195001
+0 8.40708323440007
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1 2.69938394559997
+1 2.99358309960001
+};
+
+\nextgroupplot[
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+tick pos=left,
+title={problem = ps2},
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={Time type},
+xmin=-0.5, xmax=1.5,
+xtick style={color=black},
+xtick={0,1},
+xticklabels={GT,ST},
+y grid style={darkgray176},
+ymin=0, ymax=57.4506234458101,
+ytick style={color=black},
+yticklabels={}
+]
+\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:0.4,12.601504584);
+\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:1.4,11.1949603239999);
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0 12.5092480147
+0 12.6796256847
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1 10.2735048374999
+1 12.162032369
+};
+
+\nextgroupplot[
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+tick pos=left,
+title={problem = ps3},
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={Time type},
+xmin=-0.5, xmax=1.5,
+xtick style={color=black},
+xtick={0,1},
+xticklabels={GT,ST},
+y grid style={darkgray176},
+ymin=0, ymax=57.4506234458101,
+ytick style={color=black},
+yticklabels={}
+]
+\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:0.4,18.919824768);
+\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:1.4,49.5227110879999);
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0 18.7237845497001
+0 19.1060090931
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1 44.8648399616996
+1 54.7148794722001
+};
+\end{groupplot}
+
+\end{tikzpicture}
