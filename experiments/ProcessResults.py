@@ -1,7 +1,7 @@
 ###########################################################################
 ###########################################################################
 ## Script for generating tables and graphs for experimental results.     ##
-## Copyright (C)  2020  Oliver Michael Kamperis                          ##
+## Copyright (C)  2022  Oliver Michael Kamperis                          ##
 ## Email: o.m.kamperis@gmail.com                                         ##
 ##                                                                       ##
 ## This program is free software: you can redistribute it and/or modify  ##
@@ -160,7 +160,7 @@ parser.add_argument("-actions", "--include_actions", default=False, type=bool_op
                     help="Include the actions in the tables and plots.")
 parser.add_argument("-overhead", "--include_overhead_time", default=False, type=bool_options,
                     help="Include the overhead time in the tables and plots.")
-parser.add_argument("-percent_classical", "--include_percent_classical", default=True, type=bool_options,
+parser.add_argument("-percent_classical", "--include_percent_classical", default=False, type=bool_options,
                     help="Include the raw time values are a percent of the classical time for the same problem in the tables and plots. "
                          "This fails if no classical configurations are included or the data is combined on the planning mode or problem.")
 cli_args: argparse.Namespace = parser.parse_args()

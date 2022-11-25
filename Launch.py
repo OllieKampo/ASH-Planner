@@ -64,10 +64,10 @@ Copyright (C)  2021  Oliver Michael Kamperis
  
 This program comes with ABSOLUTELY NO WARRANTY; for details use `--warranty'. This is free software,
 and you are welcome to redistribute it under certain conditions; use `--conditions' for details.
-For help and usage instructions use `--help' and `--instructions' respectively.
+For help and usage instructions use `--help'.
 """
 
-_ASH_VERSION: str = "PROTOTYPE v0.5.0"
+_ASH_VERSION: str = "PROTOTYPE v0.6.1"
 
 _ASH_WARRANTY: str = """
 THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
@@ -359,20 +359,6 @@ def __main() -> int:
         
         ## Graphify statistics as requested
         if namespace.display_figure:
-            
-            bar_width: float
-            
-            ## Find the regression plots for each partial plan
-            # regression_lines: dict[int, dict[str, Any]] = {"total" : {}, "ground" : {}, "search" : {}}
-            # for problem_number, partial_plan in enumerate(hierarchical_plan.get_plan_sequence(bottom_level)):
-            #     try:
-            #         func, x_points, y_points, popt, pcov = partial_plan.regress_total_time
-            #         regression_lines["total"][problem_number] = {"func" : func, "x_points" : x_points, "y_points" : y_points, "popt" : popt, "pcov" : pcov}
-            #         func, x_points, y_points, popt, pcov = partial_plan.regress_grounding_time
-            #         regression_lines["ground"][problem_number] = {"func" : func, "x_points" : x_points, "y_points" : y_points, "popt" : popt, "pcov" : pcov}
-            #         func, x_points, y_points, popt, pcov = partial_plan.regress_solving_time
-            #         regression_lines["search"][problem_number] = {"func" : func, "x_points" : x_points, "y_points" : y_points, "popt" : popt, "pcov" : pcov}
-            #     except: pass
             
             ## Generate four graphs;
             ##      - Planning statistics per abstraction level bar chart,
