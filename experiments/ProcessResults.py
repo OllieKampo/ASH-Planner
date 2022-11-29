@@ -1006,7 +1006,7 @@ def save_figure(fig: figure.Figure, filename: str) -> None:
     print(f"\t- {figure_num}) Generating figure:  {filename}")
     fig.subplots_adjust(top=0.95, hspace=0.4)
     fig.savefig(fname=f"{cli_args.output_path}_{filename}.png", bbox_inches="tight", dpi=600)
-    tikzplotlib.save(figure=fig, filepath=f"{cli_args.output_path}_{filename}.tex", dpi=600,
+    tikzplotlib.save(figure=fig, filepath=f"{cli_args.output_path}_{filename}.tikz", dpi=600,
                      textsize=12, axis_width="\\plotWidth", axis_height="\\plotHeight")
 
 ## Max limits for absolute plots.

@@ -160,7 +160,7 @@ goal_fluent(AL, in_tower(BASE, BLOCK)) :- insta_of(AL, block, BASE), insta_of(AL
 goal_fluent(AL, tower_base(BASE, TABLE)) :- insta_of(AL, block, BASE), insta_of(AL, table, TABLE), al(AL).
 goal_fluent(AL, on(BLOCK)) :- insta_of(AL, block, BLOCK), al(AL).
 
-%% The goal is to put block 2 on the left hand side of the table in puzzle room 2 whilst leaving block 1 on the table in puzzle room 1
+%% The goal is to stack the blocks in descending order towers of the same colour
 final_goal(AL, complete_tower(COLOUR, TABLE), true, true) :- insta_of(AL, colour, COLOUR), insta_of(AL, table, TABLE), al(AL).
 final_goal(1, on((block, 3)), puzzle_room_table_left, true).
 final_goal(1, on((block, 6)), puzzle_room_table_right, true).

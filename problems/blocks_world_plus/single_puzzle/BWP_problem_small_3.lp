@@ -49,7 +49,6 @@ is(1, connected((hallway, 2), (puzzle_room, 0))).
 
 %% Door connection between the hallway and the puzzle room
 is(1, connected_by_door(store_room_door, (store_room, 1), (hallway, 0))).
-% is(1, connected_by_door(starting_room_door, (starting_room, 1), (hallway, 1))).
 is(1, connected_by_door(puzzle_room_door, (hallway, 2), (puzzle_room, 0))).
 
 %% The door's handles are located on either side of it
@@ -150,7 +149,7 @@ goal_fluent(AL, in_tower(BASE, BLOCK)) :- insta_of(AL, block, BASE), insta_of(AL
 goal_fluent(AL, tower_base(BASE, TABLE)) :- insta_of(AL, block, BASE), insta_of(AL, table, TABLE), al(AL).
 goal_fluent(AL, on(BLOCK)) :- insta_of(AL, block, BLOCK), al(AL).
 
-%% The goal is to put block 2 on the left hand side of the table in puzzle room 2 whilst leaving block 1 on the table in puzzle room 1
+%% The goal is to stack the blocks in descending order towers of the same colour
 final_goal(AL, complete_tower(COLOUR, TABLE), true, true) :- insta_of(AL, colour, COLOUR), insta_of(AL, table, TABLE), al(AL).
 final_goal(1, on((block, 3)), puzzle_room_table_left, true).
 final_goal(1, on((block, 6)), puzzle_room_table_right, true).
