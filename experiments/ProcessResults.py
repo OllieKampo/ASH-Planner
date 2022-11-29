@@ -945,13 +945,14 @@ if cli_args.make_tables:
     print("\nGenerating tables...")
     
     table_num: int = 0
-    def save_table(df: pandas.DataFrame, name: str) -> None:
+    def save_table(df: pandas.DataFrame, filename: str) -> None:
         """Save a table to a tex and dat file."""
         global table_num
         table_num += 1
-        print(f"\t- {table_num}) Generating table: {name}")
-        df.to_latex(f"{cli_args.output_path}_{name}.tex", float_format="%.2f")
-        df.to_csv(f"{cli_args.output_path}_{name}.dat", sep=" ", line_terminator="\n", index=True)
+        print(f"\t- {table_num}) Generating table: {filename}")
+        name: str = f"{cli_args.output_path}_t{table_num}_{filename}"
+        df.to_latex(name + ".tex", float_format="%.2f")
+        df.to_csv(name + ".dat", sep=" ", line_terminator="\n", index=True)
     
     ## All 1N summaries are median over all experimental runs for each combined configuration.
     save_table(summary_globals_1N_stacked, "OverallScore_1N_Summary")
@@ -995,7 +996,7 @@ def set_title_and_labels(fig_or_ax: Union[sns.FacetGrid, sns.JointGrid, pyplot.A
         fig_or_ax.set_ylabel(y_label)
 
 figure_num: int = 0
-def save_figure(fig: figure.Figure, filename: str) -> None:
+def save_figure(fig: figure.Figure, filename: str, tikz_clean: bool = False) -> None:
     """Save a figure to a pdf and tex file."""
     if not isinstance(fig, figure.Figure):
         if hasattr(fig, "figure"):
@@ -1003,10 +1004,12 @@ def save_figure(fig: figure.Figure, filename: str) -> None:
         else: raise TypeError(f"Expected a matplotlib figure, or something with a figure attribute. Got; {fig} of type {type(fig)}.")
     global figure_num
     figure_num += 1
-    print(f"\t- {figure_num}) Generating figure:  {filename}")
+    print(f"\t- {figure_num}) Generating figure: {filename}")
     fig.subplots_adjust(top=0.95, hspace=0.4)
-    fig.savefig(fname=f"{cli_args.output_path}_{filename}.png", bbox_inches="tight", dpi=600)
-    tikzplotlib.save(figure=fig, filepath=f"{cli_args.output_path}_{filename}.tikz", dpi=600,
+    name: str = f"{cli_args.output_path}_f{figure_num}_{filename}"
+    fig.savefig(fname=name + ".png", bbox_inches="tight", dpi=600)
+    if tikz_clean: tikzplotlib.clean_figure(fig)
+    tikzplotlib.save(figure=fig, filepath=name + ".tikz", dpi=600,
                      textsize=12, axis_width="\\plotWidth", axis_height="\\plotHeight")
 
 ## Max limits for absolute plots.
@@ -1036,22 +1039,38 @@ if "grades" in cli_args.make_plots:
     fg = sns.catplot(
         data=fully_combined_data_sets["Globals"],
         x=cli_args.break_second, y="GRADE", hue=cli_args.break_first,
-        kind="box", estimator="median", height=4, aspect=1.5
+        kind="box", estimator="median", height=4
     )
     fg.set(ylim=(0, 1))
     set_title_and_labels(fg, cli_args.break_second, "Grade", f"Grade of Planner Performance for each {cli_args.break_first} and {cli_args.break_second}s")
     save_figure(fg.figure, "Grades")
     
     ## Grade of planner perfomance trade-off chart;
-    jg = sns.JointGrid(
+    fg = sns.displot(
         data=fully_combined_data_sets["Globals"],
         x="TI_SCORE", y="QL_SCORE", hue=cli_args.break_first,
-        xlim=(0, 1), ylim=(0, 1)
+        kind="hist", rug=True, height=4
     )
-    jg.plot_joint(sns.scatterplot); jg.plot_joint(sns.kdeplot, zorder=0, n_levels=6) # zorder=0 plots kde behind scatterplot
-    jg.plot_marginals(sns.boxplot); jg.plot_marginals(sns.rugplot, height=-0.15, clip_on=False)
-    set_title_and_labels(jg, "Time Score", "Quality Score", f"Performance Trade-off between Planning Time and Plan Quality for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
-    save_figure(jg.figure, "Grades_ScoreTradeOff")
+    fg.set(xlim=(0, 1), ylim=(0, 1))
+    # fg = sns.relplot(
+    #     data=fully_combined_data_sets["Globals"],
+    #     x="TI_SCORE", y="QL_SCORE", hue=cli_args.break_first,
+    #     kind="scatter", height=4
+    # )
+    # sns.kdeplot(
+    #     data=fully_combined_data_sets["Globals"],
+    #     x="TI_SCORE", y="QL_SCORE", hue=cli_args.break_first, zorder=0, alpha=0.5
+    # )
+    # fg.set(xlim=(0, 1), ylim=(0, 1))
+    # jg = sns.JointGrid(
+    #     data=fully_combined_data_sets["Globals"],
+    #     x="TI_SCORE", y="QL_SCORE", hue=cli_args.break_first,
+    #     xlim=(0, 1), ylim=(0, 1)
+    # )
+    # jg.plot_joint(sns.scatterplot); jg.plot_joint(sns.kdeplot, zorder=0, n_levels=6) # zorder=0 plots kde behind scatterplot
+    # jg.plot_marginals(sns.boxplot); jg.plot_marginals(sns.rugplot, height=-0.15, clip_on=False)
+    set_title_and_labels(fg, "Time Score", "Quality Score", f"Performance Trade-off between Planning Time and Plan Quality for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
+    save_figure(fg.figure, "Grades_ScoreTradeOff")
 
 ################################################################################################################################
 ################################################################################################################################
@@ -1066,7 +1085,7 @@ if "quality" in cli_args.make_plots:
         fg = sns.catplot(
             data=fully_combined_data_sets["Cat Plans"].melt(id_vars=["AL", cli_args.break_first, cli_args.break_second], value_vars=["LE", "AC"], var_name="Type", value_name="Total"),
             x="AL", y="Total", hue="Type", row=cli_args.break_first, col=cli_args.break_second,
-            kind="bar", estimator="median", height=4, aspect=1.5
+            kind="bar", estimator="median", height=4
         )
         fg.set_titles("{col_var} {col_name}")
         fg.set(ylim=(0, cat_plans_length_max))
@@ -1076,7 +1095,7 @@ if "quality" in cli_args.make_plots:
         fg = sns.catplot(
             data=fully_combined_data_sets["Cat Plans"],
             x="AL", y="LE", hue=cli_args.break_first, col=cli_args.break_second,
-            kind="bar", estimator="median", height=4, aspect=1.5
+            kind="bar", estimator="median", height=4
         )
         fg.set_titles("{col_var} {col_name}")
         fg.set(ylim=(0, cat_plans_length_max))
@@ -1088,7 +1107,7 @@ if "quality" in cli_args.make_plots:
         fg = sns.catplot(
             data=fully_combined_data_sets["Globals"].melt(id_vars=[cli_args.break_first, cli_args.break_second], value_vars=["BL_LE", "BL_AC"], var_name="Type", value_name="Total"),
             x=cli_args.break_first, y="Total", hue="Type", col=cli_args.break_second,
-            kind="bar", estimator="median", height=4, aspect=1.5
+            kind="bar", estimator="median", height=4
         )
         fg.set(ylim=(0, globals_length_max))
         set_title_and_labels(fg, cli_args.break_second, "Ground-level plan length", f"Median ground-plan length for each {cli_args.break_first} and {cli_args.break_second}s")
@@ -1097,7 +1116,7 @@ if "quality" in cli_args.make_plots:
         fg = sns.catplot(
             data=fully_combined_data_sets["Globals"],
             x=cli_args.break_second, y="BL_LE", hue=cli_args.break_first,
-            kind="bar", estimator="median", height=4, aspect=1.5
+            kind="bar", estimator="median", height=4
         )
         fg.set(ylim=(0, globals_length_max))
         set_title_and_labels(fg, cli_args.break_second, "Ground-level plan length", f"Median ground-plan length for each {cli_args.break_first} and {cli_args.break_second}s")
@@ -1107,7 +1126,7 @@ if "quality" in cli_args.make_plots:
     fg = sns.catplot(
         data=fully_combined_data_sets["Cat Plans"].query(f"AL < {max(al_range)}"),
         x="AL", y="QL_SCORE", hue=cli_args.break_first,
-        kind="bar", estimator="median", height=4, aspect=1.5
+        kind="bar", estimator="median", height=4
     )
     fg.set(ylim=(0, 1))
     set_title_and_labels(fg, "Abstraction level", "Plan quality score", f"Median plan quality score per level for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
@@ -1117,7 +1136,7 @@ if "quality" in cli_args.make_plots:
     fg = sns.catplot(
         data=fully_combined_data_sets["Globals"],
         x=cli_args.break_second, y="QL_SCORE", hue=cli_args.break_first,
-        kind="bar", estimator="median", height=4, aspect=1.5
+        kind="bar", estimator="median", height=4
     )
     fg.set(ylim=(0, 1))
     set_title_and_labels(fg, cli_args.break_second, "Ground-level plan quality score", f"Median ground-plan quality score for each {cli_args.break_first} and {cli_args.break_second}s")
@@ -1132,11 +1151,11 @@ if "quality" in cli_args.make_plots:
     fg = sns.displot(
         data=fully_combined_data_sets["Cat Plans"].query(f"AL < {max(al_range)}"),
         x="QL_SCORE", hue=cli_args.break_first, col="AL",
-        kind="hist", height=4, aspect=1.5,
-        stat="percent", element="step", kde=True
+        kind="hist", height=4,
+        stat="percent", common_norm=False, element="step", kde=True
     )
     fg.set_titles("{col_var} {col_name}")
-    fg.set(xlim=(0, 1))
+    fg.set(xlim=(0, 1)); fg.set(ylim=(0, 100))
     set_title_and_labels(fg, "Plan quality score", "Percent of runs achieving score", f"Histogram of plan length per level for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
     save_figure(fg.figure, "PlanQualityScore_LevelWise_HistPlot")
     
@@ -1145,10 +1164,10 @@ if "quality" in cli_args.make_plots:
     fg = sns.displot(
         data=fully_combined_data_sets["Globals"],
         x="QL_SCORE", hue=cli_args.break_first,
-        kind="hist", height=4, aspect=1.5,
-        stat="percent", element="step", kde=True
+        kind="hist", height=4,
+        stat="percent", common_norm=False, element="step", kde=True
     )
-    fg.set(xlim=(0, 1))
+    fg.set(xlim=(0, 1)); fg.set(ylim=(0, 100))
     set_title_and_labels(fg, "Ground-plan quality score", "Percent of runs achieving score", f"Histogram of ground-plan quality score for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
     save_figure(fg.figure, "PlanQualityScore_Global_HistPlot")
     
@@ -1159,7 +1178,7 @@ if "quality" in cli_args.make_plots:
     fg = sns.catplot(
         data=fully_combined_data_sets["Cat Plans"].query(f"AL < {max(al_range)}"),
         x="AL", y="QL_SCORE", hue=cli_args.break_first,
-        kind="box", estimator="median", height=4, aspect=1.5
+        kind="box", estimator="median", height=4
     )
     fg.set(ylim=(0, 1))
     set_title_and_labels(fg, "Abstraction level", "Plan quality score", f"Plan quality score per level for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
@@ -1169,7 +1188,7 @@ if "quality" in cli_args.make_plots:
     fg = sns.catplot(
         data=fully_combined_data_sets["Globals"],
         x=cli_args.break_second, y="QL_SCORE", hue=cli_args.break_first,
-        kind="box", estimator="median", height=4, aspect=1.5
+        kind="box", estimator="median", height=4
     )
     fg.set(ylim=(0, 1))
     set_title_and_labels(fg, cli_args.break_second, "Ground-level plan quality score", f"Ground-plan quality score for each {cli_args.break_first} and {cli_args.break_second}s")
@@ -1187,7 +1206,7 @@ if "time" in cli_args.make_plots:
     fg = sns.catplot(
         data=fully_combined_data_sets["Cat Plans"],
         x="AL", y="TT", hue=cli_args.break_first, col=cli_args.break_second,
-        kind="bar", estimator="median", height=4, aspect=1.5
+        kind="bar", estimator="median", height=4
     )
     fg.set_titles("{col_var} {col_name}")
     fg.set(yscale="log")
@@ -1198,7 +1217,7 @@ if "time" in cli_args.make_plots:
     fg = sns.catplot(
         data=fully_combined_data_sets["Globals"],
         x=cli_args.break_second, y="HA_T", hue=cli_args.break_first,
-        kind="bar", estimator="median", height=4, aspect=1.5
+        kind="bar", estimator="median", height=4
     )
     fg.set(yscale="log")
     set_title_and_labels(fg, cli_args.break_second, "Hierarchical Absolution Time (s)", f"Median Hierarchical Absolution Time for each {cli_args.break_first} and {cli_args.break_second}")
@@ -1208,7 +1227,7 @@ if "time" in cli_args.make_plots:
     fg = sns.catplot(
         data=fully_combined_data_sets["Cat Plans"],
         x="AL", y="TI_SCORE", hue=cli_args.break_first,
-        kind="bar", estimator="median", height=4, aspect=1.5
+        kind="bar", estimator="median", height=4
     )
     fg.set(ylim=(0, 1))
     set_title_and_labels(fg, "Abstraction level", "Level-wise time score", f"Median planning time score per level for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
@@ -1218,7 +1237,7 @@ if "time" in cli_args.make_plots:
     fg = sns.catplot(
         data=fully_combined_data_sets["Globals"],
         x=cli_args.break_second, y="TI_SCORE", hue=cli_args.break_first,
-        kind="bar", estimator="median", height=4, aspect=1.5
+        kind="bar", estimator="median", height=4
     )
     fg.set(ylim=(0, 1))
     set_title_and_labels(fg, cli_args.break_second, "Overall time score", f"Median time score for each {cli_args.break_first} and {cli_args.break_second}")
@@ -1233,10 +1252,11 @@ if "time" in cli_args.make_plots:
     fg = sns.displot(
         data=fully_combined_data_sets["Cat Plans"],
         x="TI_SCORE", hue=cli_args.break_first, col="AL",
-        kind="hist", height=4, aspect=1.5,
-        stat="percent", element="step", kde=True
+        kind="hist", height=4,
+        stat="percent", common_norm=False, element="step", kde=True
     )
     fg.set_titles("{col_var} {col_name}")
+    fg.set(xlim=(0, 1)); fg.set(ylim=(0, 100))
     set_title_and_labels(fg, "Level-wise time score", "Percent of runs achieving score", f"Histogram of time score per level for each {cli_args.break_first} and {cli_args.break_second}s")
     save_figure(fg.figure, "PlanTimeScore_LevelWise_HistPlot")
     
@@ -1245,10 +1265,10 @@ if "time" in cli_args.make_plots:
     fg = sns.displot(
         data=fully_combined_data_sets["Globals"],
         x="TI_SCORE", hue=cli_args.break_first,
-        kind="hist", height=4, aspect=1.5,
-        stat="percent", element="step", kde=True
+        kind="hist", height=4,
+        stat="percent", common_norm=False, element="step", kde=True
     )
-    fg.set(xlim=(0, 1))
+    fg.set(xlim=(0, 1)); fg.set(ylim=(0, 100))
     set_title_and_labels(fg, "Overall time score", "Percent of runs achieving score", f"Histogram of overall time score for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
     save_figure(fg.figure, "PlanTimeScore_Global_HistPlot")
     
@@ -1259,21 +1279,21 @@ if "time" in cli_args.make_plots:
     fg = sns.catplot(
         data=fully_combined_data_sets["Cat Plans"],
         x="AL", y="TI_SCORE", hue=cli_args.break_first,
-        kind="box", estimator="median", height=4, aspect=1.5
+        kind="box", estimator="median", height=4
     )
     fg.set(ylim=(0, 1))
     set_title_and_labels(fg, "Abstraction level", "Level-wise time score", f"Time score per level for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
-    save_figure(fg.figure, "PlanQualityScore_LevelWise_BoxPlot")
+    save_figure(fg.figure, "PlanTimeScore_LevelWise_BoxPlot")
     
     ## Plan quality score global box plot;
     fg = sns.catplot(
         data=fully_combined_data_sets["Globals"],
         x=cli_args.break_second, y="TI_SCORE", hue=cli_args.break_first,
-        kind="box", estimator="median", height=4, aspect=1.5
+        kind="box", estimator="median", height=4
     )
     fg.set(ylim=(0, 1))
     set_title_and_labels(fg, cli_args.break_second, "Overall time score", f"Overall time score for each {cli_args.break_first} and {cli_args.break_second}s")
-    save_figure(fg.figure, "PlanQualityScore_Global_BoxPlot")
+    save_figure(fg.figure, "PlanTimeScore_Global_BoxPlot")
     
     #########################
     ## Bar charts: Aggregate time types showing contribution of each type to overall score
@@ -1282,7 +1302,7 @@ if "time" in cli_args.make_plots:
     fg = sns.catplot(
         data=summary_raw_ground_level.reset_index(level=[cli_args.break_first, cli_args.break_second]).melt(id_vars=[cli_args.break_first, cli_args.break_second], value_vars=["LT", "WT", "MET", "CT"], var_name="Time type", value_name="Time"),
         x="Time type", y="Time", hue=cli_args.break_first, col=cli_args.break_second,
-        kind="bar", estimator="median", height=4, aspect=1.5
+        kind="bar", estimator="median", height=4
     )
     fg.set_titles("{col_var} {col_name}")
     fg.set(yscale="log")
@@ -1291,11 +1311,14 @@ if "time" in cli_args.make_plots:
     
     ## Time sub-score ground-level planning times bar chart;
     ##      - These show how each sub-score contributes to the total time score,
-    ##      - Fine to just have ground-level as these are the ones that are critical for these time scores.
+    ##      - Fine to just have ground-level as these are the ones that are critical for these time scores,
+    ##      - Note that the LT and AW scores are the same as the CT score for classical and offline planning modes,
+    ##      - Note also that the AME_SCORE is not meaningful for classical or offline planning, since they only yield one plan per level, the wait time cannot be calculated and the score is always 1.0,
+    ##      - Therefore this graph is only meaningful for comparing different online planning configurations.
     fg = sns.catplot(
         data=summary_raw_ground_level.reset_index(level=[cli_args.break_first, cli_args.break_second]).melt(id_vars=[cli_args.break_first, cli_args.break_second], value_vars=["LT_SCORE", "AW_SCORE", "AME_SCORE", "CT_SCORE"], var_name="Time score type", value_name="Score"),
         x="Time score type", y="Score", hue=cli_args.break_first,
-        kind="bar", estimator="median", height=4, aspect=1.5
+        kind="bar", estimator="median", height=4
     )
     fg.set(ylim=(0, 1))
     set_title_and_labels(fg, "Time score type", "Time score", f"Median hierarchical planning time scores for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
@@ -1309,7 +1332,7 @@ if "time" in cli_args.make_plots:
     fg = sns.catplot(
         data=fully_combined_data_sets_cat_plans_time_sums.reset_index(level=[cli_args.break_first, cli_args.break_second]).melt(id_vars=[cli_args.break_first, cli_args.break_second], value_vars=["GT", "ST"], var_name="Time type", value_name="Time"),
         x="Time type", y="Time", hue=cli_args.break_first, col=cli_args.break_second,
-        kind="bar", estimator="median", height=4, aspect=1.5
+        kind="bar", estimator="median", height=4
     )
     fg.set_titles("{col_var} {col_name}")
     fg.set(yscale="log")
@@ -1321,7 +1344,7 @@ if "time" in cli_args.make_plots:
     fg = sns.catplot(
         data=fully_combined_data_sets_cat_plans_time_sums.reset_index(level=[cli_args.break_first, cli_args.break_second]).melt(id_vars=[cli_args.break_first, cli_args.break_second], value_vars=["GT_POTT", "ST_POTT"], var_name="Time type", value_name="Time"),
         x="Time type", y="Time", hue=cli_args.break_first,
-        kind="bar", estimator="median", height=4, aspect=1.5
+        kind="bar", estimator="median", height=4
     )
     fg.set(ylim=(0, 1))
     set_title_and_labels(fg, "Time type", "Percent of total time", f"Median grounding and solving times as percentage of total time for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
@@ -1330,26 +1353,38 @@ if "time" in cli_args.make_plots:
     #########################
     ## Scatter plots: Contributions to grand total times
     
-    jg = sns.JointGrid(
+    fg = sns.displot(
         data=fully_combined_data_sets_cat_plans_time_sums,
-        x="GT", y="ST", hue=cli_args.break_first
+        x="GT", y="ST", hue=cli_args.break_first,
+        kind="kde", fill=True, height=4
     )
-    jg.ax_joint.set_xscale("log"); jg.ax_joint.set_yscale("log")
-    jg.ax_marg_x.set_xscale("log"); jg.ax_marg_y.set_yscale("log")
-    jg.plot_joint(sns.scatterplot); jg.plot_joint(sns.kdeplot, zorder=0, n_levels=6)
-    jg.plot_marginals(sns.boxplot); jg.plot_marginals(sns.rugplot, height=-0.15, clip_on=False)
-    set_title_and_labels(jg, "Grounding time", "Solving time", f"Grand total grounding time vs solving time for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
-    save_figure(jg.figure, "GroundSum_PlanningTime_ScatterPlot")
+    fg.set(xscale="log", yscale="log")
+    # jg = sns.JointGrid(
+    #     data=fully_combined_data_sets_cat_plans_time_sums,
+    #     x="GT", y="ST", hue=cli_args.break_first
+    # )
+    # jg.ax_joint.set_xscale("log"); jg.ax_joint.set_yscale("log")
+    # jg.ax_marg_x.set_xscale("log"); jg.ax_marg_y.set_yscale("log")
+    # jg.plot_joint(sns.scatterplot); jg.plot_joint(sns.kdeplot, zorder=0, n_levels=6)
+    # jg.plot_marginals(sns.boxplot); # jg.plot_marginals(sns.rugplot, height=-0.15, clip_on=False)
+    set_title_and_labels(fg, "Grounding time", "Solving time", f"Grand total grounding time vs solving time for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
+    save_figure(fg.figure, "GroundSum_PlanningTime_DisPlot")
     
-    jg = sns.jointplot(
-        data=fully_combined_data_sets_cat_plans_time_sums,
-        x="GT_POTT", y="ST_POTT", hue=cli_args.break_first,
-        kind="scatter", xlim=(0, 1), ylim=(0, 1)
-    )
-    jg.plot_joint(sns.scatterplot); jg.plot_joint(sns.kdeplot, zorder=0, n_levels=6)
-    jg.plot_marginals(sns.boxplot); jg.plot_marginals(sns.rugplot, height=-0.15, clip_on=False)
-    set_title_and_labels(jg, "Grounding time as percentage of total time", "Solving time as percentage of grand total time", f"Grand total grounding time vs solving time as percentage of total time for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
-    save_figure(jg.figure, "GroundSum_PercentPlanningTime_ScatterPlot")
+    # fg = sns.displot(
+    #     data=fully_combined_data_sets_cat_plans_time_sums,
+    #     x="GT_POTT", y="ST_POTT", hue=cli_args.break_first,
+    #     kind="kde", height=4
+    # )
+    # fg.set(xlim=(0, 1), ylim=(0, 1))
+    # # jg = sns.jointplot(
+    # #     data=fully_combined_data_sets_cat_plans_time_sums,
+    # #     x="GT_POTT", y="ST_POTT", hue=cli_args.break_first,
+    # #     kind="scatter", xlim=(0, 1), ylim=(0, 1)
+    # # )
+    # # jg.plot_joint(sns.scatterplot); jg.plot_joint(sns.kdeplot, zorder=0, n_levels=6)
+    # # jg.plot_marginals(sns.boxplot); # jg.plot_marginals(sns.rugplot, height=-0.15, clip_on=False)
+    # set_title_and_labels(fg, "Grounding time as percentage of total time", "Solving time as percentage of grand total time", f"Grand total grounding time vs solving time as percentage of total time for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
+    # save_figure(fg.figure, "GroundSum_PercentPlanningTime_ScatterPlot")
     
     #########################
     ## Relational plots: Step-wise search times, sub-goal achievement, and refinement expansions, https://seaborn.pydata.org/tutorial/relational.html
@@ -1388,6 +1423,7 @@ if "time" in cli_args.make_plots:
     save_figure(fg.figure, "Stepwise_TotalTimes_GroundLevel_RelPlot")
     
     ## Ground-level step-wise total search time scatter with exponential regression lines;
+    ##      - https://stackoverflow.com/questions/46497892/non-linear-regression-in-seaborn-python
     def regress(func, steps, times):
         """Regress the given times against the given steps using the given function."""
         x_points: numpy.ndarray = numpy.array(steps)
@@ -1467,10 +1503,11 @@ if "balance" in cli_args.make_plots:
         data=pandas.concat([fully_combined_data_sets["Concat Index-wise"].melt(id_vars=["AL", cli_args.break_first, cli_args.break_second], value_vars=["ACH_AT"], var_name="Type", value_name="Length"),
                            fully_combined_data_sets["Partial Plans"].melt(id_vars=["AL", cli_args.break_first, cli_args.break_second], value_vars=["END_S"], var_name="Type", value_name="Length")]),
         x="Length", hue="Type", row="AL", col=cli_args.break_first,
-        kind="hist", height=4, aspect=1.5,
-        stat="percent", element="step", kde=True
+        kind="hist", height=4,
+        stat="percent", common_norm=False, element="step", kde=True
     )
     fg.set_titles("{col_var} {col_name} | {row_var} {row_name}")
+    fg.set(ylim=(0, 100))
     set_title_and_labels(fg, "Plan step", "Percentage of plans where a division or matching child fell on the given step", f"Histogram showing distribution of problem divisions and mathching children per level for each {cli_args.break_first} averaged over all {cli_args.break_second}")
     save_figure(fg.figure, "Indexwise_DivisionAndMatchingChildren_LevelWise_HistPlot")
     
@@ -1478,7 +1515,7 @@ if "balance" in cli_args.make_plots:
     fg = sns.catplot(
         data=fully_combined_data_sets["Concat Index-wise"].query(f"AL == 1").melt(id_vars=[cli_args.break_first, cli_args.break_second, "INDEX"], value_vars=["SP_L", "INTER_Q"], var_name="Length type", value_name="Length"),
         x="INDEX", y="Length", hue="Length type", row=cli_args.break_first, col=cli_args.break_second,
-        kind="bar", estimator="median", height=4, aspect=1.5
+        kind="bar", estimator="median", height=4
     )
     fg.set_titles("{col_var} {col_name} | {row_var} {row_name}")
     set_title_and_labels(fg, "Sub-goal stage index", "Sub-plan length and interleaving quantity", f"Ground-level index-wise sub-plan lengths and interleaving quantities for each {cli_args.break_first} and {cli_args.break_second}")
@@ -1494,7 +1531,7 @@ if "balance" in cli_args.make_plots:
     fg = sns.catplot(
         data=fully_combined_data_sets_par_plans.query(f"AL < {max(al_range)}").melt(id_vars=["AL", cli_args.break_first, cli_args.break_second], value_vars=["SIZE", "LE"], var_name="Value type", value_name="Value"),
         x="AL", y="Value", hue="Value type", row=cli_args.break_first, col=cli_args.break_second,
-        kind="violin", split=True, estimator="median", height=4, aspect=1.5
+        kind="violin", split=True, estimator="median", height=4
     )
     fg.set_titles("{col_var} {col_name} | {row_var} {row_name}")
     set_title_and_labels(fg, "Level", "Partial-problem size and partial-plan length", f"Median problem size and partial-plan length per level for each {cli_args.break_first} and {cli_args.break_second}")
@@ -1504,7 +1541,7 @@ if "balance" in cli_args.make_plots:
     fg = sns.catplot(
         data=fully_combined_data_sets_cat_plans.query(f"AL < {max(al_range)}"),
         x="AL", y="PR_T", hue=cli_args.break_first, col=cli_args.break_second,
-        kind="bar", estimator="median", height=4, aspect=1.5
+        kind="bar", estimator="median", height=4
     )
     fg.set_titles("{col_var} {col_name}")
     set_title_and_labels(fg, "Level", "Total partial-problems", f"Total partial-problems per level for each {cli_args.break_first} and {cli_args.break_second}")
@@ -1530,7 +1567,7 @@ if "balance" in cli_args.make_plots:
     fg = sns.catplot(
         data=fully_combined_data_sets_cat_plans.query(f"AL < {max(al_range)}").melt(id_vars=["AL", cli_args.break_first, cli_args.break_second], value_vars=["PR_TS_F_MEAN", "PR_TS_CD", "DIV_INDEX_MAE", "PP_EF_LE_MED", "PP_ED_L", "DIV_STEP_MAE"], var_name="Value type", value_name="Value"),
         x="AL", y="Value", hue="Value type", col=cli_args.break_first,
-        kind="bar", estimator="median", height=4, aspect=1.5
+        kind="bar", estimator="median", height=4
     )
     fg.set_titles("{col_var} {col_name}")
     set_title_and_labels(fg, "Level", "Partial-problem size and partial-plan length", f"Partial problem/plan size and length balancing per level for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
