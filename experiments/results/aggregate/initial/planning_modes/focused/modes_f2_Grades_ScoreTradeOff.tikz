@@ -1,0 +1,2428 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{darkorange25512714}{RGB}{255,127,14}
+\definecolor{forestgreen4416044}{RGB}{44,160,44}
+\definecolor{steelblue31119180}{RGB}{31,119,180}
+
+\begin{axis}[
+height=\plotHeight,
+tick align=outside,
+tick pos=left,
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={Time Score},
+xmin=0, xmax=1,
+xtick style={color=black},
+y grid style={darkgray176},
+ylabel={Quality Score},
+ymin=0, ymax=1,
+ytick style={color=black}
+]
+\addplot graphics [includegraphics cmd=\pgfimage,xmin=0, xmax=1, ymin=0, ymax=1] {modes_f2_Grades_ScoreTradeOff-000.png};
+\addplot graphics [includegraphics cmd=\pgfimage,xmin=0, xmax=1, ymin=0, ymax=1] {modes_f2_Grades_ScoreTradeOff-001.png};
+\addplot graphics [includegraphics cmd=\pgfimage,xmin=0, xmax=1, ymin=0, ymax=1] {modes_f2_Grades_ScoreTradeOff-002.png};
+\path [draw=steelblue31119180]
+(axis cs:0.691319473791179,0)
+--(axis cs:0.691319473791179,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.691779332152655,0)
+--(axis cs:0.691779332152655,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.698114116498913,0)
+--(axis cs:0.698114116498913,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.733718067122167,0)
+--(axis cs:0.733718067122167,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.684439172693839,0)
+--(axis cs:0.684439172693839,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.721155408578476,0)
+--(axis cs:0.721155408578476,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.699181219627959,0)
+--(axis cs:0.699181219627959,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.704883196289941,0)
+--(axis cs:0.704883196289941,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.701593716612067,0)
+--(axis cs:0.701593716612067,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.700192542851416,0)
+--(axis cs:0.700192542851416,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.704672445821103,0)
+--(axis cs:0.704672445821103,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.693786905558446,0)
+--(axis cs:0.693786905558446,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.701684143971396,0)
+--(axis cs:0.701684143971396,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.686529940493745,0)
+--(axis cs:0.686529940493745,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.686649479873326,0)
+--(axis cs:0.686649479873326,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.717290961875912,0)
+--(axis cs:0.717290961875912,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.666453117934836,0)
+--(axis cs:0.666453117934836,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.677128100986278,0)
+--(axis cs:0.677128100986278,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.699203426164152,0)
+--(axis cs:0.699203426164152,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.653575933871019,0)
+--(axis cs:0.653575933871019,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.711286183772042,0)
+--(axis cs:0.711286183772042,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.70321542710313,0)
+--(axis cs:0.70321542710313,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.704756849934573,0)
+--(axis cs:0.704756849934573,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.68567765153539,0)
+--(axis cs:0.68567765153539,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.698818949990135,0)
+--(axis cs:0.698818949990135,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.528872217147827,0)
+--(axis cs:0.528872217147827,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.538701869779027,0)
+--(axis cs:0.538701869779027,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.525122951870778,0)
+--(axis cs:0.525122951870778,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.530081157408715,0)
+--(axis cs:0.530081157408715,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.523414620099242,0)
+--(axis cs:0.523414620099242,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.543973874343046,0)
+--(axis cs:0.543973874343046,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.510864775631779,0)
+--(axis cs:0.510864775631779,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.489011603786082,0)
+--(axis cs:0.489011603786082,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.562173411575237,0)
+--(axis cs:0.562173411575237,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.520439944096781,0)
+--(axis cs:0.520439944096781,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.530391930074239,0)
+--(axis cs:0.530391930074239,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.525916197277288,0)
+--(axis cs:0.525916197277288,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.530489334658448,0)
+--(axis cs:0.530489334658448,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.525449644983602,0)
+--(axis cs:0.525449644983602,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.536225469257436,0)
+--(axis cs:0.536225469257436,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.530555814774407,0)
+--(axis cs:0.530555814774407,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.510010021224957,0)
+--(axis cs:0.510010021224957,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.543523500362208,0)
+--(axis cs:0.543523500362208,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.536933094787342,0)
+--(axis cs:0.536933094787342,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.526506244629605,0)
+--(axis cs:0.526506244629605,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.524781388346993,0)
+--(axis cs:0.524781388346993,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.527144926495003,0)
+--(axis cs:0.527144926495003,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.538124953821323,0)
+--(axis cs:0.538124953821323,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.539784246209952,0)
+--(axis cs:0.539784246209952,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.526806131573809,0)
+--(axis cs:0.526806131573809,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.15233007638717,0)
+--(axis cs:0.15233007638717,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.112781570237371,0)
+--(axis cs:0.112781570237371,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.111492062049875,0)
+--(axis cs:0.111492062049875,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.198019537488362,0)
+--(axis cs:0.198019537488362,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.123423092679256,0)
+--(axis cs:0.123423092679256,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.161880201000204,0)
+--(axis cs:0.161880201000204,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.177960151367029,0)
+--(axis cs:0.177960151367029,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.121622481250964,0)
+--(axis cs:0.121622481250964,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.189617428250956,0)
+--(axis cs:0.189617428250956,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.189043685964108,0)
+--(axis cs:0.189043685964108,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.177078308120766,0)
+--(axis cs:0.177078308120766,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.192776560671597,0)
+--(axis cs:0.192776560671597,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.123708817018852,0)
+--(axis cs:0.123708817018852,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.155491508640088,0)
+--(axis cs:0.155491508640088,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.140187935639186,0)
+--(axis cs:0.140187935639186,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.112973134706282,0)
+--(axis cs:0.112973134706282,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.177190170490084,0)
+--(axis cs:0.177190170490084,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.124976585778008,0)
+--(axis cs:0.124976585778008,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.111297712124189,0)
+--(axis cs:0.111297712124189,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.0990230139053176,0)
+--(axis cs:0.0990230139053176,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.185962226390346,0)
+--(axis cs:0.185962226390346,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.145802500987626,0)
+--(axis cs:0.145802500987626,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.213601904814685,0)
+--(axis cs:0.213601904814685,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.122815651061607,0)
+--(axis cs:0.122815651061607,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0.199041972890386,0)
+--(axis cs:0.199041972890386,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.779575672722245,0)
+--(axis cs:0.779575672722245,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.744779283467627,0)
+--(axis cs:0.744779283467627,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.744001411964612,0)
+--(axis cs:0.744001411964612,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.780734682100113,0)
+--(axis cs:0.780734682100113,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.758435719252328,0)
+--(axis cs:0.758435719252328,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.741176159717598,0)
+--(axis cs:0.741176159717598,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.755212541263177,0)
+--(axis cs:0.755212541263177,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.775868418864686,0)
+--(axis cs:0.775868418864686,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.762679207202824,0)
+--(axis cs:0.762679207202824,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.730216784389533,0)
+--(axis cs:0.730216784389533,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.763742366926258,0)
+--(axis cs:0.763742366926258,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.743309443373068,0)
+--(axis cs:0.743309443373068,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.718470166010982,0)
+--(axis cs:0.718470166010982,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.765586783753933,0)
+--(axis cs:0.765586783753933,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.741887671240999,0)
+--(axis cs:0.741887671240999,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.761501493627328,0)
+--(axis cs:0.761501493627328,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.761795472384745,0)
+--(axis cs:0.761795472384745,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.776445917146557,0)
+--(axis cs:0.776445917146557,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.760309337700531,0)
+--(axis cs:0.760309337700531,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.769948076838467,0)
+--(axis cs:0.769948076838467,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.740392734302758,0)
+--(axis cs:0.740392734302758,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.771011294629827,0)
+--(axis cs:0.771011294629827,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.758145536034519,0)
+--(axis cs:0.758145536034519,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.736841805617974,0)
+--(axis cs:0.736841805617974,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.769591310281182,0)
+--(axis cs:0.769591310281182,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.680561939439045,0)
+--(axis cs:0.680561939439045,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.667299482821873,0)
+--(axis cs:0.667299482821873,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.631154315422917,0)
+--(axis cs:0.631154315422917,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.659735216176535,0)
+--(axis cs:0.659735216176535,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.670340325311418,0)
+--(axis cs:0.670340325311418,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.681690842750717,0)
+--(axis cs:0.681690842750717,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.670871550135888,0)
+--(axis cs:0.670871550135888,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.660221190930092,0)
+--(axis cs:0.660221190930092,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.674520699334954,0)
+--(axis cs:0.674520699334954,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.630874008431237,0)
+--(axis cs:0.630874008431237,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.589340949973322,0)
+--(axis cs:0.589340949973322,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.656514242657539,0)
+--(axis cs:0.656514242657539,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.674349060549401,0)
+--(axis cs:0.674349060549401,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.669850420404484,0)
+--(axis cs:0.669850420404484,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.649878193352083,0)
+--(axis cs:0.649878193352083,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.635382449717293,0)
+--(axis cs:0.635382449717293,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.658813436259281,0)
+--(axis cs:0.658813436259281,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.648286990061806,0)
+--(axis cs:0.648286990061806,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.658141059744982,0)
+--(axis cs:0.658141059744982,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.66797357292094,0)
+--(axis cs:0.66797357292094,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.662329049008635,0)
+--(axis cs:0.662329049008635,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.661038775813443,0)
+--(axis cs:0.661038775813443,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.658316923093328,0)
+--(axis cs:0.658316923093328,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.635558757200596,0)
+--(axis cs:0.635558757200596,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.661293480660348,0)
+--(axis cs:0.661293480660348,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.482120118137217,0)
+--(axis cs:0.482120118137217,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.495616176915282,0)
+--(axis cs:0.495616176915282,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.515025070812307,0)
+--(axis cs:0.515025070812307,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.475997010610182,0)
+--(axis cs:0.475997010610182,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.496268887763268,0)
+--(axis cs:0.496268887763268,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.495959355097409,0)
+--(axis cs:0.495959355097409,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.500318447164371,0)
+--(axis cs:0.500318447164371,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.521108236409779,0)
+--(axis cs:0.521108236409779,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.462474448623616,0)
+--(axis cs:0.462474448623616,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.491133728775575,0)
+--(axis cs:0.491133728775575,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.509965944290312,0)
+--(axis cs:0.509965944290312,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.529259888537207,0)
+--(axis cs:0.529259888537207,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.410741834151986,0)
+--(axis cs:0.410741834151986,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.485026872333788,0)
+--(axis cs:0.485026872333788,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.489326886141764,0)
+--(axis cs:0.489326886141764,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.488147376337524,0)
+--(axis cs:0.488147376337524,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.478608532222748,0)
+--(axis cs:0.478608532222748,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.522593003649898,0)
+--(axis cs:0.522593003649898,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.452791965503259,0)
+--(axis cs:0.452791965503259,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.474827798802337,0)
+--(axis cs:0.474827798802337,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.462973054718721,0)
+--(axis cs:0.462973054718721,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.5246164674997,0)
+--(axis cs:0.5246164674997,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.489705974329167,0)
+--(axis cs:0.489705974329167,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.474539960449138,0)
+--(axis cs:0.474539960449138,0.025);
+
+\path [draw=darkorange25512714]
+(axis cs:0.424116951585613,0)
+--(axis cs:0.424116951585613,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:1,0)
+--(axis cs:1,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.956112473668299,0)
+--(axis cs:0.956112473668299,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.969196513953654,0)
+--(axis cs:0.969196513953654,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.961999174473052,0)
+--(axis cs:0.961999174473052,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.972688117696225,0)
+--(axis cs:0.972688117696225,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.969854964823365,0)
+--(axis cs:0.969854964823365,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.957392665827215,0)
+--(axis cs:0.957392665827215,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.956934908431576,0)
+--(axis cs:0.956934908431576,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.959165995002534,0)
+--(axis cs:0.959165995002534,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.956459027670892,0)
+--(axis cs:0.956459027670892,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.958665602632703,0)
+--(axis cs:0.958665602632703,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.956541449329807,0)
+--(axis cs:0.956541449329807,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.962393062281841,0)
+--(axis cs:0.962393062281841,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.957494749106773,0)
+--(axis cs:0.957494749106773,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.965693791904954,0)
+--(axis cs:0.965693791904954,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.961961153766541,0)
+--(axis cs:0.961961153766541,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.964175963785152,0)
+--(axis cs:0.964175963785152,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.963139496002975,0)
+--(axis cs:0.963139496002975,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.963211875803087,0)
+--(axis cs:0.963211875803087,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.959710527190836,0)
+--(axis cs:0.959710527190836,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.955651034783184,0)
+--(axis cs:0.955651034783184,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.958456712122734,0)
+--(axis cs:0.958456712122734,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.955175258483914,0)
+--(axis cs:0.955175258483914,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.95353929183141,0)
+--(axis cs:0.95353929183141,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.964109482644042,0)
+--(axis cs:0.964109482644042,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.95556770908638,0)
+--(axis cs:0.95556770908638,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.962806236592707,0)
+--(axis cs:0.962806236592707,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.959683089373452,0)
+--(axis cs:0.959683089373452,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.963770353675317,0)
+--(axis cs:0.963770353675317,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.964135760610567,0)
+--(axis cs:0.964135760610567,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.962382117239164,0)
+--(axis cs:0.962382117239164,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.963876590308294,0)
+--(axis cs:0.963876590308294,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.972120054126579,0)
+--(axis cs:0.972120054126579,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.964428355700986,0)
+--(axis cs:0.964428355700986,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.963818498160249,0)
+--(axis cs:0.963818498160249,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.963922170720301,0)
+--(axis cs:0.963922170720301,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.964257578227068,0)
+--(axis cs:0.964257578227068,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.961544032931905,0)
+--(axis cs:0.961544032931905,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.964394952456601,0)
+--(axis cs:0.964394952456601,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.965086213492891,0)
+--(axis cs:0.965086213492891,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.963832590630161,0)
+--(axis cs:0.963832590630161,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.961596905348927,0)
+--(axis cs:0.961596905348927,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.955739099398957,0)
+--(axis cs:0.955739099398957,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.963910479385934,0)
+--(axis cs:0.963910479385934,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.959747379534623,0)
+--(axis cs:0.959747379534623,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.952494859075074,0)
+--(axis cs:0.952494859075074,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.970425528553961,0)
+--(axis cs:0.970425528553961,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.963860200997669,0)
+--(axis cs:0.963860200997669,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.954802521061506,0)
+--(axis cs:0.954802521061506,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.956661619717822,0)
+--(axis cs:0.956661619717822,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.963427372099983,0)
+--(axis cs:0.963427372099983,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.944211605304688,0)
+--(axis cs:0.944211605304688,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.961143770080039,0)
+--(axis cs:0.961143770080039,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.943220804130918,0)
+--(axis cs:0.943220804130918,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.946760099847321,0)
+--(axis cs:0.946760099847321,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.900514165418826,0)
+--(axis cs:0.900514165418826,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.923648788900344,0)
+--(axis cs:0.923648788900344,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.932040639735525,0)
+--(axis cs:0.932040639735525,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.936591661212538,0)
+--(axis cs:0.936591661212538,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.923264858798596,0)
+--(axis cs:0.923264858798596,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.953419973819053,0)
+--(axis cs:0.953419973819053,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.960424491513003,0)
+--(axis cs:0.960424491513003,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.943770568369959,0)
+--(axis cs:0.943770568369959,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.904324515439981,0)
+--(axis cs:0.904324515439981,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.928601125907664,0)
+--(axis cs:0.928601125907664,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.956935453831492,0)
+--(axis cs:0.956935453831492,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.951536777592277,0)
+--(axis cs:0.951536777592277,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.944080160072958,0)
+--(axis cs:0.944080160072958,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.923907036216063,0)
+--(axis cs:0.923907036216063,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.934217417859498,0)
+--(axis cs:0.934217417859498,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.957018943393201,0)
+--(axis cs:0.957018943393201,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.89611013350731,0)
+--(axis cs:0.89611013350731,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.93007055124277,0)
+--(axis cs:0.93007055124277,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.920928753761653,0)
+--(axis cs:0.920928753761653,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.924362764585392,0)
+--(axis cs:0.924362764585392,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.866886550555607,0)
+--(axis cs:0.866886550555607,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.943879135017102,0)
+--(axis cs:0.943879135017102,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.95482155239656,0)
+--(axis cs:0.95482155239656,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.949772646209305,0)
+--(axis cs:0.949772646209305,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.950509008495091,0)
+--(axis cs:0.950509008495091,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.947771173651122,0)
+--(axis cs:0.947771173651122,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.901817632817568,0)
+--(axis cs:0.901817632817568,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.94998883759425,0)
+--(axis cs:0.94998883759425,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.952119698244076,0)
+--(axis cs:0.952119698244076,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.958338521836169,0)
+--(axis cs:0.958338521836169,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.926385379043193,0)
+--(axis cs:0.926385379043193,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.94405613681506,0)
+--(axis cs:0.94405613681506,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.94851211505328,0)
+--(axis cs:0.94851211505328,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.933912166351498,0)
+--(axis cs:0.933912166351498,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.925677209925936,0)
+--(axis cs:0.925677209925936,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.949486705573167,0)
+--(axis cs:0.949486705573167,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.86906492773243,0)
+--(axis cs:0.86906492773243,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.943195978425751,0)
+--(axis cs:0.943195978425751,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.955693279240429,0)
+--(axis cs:0.955693279240429,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.926703955707382,0)
+--(axis cs:0.926703955707382,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.948753692500267,0)
+--(axis cs:0.948753692500267,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.94926268864746,0)
+--(axis cs:0.94926268864746,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.952564969636475,0)
+--(axis cs:0.952564969636475,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.950660224725093,0)
+--(axis cs:0.950660224725093,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.946815264841145,0)
+--(axis cs:0.946815264841145,0.025);
+
+\path [draw=forestgreen4416044]
+(axis cs:0.936100284575549,0)
+--(axis cs:0.936100284575549,0.025);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=steelblue31119180]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.963636363636364)
+--(axis cs:0.025,0.963636363636364);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.963636363636364)
+--(axis cs:0.025,0.963636363636364);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.963636363636364)
+--(axis cs:0.025,0.963636363636364);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.963636363636364)
+--(axis cs:0.025,0.963636363636364);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.963636363636364)
+--(axis cs:0.025,0.963636363636364);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.963636363636364)
+--(axis cs:0.025,0.963636363636364);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.963636363636364)
+--(axis cs:0.025,0.963636363636364);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.963636363636364)
+--(axis cs:0.025,0.963636363636364);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.963636363636364)
+--(axis cs:0.025,0.963636363636364);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.963636363636364)
+--(axis cs:0.025,0.963636363636364);
+
+\path [draw=darkorange25512714]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.943661971830986)
+--(axis cs:0.025,0.943661971830986);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.943661971830986)
+--(axis cs:0.025,0.943661971830986);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.943661971830986)
+--(axis cs:0.025,0.943661971830986);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.917808219178082)
+--(axis cs:0.025,0.917808219178082);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.943661971830986)
+--(axis cs:0.025,0.943661971830986);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.943661971830986)
+--(axis cs:0.025,0.943661971830986);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.943661971830986)
+--(axis cs:0.025,0.943661971830986);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.971014492753623)
+--(axis cs:0.025,0.971014492753623);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.917808219178082)
+--(axis cs:0.025,0.917808219178082);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.943661971830986)
+--(axis cs:0.025,0.943661971830986);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.917808219178082)
+--(axis cs:0.025,0.917808219178082);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.943661971830986)
+--(axis cs:0.025,0.943661971830986);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.917808219178082)
+--(axis cs:0.025,0.917808219178082);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.917808219178082)
+--(axis cs:0.025,0.917808219178082);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.971014492753623)
+--(axis cs:0.025,0.971014492753623);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.943661971830986)
+--(axis cs:0.025,0.943661971830986);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.971014492753623)
+--(axis cs:0.025,0.971014492753623);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.971014492753623)
+--(axis cs:0.025,0.971014492753623);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.917808219178082)
+--(axis cs:0.025,0.917808219178082);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.943661971830986)
+--(axis cs:0.025,0.943661971830986);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.917808219178082)
+--(axis cs:0.025,0.917808219178082);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.917808219178082)
+--(axis cs:0.025,0.917808219178082);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.971014492753623)
+--(axis cs:0.025,0.971014492753623);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.943661971830986)
+--(axis cs:0.025,0.943661971830986);
+
+\path [draw=darkorange25512714]
+(axis cs:0,0.943661971830986)
+--(axis cs:0.025,0.943661971830986);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.735849056603774)
+--(axis cs:0.025,0.735849056603774);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.906976744186046)
+--(axis cs:0.025,0.906976744186046);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.906976744186046)
+--(axis cs:0.025,0.906976744186046);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.906976744186046)
+--(axis cs:0.025,0.906976744186046);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.735849056603774)
+--(axis cs:0.025,0.735849056603774);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.906976744186046)
+--(axis cs:0.025,0.906976744186046);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.906976744186046)
+--(axis cs:0.025,0.906976744186046);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.735849056603774)
+--(axis cs:0.025,0.735849056603774);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.906976744186046)
+--(axis cs:0.025,0.906976744186046);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.684210526315789)
+--(axis cs:0.025,0.684210526315789);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.684210526315789)
+--(axis cs:0.025,0.684210526315789);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.906976744186046)
+--(axis cs:0.025,0.906976744186046);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.906976744186046)
+--(axis cs:0.025,0.906976744186046);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.684210526315789)
+--(axis cs:0.025,0.684210526315789);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.684210526315789)
+--(axis cs:0.025,0.684210526315789);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.906976744186046)
+--(axis cs:0.025,0.906976744186046);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.906976744186046)
+--(axis cs:0.025,0.906976744186046);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.906976744186046)
+--(axis cs:0.025,0.906976744186046);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.684210526315789)
+--(axis cs:0.025,0.684210526315789);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.735849056603774)
+--(axis cs:0.025,0.735849056603774);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.684210526315789)
+--(axis cs:0.025,0.684210526315789);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.906976744186046)
+--(axis cs:0.025,0.906976744186046);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.906976744186046)
+--(axis cs:0.025,0.906976744186046);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.684210526315789)
+--(axis cs:0.025,0.684210526315789);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.906976744186046)
+--(axis cs:0.025,0.906976744186046);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.906976744186046)
+--(axis cs:0.025,0.906976744186046);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.684210526315789)
+--(axis cs:0.025,0.684210526315789);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.906976744186046)
+--(axis cs:0.025,0.906976744186046);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.684210526315789)
+--(axis cs:0.025,0.684210526315789);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.684210526315789)
+--(axis cs:0.025,0.684210526315789);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.684210526315789)
+--(axis cs:0.025,0.684210526315789);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.906976744186046)
+--(axis cs:0.025,0.906976744186046);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.906976744186046)
+--(axis cs:0.025,0.906976744186046);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.735849056603774)
+--(axis cs:0.025,0.735849056603774);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.684210526315789)
+--(axis cs:0.025,0.684210526315789);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.735849056603774)
+--(axis cs:0.025,0.735849056603774);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.684210526315789)
+--(axis cs:0.025,0.684210526315789);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.684210526315789)
+--(axis cs:0.025,0.684210526315789);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.726027397260274)
+--(axis cs:0.025,0.726027397260274);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.706666666666667)
+--(axis cs:0.025,0.706666666666667);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.791044776119403)
+--(axis cs:0.025,0.791044776119403);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.868852459016393)
+--(axis cs:0.025,0.868852459016393);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.929824561403509)
+--(axis cs:0.025,0.929824561403509);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.768115942028985)
+--(axis cs:0.025,0.768115942028985);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.898305084745763)
+--(axis cs:0.025,0.898305084745763);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.688311688311688)
+--(axis cs:0.025,0.688311688311688);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.726027397260274)
+--(axis cs:0.025,0.726027397260274);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.688311688311688)
+--(axis cs:0.025,0.688311688311688);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.898305084745763)
+--(axis cs:0.025,0.898305084745763);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.841269841269841)
+--(axis cs:0.025,0.841269841269841);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.726027397260274)
+--(axis cs:0.025,0.726027397260274);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.841269841269841)
+--(axis cs:0.025,0.841269841269841);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.746478873239437)
+--(axis cs:0.025,0.746478873239437);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.841269841269841)
+--(axis cs:0.025,0.841269841269841);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.746478873239437)
+--(axis cs:0.025,0.746478873239437);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.898305084745763)
+--(axis cs:0.025,0.898305084745763);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.726027397260274)
+--(axis cs:0.025,0.726027397260274);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.726027397260274)
+--(axis cs:0.025,0.726027397260274);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.726027397260274)
+--(axis cs:0.025,0.726027397260274);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.688311688311688)
+--(axis cs:0.025,0.688311688311688);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.963636363636364)
+--(axis cs:0.025,0.963636363636364);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.688311688311688)
+--(axis cs:0.025,0.688311688311688);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.726027397260274)
+--(axis cs:0.025,0.726027397260274);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.688311688311688)
+--(axis cs:0.025,0.688311688311688);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.963636363636364)
+--(axis cs:0.025,0.963636363636364);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.791044776119403)
+--(axis cs:0.025,0.791044776119403);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.688311688311688)
+--(axis cs:0.025,0.688311688311688);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.929824561403509)
+--(axis cs:0.025,0.929824561403509);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.706666666666667)
+--(axis cs:0.025,0.706666666666667);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.791044776119403)
+--(axis cs:0.025,0.791044776119403);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.898305084745763)
+--(axis cs:0.025,0.898305084745763);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.898305084745763)
+--(axis cs:0.025,0.898305084745763);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.929824561403509)
+--(axis cs:0.025,0.929824561403509);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.688311688311688)
+--(axis cs:0.025,0.688311688311688);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,1)
+--(axis cs:0.025,1);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.791044776119403)
+--(axis cs:0.025,0.791044776119403);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.963636363636364)
+--(axis cs:0.025,0.963636363636364);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.929824561403509)
+--(axis cs:0.025,0.929824561403509);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.726027397260274)
+--(axis cs:0.025,0.726027397260274);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.898305084745763)
+--(axis cs:0.025,0.898305084745763);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.868852459016393)
+--(axis cs:0.025,0.868852459016393);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.929824561403509)
+--(axis cs:0.025,0.929824561403509);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.868852459016393)
+--(axis cs:0.025,0.868852459016393);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.898305084745763)
+--(axis cs:0.025,0.898305084745763);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.841269841269841)
+--(axis cs:0.025,0.841269841269841);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.893333333333333)
+--(axis cs:0.025,0.893333333333333);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.917808219178082)
+--(axis cs:0.025,0.917808219178082);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.779069767441861)
+--(axis cs:0.025,0.779069767441861);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.797619047619048)
+--(axis cs:0.025,0.797619047619048);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.770114942528736)
+--(axis cs:0.025,0.770114942528736);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.930555555555556)
+--(axis cs:0.025,0.930555555555556);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.943661971830986)
+--(axis cs:0.025,0.943661971830986);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.817073170731707)
+--(axis cs:0.025,0.817073170731707);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.893333333333333)
+--(axis cs:0.025,0.893333333333333);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.943661971830986)
+--(axis cs:0.025,0.943661971830986);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.752808988764045)
+--(axis cs:0.025,0.752808988764045);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.788235294117647)
+--(axis cs:0.025,0.788235294117647);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.770114942528736)
+--(axis cs:0.025,0.770114942528736);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.893333333333333)
+--(axis cs:0.025,0.893333333333333);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.8375)
+--(axis cs:0.025,0.8375);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.8375)
+--(axis cs:0.025,0.8375);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.858974358974359)
+--(axis cs:0.025,0.858974358974359);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.930555555555556)
+--(axis cs:0.025,0.930555555555556);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.893333333333333)
+--(axis cs:0.025,0.893333333333333);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.971014492753623)
+--(axis cs:0.025,0.971014492753623);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.770114942528736)
+--(axis cs:0.025,0.770114942528736);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.817073170731707)
+--(axis cs:0.025,0.817073170731707);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.779069767441861)
+--(axis cs:0.025,0.779069767441861);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.930555555555556)
+--(axis cs:0.025,0.930555555555556);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.712765957446808)
+--(axis cs:0.025,0.712765957446808);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.807228915662651)
+--(axis cs:0.025,0.807228915662651);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.770114942528736)
+--(axis cs:0.025,0.770114942528736);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.807228915662651)
+--(axis cs:0.025,0.807228915662651);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.752808988764045)
+--(axis cs:0.025,0.752808988764045);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.788235294117647)
+--(axis cs:0.025,0.788235294117647);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.752808988764045)
+--(axis cs:0.025,0.752808988764045);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.807228915662651)
+--(axis cs:0.025,0.807228915662651);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.8375)
+--(axis cs:0.025,0.8375);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.943661971830986)
+--(axis cs:0.025,0.943661971830986);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.788235294117647)
+--(axis cs:0.025,0.788235294117647);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.779069767441861)
+--(axis cs:0.025,0.779069767441861);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.917808219178082)
+--(axis cs:0.025,0.917808219178082);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.779069767441861)
+--(axis cs:0.025,0.779069767441861);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.943661971830986)
+--(axis cs:0.025,0.943661971830986);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.788235294117647)
+--(axis cs:0.025,0.788235294117647);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.728260869565217)
+--(axis cs:0.025,0.728260869565217);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.87012987012987)
+--(axis cs:0.025,0.87012987012987);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.807228915662651)
+--(axis cs:0.025,0.807228915662651);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.848101265822785)
+--(axis cs:0.025,0.848101265822785);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.917808219178082)
+--(axis cs:0.025,0.917808219178082);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.752808988764045)
+--(axis cs:0.025,0.752808988764045);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.807228915662651)
+--(axis cs:0.025,0.807228915662651);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.807228915662651)
+--(axis cs:0.025,0.807228915662651);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.943661971830986)
+--(axis cs:0.025,0.943661971830986);
+
+\path [draw=forestgreen4416044]
+(axis cs:0,0.817073170731707)
+--(axis cs:0.025,0.817073170731707);
+
+\end{axis}
+
+\end{tikzpicture}

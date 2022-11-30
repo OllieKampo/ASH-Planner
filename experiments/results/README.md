@@ -29,14 +29,14 @@ For columns headers for aggregate results, see the `aggregate` sub-directory.
 | HA_T | Hierarchical absolution time | The time to generate an absolute hierarchical plan, for monolevel classical problems this is the ground-level monolevel planning time |  |  |
 | AW_T |  |  |  |
 | AW_T_PA |  |  |  |
-| AME_T |  |  |  |
+| AME_T |  | Note that for classical and offline planning modes, this cannot be calculated as there is only ever one plan generated per level. |  |
 | AME_T_PA |  |  |  |
 | QL_SCORE |  |  |  |
 | EX_SCORE |  |  |  |
 | HA_SCORE |  |  |  |
 | AW_SCORE |  |  |  |
 | AW_PA_SCORE |  |  |  |
-| AME_SCORE |  |  |  |
+| AME_SCORE |  | Note that for classical and offline planning modes, this is not meaningful, and will always be 1.0. |  |
 | AME_PA_SCORE |  |  |  |
 | TI_SCORE |  |  |  |
 | EX_GRADE |  |  |  |
