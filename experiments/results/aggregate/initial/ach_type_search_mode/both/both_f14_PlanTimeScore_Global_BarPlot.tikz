@@ -1,0 +1,69 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{peru22412844}{RGB}{224,128,44}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{axis}[
+height=\plotHeight,
+tick align=outside,
+tick pos=left,
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={search mode},
+xmin=-0.5, xmax=2.5,
+xtick style={color=black},
+xtick={0,1,2},
+xticklabels={minbound,standard,yield},
+y grid style={darkgray176},
+ylabel={Overall time score},
+ymin=0, ymax=1,
+ytick style={color=black}
+]
+\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:0,0.660221190930092);
+\addlegendimage{ybar,ybar legend,draw=none,fill=steelblue49115161}
+\addlegendentry{seqa}
+
+\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:1,0.604032948733963);
+\draw[draw=none,fill=steelblue49115161] (axis cs:1.6,0) rectangle (axis cs:2,0.625819065928914);
+\draw[draw=none,fill=peru22412844] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,0.65242646242671);
+\addlegendimage{ybar,ybar legend,draw=none,fill=peru22412844}
+\addlegendentry{sima}
+
+\draw[draw=none,fill=peru22412844] (axis cs:1,0) rectangle (axis cs:1.4,0.605191554696219);
+\draw[draw=none,fill=peru22412844] (axis cs:2,0) rectangle (axis cs:2.4,0.622474927993803);
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+-0.2 0.635382449717293
+-0.2 0.670871550135888
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.8 0.58631310180982
+0.8 0.620360662263783
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.8 0.618741757955763
+1.8 0.630031568421267
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.2 0.621947941118454
+0.2 0.669331049737835
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.2 0.590300839967205
+1.2 0.62024383038756
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+2.2 0.613311477679111
+2.2 0.627014206781583
+};
+\end{axis}
+
+\end{tikzpicture}

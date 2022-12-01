@@ -1,0 +1,9 @@
+problem  ps15 ps15 ps15 ps15 ps15 ps15 ps15 ps15 ps15
+  "Number of Problems" "Mean Problem Size Factor" "Problem Balance Normalised Deviation" "Problem Balance Normalised Error" "Complete-Plan Expansion Factor" "Partial-Plan Expansion Balance Normalised Deviation" "Partial-Plan Expansion Balance Normalised Error" "Sub-Plan Expansion Balance Normalised Deviation" "Sub-Plan Expansion Balance Normalised Error"
+planning_mode AL         
+offline 1.0 1.0 1.0 0.0 0.0 1.695652173913043 0.0 0.0 0.6981713126577043 0.7391304347826086
+offline 2.0 1.0 1.0 0.0 0.0 1.533333333333333 0.0 0.0 0.5437887311952991 1.565217391304347
+offline 3.0 1.0 1.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0
+online 1.0 12.0 0.08333333333333334 0.3447065074661269 0.4565217391304343 2.608695652173913 1.312787464470448 1.415384615384615 1.718889787504015 3.1427536231884066
+online 2.0 4.0 0.25 0.1333333333333333 0.08 1.533333333333333 0.4977105745360861 0.191304347826087 0.5437887311952991 1.521739130434782
+online 3.0 1.0 1.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0

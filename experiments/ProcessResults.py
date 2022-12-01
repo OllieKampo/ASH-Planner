@@ -622,10 +622,10 @@ summary_raw_ground_level = pandas.merge(fully_combined_data_sets_cat_plans_time_
                                         fully_combined_data_sets_ground_level_grouped[["LT", "WT", "MET", "CT", "LE", "AC", "CF", "LT_SCORE", "AW_SCORE", "AME_SCORE", "CT_SCORE"]].median(), left_index=True, right_index=True)
 summary_raw_ground_level_stacked = summary_raw_ground_level[summary_statistics_ground_level].unstack(cli_args.break_second).swaplevel(0, 1, axis=1).sort_index(axis=1, level=0).reindex(summary_statistics_ground_level, axis=1, level=1)
 
-if (cli_args.include_percent_classical
-    and "planning_mode" in configuration_headers
-    and "problem" in configuration_headers
-    and "classical" in fully_combined_data_sets["Cat Plans"]["planning_mode"].unique()):
+if include_percent_classical := (cli_args.include_percent_classical
+                                 and "planning_mode" in configuration_headers
+                                 and "problem" in configuration_headers
+                                 and "classical" in fully_combined_data_sets["Cat Plans"]["planning_mode"].unique()):
     summary_raw_ground_level_classical = summary_raw_ground_level.query("planning_mode == 'classical'").droplevel("planning_mode")
     summary_raw_ground_level_precent_classical = summary_raw_ground_level.query("planning_mode != 'classical'").apply(lambda row: row / summary_raw_ground_level_classical.loc[row.name[1],:], axis=1) # Name of series is the index of the row (break_first, break_second), and the series index are the columns over the row.
     summary_raw_ground_level_stacked_percent_classical = summary_raw_ground_level_precent_classical.unstack(cli_args.break_second).swaplevel(0, 1, axis=1).sort_index(axis=1, level=0).reindex(summary_statistics_ground_level, axis=1, level=1)
@@ -856,7 +856,8 @@ if cli_args.make_excel:
     
     save_sheet(summary_globals_1N_stacked, "Score 1N Summary", merge_cells=True)
     save_sheet(summary_raw_ground_level_stacked, "Raw 1N Summary", merge_cells=True)
-    save_sheet(summary_raw_ground_level_stacked_percent_classical, "Per-Class 1N Summary", merge_cells=True)
+    if include_percent_classical:
+        save_sheet(summary_raw_ground_level_stacked_percent_classical, "Per-Class 1N Summary", merge_cells=True)
     save_sheet(summary_hierarchy_balance_1N_stacked, "HierExpansion 1N Summary", merge_cells=True)
     save_sheet(summary_balance_1N_stacked, "Balance 1N Summary", merge_cells=True)
     save_sheet(summary_partial_plan_1N_stacked, "PartialPlan 1N Summary", merge_cells=True)
@@ -957,7 +958,8 @@ if cli_args.make_tables:
     ## All 1N summaries are median over all experimental runs for each combined configuration.
     save_table(summary_globals_1N_stacked, "OverallScore_1N_Summary")
     save_table(summary_raw_ground_level_stacked, "CatRaw_1N_Summary")
-    save_table(summary_raw_ground_level_stacked_percent_classical, "PerClassical_1N_Summary")
+    if include_percent_classical:
+        save_table(summary_raw_ground_level_stacked_percent_classical, "PerClassical_1N_Summary")
     save_table(summary_hierarchy_balance_1N_stacked, "HierExpansion_1N_Summary")
     save_table(summary_balance_1N_stacked, "LevelWiseExpansionAndBalance_1N_Summary")
     save_table(summary_partial_plan_1N_stacked, "PartialPlanWise_1N_Summary")
@@ -1049,7 +1051,7 @@ if "grades" in cli_args.make_plots:
     fg = sns.displot(
         data=fully_combined_data_sets["Globals"],
         x="TI_SCORE", y="QL_SCORE", hue=cli_args.break_first,
-        kind="hist", rug=True, height=4
+        kind="hist", rug=False, height=4
     )
     fg.set(xlim=(0, 1), ylim=(0, 1))
     # fg = sns.relplot(
@@ -1416,9 +1418,10 @@ if "time" in cli_args.make_plots:
         x="SL", y="S_TT", hue=cli_args.break_first, style=cli_args.break_first, col=cli_args.break_second,
         kind="line", markers=False, dashes=True
     )
-    for i, problem in enumerate(fully_combined_data_sets["Partial Plans"]["problem"].unique()):
-        for x in fully_combined_data_sets["Partial Plans"].query(f"AL == 1 and problem == '{problem}'").groupby("PN").median()["LE"]:
-            fg.axes[0, i].axvline(x, color="red", linestyle="dashed", linewidth=0.5)
+    if "problem" in fully_combined_data_sets["Partial Plans"]:
+        for i, problem in enumerate(fully_combined_data_sets["Partial Plans"]["problem"].unique()):
+            for x in fully_combined_data_sets["Partial Plans"].query(f"AL == 1 and problem == '{problem}'").groupby("PN").median()["LE"]:
+                fg.axes[0, i].axvline(x, color="red", linestyle="dashed", linewidth=0.5)
     set_title_and_labels(fg, "Step", "Total Time (s)", f"Ground-level step-wise total time for each {cli_args.break_first} and {cli_args.break_second}")
     save_figure(fg.figure, "Stepwise_TotalTimes_GroundLevel_RelPlot")
     
@@ -1450,9 +1453,10 @@ if "time" in cli_args.make_plots:
         x="SL", y="S_TT", hue=cli_args.break_first, style=cli_args.break_first, col=cli_args.break_second,
         kind="line", markers=False, dashes=True
     )
-    for i, problem in enumerate(fully_combined_data_sets["Partial Plans"]["problem"].unique()):
-        for x in fully_combined_data_sets["Partial Plans"].query(f"AL == 1 and problem == '{problem}'").groupby("PN").median()["LE"]:
-            fg.axes[0, i].axvline(x, color="red", linestyle="dashed", linewidth=0.5)
+    if "problem" in fully_combined_data_sets["Partial Plans"]:
+        for i, problem in enumerate(fully_combined_data_sets["Partial Plans"]["problem"].unique()):
+            for x in fully_combined_data_sets["Partial Plans"].query(f"AL == 1 and problem == '{problem}'").groupby("PN").median()["LE"]:
+                fg.axes[0, i].axvline(x, color="red", linestyle="dashed", linewidth=0.5)
     set_title_and_labels(fg, "Step", "Total Time (s)", f"Exponential regression fit for ground-level step-wise total time for each {cli_args.break_first} and {cli_args.break_second}")
     save_figure(fg.figure, "Regression_Stepwise_TotalTimes_GroundLevel_RelPlot")
 

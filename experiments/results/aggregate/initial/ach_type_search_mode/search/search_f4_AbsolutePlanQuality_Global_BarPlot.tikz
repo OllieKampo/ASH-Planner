@@ -1,0 +1,91 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{peru22412844}{RGB}{224,128,44}
+\definecolor{seagreen5814558}{RGB}{58,145,58}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{axis}[
+height=\plotHeight,
+tick align=outside,
+tick pos=left,
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={problem},
+xmin=-0.5, xmax=2.5,
+xtick style={color=black},
+xtick={0,1,2},
+xticklabels={ps1,ps2,ps3},
+y grid style={darkgray176},
+ylabel={Ground-level plan length},
+ymin=0, ymax=73,
+ytick style={color=black}
+]
+\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:-0.133333333333333,39);
+\addlegendimage{ybar,ybar legend,draw=none,fill=steelblue49115161}
+\addlegendentry{minbound}
+
+\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:0.866666666666667,53);
+\draw[draw=none,fill=steelblue49115161] (axis cs:1.6,0) rectangle (axis cs:1.86666666666667,71);
+\draw[draw=none,fill=peru22412844] (axis cs:-0.133333333333333,0) rectangle (axis cs:0.133333333333333,39);
+\addlegendimage{ybar,ybar legend,draw=none,fill=peru22412844}
+\addlegendentry{standard}
+
+\draw[draw=none,fill=peru22412844] (axis cs:0.866666666666667,0) rectangle (axis cs:1.13333333333333,55);
+\draw[draw=none,fill=peru22412844] (axis cs:1.86666666666667,0) rectangle (axis cs:2.13333333333333,71);
+\draw[draw=none,fill=seagreen5814558] (axis cs:0.133333333333333,0) rectangle (axis cs:0.4,39);
+\addlegendimage{ybar,ybar legend,draw=none,fill=seagreen5814558}
+\addlegendentry{yield}
+
+\draw[draw=none,fill=seagreen5814558] (axis cs:1.13333333333333,0) rectangle (axis cs:1.4,55);
+\draw[draw=none,fill=seagreen5814558] (axis cs:2.13333333333333,0) rectangle (axis cs:2.4,73);
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+-0.266666666666667 39
+-0.266666666666667 39
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.733333333333333 53
+0.733333333333333 55
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.73333333333333 71
+1.73333333333333 71
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0 39
+0 39
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1 53
+1 55
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+2 71
+2 73
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.266666666666667 39
+0.266666666666667 39
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.26666666666667 55
+1.26666666666667 55
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+2.26666666666667 71
+2.26666666666667 73
+};
+\end{axis}
+
+\end{tikzpicture}

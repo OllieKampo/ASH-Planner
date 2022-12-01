@@ -1,0 +1,197 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{peru22412844}{RGB}{224,128,44}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{groupplot}[group style={group size=3 by 1}]
+\nextgroupplot[
+height=\plotHeight,
+log basis y={10},
+minor ytick={2,3,4,5,6,7,8,9,20,30,40,50,60,70,80,90,200,300,400,500,600,700,800,900,2000,3000,4000,5000,6000,7000,8000,9000},
+minor yticklabels={
+  \(\displaystyle {2\times10^{0}}\),
+  \(\displaystyle {3\times10^{0}}\),
+  \(\displaystyle {4\times10^{0}}\),
+  \(\displaystyle {5\times10^{0}}\),
+  \(\displaystyle {6\times10^{0}}\),
+  \(\displaystyle {7\times10^{0}}\),
+  \(\displaystyle {8\times10^{0}}\),
+  \(\displaystyle {9\times10^{0}}\),
+  \(\displaystyle {2\times10^{1}}\),
+  \(\displaystyle {3\times10^{1}}\),
+  \(\displaystyle {4\times10^{1}}\),
+  \(\displaystyle {5\times10^{1}}\),
+  \(\displaystyle {6\times10^{1}}\),
+  \(\displaystyle {7\times10^{1}}\),
+  \(\displaystyle {8\times10^{1}}\),
+  \(\displaystyle {9\times10^{1}}\),
+  \(\displaystyle {2\times10^{2}}\),
+  \(\displaystyle {3\times10^{2}}\),
+  \(\displaystyle {4\times10^{2}}\),
+  \(\displaystyle {5\times10^{2}}\),
+  \(\displaystyle {6\times10^{2}}\),
+  \(\displaystyle {7\times10^{2}}\),
+  \(\displaystyle {8\times10^{2}}\),
+  \(\displaystyle {9\times10^{2}}\),
+  \(\displaystyle {2\times10^{3}}\),
+  \(\displaystyle {3\times10^{3}}\),
+  \(\displaystyle {4\times10^{3}}\),
+  \(\displaystyle {5\times10^{3}}\),
+  \(\displaystyle {6\times10^{3}}\),
+  \(\displaystyle {7\times10^{3}}\),
+  \(\displaystyle {8\times10^{3}}\),
+  \(\displaystyle {9\times10^{3}}\)
+},
+tick align=outside,
+tick pos=left,
+title={search\_mode minbound},
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={Time type},
+xmin=-0.5, xmax=1.5,
+xtick style={color=black},
+xtick={0,1},
+xticklabels={GT,ST},
+y grid style={darkgray176},
+ylabel={Time (s)},
+ymin=38.8604650063706, ymax=79.1232487310819,
+ymode=log,
+ytick style={color=black},
+ytick={1,10,100,1000},
+yticklabels={
+  \(\displaystyle {10^{0}}\),
+  \(\displaystyle {10^{1}}\),
+  \(\displaystyle {10^{2}}\),
+  \(\displaystyle {10^{3}}\)
+}
+]
+\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:0,29.8348469999999);
+\addlegendimage{ybar,ybar legend,draw=none,fill=steelblue49115161}
+\addlegendentry{seqa}
+
+\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:1,48.2634674999997);
+\draw[draw=none,fill=peru22412844] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,29.8858282000007);
+\addlegendimage{ybar,ybar legend,draw=none,fill=peru22412844}
+\addlegendentry{sima}
+
+\draw[draw=none,fill=peru22412844] (axis cs:1,0) rectangle (axis cs:1.4,49.4289307000001);
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+-0.2 29.6590690000007
+-0.2 30.2777016000002
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.8 43.9178321000002
+0.8 51.232108600001
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.2 29.6367253999995
+0.2 30.2479038000018
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.2 36.7017487999998
+1.2 54.6683698000005
+};
+
+\nextgroupplot[
+height=\plotHeight,
+log basis y={10},
+minor yticklabels={},
+scaled minor y ticks=manual:{}{\pgfmathparse{#1}},
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+tick pos=left,
+title={search\_mode standard},
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={Time type},
+xmin=-0.5, xmax=1.5,
+xtick style={color=black},
+xtick={0,1},
+xticklabels={GT,ST},
+y grid style={darkgray176},
+ymin=38.8604650063706, ymax=79.1232487310819,
+ymode=log,
+ytick style={color=black},
+yticklabels={}
+]
+\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:0,40.0094132999994);
+\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:1,60.5368979);
+\draw[draw=none,fill=peru22412844] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,40.0668107000005);
+\draw[draw=none,fill=peru22412844] (axis cs:1,0) rectangle (axis cs:1.4,70.1913402000004);
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+-0.2 39.658569200001
+-0.2 40.1004710900003
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.8 58.3638017999985
+0.8 71.5932585000013
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.2 39.6045340999993
+0.2 40.1376090000002
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.2 65.5184884000003
+1.2 76.6069062000002
+};
+
+\nextgroupplot[
+height=\plotHeight,
+log basis y={10},
+minor yticklabels={},
+scaled minor y ticks=manual:{}{\pgfmathparse{#1}},
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+tick pos=left,
+title={search\_mode yield},
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={Time type},
+xmin=-0.5, xmax=1.5,
+xtick style={color=black},
+xtick={0,1},
+xticklabels={GT,ST},
+y grid style={darkgray176},
+ymin=38.8604650063706, ymax=79.1232487310819,
+ymode=log,
+ytick style={color=black},
+yticklabels={}
+]
+\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:0,41.7050925999998);
+\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:1,48.5317024000003);
+\draw[draw=none,fill=peru22412844] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,41.5806151999996);
+\draw[draw=none,fill=peru22412844] (axis cs:1,0) rectangle (axis cs:1.4,45.2849294000018);
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+-0.2 41.5184737000008
+-0.2 42.0884665000001
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.8 43.1905455000001
+0.8 54.7838399999991
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.2 41.0001807999991
+0.2 42.0602122999997
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.2 40.1369326999993
+1.2 51.4933402550007
+};
+\end{groupplot}
+
+\end{tikzpicture}
