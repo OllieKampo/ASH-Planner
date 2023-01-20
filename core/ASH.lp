@@ -67,7 +67,7 @@ insta_of(AL, CLS, EN) :- entity(CLS, EN), class(AL, CLS), al(AL).
 insta_of(AL_3, CLS_1, EN) :- insta_of(AL_2, CLS_2, EN),
                              super_class(CLS_1, CLS_2),
                              entity(CLS_3, EN), class(AL_3, CLS_3), % The entity's base class (can be from any abstraction level).
-                             class(AL_1, CLS_1), AL_1 >= AL_2, % The entity's super-class (can be from the same or any higher abstraction level, encoding that classes are always copied down the hierarchy).
+                             class(AL_1, CLS_1), AL_1 >= AL_2, % The entity's super-class (can be from the same or any higher abstraction level, encoding that classes are always copied down the hierarchy, and that super-classes can't be introduced at lower levels of the hierarchy).
                              al(AL_1), al(AL_2), al(AL_3).
 
 %% As well as the next lower abstraction level if its type is not overridden by one of its descendants of the same type.

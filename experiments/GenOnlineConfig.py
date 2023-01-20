@@ -22,6 +22,7 @@
 """Script for generating online planning configurations with bounds for division strategies."""
 
 import argparse
+import math
 import re
 import itertools
 from os import listdir
@@ -37,19 +38,24 @@ parser.add_argument("-type", "--strategy_type", required=True, choices=["proacti
 parser.add_argument("-pbounds", "--primary_bounds", nargs="*", default=[], type=str)
 parser.add_argument("-sbounds", "--secondary_bounds", nargs="*", default=[], type=str)
 parser.add_argument("-smaller", "--lower_only_smaller", action="store_true", default=False)
+parser.add_argument("-summin", "--bound_sum_min", default=None, type=str)
+parser.add_argument("-summax", "--bound_sum_max", default=None, type=str)
+parser.add_argument("-prodmin", "--bound_prod_min", default=None, type=str)
+parser.add_argument("-prodmax", "--bound_prod_max", default=None, type=str)
 cli_args: argparse.Namespace = parser.parse_args()
 
 def get_combinations(bounds: list[str], abstraction_levels: int) -> list[tuple[str, ...]]:
     """Get all combinations of bounds for the given abstraction levels."""
-    combinations: list[tuple[str, ...]] = []
-    for combination in itertools.product(bounds, repeat=abstraction_levels):
-        combinations.append(combination)
-    return combinations
+    return [combination for combination in itertools.product(bounds, repeat=abstraction_levels)]
 
 def generate_configurations(file_name: str, input_path: str, output_path: str,
                             abstraction_levels: int, proactive: bool,
                             primary_bounds: list[str], secondary_bounds: list[str],
-                            lower_only_smaller: bool = True) -> None:
+                            lower_only_smaller: bool = True,
+                            bound_sum_min: Optional[str] = None,
+                            bound_sum_max: Optional[str] = None,
+                            bound_prod_min: Optional[str] = None,
+                            bound_prod_max: Optional[str] = None) -> None:
     """Generate online planning configurations with bounds for division strategies."""
     print(f"Generating configurations for template file '{file_name}' over {abstraction_levels} "
           f"abstraction levels by combining bounds primary={primary_bounds}, secondary={secondary_bounds}.")
@@ -72,10 +78,19 @@ def generate_configurations(file_name: str, input_path: str, output_path: str,
                 if any((index != 0 and float(bound) > min(map(float, combination[:index])))
                     for index, bound in enumerate(combination)):
                     continue
-            # if math.prod(int(b) for b in combination) < bound_sum_min:
-            #     continue
-            # if math.prod(int(b) for b in combination) > bound_sum_max:
-            #     continue
+            
+            if bound_sum_min is not None:
+                if sum(float(b) for b in combination) < float(bound_sum_min):
+                    continue
+            if bound_sum_max is not None:
+                if sum(float(b) for b in combination) > float(bound_sum_max):
+                    continue
+            if bound_prod_min is not None:
+                if math.prod(float(b) for b in combination) < float(bound_prod_min):
+                    continue
+            if bound_prod_max is not None:
+                if math.prod(float(b) for b in combination) > float(bound_prod_max):
+                    continue
             
             new_file_name: str
             if isinstance(combination, list):
@@ -108,18 +123,25 @@ def generate_configurations(file_name: str, input_path: str, output_path: str,
                         file_writer.write(f"-bound{bounds}\n")
                     else: file_writer.write(line)
 
-output_path: Optional[str] = cli_args.output_path
-abstraction_levels: int = cli_args.abstraction_levels
-proactive: bool = cli_args.strategy_type == "proactive"
-primary_bounds: list[str] = cli_args.primary_bounds
-secondary_bounds: list[str] = cli_args.secondary_bounds
-lower_only_smaller: bool = cli_args.lower_only_smaller
-
-paths: str = cli_args.input_paths
-for path in paths:
-    if path.endswith(".config"):
-        generate_configurations(path.split("\\")[-1], path, output_path, abstraction_levels, proactive, primary_bounds, secondary_bounds, lower_only_smaller)
-    else:
-        for file_name in listdir(path):
-            if isfile(input_path := join(path, file_name)):
-                generate_configurations(file_name, input_path, output_path, abstraction_levels, proactive, primary_bounds, secondary_bounds, lower_only_smaller)
+if __name__ == "__main__":
+    print(f"Generating online planning configurations with bounds: primary={cli_args.primary_bounds}, secondary={cli_args.secondary_bounds}")
+    
+    paths: str = cli_args.input_paths
+    for path in paths:
+        ## If the path is a file, generate configurations for this file.
+        if isfile(path) and path.endswith(".config"):
+            generate_configurations(path.split("\\")[-1], path, cli_args.output_path,
+                                    cli_args.abstraction_levels, cli_args.strategy_type == "proactive",
+                                    cli_args.primary_bounds, cli_args.secondary_bounds, cli_args.lower_only_smaller,
+                                    cli_args.bound_sum_min, cli_args.bound_sum_max,
+                                    cli_args.bound_prod_min, cli_args.bound_prod_max)
+        
+        ## If the path is a directory, generate configurations for all files in the directory.
+        else:
+            for file_name in listdir(path):
+                if isfile(input_path := join(path, file_name)):
+                    generate_configurations(file_name, input_path, cli_args.output_path,
+                                            cli_args.abstraction_levels, cli_args.strategy_type == "proactive",
+                                            cli_args.primary_bounds, cli_args.secondary_bounds, cli_args.lower_only_smaller,
+                                            cli_args.bound_sum_min, cli_args.bound_sum_max,
+                                            cli_args.bound_prod_min, cli_args.bound_prod_max)

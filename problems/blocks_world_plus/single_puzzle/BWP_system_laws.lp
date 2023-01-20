@@ -107,9 +107,11 @@ super_class(surface, block).
 
 %% Manipulator arms can grasp objects because they are composed of a end effector
 override_class(manipulator_arm, manipulator_end, grasper).
+% override_class(manipulator_arm, manipulator_end, object).
 
 %% Manipulator arms are extensible because they are composed of a manipulator limb
 override_class(manipulator_arm, manipulator_limb, extensible).
+% override_class(manipulator_arm, manipulator_limb, object).
 
 %% A room is composed from a set of cells
 override_class(room, cell, location).

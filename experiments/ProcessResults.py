@@ -236,12 +236,12 @@ configuration_headers: list[str] = ["problem",          # The problem instance; 
                                     "online_bounds",    # The online bounds; a vector of numbers.
                                     "search_mode",      # The search mode; standard, min_bound, yield.
                                     "achievement_type", # The sub-goal achievement type; sima, seqa.
-                                    "action_planning",  # The action planning type; simultaneous, sequential.
+                                    "action_planning",  # The action planning type; sequential, concurrent.
                                     "preach_type",      # The final-goal pre-emptive achievement type; heur, opt.
                                     "blend_direction",  # The blend direction; left, right.
                                     "blend_type",       # The blend type; abs, per.
                                     "blend_quantity",   # The blend quantity; a number.
-                                    "online_method"]    # The online method; ground-first, complete-first, hybrid.
+                                    "online_method"]    # The online method; gf, cf, hy.
 original_configuration_headers: list[str] = configuration_headers.copy()
 
 if cli_args.combine_on == ["all"]:
@@ -276,7 +276,7 @@ def extract_configuration(excel_file_name: str) -> Optional[list[str]]:
                 configuration_dict[header] = "NONE"
         
     else:
-        index: int = 1
+        index: int = planning_type_index
         
         def get_term(matches: Optional[list[str]] = None, default: str = "NONE") -> str:
             """Get a planning configuration term from the file name."""
@@ -703,7 +703,7 @@ for comparison_statistic, comparison_function in global_comparison_statistics.it
                                                for configuration in combined_data_sets])
             pvalue = comparison.pvalue
         except ValueError:
-            pvalue = 0.0
+            pvalue = 1.0 ## Indicates that the data sets are identical
         global_comparison_matrix.loc[comparison_statistic,statistic] = pvalue
 
 print("\nProcessing pair-wise comparison statistics...")
@@ -752,10 +752,12 @@ for comparison_statistic, comparison_function in pair_wise_comparison_statistics
             if len(row_) == len(column_):
                 try:
                     comparison = comparison_function(row_, column_)
-                    pvalue = getattr(comparison, "pvalue", getattr(comparison, "p", -1.0))
+                    if comparison_statistic == "Median Test":
+                        pvalue = comparison[1]
+                    else: pvalue = getattr(comparison, "pvalue", -1.0)
                 except ValueError:
-                    pvalue = 0.0
-            else: pvalue = -1.0 ## Indicates that the data sets are not the same length
+                    pvalue = 1.0 ## Indicates that the data sets are identical
+            else: pvalue = -2.0 ## Indicates that the data sets are not the same length
             pair_wise_data_set_comparison_matrix.loc[(*row_configuration, comparison_statistic), (*column_configuration, statistic)] = pvalue
 
 pair_wise_data_set_comparison_matrix = pair_wise_data_set_comparison_matrix.reorder_levels((*HEADER_ORDER, "comparison"), axis=0)
@@ -791,6 +793,8 @@ for skew_statistic, skew_function in skew_statistics.items():
                 pvalue = result.pvalue
             except RuntimeWarning:
                 pvalue = -1.0 ## Indicates catastrophic cancellation due to the data being nearly identical
+            except ValueError:
+                pvalue = -2.0 ## Indicates that there are less than the 8 samples needed to calculate the statistic
             skew_test_matrix.loc[(*configuration, skew_statistic), raw_statistic] = pvalue
 
 skew_test_matrix = skew_test_matrix.reorder_levels((*HEADER_ORDER, "test"), axis=0)

@@ -2912,8 +2912,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
                                     or _preempt_neg_fgoals)))
         
         ## Determine solver options
-        solver_options = [ASP.Options.program_heuristics(),
-                          ASP.Options.statistics(),
+        solver_options = [ASP.Options.statistics(),
                           ASP.Options.threads(self.__threads),
                           ASP.Options.warn(not self.__silence_clingo),
                           ASP.Options.optimise(ASP.Options.OptimiseMode.EmunerateOptimal
@@ -2921,6 +2920,8 @@ class HierarchicalPlanner(AbstractionHierarchy):
                                                (ASP.Options.OptimiseMode.FindOptimum
                                                 if _optimise else
                                                 ASP.Options.OptimiseMode.Ignore))]
+        if _preempt_mode is PreemptMode.Heuristic:
+            solver_options.append(ASP.Options.program_heuristics())
         if _generate_problem_space:
             solver_options.append(ASP.Options.models(0))
         if problem.use_search_length_bound:
