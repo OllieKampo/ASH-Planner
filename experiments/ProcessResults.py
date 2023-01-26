@@ -231,7 +231,10 @@ if cli_args.pause:
 configuration_headers: list[str] = ["problem",          # The problem instance; e.g. PS1, PL2, etc.
                                     "planning_type",    # The planning type; mcl, hcl, hcr.
                                     "planning_mode",    # The planning mode; classical, offline, online.
+                                    "grounding",        # The grounding saving type; save, discard.
                                     "strategy",         # The division strategy; e.g. basic, hasty, steady, etc.
+                                    "commit_type",      # The reactive division commit type; con, rup, comb.
+                                    "check_type",       # The reactive division check type; prediv, childdiv.
                                     "bound_type",       # The bound type; abs, per, sl, cumt.
                                     "online_bounds",    # The online bounds; a vector of numbers.
                                     "search_mode",      # The search mode; standard, min_bound, yield.
@@ -300,10 +303,11 @@ def extract_configuration(excel_file_name: str) -> Optional[list[str]]:
         configuration_dict["planning_mode"] = get_term(["offline", "online"], "online")
         
         if configuration_dict["planning_mode"] == "online":
+            configuration_dict["grounding"] = get_term(["save", "discard"], "save")
             configuration_dict["strategy"] = get_term(["basic", "hasty", "steady", "jumpy", "impetuous", "relentless"], "basic")
-            configuration_dict["division_commit_type"] = get_term(["con", "rup", "comb"], "rup")
-            configuration_dict["prediv"] = get_term(["prediv", "childdiv"], "childdiv")
-            configuration_dict["bound_type"] = get_term(["abs", "per", "sl", "cumt", "inct", "dift", "intt"], "abs")
+            configuration_dict["commit_type"] = get_term(["con", "rup", "comb"], "rup")
+            configuration_dict["check_type"] = get_term(["prediv", "childdiv"], "childdiv")
+            configuration_dict["bound_type"] = get_term(["abs", "per", "sl", "cumt", "inct", "dift", "intt", "pidt"], "abs")
             for rel_index, term in enumerate(terms[(index := index + 1):]):
                 if not term.isdigit():
                     rel_index -= 1; break
@@ -332,7 +336,7 @@ def extract_configuration(excel_file_name: str) -> Optional[list[str]]:
                 configuration_dict["blend_direction"] = get_term(["left", "right"], "right")
                 
                 blend: str = get_term()
-                configuration_dict["blend_type"] = blend[0]
+                configuration_dict["blend_type"] = {"a" : "abs", "p" : "per"}[blend[0]]
                 configuration_dict["blend_quantity"] = int(blend[1:])
             else:
                 configuration_dict["blend_direction"] = "NONE"
@@ -637,9 +641,13 @@ if include_percent_classical := (cli_args.include_percent_classical
 ##      - Hierarchical smoothness score: hs = statistics.mean(abs(pld) for level in levels) / aef
 hierarchy_balances: list[pandas.DataFrame] = []
 for index, configuration in enumerate(fully_combined_data_sets["Cat Plans"][[cli_args.break_first, cli_args.break_second]].drop_duplicates().itertuples(index=False)):
+    print(index, configuration)
     fully_combined_data_sets_for_configuration = fully_combined_data_sets["Cat Plans"].query(f"{cli_args.break_first} == '{configuration[0]}' and {cli_args.break_second} == '{configuration[1]}'")
+    print(fully_combined_data_sets_for_configuration.head(10))
     overall_ef = (fully_combined_data_sets_for_configuration.query(f"AL == {min(al_range)}")["LE"].median() / fully_combined_data_sets_for_configuration.query(f"AL == {max(al_range)}")["LE"].median()) ** (1 / (max(al_range) - 1))
+    print(overall_ef)
     level_wise_ef = fully_combined_data_sets_for_configuration.query(f"AL < {max(al_range)}").groupby("AL")["CP_EF_L"].median()
+    print(level_wise_ef)
     average_ef = statistics.mean(level_wise_ef)
     stdev_ef = statistics.stdev(level_wise_ef)
     norm_stdev_ef = stdev_ef / average_ef

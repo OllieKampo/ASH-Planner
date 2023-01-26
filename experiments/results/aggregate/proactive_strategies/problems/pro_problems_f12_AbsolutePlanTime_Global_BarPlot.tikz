@@ -1,0 +1,92 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{peru22412844}{RGB}{224,128,44}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{axis}[
+height=\plotHeight,
+log basis y={10},
+minor ytick={13,13.2,13.4,13.6,13.8,14,14.2,14.4,14.6,14.8,15},
+minor yticklabels={
+  \(\displaystyle {1.3\times10^{1}}\),
+  \(\displaystyle {1.32\times10^{1}}\),
+  \(\displaystyle {1.34\times10^{1}}\),
+  \(\displaystyle {1.36\times10^{1}}\),
+  \(\displaystyle {1.38\times10^{1}}\),
+  \(\displaystyle {1.4\times10^{1}}\),
+  \(\displaystyle {1.42\times10^{1}}\),
+  \(\displaystyle {1.44\times10^{1}}\),
+  \(\displaystyle {1.46\times10^{1}}\),
+  \(\displaystyle {1.48\times10^{1}}\),
+  \(\displaystyle {1.5\times10^{1}}\)
+},
+tick align=outside,
+tick pos=left,
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={online method},
+xmin=-0.5, xmax=2.5,
+xtick style={color=black},
+xtick={0,1,2},
+xticklabels={cf,gf,hy},
+y grid style={darkgray176},
+ylabel={Hierarchical Absolution Time (s)},
+ymin=13.1767493101595, ymax=14.8462685125018,
+ymode=log,
+ytick style={color=black},
+ytick={1,10,100,1000},
+yticklabels={
+  \(\displaystyle {10^{0}}\),
+  \(\displaystyle {10^{1}}\),
+  \(\displaystyle {10^{2}}\),
+  \(\displaystyle {10^{3}}\)
+}
+]
+\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:0,13.5028186999999);
+\addlegendimage{ybar,ybar legend,draw=none,fill=steelblue49115161}
+\addlegendentry{ps3}
+
+\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:1,13.3743387999993);
+\draw[draw=none,fill=steelblue49115161] (axis cs:1.6,0) rectangle (axis cs:2,13.3244345000003);
+\draw[draw=none,fill=peru22412844] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,14.6663612000007);
+\addlegendimage{ybar,ybar legend,draw=none,fill=peru22412844}
+\addlegendentry{ps3ts}
+
+\draw[draw=none,fill=peru22412844] (axis cs:1,0) rectangle (axis cs:1.4,14.5215570499993);
+\draw[draw=none,fill=peru22412844] (axis cs:2,0) rectangle (axis cs:2.4,14.506131550001);
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+-0.2 13.4332259500007
+-0.2 13.5865950675
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.8 13.2945986000005
+0.8 13.4604344000001
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.8 13.2483941212488
+1.8 13.3739297999999
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.2 14.5737688999998
+0.2 14.7659826987478
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.2 14.4444500999989
+1.2 14.6278637012499
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+2.2 14.4423741862514
+2.2 14.5762303050014
+};
+\end{axis}
+
+\end{tikzpicture}

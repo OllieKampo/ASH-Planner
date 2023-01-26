@@ -1,0 +1,227 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{darkslategray63}{RGB}{63,63,63}
+\definecolor{peru22412844}{RGB}{224,128,44}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{axis}[
+height=\plotHeight,
+tick align=outside,
+tick pos=left,
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={search mode},
+xmin=-0.5, xmax=2.5,
+xtick style={color=black},
+xtick={0,1,2},
+xticklabels={minbound,standard,yield},
+y grid style={darkgray176},
+ylabel={Overall time score},
+ymin=0, ymax=1,
+ytick style={color=black}
+]
+\path [draw=darkslategray63, fill=steelblue49115161, semithick]
+(axis cs:-0.396,0.505142195727341)
+--(axis cs:-0.004,0.505142195727341)
+--(axis cs:-0.004,0.742598557307034)
+--(axis cs:-0.396,0.742598557307034)
+--(axis cs:-0.396,0.505142195727341)
+--cycle;
+\path [draw=darkslategray63, fill=peru22412844, semithick]
+(axis cs:0.004,0.537580770175486)
+--(axis cs:0.396,0.537580770175486)
+--(axis cs:0.396,0.74653417270871)
+--(axis cs:0.004,0.74653417270871)
+--(axis cs:0.004,0.537580770175486)
+--cycle;
+\path [draw=darkslategray63, fill=steelblue49115161, semithick]
+(axis cs:0.604,0.466112560121702)
+--(axis cs:0.996,0.466112560121702)
+--(axis cs:0.996,0.731989227875242)
+--(axis cs:0.604,0.731989227875242)
+--(axis cs:0.604,0.466112560121702)
+--cycle;
+\path [draw=darkslategray63, fill=peru22412844, semithick]
+(axis cs:1.004,0.453714938417156)
+--(axis cs:1.396,0.453714938417156)
+--(axis cs:1.396,0.730213767588388)
+--(axis cs:1.004,0.730213767588388)
+--(axis cs:1.004,0.453714938417156)
+--cycle;
+\path [draw=darkslategray63, fill=steelblue49115161, semithick]
+(axis cs:1.604,0.489803172311365)
+--(axis cs:1.996,0.489803172311365)
+--(axis cs:1.996,0.715700325782494)
+--(axis cs:1.604,0.715700325782494)
+--(axis cs:1.604,0.489803172311365)
+--cycle;
+\path [draw=darkslategray63, fill=peru22412844, semithick]
+(axis cs:2.004,0.502174807822269)
+--(axis cs:2.396,0.502174807822269)
+--(axis cs:2.396,0.716240782540964)
+--(axis cs:2.004,0.716240782540964)
+--(axis cs:2.004,0.502174807822269)
+--cycle;
+\draw[draw=darkslategray63,fill=steelblue49115161,line width=0.3pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\addlegendimage{ybar,ybar legend,draw=darkslategray63,fill=steelblue49115161,line width=0.3pt}
+\addlegendentry{seqa}
+
+\draw[draw=darkslategray63,fill=peru22412844,line width=0.3pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\addlegendimage{ybar,ybar legend,draw=darkslategray63,fill=peru22412844,line width=0.3pt}
+\addlegendentry{sima}
+
+\addplot [semithick, darkslategray63]
+table {%
+-0.2 0.505142195727341
+-0.2 0.410741834151986
+};
+\addplot [semithick, darkslategray63]
+table {%
+-0.2 0.742598557307034
+-0.2 0.780734682100113
+};
+\addplot [semithick, darkslategray63]
+table {%
+-0.298 0.410741834151986
+-0.102 0.410741834151986
+};
+\addplot [semithick, darkslategray63]
+table {%
+-0.298 0.780734682100113
+-0.102 0.780734682100113
+};
+\addplot [semithick, darkslategray63]
+table {%
+0.2 0.537580770175486
+0.2 0.419352996326034
+};
+\addplot [semithick, darkslategray63]
+table {%
+0.2 0.74653417270871
+0.2 0.777038274348529
+};
+\addplot [semithick, darkslategray63]
+table {%
+0.102 0.419352996326034
+0.298 0.419352996326034
+};
+\addplot [semithick, darkslategray63]
+table {%
+0.102 0.777038274348529
+0.298 0.777038274348529
+};
+\addplot [semithick, darkslategray63]
+table {%
+0.8 0.466112560121702
+0.8 0.400705121109555
+};
+\addplot [semithick, darkslategray63]
+table {%
+0.8 0.731989227875242
+0.8 0.744980181000389
+};
+\addplot [semithick, darkslategray63]
+table {%
+0.702 0.400705121109555
+0.898 0.400705121109555
+};
+\addplot [semithick, darkslategray63]
+table {%
+0.702 0.744980181000389
+0.898 0.744980181000389
+};
+\addplot [semithick, darkslategray63]
+table {%
+1.2 0.453714938417156
+1.2 0.393559014957658
+};
+\addplot [semithick, darkslategray63]
+table {%
+1.2 0.730213767588388
+1.2 0.746515625565634
+};
+\addplot [semithick, darkslategray63]
+table {%
+1.102 0.393559014957658
+1.298 0.393559014957658
+};
+\addplot [semithick, darkslategray63]
+table {%
+1.102 0.746515625565634
+1.298 0.746515625565634
+};
+\addplot [semithick, darkslategray63]
+table {%
+1.8 0.489803172311365
+1.8 0.397224212776721
+};
+\addplot [semithick, darkslategray63]
+table {%
+1.8 0.715700325782494
+1.8 0.725538994111268
+};
+\addplot [semithick, darkslategray63]
+table {%
+1.702 0.397224212776721
+1.898 0.397224212776721
+};
+\addplot [semithick, darkslategray63]
+table {%
+1.702 0.725538994111268
+1.898 0.725538994111268
+};
+\addplot [semithick, darkslategray63]
+table {%
+2.2 0.502174807822269
+2.2 0.437797636411484
+};
+\addplot [semithick, darkslategray63]
+table {%
+2.2 0.716240782540964
+2.2 0.727887148623812
+};
+\addplot [semithick, darkslategray63]
+table {%
+2.102 0.437797636411484
+2.298 0.437797636411484
+};
+\addplot [semithick, darkslategray63]
+table {%
+2.102 0.727887148623812
+2.298 0.727887148623812
+};
+\addplot [semithick, darkslategray63]
+table {%
+-0.396 0.660221190930092
+-0.004 0.660221190930092
+};
+\addplot [semithick, darkslategray63]
+table {%
+0.004 0.65242646242671
+0.396 0.65242646242671
+};
+\addplot [semithick, darkslategray63]
+table {%
+0.604 0.604032948733963
+0.996 0.604032948733963
+};
+\addplot [semithick, darkslategray63]
+table {%
+1.004 0.605191554696219
+1.396 0.605191554696219
+};
+\addplot [semithick, darkslategray63]
+table {%
+1.604 0.625819065928914
+1.996 0.625819065928914
+};
+\addplot [semithick, darkslategray63]
+table {%
+2.004 0.622474927993803
+2.396 0.622474927993803
+};
+\end{axis}
+
+\end{tikzpicture}

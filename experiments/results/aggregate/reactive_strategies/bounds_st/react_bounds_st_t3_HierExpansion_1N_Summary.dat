@@ -1,0 +1,5 @@
+problem ps3 ps3 ps3 ps3
+ "Hierarchical Expansion Balance Normalised Deviation" "Hierarchical Expansion Balance Normalised Error" "Mean Expansion Factor Per Level" "Overall Hierarchical Expansion Factor"
+online_bounds    
+(0,) 0.3279025608529149 0.2318621243475307 2.110625814863103 1.9874606914351791
+(1,) 0.1982231023820947 0.14016489988221445 1.9295454545454547 1.91049731745428

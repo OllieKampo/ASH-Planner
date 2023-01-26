@@ -1,0 +1,5 @@
+online_method cf cf cf cf gf gf gf gf hy hy hy hy
+ "Hierarchical Expansion Balance Normalised Deviation" "Hierarchical Expansion Balance Normalised Error" "Mean Expansion Factor Per Level" "Overall Hierarchical Expansion Factor" "Hierarchical Expansion Balance Normalised Deviation" "Hierarchical Expansion Balance Normalised Error" "Mean Expansion Factor Per Level" "Overall Hierarchical Expansion Factor" "Hierarchical Expansion Balance Normalised Deviation" "Hierarchical Expansion Balance Normalised Error" "Mean Expansion Factor Per Level" "Overall Hierarchical Expansion Factor"
+strategy            
+hasty 0.1660775823985627 0.1264696536383858 1.833916083916084 1.8248531140351991 0.16283134792418033 0.12473118279569904 1.81438127090301 1.801454980601186 0.15734413901055588 0.1201171583131594 1.8157102157102156 1.8093216960274119
+steady 0.15065589714708216 0.1130734199711208 1.8321123321123318 1.8248531140351991 0.15959365372642215 0.12221281399943551 1.8108867876309735 1.801454980601186 0.15548210000636178 0.11866916115641489 1.8135457135457134 1.8093216960274119

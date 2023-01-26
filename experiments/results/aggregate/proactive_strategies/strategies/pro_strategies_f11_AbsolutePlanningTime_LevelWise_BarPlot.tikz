@@ -1,0 +1,235 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{peru22412844}{RGB}{224,128,44}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{groupplot}[group style={group size=3 by 1}]
+\nextgroupplot[
+height=\plotHeight,
+log basis y={10},
+tick align=outside,
+tick pos=left,
+title={online\_method cf},
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={Abstraction level},
+xmin=-0.5, xmax=3.5,
+xtick style={color=black},
+xtick={0,1,2,3},
+xticklabels={1.0,2.0,3.0,4.0},
+y grid style={darkgray176},
+ylabel={Total planning time (s)},
+ymin=0.622213970087411, ymax=9.73915580810868,
+ymode=log,
+ytick style={color=black},
+ytick={0.01,0.1,1,10,100},
+yticklabels={
+  \(\displaystyle {10^{-2}}\),
+  \(\displaystyle {10^{-1}}\),
+  \(\displaystyle {10^{0}}\),
+  \(\displaystyle {10^{1}}\),
+  \(\displaystyle {10^{2}}\)
+}
+]
+\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:0,8.50296079999968);
+\addlegendimage{ybar,ybar legend,draw=none,fill=steelblue49115161}
+\addlegendentry{hasty}
+
+\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:1,3.65131385);
+\draw[draw=none,fill=steelblue49115161] (axis cs:1.6,0) rectangle (axis cs:2,1.57956065000016);
+\draw[draw=none,fill=steelblue49115161] (axis cs:2.6,0) rectangle (axis cs:3,0.71153915000005);
+\draw[draw=none,fill=peru22412844] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,8.44399614999992);
+\addlegendimage{ybar,ybar legend,draw=none,fill=peru22412844}
+\addlegendentry{steady}
+
+\draw[draw=none,fill=peru22412844] (axis cs:1,0) rectangle (axis cs:1.4,3.69931910000008);
+\draw[draw=none,fill=peru22412844] (axis cs:2,0) rectangle (axis cs:2.4,1.55190070000003);
+\draw[draw=none,fill=peru22412844] (axis cs:3,0) rectangle (axis cs:3.4,0.708477999999928);
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+-0.2 8.3851194999998
+-0.2 8.59453040124991
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.8 3.63102141625001
+0.8 3.67421741125005
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.8 1.56033214999957
+1.8 1.66254564374998
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+2.8 0.710856749999891
+2.8 0.711863099999846
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.2 8.33240970000065
+0.2 8.53169849999966
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.2 3.67396630000013
+1.2 3.72564954375023
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+2.2 1.5304219375
+2.2 1.59155252125044
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+3.2 0.707787127499984
+3.2 0.709329300000149
+};
+
+\nextgroupplot[
+height=\plotHeight,
+log basis y={10},
+minor yticklabels={},
+scaled minor y ticks=manual:{}{\pgfmathparse{#1}},
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+tick pos=left,
+title={online\_method gf},
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={Abstraction level},
+xmin=-0.5, xmax=3.5,
+xtick style={color=black},
+xtick={0,1,2,3},
+xticklabels={1.0,2.0,3.0,4.0},
+y grid style={darkgray176},
+ymin=0.622213970087411, ymax=9.73915580810868,
+ymode=log,
+ytick style={color=black},
+yticklabels={}
+]
+\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:0,8.41184520000002);
+\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:1,3.62759909999994);
+\draw[draw=none,fill=steelblue49115161] (axis cs:1.6,0) rectangle (axis cs:2,1.58497395000035);
+\draw[draw=none,fill=steelblue49115161] (axis cs:2.6,0) rectangle (axis cs:3,0.707029300000151);
+\draw[draw=none,fill=peru22412844] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,8.17695610000021);
+\draw[draw=none,fill=peru22412844] (axis cs:1,0) rectangle (axis cs:1.4,3.72848989999972);
+\draw[draw=none,fill=peru22412844] (axis cs:2,0) rectangle (axis cs:2.4,1.56261080000019);
+\draw[draw=none,fill=peru22412844] (axis cs:3,0) rectangle (axis cs:3.4,0.707336499999997);
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+-0.2 8.34744045000003
+-0.2 8.47164864999971
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.8 3.61128455375005
+0.8 3.64687015000024
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.8 1.56210905000023
+1.8 1.65530598749996
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+2.8 0.70634519999976
+2.8 0.707596191249998
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.2 8.10369200000002
+0.2 8.24629180374986
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.2 3.71036012875025
+1.2 3.74427354499984
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+2.2 1.53172531000002
+2.2 1.60990005000036
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+3.2 0.706860399999869
+3.2 0.707794200000194
+};
+
+\nextgroupplot[
+height=\plotHeight,
+log basis y={10},
+minor yticklabels={},
+scaled minor y ticks=manual:{}{\pgfmathparse{#1}},
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+tick pos=left,
+title={online\_method hy},
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={Abstraction level},
+xmin=-0.5, xmax=3.5,
+xtick style={color=black},
+xtick={0,1,2,3},
+xticklabels={1.0,2.0,3.0,4.0},
+y grid style={darkgray176},
+ymin=0.622213970087411, ymax=9.73915580810868,
+ymode=log,
+ytick style={color=black},
+yticklabels={}
+]
+\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:0,8.29570349999997);
+\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:1,3.61122845);
+\draw[draw=none,fill=steelblue49115161] (axis cs:1.6,0) rectangle (axis cs:2,1.56846079999998);
+\draw[draw=none,fill=steelblue49115161] (axis cs:2.6,0) rectangle (axis cs:3,0.705507850000174);
+\draw[draw=none,fill=peru22412844] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,8.30044824999999);
+\draw[draw=none,fill=peru22412844] (axis cs:1,0) rectangle (axis cs:1.4,3.71066674999983);
+\draw[draw=none,fill=peru22412844] (axis cs:2,0) rectangle (axis cs:2.4,1.56934459999999);
+\draw[draw=none,fill=peru22412844] (axis cs:3,0) rectangle (axis cs:3.4,0.707110650000175);
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+-0.2 8.18125767124991
+-0.2 8.40856850125012
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.8 3.59441290000007
+0.8 3.63188552625055
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.8 1.54826421749998
+1.8 1.63968755500003
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+2.8 0.705080849999888
+2.8 0.706089249999778
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.2 8.25027026874999
+0.2 8.33431090000067
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.2 3.68207334750037
+1.2 3.72927059999984
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+2.2 1.53379482500009
+2.2 1.61089155000011
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+3.2 0.706600603750161
+3.2 0.707654249999976
+};
+\end{groupplot}
+
+\end{tikzpicture}

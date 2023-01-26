@@ -1,0 +1,69 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{peru22412844}{RGB}{224,128,44}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{axis}[
+height=\plotHeight,
+tick align=outside,
+tick pos=left,
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={problem},
+xmin=-0.5, xmax=2.5,
+xtick style={color=black},
+xtick={0,1,2},
+xticklabels={ps1,ps2,ps3},
+y grid style={darkgray176},
+ylabel={Overall time score},
+ymin=0, ymax=1,
+ytick style={color=black}
+]
+\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:0,1);
+\addlegendimage{ybar,ybar legend,draw=none,fill=steelblue49115161}
+\addlegendentry{NONE}
+
+\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:1,0.962387589760502);
+\draw[draw=none,fill=steelblue49115161] (axis cs:1.6,0) rectangle (axis cs:2,0.943967635916081);
+\draw[draw=none,fill=peru22412844] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,1);
+\addlegendimage{ybar,ybar legend,draw=none,fill=peru22412844}
+\addlegendentry{opt}
+
+\draw[draw=none,fill=peru22412844] (axis cs:1,0) rectangle (axis cs:1.4,0.961634066145195);
+\draw[draw=none,fill=peru22412844] (axis cs:2,0) rectangle (axis cs:2.4,0.94286331889445);
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+-0.2 1
+-0.2 1
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.8 0.959696808282144
+0.8 0.963818498160249
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.8 0.934986505273423
+1.8 0.948262433075695
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.2 1
+0.2 1
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.2 0.958868539096778
+1.2 0.964456538758129
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+2.2 0.936751571615248
+2.2 0.945788256733339
+};
+\end{axis}
+
+\end{tikzpicture}

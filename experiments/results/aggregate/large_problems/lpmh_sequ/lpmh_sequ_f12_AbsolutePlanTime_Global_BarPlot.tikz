@@ -1,0 +1,190 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{brown1926061}{RGB}{192,60,61}
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{dimgray1319183}{RGB}{131,91,83}
+\definecolor{mediumpurple147113178}{RGB}{147,113,178}
+\definecolor{orchid213132188}{RGB}{213,132,188}
+\definecolor{peru22412844}{RGB}{224,128,44}
+\definecolor{seagreen5814558}{RGB}{58,145,58}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{axis}[
+height=\plotHeight,
+log basis y={10},
+minor ytick={2,3,4,5,6,7,8,9,20,30,40,50,60,70,80,90,200,300,400,500,600,700,800,900,2000,3000,4000,5000,6000,7000,8000,9000,20000,30000,40000,50000,60000,70000,80000,90000},
+minor yticklabels={
+  \(\displaystyle {2\times10^{0}}\),
+  \(\displaystyle {3\times10^{0}}\),
+  \(\displaystyle {4\times10^{0}}\),
+  ,
+  \(\displaystyle {6\times10^{0}}\),
+  ,
+  ,
+  ,
+  \(\displaystyle {2\times10^{1}}\),
+  \(\displaystyle {3\times10^{1}}\),
+  \(\displaystyle {4\times10^{1}}\),
+  ,
+  \(\displaystyle {6\times10^{1}}\),
+  ,
+  ,
+  ,
+  \(\displaystyle {2\times10^{2}}\),
+  \(\displaystyle {3\times10^{2}}\),
+  \(\displaystyle {4\times10^{2}}\),
+  ,
+  \(\displaystyle {6\times10^{2}}\),
+  ,
+  ,
+  ,
+  \(\displaystyle {2\times10^{3}}\),
+  \(\displaystyle {3\times10^{3}}\),
+  \(\displaystyle {4\times10^{3}}\),
+  ,
+  \(\displaystyle {6\times10^{3}}\),
+  ,
+  ,
+  ,
+  \(\displaystyle {2\times10^{4}}\),
+  \(\displaystyle {3\times10^{4}}\),
+  \(\displaystyle {4\times10^{4}}\),
+  ,
+  \(\displaystyle {6\times10^{4}}\),
+  ,
+  ,
+  
+},
+tick align=outside,
+tick pos=left,
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={problem},
+xmin=-0.5, xmax=1.5,
+xtick style={color=black},
+xtick={0,1},
+xticklabels={pl1ts,pl2dc},
+y grid style={darkgray176},
+ylabel={Hierarchical Absolution Time (s)},
+ymin=36.8563936469805, ymax=150.049066872047,
+ymode=log,
+ytick style={color=black},
+ytick={1,10,100,1000,10000},
+yticklabels={
+  \(\displaystyle {10^{0}}\),
+  \(\displaystyle {10^{1}}\),
+  \(\displaystyle {10^{2}}\),
+  \(\displaystyle {10^{3}}\),
+  \(\displaystyle {10^{4}}\)
+}
+]
+\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:-0.285714285714286,119.701569050004);
+\addlegendimage{ybar,ybar legend,draw=none,fill=steelblue49115161}
+\addlegendentry{(1, 2, 2)}
+
+\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:0.714285714285714,135.599957450006);
+\draw[draw=none,fill=peru22412844] (axis cs:-0.285714285714286,0) rectangle (axis cs:-0.171428571428571,123.723704800004);
+\addlegendimage{ybar,ybar legend,draw=none,fill=peru22412844}
+\addlegendentry{(1, 2, 3)}
+
+\draw[draw=none,fill=peru22412844] (axis cs:0.714285714285714,0) rectangle (axis cs:0.828571428571429,108.490824199998);
+\draw[draw=none,fill=seagreen5814558] (axis cs:-0.171428571428571,0) rectangle (axis cs:-0.0571428571428571,115.540678099999);
+\addlegendimage{ybar,ybar legend,draw=none,fill=seagreen5814558}
+\addlegendentry{(1, 3, 3)}
+
+\draw[draw=none,fill=seagreen5814558] (axis cs:0.828571428571429,0) rectangle (axis cs:0.942857142857143,86.2355769499994);
+\draw[draw=none,fill=brown1926061] (axis cs:-0.0571428571428571,0) rectangle (axis cs:0.0571428571428571,42.5521426499999);
+\addlegendimage{ybar,ybar legend,draw=none,fill=brown1926061}
+\addlegendentry{(2, 2, 2)}
+
+\draw[draw=none,fill=brown1926061] (axis cs:0.942857142857143,0) rectangle (axis cs:1.05714285714286,85.7561733499994);
+\draw[draw=none,fill=mediumpurple147113178] (axis cs:0.0571428571428571,0) rectangle (axis cs:0.171428571428571,40.2399216999999);
+\addlegendimage{ybar,ybar legend,draw=none,fill=mediumpurple147113178}
+\addlegendentry{(2, 2, 3)}
+
+\draw[draw=none,fill=mediumpurple147113178] (axis cs:1.05714285714286,0) rectangle (axis cs:1.17142857142857,76.0984667999992);
+\draw[draw=none,fill=dimgray1319183] (axis cs:0.171428571428571,0) rectangle (axis cs:0.285714285714286,40.3095945000011);
+\addlegendimage{ybar,ybar legend,draw=none,fill=dimgray1319183}
+\addlegendentry{(2, 3, 3)}
+
+\draw[draw=none,fill=dimgray1319183] (axis cs:1.17142857142857,0) rectangle (axis cs:1.28571428571429,70.3807554500019);
+\draw[draw=none,fill=orchid213132188] (axis cs:0.285714285714286,0) rectangle (axis cs:0.4,42.8125687000005);
+\addlegendimage{ybar,ybar legend,draw=none,fill=orchid213132188}
+\addlegendentry{(3, 3, 3)}
+
+\draw[draw=none,fill=orchid213132188] (axis cs:1.28571428571429,0) rectangle (axis cs:1.4,67.3634163500016);
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+-0.342857142857143 100.863706649994
+-0.342857142857143 132.247355800005
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.657142857142857 132.293208800002
+0.657142857142857 140.772794700004
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+-0.228571428571429 104.192794150001
+-0.228571428571429 133.370368800003
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.771428571428571 106.595929750002
+0.771428571428571 110.037235350001
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+-0.114285714285714 102.760731499994
+-0.114285714285714 125.822475700011
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.885714285714286 84.2918199000007
+0.885714285714286 87.5729480975024
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0 41.9303936000015
+0 43.8210292999988
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1 84.478724299991
+1 86.5155507999952
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.114285714285714 39.2850585000009
+0.114285714285714 41.1378562649998
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.11428571428571 74.7244800562523
+1.11428571428571 77.8029100999993
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.228571428571429 39.5957643999982
+0.228571428571429 41.2842752000004
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.22857142857143 68.6660620000021
+1.22857142857143 72.670582300002
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.342857142857143 41.8888997500001
+0.342857142857143 44.7067881999992
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.34285714285714 66.5300478999998
+1.34285714285714 68.3660547500049
+};
+\end{axis}
+
+\end{tikzpicture}

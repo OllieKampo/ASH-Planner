@@ -1,0 +1,69 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{peru22412844}{RGB}{224,128,44}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{axis}[
+height=\plotHeight,
+log basis y={10},
+tick align=outside,
+tick pos=left,
+title={problem ps3},
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={Time type},
+xmin=-0.5, xmax=1.5,
+xtick style={color=black},
+xtick={0,1},
+xticklabels={GT,ST},
+y grid style={darkgray176},
+ylabel={Time (s)},
+ymin=4.50231751260512, ymax=145.921086609104,
+ymode=log,
+ytick style={color=black},
+ytick={0.1,1,10,100,1000,10000},
+yticklabels={
+  \(\displaystyle {10^{-1}}\),
+  \(\displaystyle {10^{0}}\),
+  \(\displaystyle {10^{1}}\),
+  \(\displaystyle {10^{2}}\),
+  \(\displaystyle {10^{3}}\),
+  \(\displaystyle {10^{4}}\)
+}
+]
+\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:0,26.0318707999992);
+\addlegendimage{ybar,ybar legend,draw=none,fill=steelblue49115161}
+\addlegendentry{(0,)}
+
+\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:1,5.5123135999999);
+\draw[draw=none,fill=peru22412844] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,123.720422750002);
+\addlegendimage{ybar,ybar legend,draw=none,fill=peru22412844}
+\addlegendentry{(1,)}
+
+\draw[draw=none,fill=peru22412844] (axis cs:1,0) rectangle (axis cs:1.4,31.688222950001);
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+-0.2 25.0501365000003
+-0.2 27.0729866500016
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.8 5.27355499999993
+0.8 5.70143259999998
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.2 122.901721500001
+0.2 124.580679199998
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.2 30.9190748712507
+1.2 32.1132846499989
+};
+\end{axis}
+
+\end{tikzpicture}

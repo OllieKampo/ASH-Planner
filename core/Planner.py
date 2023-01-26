@@ -846,7 +846,7 @@ class RefinementSchema:
     
     @property
     def serialisable_dict(self) -> dict[int, dict[int, dict[str, str]]]:
-        "Convert the refinement schema to a json serialisable dictionary."
+        """Convert the refinement schema to a json serialisable dictionary."""
         _dict: dict[str, dict[int, str]] = {}
         
         _dict["sub_goal_stages"] = {}

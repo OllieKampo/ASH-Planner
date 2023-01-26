@@ -1,0 +1,281 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{peru22412844}{RGB}{224,128,44}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{groupplot}[group style={group size=3 by 1}]
+\nextgroupplot[
+height=\plotHeight,
+log basis y={10},
+minor ytick={0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,2,3,4,5,6,7,8,9,20,30,40,50,60,70,80,90,200,300,400,500,600,700,800,900,2000,3000,4000,5000,6000,7000,8000,9000},
+minor yticklabels={
+  \(\displaystyle {2\times10^{-1}}\),
+  \(\displaystyle {3\times10^{-1}}\),
+  \(\displaystyle {4\times10^{-1}}\),
+  ,
+  \(\displaystyle {6\times10^{-1}}\),
+  ,
+  ,
+  ,
+  \(\displaystyle {2\times10^{0}}\),
+  \(\displaystyle {3\times10^{0}}\),
+  \(\displaystyle {4\times10^{0}}\),
+  ,
+  \(\displaystyle {6\times10^{0}}\),
+  ,
+  ,
+  ,
+  \(\displaystyle {2\times10^{1}}\),
+  \(\displaystyle {3\times10^{1}}\),
+  \(\displaystyle {4\times10^{1}}\),
+  ,
+  \(\displaystyle {6\times10^{1}}\),
+  ,
+  ,
+  ,
+  \(\displaystyle {2\times10^{2}}\),
+  \(\displaystyle {3\times10^{2}}\),
+  \(\displaystyle {4\times10^{2}}\),
+  ,
+  \(\displaystyle {6\times10^{2}}\),
+  ,
+  ,
+  ,
+  \(\displaystyle {2\times10^{3}}\),
+  \(\displaystyle {3\times10^{3}}\),
+  \(\displaystyle {4\times10^{3}}\),
+  ,
+  \(\displaystyle {6\times10^{3}}\),
+  ,
+  ,
+  
+},
+tick align=outside,
+tick pos=left,
+title={problem ps1},
+unbounded coords=jump,
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={Time type},
+xmin=-0.5, xmax=3.5,
+xtick style={color=black},
+xtick={0,1,2,3},
+xticklabels={LT,WT,MET,CT},
+y grid style={darkgray176},
+ylabel={Time (s)},
+ymin=2.201754088804, ymax=17.9534022517706,
+ymode=log,
+ytick style={color=black},
+ytick={0.1,1,10,100,1000},
+yticklabels={
+  \(\displaystyle {10^{-1}}\),
+  \(\displaystyle {10^{0}}\),
+  \(\displaystyle {10^{1}}\),
+  \(\displaystyle {10^{2}}\),
+  \(\displaystyle {10^{3}}\)
+}
+]
+\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:0,4.01125674999997);
+\addlegendimage{ybar,ybar legend,draw=none,fill=steelblue49115161}
+\addlegendentry{NONE}
+
+\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:1,1.9639223);
+\draw[draw=none,fill=steelblue49115161] (axis cs:1.6,0) rectangle (axis cs:2,1.24304995);
+\draw[draw=none,fill=steelblue49115161] (axis cs:2.6,0) rectangle (axis cs:3,7.72592250000004);
+\draw[draw=none,fill=peru22412844] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,4.07908340000005);
+\addlegendimage{ybar,ybar legend,draw=none,fill=peru22412844}
+\addlegendentry{opt}
+
+\draw[draw=none,fill=peru22412844] (axis cs:1,0) rectangle (axis cs:1.4,1.90117822499999);
+\draw[draw=none,fill=peru22412844] (axis cs:2,0) rectangle (axis cs:2.4,1.1334543833333);
+\draw[draw=none,fill=peru22412844] (axis cs:3,0) rectangle (axis cs:3.4,7.44956775000004);
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+-0.2 nan
+-0.2 nan
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.8 nan
+0.8 nan
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.8 nan
+1.8 nan
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+2.8 nan
+2.8 nan
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.2 nan
+0.2 nan
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.2 nan
+1.2 nan
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+2.2 nan
+2.2 nan
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+3.2 nan
+3.2 nan
+};
+
+\nextgroupplot[
+height=\plotHeight,
+log basis y={10},
+minor yticklabels={},
+scaled minor y ticks=manual:{}{\pgfmathparse{#1}},
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+tick pos=left,
+title={problem ps2},
+unbounded coords=jump,
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={Time type},
+xmin=-0.5, xmax=3.5,
+xtick style={color=black},
+xtick={0,1,2,3},
+xticklabels={LT,WT,MET,CT},
+y grid style={darkgray176},
+ymin=2.201754088804, ymax=17.9534022517706,
+ymode=log,
+ytick style={color=black},
+yticklabels={}
+]
+\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:0,6.32978549999983);
+\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:1,3.01789618750006);
+\draw[draw=none,fill=steelblue49115161] (axis cs:1.6,0) rectangle (axis cs:2,1.8841564833333);
+\draw[draw=none,fill=steelblue49115161] (axis cs:2.6,0) rectangle (axis cs:3,11.9407894500003);
+\draw[draw=none,fill=peru22412844] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,6.36960710000004);
+\draw[draw=none,fill=peru22412844] (axis cs:1,0) rectangle (axis cs:1.4,2.7236492249999);
+\draw[draw=none,fill=peru22412844] (axis cs:2,0) rectangle (axis cs:2.4,1.46261471666665);
+\draw[draw=none,fill=peru22412844] (axis cs:3,0) rectangle (axis cs:3.4,10.7642261499995);
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+-0.2 nan
+-0.2 nan
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.8 nan
+0.8 nan
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.8 nan
+1.8 nan
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+2.8 nan
+2.8 nan
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.2 nan
+0.2 nan
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.2 nan
+1.2 nan
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+2.2 nan
+2.2 nan
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+3.2 nan
+3.2 nan
+};
+
+\nextgroupplot[
+height=\plotHeight,
+log basis y={10},
+minor yticklabels={},
+scaled minor y ticks=manual:{}{\pgfmathparse{#1}},
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+tick pos=left,
+title={problem ps3},
+unbounded coords=jump,
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={Time type},
+xmin=-0.5, xmax=3.5,
+xtick style={color=black},
+xtick={0,1,2,3},
+xticklabels={LT,WT,MET,CT},
+y grid style={darkgray176},
+ymin=2.201754088804, ymax=17.9534022517706,
+ymode=log,
+ytick style={color=black},
+yticklabels={}
+]
+\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:0,7.27152229999945);
+\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:1,4.11304093750019);
+\draw[draw=none,fill=steelblue49115161] (axis cs:1.6,0) rectangle (axis cs:2,2.92690263333343);
+\draw[draw=none,fill=steelblue49115161] (axis cs:2.6,0) rectangle (axis cs:3,16.3200126500007);
+\draw[draw=none,fill=peru22412844] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,7.61407034999958);
+\draw[draw=none,fill=peru22412844] (axis cs:1,0) rectangle (axis cs:1.4,3.75148803750007);
+\draw[draw=none,fill=peru22412844] (axis cs:2,0) rectangle (axis cs:2.4,2.42211679999997);
+\draw[draw=none,fill=peru22412844] (axis cs:3,0) rectangle (axis cs:3.4,14.8737570500001);
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+-0.2 nan
+-0.2 nan
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.8 nan
+0.8 nan
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.8 nan
+1.8 nan
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+2.8 nan
+2.8 nan
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.2 nan
+0.2 nan
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.2 nan
+1.2 nan
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+2.2 nan
+2.2 nan
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+3.2 nan
+3.2 nan
+};
+\end{groupplot}
+
+\end{tikzpicture}

@@ -1,0 +1,89 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{brown1926061}{RGB}{192,60,61}
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{peru22412844}{RGB}{224,128,44}
+\definecolor{seagreen5814558}{RGB}{58,145,58}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{axis}[
+height=\plotHeight,
+tick align=outside,
+tick pos=left,
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={Abstraction level},
+xmin=-0.5, xmax=1.5,
+xtick style={color=black},
+xtick={0,1},
+xticklabels={1.0,2.0},
+y grid style={darkgray176},
+ylabel={Plan quality score},
+ymin=0, ymax=1,
+ytick style={color=black}
+]
+\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:-0.2,0.963636363636364);
+\addlegendimage{ybar,ybar legend,draw=none,fill=steelblue49115161}
+\addlegendentry{(2, 2)}
+
+\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:0.8,1);
+\draw[draw=none,fill=peru22412844] (axis cs:-0.2,0) rectangle (axis cs:0,0.906976744186046);
+\addlegendimage{ybar,ybar legend,draw=none,fill=peru22412844}
+\addlegendentry{(2, 4)}
+
+\draw[draw=none,fill=peru22412844] (axis cs:0.8,0) rectangle (axis cs:1,1);
+\draw[draw=none,fill=seagreen5814558] (axis cs:2.77555756156289e-17,0) rectangle (axis cs:0.2,0.971014492753623);
+\addlegendimage{ybar,ybar legend,draw=none,fill=seagreen5814558}
+\addlegendentry{(4, 2)}
+
+\draw[draw=none,fill=seagreen5814558] (axis cs:1,0) rectangle (axis cs:1.2,1);
+\draw[draw=none,fill=brown1926061] (axis cs:0.2,0) rectangle (axis cs:0.4,0.906976744186046);
+\addlegendimage{ybar,ybar legend,draw=none,fill=brown1926061}
+\addlegendentry{(4, 4)}
+
+\draw[draw=none,fill=brown1926061] (axis cs:1.2,0) rectangle (axis cs:1.4,1);
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+-0.3 0.943661971830986
+-0.3 1
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.7 1
+0.7 1
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+-0.1 0.906976744186046
+-0.1 0.917808219178082
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.9 1
+0.9 1
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.1 0.963636363636364
+0.1 1
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.1 1
+1.1 1
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.3 0.906976744186046
+0.3 0.917808219178082
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.3 1
+1.3 1
+};
+\end{axis}
+
+\end{tikzpicture}

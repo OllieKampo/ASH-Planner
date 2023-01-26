@@ -1,0 +1,181 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{peru22412844}{RGB}{224,128,44}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{groupplot}[group style={group size=3 by 1}]
+\nextgroupplot[
+height=\plotHeight,
+tick align=outside,
+tick pos=left,
+title={online\_method cf},
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={Level},
+xmin=-0.5, xmax=2.5,
+xtick style={color=black},
+xtick={0,1,2},
+xticklabels={1.0,2.0,3.0},
+y grid style={darkgray176},
+ylabel={Total partial-problems},
+ymin=0, ymax=24.15,
+ytick style={color=black}
+]
+\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:0,16);
+\addlegendimage{ybar,ybar legend,draw=none,fill=steelblue49115161}
+\addlegendentry{ps3}
+
+\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:1,4.5);
+\draw[draw=none,fill=steelblue49115161] (axis cs:1.6,0) rectangle (axis cs:2,1);
+\draw[draw=none,fill=peru22412844] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,22);
+\addlegendimage{ybar,ybar legend,draw=none,fill=peru22412844}
+\addlegendentry{ps3ts}
+
+\draw[draw=none,fill=peru22412844] (axis cs:1,0) rectangle (axis cs:1.4,6);
+\draw[draw=none,fill=peru22412844] (axis cs:2,0) rectangle (axis cs:2.4,3);
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+-0.2 11
+-0.2 21
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.8 4
+0.8 5
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.8 1
+1.8 1
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.2 22
+0.2 23
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.2 5
+1.2 6
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+2.2 3
+2.2 3
+};
+
+\nextgroupplot[
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+tick pos=left,
+title={online\_method gf},
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={Level},
+xmin=-0.5, xmax=2.5,
+xtick style={color=black},
+xtick={0,1,2},
+xticklabels={1.0,2.0,3.0},
+y grid style={darkgray176},
+ymin=0, ymax=24.15,
+ytick style={color=black},
+yticklabels={}
+]
+\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:0,16.5);
+\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:1,4.5);
+\draw[draw=none,fill=steelblue49115161] (axis cs:1.6,0) rectangle (axis cs:2,1);
+\draw[draw=none,fill=peru22412844] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,21);
+\draw[draw=none,fill=peru22412844] (axis cs:1,0) rectangle (axis cs:1.4,5.5);
+\draw[draw=none,fill=peru22412844] (axis cs:2,0) rectangle (axis cs:2.4,3);
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+-0.2 13
+-0.2 20
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.8 4
+0.8 5
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.8 1
+1.8 1
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.2 21
+0.2 22
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.2 5
+1.2 6
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+2.2 3
+2.2 3
+};
+
+\nextgroupplot[
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+tick pos=left,
+title={online\_method hy},
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={Level},
+xmin=-0.5, xmax=2.5,
+xtick style={color=black},
+xtick={0,1,2},
+xticklabels={1.0,2.0,3.0},
+y grid style={darkgray176},
+ymin=0, ymax=24.15,
+ytick style={color=black},
+yticklabels={}
+]
+\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:0,16);
+\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:1,4.5);
+\draw[draw=none,fill=steelblue49115161] (axis cs:1.6,0) rectangle (axis cs:2,1);
+\draw[draw=none,fill=peru22412844] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,22);
+\draw[draw=none,fill=peru22412844] (axis cs:1,0) rectangle (axis cs:1.4,6);
+\draw[draw=none,fill=peru22412844] (axis cs:2,0) rectangle (axis cs:2.4,3);
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+-0.2 12
+-0.2 21
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.8 4
+0.8 5
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.8 1
+1.8 1
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+0.2 22
+0.2 22
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+1.2 5
+1.2 6
+};
+\addplot [line width=1.08pt, darkslategray66]
+table {%
+2.2 3
+2.2 3
+};
+\end{groupplot}
+
+\end{tikzpicture}

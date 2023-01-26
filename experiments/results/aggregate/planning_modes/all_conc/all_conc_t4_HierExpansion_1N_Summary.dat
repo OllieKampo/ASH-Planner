@@ -1,0 +1,6 @@
+problem ps1 ps1 ps1 ps1 ps2 ps2 ps2 ps2 ps3 ps3 ps3 ps3
+ "Hierarchical Expansion Balance Normalised Deviation" "Hierarchical Expansion Balance Normalised Error" "Mean Expansion Factor Per Level" "Overall Hierarchical Expansion Factor" "Hierarchical Expansion Balance Normalised Deviation" "Hierarchical Expansion Balance Normalised Error" "Mean Expansion Factor Per Level" "Overall Hierarchical Expansion Factor" "Hierarchical Expansion Balance Normalised Deviation" "Hierarchical Expansion Balance Normalised Error" "Mean Expansion Factor Per Level" "Overall Hierarchical Expansion Factor"
+planning_mode            
+classical 0.0 0.0 1.0 1.4411533842457842 0.0 0.0 1.0 1.7759071354792608 0.0 0.0 1.0 2.017778127403648
+offline 0.0822217187426218 0.05813953488372093 1.4700854700854706 1.4675987714106855 0.022364307497993206 0.015813953488372147 1.797658862876254 1.7974340685458343 0.08495275816375483 0.06007067137809188 2.0214285714285714 2.017778127403648
+online 0.17582114559233059 0.12432432432432422 1.5811965811965814 1.5689290811054724 0.07109152557710373 0.050269299820466934 1.8628762541806019 1.9806758753205742 0.048765984909417054 0.03448275862068964 2.071428571428571 2.187627547301936

@@ -1,0 +1,122 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{darkslategray63}{RGB}{63,63,63}
+\definecolor{peru22412844}{RGB}{224,128,44}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{axis}[
+height=\plotHeight,
+tick align=outside,
+tick pos=left,
+width=\plotWidth,
+x grid style={darkgray176},
+xlabel={problem},
+xmin=-0.5, xmax=0.5,
+xtick style={color=black},
+xtick={0},
+xticklabels={ps3},
+y grid style={darkgray176},
+ylabel={Overall time score},
+ymin=0, ymax=1,
+ytick style={color=black}
+]
+\path [draw=darkslategray63, fill=steelblue49115161, semithick]
+(axis cs:-0.396,1)
+--(axis cs:-0.004,1)
+--(axis cs:-0.004,1)
+--(axis cs:-0.396,1)
+--(axis cs:-0.396,1)
+--cycle;
+\path [draw=darkslategray63, fill=peru22412844, semithick]
+(axis cs:0.004,0.992430738994488)
+--(axis cs:0.396,0.992430738994488)
+--(axis cs:0.396,1)
+--(axis cs:0.004,1)
+--(axis cs:0.004,0.992430738994488)
+--cycle;
+\draw[draw=darkslategray63,fill=steelblue49115161,line width=0.3pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\addlegendimage{ybar,ybar legend,draw=darkslategray63,fill=steelblue49115161,line width=0.3pt}
+\addlegendentry{(0,)}
+
+\draw[draw=darkslategray63,fill=peru22412844,line width=0.3pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\addlegendimage{ybar,ybar legend,draw=darkslategray63,fill=peru22412844,line width=0.3pt}
+\addlegendentry{(1,)}
+
+\addplot [semithick, darkslategray63]
+table {%
+-0.2 1
+-0.2 1
+};
+\addplot [semithick, darkslategray63]
+table {%
+-0.2 1
+-0.2 1
+};
+\addplot [semithick, darkslategray63]
+table {%
+-0.298 1
+-0.102 1
+};
+\addplot [semithick, darkslategray63]
+table {%
+-0.298 1
+-0.102 1
+};
+\addplot [semithick, darkslategray63]
+table {%
+0.2 0.992430738994488
+0.2 0.981331659946693
+};
+\addplot [semithick, darkslategray63]
+table {%
+0.2 1
+0.2 1
+};
+\addplot [semithick, darkslategray63]
+table {%
+0.102 0.981331659946693
+0.298 0.981331659946693
+};
+\addplot [semithick, darkslategray63]
+table {%
+0.102 1
+0.298 1
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray63}, only marks]
+table {%
+0.2 0.975898235211993
+0.2 0.973946725486399
+0.2 0.980688030579381
+0.2 0.970812872793208
+0.2 0.967955298446277
+0.2 0.979014363767543
+0.2 0.976712373315216
+0.2 0.97519505434942
+0.2 0.974056344642041
+0.2 0.971386590681269
+0.2 0.964666335178439
+0.2 0.966714605782803
+0.2 0.968210975651177
+0.2 0.977223400920493
+0.2 0.976755437408456
+0.2 0.979338341219037
+0.2 0.977273223526328
+0.2 0.973224020152997
+0.2 0.968199264567338
+0.2 0.980814376004026
+};
+\addplot [semithick, darkslategray63]
+table {%
+-0.396 1
+-0.004 1
+};
+\addplot [semithick, darkslategray63]
+table {%
+0.004 1
+0.396 1
+};
+\end{axis}
+
+\end{tikzpicture}
