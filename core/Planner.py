@@ -948,7 +948,7 @@ class HierarchicalPlan(_collections_abc.Mapping, AbstractionHierarchy):
             return 0.0
         raw_wait_time: float = self.get_wait_time(level, problem_number + 1)
         if per_action:
-            return raw_wait_time / self.partial_plans[level][problem_number].total_actions
+            return raw_wait_time / list(self.partial_plans[level].items())[problem_number - 1][1].total_actions
         return raw_wait_time
     
     def get_average_minimum_execution_time(self, level: int, per_action: bool = False) -> float:
@@ -991,7 +991,7 @@ class HierarchicalPlan(_collections_abc.Mapping, AbstractionHierarchy):
             raw_wait_time = self.get_yield_time(level, problem_number)
         else: raw_wait_time = self.get_yield_time(level, problem_number) - self.get_yield_time(level, problem_number - 1)
         if per_action:
-            return raw_wait_time / self.partial_plans[level][problem_number].total_actions
+            return raw_wait_time / list(self.partial_plans[level].items())[problem_number - 1][1].total_actions
         return raw_wait_time
     
     def get_average_wait_time(self, level: int, exclude_initial: bool = False, per_action: bool = False) -> float:
@@ -3471,7 +3471,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
                                                          length_limit=_length_limit)
                     
                     ## Save the solution if one was found
-                    self.__partial_plans.setdefault(level, {})[problems[level]] = monolevel_plan
+                    self.__partial_plans.setdefault(level, {})[increments] = monolevel_plan
                     
                 except ASH_NoSolutionError as error:
                     ## An error will be raise if a solution to the planning problem was not found
