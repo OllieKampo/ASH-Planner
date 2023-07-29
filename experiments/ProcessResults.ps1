@@ -93,6 +93,7 @@ if ($process -contains "large") {
     python .\ProcessResults.py .\results\main\modified_hierarchies\online\conc_action_planning\ -out .\results\aggregate\large_problems\lpmh_conc\lpmh_conc -combine all -diff online_bounds -same problem -filter problem=pl1ts,pl2dc search_mode=minbound achievement_type=seqa -allow_none all -breakf online_bounds -breaks problem -plots grades quality time -p False -show False
 }
 
+# TODO: Remove online methods from the following.
 if ($process -contains "pro") {
     Write-Output "Processing: Proactive Sized-Bound Strategies with Final-Goal Pre-emptive Achievement for all Small Problems and Different Online Bounds and Online Methods..."
     Start-Sleep -Seconds 1
