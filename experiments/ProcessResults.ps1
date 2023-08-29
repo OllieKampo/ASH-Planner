@@ -118,6 +118,7 @@ if ($process -contains "large") {
     python .\ProcessResults.py .\results\main\proactive_strategies\large_problems -out .\results\aggregate\large_problems\pl3\pl3 -combine all -diff online_method -same problem -filter search_mode=minbound achievement_type=seqa -allow_none all -breakf problem -breaks online_method -plots grades quality time -p False -show False
 }
 
+# TODO: Remove online methods from the following.
 if ($process -contains "pro") {
     Write-Output "Processing: Proactive Sized-Bound Strategies with Final-Goal Pre-emptive Achievement for all Small Problems and Different Online Bounds and Online Methods..."
     Start-Sleep -Seconds 1
