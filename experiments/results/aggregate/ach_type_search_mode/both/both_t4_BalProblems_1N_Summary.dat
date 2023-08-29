@@ -1,0 +1,7 @@
+  N N N S_f S_f S_f \mu_d \mu_d \mu_d \mu_e \mu_e \mu_e
+search_mode  minbound standard yield minbound standard yield minbound standard yield minbound standard yield
+achievement_type AL            
+seqa 1.0 1.0 1.0 1.0 1.0 1.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0
+seqa 2.0 1.0 1.0 1.0 1.0 1.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0
+sima 1.0 1.0 1.0 1.0 1.0 1.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0
+sima 2.0 1.0 1.0 1.0 1.0 1.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0

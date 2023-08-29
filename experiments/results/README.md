@@ -6,12 +6,16 @@ This directory contains the results from all experimental trials.
     - dat files contain just results for concatenated monolevel plans in space seperated value format,
     - png files contain summary graphs displaying basic performance data only.
 - Sub-directory `aggregate` contains the processed aggregrate results, including all tables and graphs presented in the thesis.
-    - The cli command for generating each aggregate result set is given below.
+    - Sub-directories named `_final_` are the final graphs and tables that were presented in the thesis itself,
+    - The cli command for generating each aggregate result set is given in `aggregate\ProcessResults.ps1`.
 
 __IMPORTANT:__ Due to a bug in the experiment system;
 - In the globals for the initial and improved initial experiments, the average wait time per action is erroneously small. The time scores and grades are still correct, as the average wait time per action is not used for calculating those statistics.
 - In the concatenated plans for the initial and improved initial experiments, the average wait time per action, and the average minimum execution time per action are all erroneously small. Therefore, the concatenated plan time scores and grades for all online experiments under these categories may be incorrect and must be ignored, and only the global time scores and grades are valid.
 - In all results, action expansion factors, deviations, and balance may have small errors (length expansion factors etc are correct). These has resultantly been omitted from the thesis.
+- In most results, the sequence number of partial-problems is not correct, because partial-plans were erroneously indexed by partial-problem number rather than correctly by increment number:
+    - For the ground-first online planning method, this does not actually affect time scores, since the latency time and average non-intial wait times will be calculated correctly even with this error,
+    - For the complete-first and hybrid online planning methods however, the results had to be re-ran with the bug removed to obtain the correct time scores, and as such only for these results are the sequence numbers of partial-problems correct as well.
 
 ## Raw Results Format and Column Headers
 

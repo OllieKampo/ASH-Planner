@@ -966,9 +966,9 @@ class Results:
                         data_dict["PAR"]["TT"].append(partial_totals.total_time)
                         
                         ## Online hierarchical planning statistics
-                        data_dict["PAR"]["YT"].append(hierarchical_plan.get_yield_time(level, iteration))
-                        data_dict["PAR"]["WT"].append(hierarchical_plan.get_wait_time(level, iteration))
-                        data_dict["PAR"]["ET"].append(hierarchical_plan.get_minimum_execution_time(level, iteration))
+                        data_dict["PAR"]["YT"].append(hierarchical_plan.get_yield_time(level, problem_number))
+                        data_dict["PAR"]["WT"].append(hierarchical_plan.get_wait_time(level, problem_number))
+                        data_dict["PAR"]["ET"].append(hierarchical_plan.get_minimum_execution_time(level, problem_number))
                         
                         ## Required memory usage
                         data_dict["PAR"]["RSS"].append(partial_totals.memory.rss)

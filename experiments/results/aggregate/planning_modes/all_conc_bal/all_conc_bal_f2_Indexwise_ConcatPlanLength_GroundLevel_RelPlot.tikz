@@ -1,28 +1,38 @@
 % This file was created with tikzplotlib v0.10.1.
 \begin{tikzpicture}
 
-\definecolor{darkgray176}{RGB}{176,176,176}
-\definecolor{darkorange25512714}{RGB}{255,127,14}
+\definecolor{crimson2143940}{RGB}{214,39,40}
+\definecolor{darkslategray38}{RGB}{38,38,38}
 \definecolor{forestgreen4416044}{RGB}{44,160,44}
+\definecolor{lavender234234242}{RGB}{234,234,242}
 \definecolor{steelblue31119180}{RGB}{31,119,180}
 
-\begin{groupplot}[group style={group size=2 by 1}]
+\begin{groupplot}[group style={group size=2 by 1, horizontal sep=0.1cm, vertical sep=0.1cm}]
 \nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
 height=\plotHeight,
 tick align=outside,
-tick pos=left,
-title={AL 1.0},
+title={AL: 1.0},
 width=\plotWidth,
-x grid style={darkgray176},
-xlabel={Sub-goal stage index},
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Sub-goal stage index},
+xmajorgrids,
+xmajorticks=false,
+xmajorticks=true,
 xmin=-1.2, xmax=47.2,
-xtick style={color=black},
-y grid style={darkgray176},
-ylabel={Concatenated plan length},
-ymin=-1.93981481481481, ymax=84.7361111111111,
-ytick style={color=black}
+xtick style={color=darkslategray38},
+xtick style={color=white},
+y grid style={white},
+ylabel=\textcolor{darkslategray38}{Concatenated plan length},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=-1.94167824074074, ymax=84.7752430555555,
+ytick style={color=darkslategray38},
+ytick style={color=white}
 ]
-\path [draw=steelblue31119180, fill=steelblue31119180, opacity=0.2]
+\path [draw=steelblue31119180, fill=steelblue31119180, opacity=0.2, line width=0.32pt]
 (axis cs:1,2)
 --(axis cs:1,2)
 --(axis cs:2,4)
@@ -32,26 +42,26 @@ ytick style={color=black}
 --(axis cs:6,11)
 --(axis cs:7,14)
 --(axis cs:8,16.04)
---(axis cs:9,17.12)
---(axis cs:10,18.159)
+--(axis cs:9,17.16)
+--(axis cs:10,18.16)
 --(axis cs:11,19.64)
 --(axis cs:12,20.64)
 --(axis cs:13,22)
 --(axis cs:14,23)
 --(axis cs:15,24.04)
---(axis cs:16,25.16)
---(axis cs:17,26.2)
---(axis cs:18,27.2)
---(axis cs:18,27.521)
---(axis cs:18,27.521)
+--(axis cs:16,25.2)
+--(axis cs:17,26.16)
+--(axis cs:18,27.199)
+--(axis cs:18,27.56)
+--(axis cs:18,27.56)
 --(axis cs:17,26.56)
 --(axis cs:16,25.56)
 --(axis cs:15,24.32)
 --(axis cs:14,23)
 --(axis cs:13,22)
---(axis cs:12,20.96)
+--(axis cs:12,20.92)
 --(axis cs:11,19.96)
---(axis cs:10,18.52)
+--(axis cs:10,18.48)
 --(axis cs:9,17.52)
 --(axis cs:8,16.32)
 --(axis cs:7,14)
@@ -63,51 +73,51 @@ ytick style={color=black}
 --(axis cs:1,2)
 --cycle;
 
-\path [draw=steelblue31119180, fill=steelblue31119180, opacity=0.2]
+\path [draw=steelblue31119180, fill=steelblue31119180, opacity=0.2, line width=0.32pt]
 (axis cs:1,2)
 --(axis cs:1,2)
 --(axis cs:2,4)
---(axis cs:3,5.28888888888889)
---(axis cs:4,9.24)
---(axis cs:5,10.2443333333333)
---(axis cs:6,12.2444444444444)
+--(axis cs:3,5.29111111111111)
+--(axis cs:4,9.24877777777778)
+--(axis cs:5,10.2488888888889)
+--(axis cs:6,12.2488888888889)
 --(axis cs:7,15.2488888888889)
---(axis cs:8,16.8066666666667)
---(axis cs:9,19.0977777777778)
---(axis cs:10,20.1377777777778)
---(axis cs:11,21.8932777777778)
---(axis cs:12,23.1221666666667)
---(axis cs:13,25.0666111111111)
---(axis cs:14,26.0533333333333)
---(axis cs:15,28.0621666666667)
---(axis cs:16,29.3821111111111)
---(axis cs:17,30.8555)
---(axis cs:18,31.8444444444444)
---(axis cs:18,32.1822222222222)
---(axis cs:18,32.1822222222222)
---(axis cs:17,31.1733888888889)
---(axis cs:16,29.6801666666667)
---(axis cs:15,28.3533333333333)
---(axis cs:14,26.3600555555556)
---(axis cs:13,25.3488888888889)
---(axis cs:12,23.3845)
---(axis cs:11,22.1644444444444)
---(axis cs:10,20.4089444444444)
+--(axis cs:8,16.8044444444444)
+--(axis cs:9,19.0844444444444)
+--(axis cs:10,20.1333333333333)
+--(axis cs:11,21.8821666666667)
+--(axis cs:12,23.1155)
+--(axis cs:13,25.0599444444444)
+--(axis cs:14,26.0643888888889)
+--(axis cs:15,28.06)
+--(axis cs:16,29.3688333333333)
+--(axis cs:17,30.8466111111111)
+--(axis cs:18,31.8577777777778)
+--(axis cs:18,32.1735)
+--(axis cs:18,32.1735)
+--(axis cs:17,31.1867777777778)
+--(axis cs:16,29.6888888888889)
+--(axis cs:15,28.3578888888889)
+--(axis cs:14,26.3578333333333)
+--(axis cs:13,25.3533888888889)
+--(axis cs:12,23.3911666666667)
+--(axis cs:11,22.1601111111111)
+--(axis cs:10,20.4111111111111)
 --(axis cs:9,19.3666666666667)
---(axis cs:8,16.9844444444444)
---(axis cs:7,15.4133333333333)
---(axis cs:6,12.4088888888889)
---(axis cs:5,10.4177777777778)
+--(axis cs:8,16.9866666666667)
+--(axis cs:7,15.4222222222222)
+--(axis cs:6,12.4178888888889)
+--(axis cs:5,10.4311111111111)
 --(axis cs:4,9.42222222222222)
---(axis cs:3,5.37777777777778)
+--(axis cs:3,5.38)
 --(axis cs:2,4)
 --(axis cs:1,2)
 --cycle;
 
-\path [draw=darkorange25512714, fill=darkorange25512714, opacity=0.2]
+\path [draw=crimson2143940, fill=crimson2143940, opacity=0.2, line width=0.32pt]
 (axis cs:1,2)
 --(axis cs:1,2)
---(axis cs:2,4.68)
+--(axis cs:2,4.64)
 --(axis cs:3,14)
 --(axis cs:4,15)
 --(axis cs:5,16)
@@ -122,18 +132,18 @@ ytick style={color=black}
 --(axis cs:14,31.16)
 --(axis cs:15,32.16)
 --(axis cs:16,33.72)
---(axis cs:17,34.76)
+--(axis cs:17,34.799)
 --(axis cs:18,36)
 --(axis cs:19,37)
 --(axis cs:20,38.12)
 --(axis cs:21,39.2)
---(axis cs:22,40.16)
---(axis cs:23,41.16)
+--(axis cs:22,40.2)
+--(axis cs:23,41.2)
 --(axis cs:23,41.56)
 --(axis cs:23,41.56)
 --(axis cs:22,40.56)
 --(axis cs:21,39.56)
---(axis cs:20,38.48)
+--(axis cs:20,38.441)
 --(axis cs:19,37.12)
 --(axis cs:18,36.12)
 --(axis cs:17,35.08)
@@ -151,97 +161,97 @@ ytick style={color=black}
 --(axis cs:5,16)
 --(axis cs:4,15)
 --(axis cs:3,14)
---(axis cs:2,5.32)
+--(axis cs:2,5.36)
 --(axis cs:1,2)
 --cycle;
 
-\path [draw=darkorange25512714, fill=darkorange25512714, opacity=0.2]
+\path [draw=crimson2143940, fill=crimson2143940, opacity=0.2, line width=0.32pt]
 (axis cs:1,2)
 --(axis cs:1,2)
---(axis cs:2,3.89333333333333)
---(axis cs:3,11.7911111111111)
---(axis cs:4,13.5666111111111)
---(axis cs:5,14.6066666666667)
---(axis cs:6,15.5731666666667)
---(axis cs:7,17.0732222222222)
---(axis cs:8,18.7688333333333)
---(axis cs:9,21.7466111111111)
---(axis cs:10,22.7577777777778)
---(axis cs:11,24.5066111111111)
---(axis cs:12,27.24)
---(axis cs:13,29.1065)
---(axis cs:14,31.4176666666667)
---(axis cs:15,32.4888888888889)
---(axis cs:16,33.9421666666667)
---(axis cs:17,35.0752222222222)
---(axis cs:18,36.7021666666667)
---(axis cs:19,38.0376111111111)
---(axis cs:20,39.6110555555556)
---(axis cs:21,40.8421111111111)
---(axis cs:22,42.0755555555556)
---(axis cs:23,43.4644444444444)
---(axis cs:24,37.6663333333333)
---(axis cs:25,39.34)
---(axis cs:26,42.8466666666667)
---(axis cs:27,44.06)
---(axis cs:28,46.3065)
---(axis cs:29,48.62)
---(axis cs:30,50.5065)
---(axis cs:31,52.1198333333333)
---(axis cs:32,53.0998333333333)
---(axis cs:33,55.0731666666667)
---(axis cs:34,56.3596666666667)
---(axis cs:35,58.0865)
---(axis cs:36,59.3865)
---(axis cs:37,62.4390186915888)
---(axis cs:38,64.0918367346939)
+--(axis cs:2,3.9)
+--(axis cs:3,11.7532222222222)
+--(axis cs:4,13.5711111111111)
+--(axis cs:5,14.5617777777778)
+--(axis cs:6,15.5777222222222)
+--(axis cs:7,17.0666111111111)
+--(axis cs:8,18.7843333333333)
+--(axis cs:9,21.7799444444444)
+--(axis cs:10,22.7687777777778)
+--(axis cs:11,24.5177222222222)
+--(axis cs:12,27.1932777777778)
+--(axis cs:13,29.0976666666667)
+--(axis cs:14,31.4041666666667)
+--(axis cs:15,32.5110555555556)
+--(axis cs:16,33.9399444444444)
+--(axis cs:17,35.0642222222222)
+--(axis cs:18,36.6644444444444)
+--(axis cs:19,38.0508333333333)
+--(axis cs:20,39.6819444444444)
+--(axis cs:21,40.8020555555556)
+--(axis cs:22,42.0821111111111)
+--(axis cs:23,43.4598333333333)
+--(axis cs:24,37.6666666666667)
+--(axis cs:25,39.3333333333333)
+--(axis cs:26,42.82)
+--(axis cs:27,44.0533333333333)
+--(axis cs:28,46.3066666666667)
+--(axis cs:29,48.6)
+--(axis cs:30,50.4865)
+--(axis cs:31,52.1065)
+--(axis cs:32,53.0931666666667)
+--(axis cs:33,55.053)
+--(axis cs:34,56.3398333333333)
+--(axis cs:35,58.0933333333333)
+--(axis cs:36,59.3131666666667)
+--(axis cs:37,62.4018691588785)
+--(axis cs:38,64.1020408163265)
 --(axis cs:39,64.2777777777778)
 --(axis cs:39,65.5555555555556)
 --(axis cs:39,65.5555555555556)
---(axis cs:38,64.5204081632653)
---(axis cs:37,63.1588785046729)
---(axis cs:36,60.3535)
---(axis cs:35,59.0333333333333)
---(axis cs:34,57.3266666666667)
---(axis cs:33,56.0401666666667)
---(axis cs:32,54.1266666666667)
+--(axis cs:38,64.5102040816327)
+--(axis cs:37,63.1591121495327)
+--(axis cs:36,60.3866666666667)
+--(axis cs:35,59.0735)
+--(axis cs:34,57.3268333333333)
+--(axis cs:33,56.0666666666667)
+--(axis cs:32,54.1068333333333)
 --(axis cs:31,53.1068333333333)
---(axis cs:30,51.567)
---(axis cs:29,49.5335)
---(axis cs:28,47.0333333333333)
---(axis cs:27,44.9068333333333)
---(axis cs:26,43.5336666666667)
---(axis cs:25,39.8333333333333)
---(axis cs:24,38.16)
---(axis cs:23,44.6667222222222)
---(axis cs:22,43.3646111111111)
---(axis cs:21,42.1157222222222)
---(axis cs:20,40.9045555555556)
---(axis cs:19,39.1800555555556)
---(axis cs:18,37.8645555555556)
---(axis cs:17,36.2379444444444)
---(axis cs:16,35.0846666666667)
---(axis cs:15,33.5933333333333)
---(axis cs:14,32.5733333333333)
+--(axis cs:30,51.5868333333333)
+--(axis cs:29,49.52)
+--(axis cs:28,47.0535)
+--(axis cs:27,44.8868333333333)
+--(axis cs:26,43.5335)
+--(axis cs:25,39.8201666666667)
+--(axis cs:24,38.1333333333333)
+--(axis cs:23,44.7112222222222)
+--(axis cs:22,43.3667777777778)
+--(axis cs:21,42.0735555555556)
+--(axis cs:20,40.8891111111111)
+--(axis cs:19,39.1778333333333)
+--(axis cs:18,37.9023333333333)
+--(axis cs:17,36.1978333333333)
+--(axis cs:16,35.0911666666667)
+--(axis cs:15,33.56)
+--(axis cs:14,32.5378888888889)
 --(axis cs:13,30.0733333333333)
---(axis cs:12,28.3066666666667)
---(axis cs:11,25.5246111111111)
---(axis cs:10,23.6822222222222)
---(axis cs:9,22.7201111111111)
---(axis cs:8,19.6778333333333)
---(axis cs:7,18.0000555555556)
---(axis cs:6,16.4067222222222)
---(axis cs:5,15.4136111111111)
---(axis cs:4,14.4000555555556)
---(axis cs:3,12.4422222222222)
---(axis cs:2,4.10005555555556)
+--(axis cs:12,28.2622777777778)
+--(axis cs:11,25.5312222222222)
+--(axis cs:10,23.7067222222222)
+--(axis cs:9,22.7336111111111)
+--(axis cs:8,19.6889444444444)
+--(axis cs:7,18.0381666666667)
+--(axis cs:6,16.4466666666667)
+--(axis cs:5,15.3801666666667)
+--(axis cs:4,14.4223888888889)
+--(axis cs:3,12.4467222222222)
+--(axis cs:2,4.1045)
 --(axis cs:1,2)
 --cycle;
 
-\path [draw=forestgreen4416044, fill=forestgreen4416044, opacity=0.2]
+\path [draw=forestgreen4416044, fill=forestgreen4416044, opacity=0.2, line width=0.32pt]
 (axis cs:1,2)
 --(axis cs:1,2)
---(axis cs:2,4.6)
+--(axis cs:2,4.56)
 --(axis cs:3,14)
 --(axis cs:4,15)
 --(axis cs:5,16)
@@ -258,7 +268,7 @@ ytick style={color=black}
 --(axis cs:16,34)
 --(axis cs:17,35)
 --(axis cs:18,36)
---(axis cs:19,37.56)
+--(axis cs:19,37.52)
 --(axis cs:20,38.56)
 --(axis cs:21,39.52)
 --(axis cs:22,41)
@@ -287,7 +297,7 @@ ytick style={color=black}
 --(axis cs:17,35)
 --(axis cs:16,34)
 --(axis cs:15,32.4)
---(axis cs:14,31.4)
+--(axis cs:14,31.401)
 --(axis cs:13,30.2)
 --(axis cs:12,28)
 --(axis cs:11,25)
@@ -303,102 +313,102 @@ ytick style={color=black}
 --(axis cs:1,2)
 --cycle;
 
-\path [draw=forestgreen4416044, fill=forestgreen4416044, opacity=0.2]
+\path [draw=forestgreen4416044, fill=forestgreen4416044, opacity=0.2, line width=0.32pt]
 (axis cs:1,2)
 --(axis cs:1,2)
---(axis cs:2,3.89777777777778)
---(axis cs:3,11.8021666666667)
---(axis cs:4,13.5711111111111)
---(axis cs:5,14.5817222222222)
---(axis cs:6,15.6088888888889)
---(axis cs:7,17.1466666666667)
---(axis cs:8,18.6931666666667)
---(axis cs:9,21.9777222222222)
---(axis cs:10,23.0042222222222)
---(axis cs:11,24.7199444444444)
---(axis cs:12,27.2998333333333)
---(axis cs:13,29.4355)
---(axis cs:14,31.4088888888889)
---(axis cs:15,32.5952777777778)
---(axis cs:16,34.0487777777778)
---(axis cs:17,35.1265)
---(axis cs:18,36.7220555555556)
---(axis cs:19,38.3576111111111)
---(axis cs:20,39.4842777777778)
---(axis cs:21,40.4308333333333)
---(axis cs:22,42.0397777777778)
---(axis cs:23,44.691)
---(axis cs:24,46.6533333333333)
---(axis cs:25,49.0666666666667)
---(axis cs:26,51.1111111111111)
---(axis cs:27,52.7355)
---(axis cs:28,55.4777222222222)
---(axis cs:29,57.6955)
---(axis cs:30,59.0555555555556)
---(axis cs:31,52.3933333333333)
---(axis cs:32,53.613)
---(axis cs:33,55.3531666666667)
---(axis cs:34,56.7065)
---(axis cs:35,58.2333333333333)
---(axis cs:36,59.8931666666667)
---(axis cs:37,61.6666666666667)
---(axis cs:38,65.0066666666667)
---(axis cs:39,66.2531666666667)
---(axis cs:40,69.4931666666667)
---(axis cs:41,71.1266666666667)
---(axis cs:42,73.1731666666667)
---(axis cs:43,75.5)
---(axis cs:44,79.0090277777778)
---(axis cs:45,80)
---(axis cs:45,80.7962962962963)
---(axis cs:45,80.7962962962963)
---(axis cs:44,79.8150462962963)
---(axis cs:43,76.5066666666667)
+--(axis cs:2,3.9)
+--(axis cs:3,11.7688333333333)
+--(axis cs:4,13.5575)
+--(axis cs:5,14.6088333333333)
+--(axis cs:6,15.6021666666667)
+--(axis cs:7,17.1599444444444)
+--(axis cs:8,18.7176666666667)
+--(axis cs:9,21.9733333333333)
+--(axis cs:10,22.9443333333333)
+--(axis cs:11,24.6976111111111)
+--(axis cs:12,27.3822222222222)
+--(axis cs:13,29.4221666666667)
+--(axis cs:14,31.4596666666667)
+--(axis cs:15,32.5864444444444)
+--(axis cs:16,34.1088333333333)
+--(axis cs:17,35.1087222222222)
+--(axis cs:18,36.7331666666667)
+--(axis cs:19,38.3797777777778)
+--(axis cs:20,39.4018888888889)
+--(axis cs:21,40.4532222222222)
+--(axis cs:22,42.0554444444444)
+--(axis cs:23,44.7105)
+--(axis cs:24,46.6107777777778)
+--(axis cs:25,49.0243888888889)
+--(axis cs:26,51.0931111111111)
+--(axis cs:27,52.78)
+--(axis cs:28,55.5288333333333)
+--(axis cs:29,57.6577222222222)
+--(axis cs:30,59.0977777777778)
+--(axis cs:31,52.3866666666667)
+--(axis cs:32,53.62)
+--(axis cs:33,55.3598333333333)
+--(axis cs:34,56.6933333333333)
+--(axis cs:35,58.28)
+--(axis cs:36,59.8933333333333)
+--(axis cs:37,61.6531666666667)
+--(axis cs:38,65.02)
+--(axis cs:39,66.2666666666667)
+--(axis cs:40,69.4865)
+--(axis cs:41,71.1666666666667)
+--(axis cs:42,73.1398333333333)
+--(axis cs:43,75.4265)
+--(axis cs:44,79.0092592592593)
+--(axis cs:45,80.0277777777778)
+--(axis cs:45,80.8335648148148)
+--(axis cs:45,80.8335648148148)
+--(axis cs:44,79.7962962962963)
+--(axis cs:43,76.5533333333333)
 --(axis cs:42,74.0468333333333)
---(axis cs:41,72.06)
---(axis cs:40,70.5468333333333)
---(axis cs:39,67)
---(axis cs:38,65.7333333333333)
---(axis cs:37,62.4601666666667)
---(axis cs:36,60.5933333333333)
---(axis cs:35,59.1533333333333)
+--(axis cs:41,72.0401666666667)
+--(axis cs:40,70.5733333333333)
+--(axis cs:39,66.9866666666667)
+--(axis cs:38,65.7601666666667)
+--(axis cs:37,62.4468333333333)
+--(axis cs:36,60.62)
+--(axis cs:35,59.1535)
 --(axis cs:34,57.74)
---(axis cs:33,56.2868333333333)
---(axis cs:32,54.4668333333333)
+--(axis cs:33,56.3068333333333)
+--(axis cs:32,54.4733333333333)
 --(axis cs:31,53.3)
---(axis cs:30,60.3888888888889)
---(axis cs:29,59.06)
---(axis cs:28,56.8867777777778)
---(axis cs:27,54.1489444444444)
---(axis cs:26,52.3577777777778)
---(axis cs:25,50.5268888888889)
---(axis cs:24,47.9648888888889)
---(axis cs:23,46.0672777777778)
---(axis cs:22,43.3644444444444)
---(axis cs:21,41.6489444444444)
---(axis cs:20,40.7000555555556)
---(axis cs:19,39.5666666666667)
---(axis cs:18,37.9201111111111)
---(axis cs:17,36.3201666666667)
---(axis cs:16,35.2269444444444)
---(axis cs:15,33.6866666666667)
---(axis cs:14,32.5779444444444)
---(axis cs:13,30.4644444444444)
---(axis cs:12,28.4712777777778)
---(axis cs:11,25.8156111111111)
---(axis cs:10,23.9955555555556)
---(axis cs:9,22.9600555555556)
---(axis cs:8,19.5755555555556)
---(axis cs:7,18.0777777777778)
---(axis cs:6,16.398)
---(axis cs:5,15.3891666666667)
---(axis cs:4,14.3978333333333)
---(axis cs:3,12.4534444444444)
---(axis cs:2,4.08888888888889)
+--(axis cs:30,60.4156111111111)
+--(axis cs:29,59.0646111111111)
+--(axis cs:28,56.8846666666667)
+--(axis cs:27,54.1024444444444)
+--(axis cs:26,52.3867777777778)
+--(axis cs:25,50.5313888888889)
+--(axis cs:24,47.9557222222222)
+--(axis cs:23,46.0311666666667)
+--(axis cs:22,43.3535555555556)
+--(axis cs:21,41.6402222222222)
+--(axis cs:20,40.678)
+--(axis cs:19,39.607)
+--(axis cs:18,37.9536111111111)
+--(axis cs:17,36.2356111111111)
+--(axis cs:16,35.2022222222222)
+--(axis cs:15,33.649)
+--(axis cs:14,32.5225)
+--(axis cs:13,30.5089444444444)
+--(axis cs:12,28.5577777777778)
+--(axis cs:11,25.7933888888889)
+--(axis cs:10,23.98)
+--(axis cs:9,22.9689444444444)
+--(axis cs:8,19.5867222222222)
+--(axis cs:7,18.078)
+--(axis cs:6,16.3913333333333)
+--(axis cs:5,15.4356666666667)
+--(axis cs:4,14.38)
+--(axis cs:3,12.4111666666667)
+--(axis cs:2,4.09555555555556)
 --(axis cs:1,2)
 --cycle;
 
-\addplot [semithick, steelblue31119180, mark=*, mark size=3, mark options={solid,draw=white}]
+\addplot [line width=0.48pt, steelblue31119180, mark=*, mark size=2.4, mark options={solid,draw=white}]
 table {%
 1 2
 2 4
@@ -419,7 +429,7 @@ table {%
 17 26.36
 18 27.36
 };
-\addplot [semithick, steelblue31119180, dash pattern=on 4pt off 1.5pt, mark=x, mark size=3, mark options={solid,draw=white}]
+\addplot [line width=0.48pt, steelblue31119180, dash pattern=on 4pt off 1.5pt, mark=x, mark size=2.4, mark options={solid,draw=white}]
 table {%
 1 2
 2 4
@@ -440,7 +450,7 @@ table {%
 17 31.0133333333333
 18 32.0133333333333
 };
-\addplot [semithick, darkorange25512714, mark=*, mark size=3, mark options={solid,draw=white}]
+\addplot [line width=0.48pt, crimson2143940, mark=*, mark size=2.4, mark options={solid,draw=white}]
 table {%
 1 2
 2 5
@@ -466,7 +476,7 @@ table {%
 22 40.36
 23 41.36
 };
-\addplot [semithick, darkorange25512714, dash pattern=on 4pt off 1.5pt, mark=x, mark size=3, mark options={solid,draw=white}]
+\addplot [line width=0.48pt, crimson2143940, dash pattern=on 4pt off 1.5pt, mark=x, mark size=2.4, mark options={solid,draw=white}]
 table {%
 1 2
 2 3.99555555555556
@@ -508,7 +518,7 @@ table {%
 38 64.3163265306122
 39 64.9444444444444
 };
-\addplot [semithick, forestgreen4416044, mark=*, mark size=3, mark options={solid,draw=white}]
+\addplot [line width=0.48pt, forestgreen4416044, mark=*, mark size=2.4, mark options={solid,draw=white}]
 table {%
 1 2
 2 4.92
@@ -541,7 +551,7 @@ table {%
 29 56
 30 57
 };
-\addplot [semithick, forestgreen4416044, dash pattern=on 4pt off 1.5pt, mark=x, mark size=3, mark options={solid,draw=white}]
+\addplot [line width=0.48pt, forestgreen4416044, dash pattern=on 4pt off 1.5pt, mark=x, mark size=2.4, mark options={solid,draw=white}]
 table {%
 1 2
 2 3.99333333333333
@@ -591,22 +601,31 @@ table {%
 };
 
 \nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
 height=\plotHeight,
 scaled y ticks=manual:{}{\pgfmathparse{#1}},
 tick align=outside,
-tick pos=left,
-title={AL 2.0},
+title={AL: 2.0},
 width=\plotWidth,
-x grid style={darkgray176},
-xlabel={Sub-goal stage index},
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Sub-goal stage index},
+xmajorgrids,
+xmajorticks=false,
+xmajorticks=true,
 xmin=-1.2, xmax=47.2,
-xtick style={color=black},
-y grid style={darkgray176},
-ymin=-1.93981481481481, ymax=84.7361111111111,
-ytick style={color=black},
+xtick style={color=darkslategray38},
+xtick style={color=white},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=-1.94167824074074, ymax=84.7752430555555,
+ytick style={color=darkslategray38},
+ytick style={color=white},
 yticklabels={}
 ]
-\path [draw=steelblue31119180, fill=steelblue31119180, opacity=0.2]
+\path [draw=steelblue31119180, fill=steelblue31119180, opacity=0.2, line width=0.32pt]
 (axis cs:1,2)
 --(axis cs:1,2)
 --(axis cs:2,4)
@@ -637,7 +656,7 @@ yticklabels={}
 --(axis cs:1,2)
 --cycle;
 
-\path [draw=steelblue31119180, fill=steelblue31119180, opacity=0.2]
+\path [draw=steelblue31119180, fill=steelblue31119180, opacity=0.2, line width=0.32pt]
 (axis cs:1,2)
 --(axis cs:1,2)
 --(axis cs:2,4)
@@ -668,7 +687,7 @@ yticklabels={}
 --(axis cs:1,2)
 --cycle;
 
-\path [draw=darkorange25512714, fill=darkorange25512714, opacity=0.2]
+\path [draw=crimson2143940, fill=crimson2143940, opacity=0.2, line width=0.32pt]
 (axis cs:1,7)
 --(axis cs:1,7)
 --(axis cs:2,9)
@@ -699,38 +718,38 @@ yticklabels={}
 --(axis cs:1,7)
 --cycle;
 
-\path [draw=darkorange25512714, fill=darkorange25512714, opacity=0.2]
+\path [draw=crimson2143940, fill=crimson2143940, opacity=0.2, line width=0.32pt]
 (axis cs:1,7)
 --(axis cs:1,7)
 --(axis cs:2,9)
---(axis cs:3,13.7466666666667)
---(axis cs:4,15.7333333333333)
---(axis cs:5,16.7333333333333)
---(axis cs:6,20.14)
---(axis cs:7,21.2688333333333)
---(axis cs:8,22.1998888888889)
---(axis cs:9,23.2021666666667)
---(axis cs:10,24.233)
---(axis cs:11,25.2398888888889)
---(axis cs:12,26.1799444444444)
---(axis cs:13,27.1887777777778)
---(axis cs:13,28.5093888888889)
---(axis cs:13,28.5093888888889)
---(axis cs:12,27.4688888888889)
---(axis cs:11,26.5112222222222)
---(axis cs:10,25.4778333333333)
---(axis cs:9,24.4712222222222)
---(axis cs:8,23.4578333333333)
---(axis cs:7,22.4581111111111)
---(axis cs:6,21.3912222222222)
---(axis cs:5,17.2936666666667)
---(axis cs:4,16.2536666666667)
+--(axis cs:3,13.72)
+--(axis cs:4,15.7463333333333)
+--(axis cs:5,16.7466666666667)
+--(axis cs:6,20.1555555555556)
+--(axis cs:7,21.2376111111111)
+--(axis cs:8,22.1932777777778)
+--(axis cs:9,23.2066111111111)
+--(axis cs:10,24.2355)
+--(axis cs:11,25.1775)
+--(axis cs:12,26.2)
+--(axis cs:13,27.1955555555556)
+--(axis cs:13,28.4356666666667)
+--(axis cs:13,28.4356666666667)
+--(axis cs:12,27.4444444444444)
+--(axis cs:11,26.4822777777778)
+--(axis cs:10,25.4911666666667)
+--(axis cs:9,24.4245)
+--(axis cs:8,23.4511111111111)
+--(axis cs:7,22.4735)
+--(axis cs:6,21.4181111111111)
+--(axis cs:5,17.24)
+--(axis cs:4,16.28)
 --(axis cs:3,14.2666666666667)
 --(axis cs:2,9)
 --(axis cs:1,7)
 --cycle;
 
-\path [draw=forestgreen4416044, fill=forestgreen4416044, opacity=0.2]
+\path [draw=forestgreen4416044, fill=forestgreen4416044, opacity=0.2, line width=0.32pt]
 (axis cs:1,7)
 --(axis cs:1,7)
 --(axis cs:2,9)
@@ -741,7 +760,7 @@ yticklabels={}
 --(axis cs:7,17)
 --(axis cs:8,18)
 --(axis cs:9,19.12)
---(axis cs:10,20.2)
+--(axis cs:10,20.24)
 --(axis cs:11,23)
 --(axis cs:12,25)
 --(axis cs:13,28)
@@ -752,7 +771,7 @@ yticklabels={}
 --(axis cs:12,25)
 --(axis cs:11,23)
 --(axis cs:10,20.6)
---(axis cs:9,19.44)
+--(axis cs:9,19.441)
 --(axis cs:8,18)
 --(axis cs:7,17)
 --(axis cs:6,16)
@@ -763,40 +782,40 @@ yticklabels={}
 --(axis cs:1,7)
 --cycle;
 
-\path [draw=forestgreen4416044, fill=forestgreen4416044, opacity=0.2]
+\path [draw=forestgreen4416044, fill=forestgreen4416044, opacity=0.2, line width=0.32pt]
 (axis cs:1,7)
 --(axis cs:1,7)
 --(axis cs:2,9)
 --(axis cs:3,13.7333333333333)
---(axis cs:4,15.7333333333333)
---(axis cs:5,16.7466666666667)
---(axis cs:6,20.2022222222222)
---(axis cs:7,21.1755)
---(axis cs:8,22.1843888888889)
---(axis cs:9,23.4644444444444)
---(axis cs:10,24.6221666666667)
---(axis cs:11,27.2111111111111)
---(axis cs:12,29.2066666666667)
---(axis cs:13,32.211)
---(axis cs:14,34.2266111111111)
---(axis cs:14,35.4157222222222)
---(axis cs:14,35.4157222222222)
---(axis cs:13,33.42)
---(axis cs:12,30.3956111111111)
---(axis cs:11,28.4803333333333)
---(axis cs:10,25.9046666666667)
---(axis cs:9,24.7380555555556)
---(axis cs:8,23.4823333333333)
---(axis cs:7,22.4470555555556)
---(axis cs:6,21.3978333333333)
+--(axis cs:4,15.733)
+--(axis cs:5,16.7333333333333)
+--(axis cs:6,20.1955555555556)
+--(axis cs:7,21.1977777777778)
+--(axis cs:8,22.2376111111111)
+--(axis cs:9,23.4708888888889)
+--(axis cs:10,24.6198888888889)
+--(axis cs:11,27.2197777777778)
+--(axis cs:12,29.2132222222222)
+--(axis cs:13,32.1622222222222)
+--(axis cs:14,34.1708888888889)
+--(axis cs:14,35.4205555555556)
+--(axis cs:14,35.4205555555556)
+--(axis cs:13,33.4111111111111)
+--(axis cs:12,30.4533333333333)
+--(axis cs:11,28.4601666666667)
+--(axis cs:10,25.8646666666667)
+--(axis cs:9,24.7802777777778)
+--(axis cs:8,23.4578888888889)
+--(axis cs:7,22.4600555555556)
+--(axis cs:6,21.3956666666667)
 --(axis cs:5,17.267)
---(axis cs:4,16.267)
+--(axis cs:4,16.2533333333333)
 --(axis cs:3,14.2533333333333)
 --(axis cs:2,9)
 --(axis cs:1,7)
 --cycle;
 
-\addplot [semithick, steelblue31119180, mark=*, mark size=3, mark options={solid,draw=white}]
+\addplot [line width=0.48pt, steelblue31119180, mark=*, mark size=2.4, mark options={solid,draw=white}]
 table {%
 1 2
 2 4
@@ -812,7 +831,7 @@ table {%
 12 17
 13 18
 };
-\addplot [semithick, steelblue31119180, dash pattern=on 4pt off 1.5pt, mark=x, mark size=3, mark options={solid,draw=white}]
+\addplot [line width=0.48pt, steelblue31119180, dash pattern=on 4pt off 1.5pt, mark=x, mark size=2.4, mark options={solid,draw=white}]
 table {%
 1 2
 2 4
@@ -828,7 +847,7 @@ table {%
 12 17
 13 18
 };
-\addplot [semithick, darkorange25512714, mark=*, mark size=3, mark options={solid,draw=white}]
+\addplot [line width=0.48pt, crimson2143940, mark=*, mark size=2.4, mark options={solid,draw=white}]
 table {%
 1 7
 2 9
@@ -844,7 +863,7 @@ table {%
 12 22
 13 23
 };
-\addplot [semithick, darkorange25512714, dash pattern=on 4pt off 1.5pt, mark=x, mark size=3, mark options={solid,draw=white}]
+\addplot [line width=0.48pt, crimson2143940, dash pattern=on 4pt off 1.5pt, mark=x, mark size=2.4, mark options={solid,draw=white}]
 table {%
 1 7
 2 9
@@ -860,7 +879,7 @@ table {%
 12 26.8288888888889
 13 27.8288888888889
 };
-\addplot [semithick, forestgreen4416044, mark=*, mark size=3, mark options={solid,draw=white}]
+\addplot [line width=0.48pt, forestgreen4416044, mark=*, mark size=2.4, mark options={solid,draw=white}]
 table {%
 1 7
 2 9
@@ -877,7 +896,7 @@ table {%
 13 28
 14 30
 };
-\addplot [semithick, forestgreen4416044, dash pattern=on 4pt off 1.5pt, mark=x, mark size=3, mark options={solid,draw=white}]
+\addplot [line width=0.48pt, forestgreen4416044, dash pattern=on 4pt off 1.5pt, mark=x, mark size=2.4, mark options={solid,draw=white}]
 table {%
 1 7
 2 9

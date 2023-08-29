@@ -1,0 +1,108 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{brown1926061}{RGB}{192,60,61}
+\definecolor{darkslategray38}{RGB}{38,38,38}
+\definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{lavender234234242}{RGB}{234,234,242}
+\definecolor{seagreen5814558}{RGB}{58,145,58}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{axis}[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+log basis y={10},
+minor ytick={2,3,4,5,6,7,8,9,20,30,40,50,60,70,80,90,200,300,400,500,600,700,800,900,2000,3000,4000,5000,6000,7000,8000,9000},
+minor yticklabels={
+  \(\displaystyle {2\times10^{0}}\),
+  \(\displaystyle {3\times10^{0}}\),
+  \(\displaystyle {4\times10^{0}}\),
+  \(\displaystyle {5\times10^{0}}\),
+  \(\displaystyle {6\times10^{0}}\),
+  \(\displaystyle {7\times10^{0}}\),
+  \(\displaystyle {8\times10^{0}}\),
+  \(\displaystyle {9\times10^{0}}\),
+  \(\displaystyle {2\times10^{1}}\),
+  \(\displaystyle {3\times10^{1}}\),
+  \(\displaystyle {4\times10^{1}}\),
+  \(\displaystyle {5\times10^{1}}\),
+  \(\displaystyle {6\times10^{1}}\),
+  \(\displaystyle {7\times10^{1}}\),
+  \(\displaystyle {8\times10^{1}}\),
+  \(\displaystyle {9\times10^{1}}\),
+  \(\displaystyle {2\times10^{2}}\),
+  \(\displaystyle {3\times10^{2}}\),
+  \(\displaystyle {4\times10^{2}}\),
+  \(\displaystyle {5\times10^{2}}\),
+  \(\displaystyle {6\times10^{2}}\),
+  \(\displaystyle {7\times10^{2}}\),
+  \(\displaystyle {8\times10^{2}}\),
+  \(\displaystyle {9\times10^{2}}\),
+  \(\displaystyle {2\times10^{3}}\),
+  \(\displaystyle {3\times10^{3}}\),
+  \(\displaystyle {4\times10^{3}}\),
+  \(\displaystyle {5\times10^{3}}\),
+  \(\displaystyle {6\times10^{3}}\),
+  \(\displaystyle {7\times10^{3}}\),
+  \(\displaystyle {8\times10^{3}}\),
+  \(\displaystyle {9\times10^{3}}\)
+},
+tick align=outside,
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{problem},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=0.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0},
+xticklabels={ps3},
+y grid style={white},
+ylabel=\textcolor{darkslategray38}{Hierarchical Absolution Time (s)},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=45.8019448493209, ymax=79.985155974849,
+ymode=log,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+ytick={1,10,100,1000},
+yticklabels={
+  \(\displaystyle {10^{0}}\),
+  \(\displaystyle {10^{1}}\),
+  \(\displaystyle {10^{2}}\),
+  \(\displaystyle {10^{3}}\)
+}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:-0.133333333333333,50.1640818999998);
+\addlegendimage{ybar,ybar legend,draw=white,fill=steelblue49115161,line width=0.32pt}
+\addlegendentry{minbound}
+
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-0.133333333333333,0) rectangle (axis cs:0.133333333333333,73.5618270000006);
+\addlegendimage{ybar,ybar legend,draw=white,fill=brown1926061,line width=0.32pt}
+\addlegendentry{standard}
+
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:0.133333333333333,0) rectangle (axis cs:0.4,55.6183255999995);
+\addlegendimage{ybar,ybar legend,draw=white,fill=seagreen5814558,line width=0.32pt}
+\addlegendentry{yield}
+
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.266666666666667 46.9774698999998
+-0.266666666666667 53.2604633999998
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0 66.5736170500003
+0 77.9836741000047
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.266666666666667 52.8237837787495
+0.266666666666667 60.4511426000008
+};
+\end{axis}
+
+\end{tikzpicture}

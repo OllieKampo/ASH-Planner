@@ -1,0 +1,98 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{brown1926061}{RGB}{192,60,61}
+\definecolor{darkslategray38}{RGB}{38,38,38}
+\definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{lavender234234242}{RGB}{234,234,242}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{axis}[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+log basis y={10},
+minor ytick={14,16,18,20,22,24,26,28},
+minor yticklabels={
+  \(\displaystyle {1.4\times10^{1}}\),
+  \(\displaystyle {1.6\times10^{1}}\),
+  \(\displaystyle {1.8\times10^{1}}\),
+  \(\displaystyle {2\times10^{1}}\),
+  \(\displaystyle {2.2\times10^{1}}\),
+  \(\displaystyle {2.4\times10^{1}}\),
+  \(\displaystyle {2.6\times10^{1}}\),
+  \(\displaystyle {2.8\times10^{1}}\)
+},
+tick align=outside,
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{search mode},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=2.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1,2},
+xticklabels={minbound,standard,yield},
+y grid style={white},
+ylabel=\textcolor{darkslategray38}{Hierarchical Absolution Time (s)},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=15.3916784009023, ymax=26.8891923418565,
+ymode=log,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+ytick={1,10,100,1000},
+yticklabels={
+  \(\displaystyle {10^{0}}\),
+  \(\displaystyle {10^{1}}\),
+  \(\displaystyle {10^{2}}\),
+  \(\displaystyle {10^{3}}\)
+}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,16.7665225000001);
+\addlegendimage{ybar,ybar legend,draw=white,fill=steelblue49115161,line width=0.32pt}
+\addlegendentry{seqa}
+
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,23.4527343000002);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,20.5219349000001);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,17.5346359999992);
+\addlegendimage{ybar,ybar legend,draw=white,fill=brown1926061,line width=0.32pt}
+\addlegendentry{sima}
+
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,23.2845308);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,20.9413098999999);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.2 15.7869867000002
+-0.2 19.3587388999988
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.8 21.2119271000004
+0.8 26.2158833000001
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.8 20.0084049999999
+1.8 21.4284104924992
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.2 15.9238785000005
+0.2 20.0093679999993
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.2 21.1339244999999
+1.2 25.5616707999999
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.2 20.1281005999998
+2.2 22.0517126000011
+};
+\end{axis}
+
+\end{tikzpicture}

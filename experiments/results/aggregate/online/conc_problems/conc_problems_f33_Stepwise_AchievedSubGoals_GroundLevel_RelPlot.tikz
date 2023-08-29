@@ -1,0 +1,2042 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{crimson2143940}{RGB}{214,39,40}
+\definecolor{darkslategray38}{RGB}{38,38,38}
+\definecolor{forestgreen4416044}{RGB}{44,160,44}
+\definecolor{lavender234234242}{RGB}{234,234,242}
+\definecolor{steelblue31119180}{RGB}{31,119,180}
+
+\begin{groupplot}[group style={group size=2 by 1, horizontal sep=0.1cm, vertical sep=0.1cm}]
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+tick align=outside,
+title={AL: 1.0},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Plan step},
+xmajorgrids,
+xmajorticks=false,
+xmajorticks=true,
+xmin=-2.9, xmax=82.9,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+y grid style={white},
+ylabel=\textcolor{darkslategray38}{Number of achieved sub-goals},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=-2.2, ymax=46.2,
+ytick style={color=darkslategray38},
+ytick style={color=white}
+]
+\path [draw=steelblue31119180, fill=steelblue31119180, opacity=0.2, line width=0.32pt]
+(axis cs:1,0)
+--(axis cs:1,0)
+--(axis cs:2,1)
+--(axis cs:3,1)
+--(axis cs:4,2)
+--(axis cs:5,2.105)
+--(axis cs:6,2.825)
+--(axis cs:7,3.01)
+--(axis cs:8,3.724875)
+--(axis cs:9,4.429875)
+--(axis cs:10,4.9)
+--(axis cs:11,5.475)
+--(axis cs:12,6.254875)
+--(axis cs:13,7.03)
+--(axis cs:14,7.324875)
+--(axis cs:15,8.325)
+--(axis cs:16,8.59)
+--(axis cs:17,8.79)
+--(axis cs:18,9.59)
+--(axis cs:19,10.045)
+--(axis cs:20,10.695)
+--(axis cs:21,11.184875)
+--(axis cs:22,11.844875)
+--(axis cs:23,12.37)
+--(axis cs:24,13.005)
+--(axis cs:25,13.764875)
+--(axis cs:26,14.56)
+--(axis cs:27,15.234875)
+--(axis cs:28,15.7)
+--(axis cs:29,16.455)
+--(axis cs:30,17.285)
+--(axis cs:31,18.164875)
+--(axis cs:32,18.939875)
+--(axis cs:33,19.315)
+--(axis cs:34,20.23)
+--(axis cs:35,21.169875)
+--(axis cs:36,22.075)
+--(axis cs:37,22.25975)
+--(axis cs:38,23.245)
+--(axis cs:39,24.165)
+--(axis cs:40,23.2444444444444)
+--(axis cs:41,23.3777777777778)
+--(axis cs:42,24)
+--(axis cs:43,24.9605263157895)
+--(axis cs:44,24)
+--(axis cs:45,24)
+--(axis cs:46,25)
+--(axis cs:47,26)
+--(axis cs:47,26)
+--(axis cs:47,26)
+--(axis cs:46,25)
+--(axis cs:45,24.3157894736842)
+--(axis cs:44,24.1578947368421)
+--(axis cs:43,25.5263157894737)
+--(axis cs:42,24.5657894736842)
+--(axis cs:41,23.9888888888889)
+--(axis cs:40,23.7888888888889)
+--(axis cs:39,24.695)
+--(axis cs:38,23.76525)
+--(axis cs:37,22.765)
+--(axis cs:36,22.67)
+--(axis cs:35,21.71)
+--(axis cs:34,20.79)
+--(axis cs:33,19.830125)
+--(axis cs:32,19.52)
+--(axis cs:31,18.72)
+--(axis cs:30,17.790125)
+--(axis cs:29,16.920125)
+--(axis cs:28,16.225125)
+--(axis cs:27,15.715)
+--(axis cs:26,14.965)
+--(axis cs:25,14.120125)
+--(axis cs:24,13.325)
+--(axis cs:23,12.675)
+--(axis cs:22,12.130125)
+--(axis cs:21,11.475)
+--(axis cs:20,10.945)
+--(axis cs:19,10.235)
+--(axis cs:18,9.78)
+--(axis cs:17,8.895)
+--(axis cs:16,8.78)
+--(axis cs:15,8.625125)
+--(axis cs:14,7.62)
+--(axis cs:13,7.405125)
+--(axis cs:12,6.53)
+--(axis cs:11,5.685)
+--(axis cs:10,5.05)
+--(axis cs:9,4.565)
+--(axis cs:8,3.84)
+--(axis cs:7,3.145)
+--(axis cs:6,2.995)
+--(axis cs:5,2.21)
+--(axis cs:4,2)
+--(axis cs:3,1)
+--(axis cs:2,1)
+--(axis cs:1,0)
+--cycle;
+
+\path [draw=steelblue31119180, fill=steelblue31119180, opacity=0.2, line width=0.32pt]
+(axis cs:1,0)
+--(axis cs:1,0)
+--(axis cs:2,1)
+--(axis cs:3,1)
+--(axis cs:4,2)
+--(axis cs:5,2.43)
+--(axis cs:6,3)
+--(axis cs:7,3)
+--(axis cs:8,3.43)
+--(axis cs:9,3.86975)
+--(axis cs:10,4.43)
+--(axis cs:11,5.43)
+--(axis cs:12,5.43)
+--(axis cs:13,6)
+--(axis cs:14,6.44)
+--(axis cs:15,6.635)
+--(axis cs:16,7.41)
+--(axis cs:17,7.869875)
+--(axis cs:18,8.25)
+--(axis cs:19,8.93)
+--(axis cs:20,9.52)
+--(axis cs:21,10.194875)
+--(axis cs:22,10.94)
+--(axis cs:23,11.71)
+--(axis cs:24,12.109875)
+--(axis cs:25,12.945)
+--(axis cs:26,13.64)
+--(axis cs:27,14.135)
+--(axis cs:28,15.14)
+--(axis cs:29,15.6931216931217)
+--(axis cs:30,15.86)
+--(axis cs:31,16.54)
+--(axis cs:32,16.8235294117647)
+--(axis cs:33,17)
+--(axis cs:34,18)
+--(axis cs:34,18)
+--(axis cs:34,18)
+--(axis cs:33,17)
+--(axis cs:32,17.1960784313725)
+--(axis cs:31,16.92)
+--(axis cs:30,16.1266666666667)
+--(axis cs:29,16.0846560846561)
+--(axis cs:28,15.48025)
+--(axis cs:27,14.475)
+--(axis cs:26,13.970125)
+--(axis cs:25,13.165125)
+--(axis cs:24,12.400125)
+--(axis cs:23,12.01)
+--(axis cs:22,11.170125)
+--(axis cs:21,10.5)
+--(axis cs:20,9.815125)
+--(axis cs:19,9.16)
+--(axis cs:18,8.42)
+--(axis cs:17,8.060125)
+--(axis cs:16,7.55)
+--(axis cs:15,6.87)
+--(axis cs:14,6.57)
+--(axis cs:13,6)
+--(axis cs:12,5.565)
+--(axis cs:11,5.57)
+--(axis cs:10,4.57)
+--(axis cs:9,4.13)
+--(axis cs:8,3.575)
+--(axis cs:7,3)
+--(axis cs:6,3)
+--(axis cs:5,2.565)
+--(axis cs:4,2)
+--(axis cs:3,1)
+--(axis cs:2,1)
+--(axis cs:1,0)
+--cycle;
+
+\path [draw=crimson2143940, fill=crimson2143940, opacity=0.2, line width=0.32pt]
+(axis cs:1,0)
+--(axis cs:1,0)
+--(axis cs:2,1)
+--(axis cs:3,1)
+--(axis cs:4,2)
+--(axis cs:5,2)
+--(axis cs:6,3)
+--(axis cs:7,4)
+--(axis cs:8,5)
+--(axis cs:9,5)
+--(axis cs:10,5)
+--(axis cs:11,5)
+--(axis cs:12,5)
+--(axis cs:13,5)
+--(axis cs:14,6)
+--(axis cs:15,7)
+--(axis cs:16,8)
+--(axis cs:17,9)
+--(axis cs:18,9.41)
+--(axis cs:19,9.485)
+--(axis cs:20,10.385)
+--(axis cs:21,10.55)
+--(axis cs:22,11.259875)
+--(axis cs:23,11.615)
+--(axis cs:24,12.075)
+--(axis cs:25,12.584875)
+--(axis cs:26,13.06)
+--(axis cs:27,13.66)
+--(axis cs:28,14.284875)
+--(axis cs:29,15.125)
+--(axis cs:30,15.584875)
+--(axis cs:31,16.159875)
+--(axis cs:32,16.79)
+--(axis cs:33,17.15)
+--(axis cs:34,17.95)
+--(axis cs:35,18.384875)
+--(axis cs:36,19.04)
+--(axis cs:37,19.559875)
+--(axis cs:38,20.234875)
+--(axis cs:39,20.879875)
+--(axis cs:40,21.645)
+--(axis cs:41,22.469875)
+--(axis cs:42,23.274875)
+--(axis cs:43,23.995)
+--(axis cs:44,24.77)
+--(axis cs:45,25.635)
+--(axis cs:46,26.42)
+--(axis cs:47,27.145)
+--(axis cs:48,27.97)
+--(axis cs:49,28.575)
+--(axis cs:50,29.57)
+--(axis cs:51,30.11)
+--(axis cs:52,31.11)
+--(axis cs:53,31.585)
+--(axis cs:54,31.8733333333333)
+--(axis cs:55,32.5531666666667)
+--(axis cs:56,32.4675324675325)
+--(axis cs:57,32.9350649350649)
+--(axis cs:58,33)
+--(axis cs:59,34)
+--(axis cs:59,34)
+--(axis cs:59,34)
+--(axis cs:58,33)
+--(axis cs:57,33.3766233766234)
+--(axis cs:56,32.6883116883117)
+--(axis cs:55,32.9601666666667)
+--(axis cs:54,32.24)
+--(axis cs:53,32.015125)
+--(axis cs:52,31.52)
+--(axis cs:51,30.53)
+--(axis cs:50,30.035)
+--(axis cs:49,29.03)
+--(axis cs:48,28.42525)
+--(axis cs:47,27.540125)
+--(axis cs:46,26.88)
+--(axis cs:45,26.06)
+--(axis cs:44,25.225)
+--(axis cs:43,24.45)
+--(axis cs:42,23.74)
+--(axis cs:41,22.975125)
+--(axis cs:40,22.115)
+--(axis cs:39,21.295)
+--(axis cs:38,20.600125)
+--(axis cs:37,19.925125)
+--(axis cs:36,19.365125)
+--(axis cs:35,18.705)
+--(axis cs:34,18.245125)
+--(axis cs:33,17.44)
+--(axis cs:32,17.135)
+--(axis cs:31,16.500125)
+--(axis cs:30,15.965125)
+--(axis cs:29,15.545)
+--(axis cs:28,14.665)
+--(axis cs:27,14.010125)
+--(axis cs:26,13.35)
+--(axis cs:25,12.805)
+--(axis cs:24,12.305)
+--(axis cs:23,11.855)
+--(axis cs:22,11.46)
+--(axis cs:21,10.725)
+--(axis cs:20,10.565)
+--(axis cs:19,9.67)
+--(axis cs:18,9.545)
+--(axis cs:17,9)
+--(axis cs:16,8)
+--(axis cs:15,7)
+--(axis cs:14,6)
+--(axis cs:13,5)
+--(axis cs:12,5)
+--(axis cs:11,5)
+--(axis cs:10,5)
+--(axis cs:9,5)
+--(axis cs:8,5)
+--(axis cs:7,4)
+--(axis cs:6,3)
+--(axis cs:5,2)
+--(axis cs:4,2)
+--(axis cs:3,1)
+--(axis cs:2,1)
+--(axis cs:1,0)
+--cycle;
+
+\path [draw=crimson2143940, fill=crimson2143940, opacity=0.2, line width=0.32pt]
+(axis cs:1,0)
+--(axis cs:1,0)
+--(axis cs:2,1)
+--(axis cs:3,1)
+--(axis cs:4,1.23)
+--(axis cs:5,1.53)
+--(axis cs:6,2)
+--(axis cs:7,2)
+--(axis cs:8,2)
+--(axis cs:9,2)
+--(axis cs:10,2)
+--(axis cs:11,2)
+--(axis cs:12,2)
+--(axis cs:13,2.19)
+--(axis cs:14,3)
+--(axis cs:15,3.69)
+--(axis cs:16,4.38)
+--(axis cs:17,5.07)
+--(axis cs:18,5.515)
+--(axis cs:19,5.859875)
+--(axis cs:20,6.215)
+--(axis cs:21,6.329875)
+--(axis cs:22,6.889875)
+--(axis cs:23,7.31975)
+--(axis cs:24,8.059875)
+--(axis cs:25,8.764875)
+--(axis cs:26,8.88)
+--(axis cs:27,9.775)
+--(axis cs:28,9.885)
+--(axis cs:29,10.344875)
+--(axis cs:30,11.025)
+--(axis cs:31,11.305)
+--(axis cs:32,12.269875)
+--(axis cs:33,12.68)
+--(axis cs:34,13.415)
+--(axis cs:35,14.05)
+--(axis cs:36,14.635)
+--(axis cs:37,15.44)
+--(axis cs:38,15.919875)
+--(axis cs:39,16.475)
+--(axis cs:40,17.129875)
+--(axis cs:41,17.59475)
+--(axis cs:42,18.38)
+--(axis cs:43,19.234875)
+--(axis cs:44,19.7285904255319)
+--(axis cs:45,20.0683229813665)
+--(axis cs:46,19.2987113402062)
+--(axis cs:47,19.0897435897436)
+--(axis cs:48,18.7627118644068)
+--(axis cs:49,19.32)
+--(axis cs:50,19.42)
+--(axis cs:51,20.3395)
+--(axis cs:52,20.9)
+--(axis cs:53,21.64)
+--(axis cs:54,22)
+--(axis cs:55,23)
+--(axis cs:55,23)
+--(axis cs:55,23)
+--(axis cs:54,22)
+--(axis cs:53,22.2)
+--(axis cs:52,21.4)
+--(axis cs:51,20.6)
+--(axis cs:50,19.84)
+--(axis cs:49,19.6)
+--(axis cs:48,19.5762711864407)
+--(axis cs:47,20.1794871794872)
+--(axis cs:46,20.2268041237113)
+--(axis cs:45,20.9378881987578)
+--(axis cs:44,20.5267287234043)
+--(axis cs:43,19.920125)
+--(axis cs:42,19.090125)
+--(axis cs:41,18.245125)
+--(axis cs:40,17.82)
+--(axis cs:39,17.125)
+--(axis cs:38,16.48)
+--(axis cs:37,16.015)
+--(axis cs:36,15.18)
+--(axis cs:35,14.565125)
+--(axis cs:34,13.915)
+--(axis cs:33,13.175)
+--(axis cs:32,12.685125)
+--(axis cs:31,11.71)
+--(axis cs:30,11.43)
+--(axis cs:29,10.685)
+--(axis cs:28,10.330125)
+--(axis cs:27,10.180125)
+--(axis cs:26,9.34525)
+--(axis cs:25,9.190125)
+--(axis cs:24,8.44)
+--(axis cs:23,7.75)
+--(axis cs:22,7.390125)
+--(axis cs:21,6.930125)
+--(axis cs:20,6.77)
+--(axis cs:19,6.36)
+--(axis cs:18,5.970125)
+--(axis cs:17,5.43)
+--(axis cs:16,4.62)
+--(axis cs:15,3.81)
+--(axis cs:14,3)
+--(axis cs:13,2.31)
+--(axis cs:12,2)
+--(axis cs:11,2)
+--(axis cs:10,2)
+--(axis cs:9,2)
+--(axis cs:8,2)
+--(axis cs:7,2)
+--(axis cs:6,2)
+--(axis cs:5,1.665)
+--(axis cs:4,1.355)
+--(axis cs:3,1)
+--(axis cs:2,1)
+--(axis cs:1,0)
+--cycle;
+
+\path [draw=forestgreen4416044, fill=forestgreen4416044, opacity=0.2, line width=0.32pt]
+(axis cs:1,0)
+--(axis cs:1,0)
+--(axis cs:2,1)
+--(axis cs:3,1)
+--(axis cs:4,2)
+--(axis cs:5,2)
+--(axis cs:6,3)
+--(axis cs:7,4)
+--(axis cs:8,5)
+--(axis cs:9,5)
+--(axis cs:10,5)
+--(axis cs:11,5)
+--(axis cs:12,5)
+--(axis cs:13,5)
+--(axis cs:14,6)
+--(axis cs:15,7)
+--(axis cs:16,8)
+--(axis cs:17,9)
+--(axis cs:18,9.37)
+--(axis cs:19,9.39)
+--(axis cs:20,10.275)
+--(axis cs:21,10.405)
+--(axis cs:22,11.115)
+--(axis cs:23,11.545)
+--(axis cs:24,12.11)
+--(axis cs:25,12.845)
+--(axis cs:26,13.315)
+--(axis cs:27,13.975)
+--(axis cs:28,14.565)
+--(axis cs:29,15.145)
+--(axis cs:30,15.619875)
+--(axis cs:31,16.07)
+--(axis cs:32,16.699875)
+--(axis cs:33,17.065)
+--(axis cs:34,17.975)
+--(axis cs:35,18.589875)
+--(axis cs:36,19.349875)
+--(axis cs:37,20.049875)
+--(axis cs:38,20.814875)
+--(axis cs:39,21.525)
+--(axis cs:40,22.249875)
+--(axis cs:41,22.95)
+--(axis cs:42,23.67)
+--(axis cs:43,24.305)
+--(axis cs:44,24.994875)
+--(axis cs:45,25.665)
+--(axis cs:46,26.305)
+--(axis cs:47,26.805)
+--(axis cs:48,27.539875)
+--(axis cs:49,28.115)
+--(axis cs:50,28.695)
+--(axis cs:51,29.294875)
+--(axis cs:52,29.739875)
+--(axis cs:53,30.215)
+--(axis cs:54,30.785)
+--(axis cs:55,31.205)
+--(axis cs:56,31.939875)
+--(axis cs:57,32.45)
+--(axis cs:58,33.12)
+--(axis cs:59,33.715)
+--(axis cs:60,34.289875)
+--(axis cs:61,34.88)
+--(axis cs:62,35.48)
+--(axis cs:63,35.985)
+--(axis cs:64,36.67)
+--(axis cs:65,37.14)
+--(axis cs:66,37.855)
+--(axis cs:67,38.435)
+--(axis cs:68,39.195)
+--(axis cs:69,39.855)
+--(axis cs:70,40.3055555555556)
+--(axis cs:71,41.03875)
+--(axis cs:72,41.3553703703704)
+--(axis cs:73,42.147962962963)
+--(axis cs:74,41.8885416666667)
+--(axis cs:75,42.8055555555556)
+--(axis cs:76,42.3913043478261)
+--(axis cs:77,43.304347826087)
+--(axis cs:78,43)
+--(axis cs:79,44)
+--(axis cs:79,44)
+--(axis cs:79,44)
+--(axis cs:78,43)
+--(axis cs:77,43.9130434782609)
+--(axis cs:76,42.9565217391304)
+--(axis cs:75,43.3194444444444)
+--(axis cs:74,42.3888888888889)
+--(axis cs:73,42.637037037037)
+--(axis cs:72,41.7851851851852)
+--(axis cs:71,41.4722222222222)
+--(axis cs:70,40.7445833333333)
+--(axis cs:69,40.26)
+--(axis cs:68,39.585)
+--(axis cs:67,38.825)
+--(axis cs:66,38.235125)
+--(axis cs:65,37.485125)
+--(axis cs:64,37.015)
+--(axis cs:63,36.335125)
+--(axis cs:62,35.805125)
+--(axis cs:61,35.255125)
+--(axis cs:60,34.645125)
+--(axis cs:59,34.12)
+--(axis cs:58,33.530125)
+--(axis cs:57,32.875125)
+--(axis cs:56,32.38)
+--(axis cs:55,31.660125)
+--(axis cs:54,31.22)
+--(axis cs:53,30.650125)
+--(axis cs:52,30.180125)
+--(axis cs:51,29.745)
+--(axis cs:50,29.145125)
+--(axis cs:49,28.57)
+--(axis cs:48,27.97)
+--(axis cs:47,27.245)
+--(axis cs:46,26.72)
+--(axis cs:45,26.11)
+--(axis cs:44,25.435125)
+--(axis cs:43,24.77)
+--(axis cs:42,24.075)
+--(axis cs:41,23.355)
+--(axis cs:40,22.64)
+--(axis cs:39,21.91)
+--(axis cs:38,21.120125)
+--(axis cs:37,20.38)
+--(axis cs:36,19.66)
+--(axis cs:35,18.895)
+--(axis cs:34,18.24)
+--(axis cs:33,17.325)
+--(axis cs:32,17.01)
+--(axis cs:31,16.385125)
+--(axis cs:30,15.925)
+--(axis cs:29,15.505125)
+--(axis cs:28,14.86)
+--(axis cs:27,14.265)
+--(axis cs:26,13.57)
+--(axis cs:25,13.085)
+--(axis cs:24,12.325)
+--(axis cs:23,11.795)
+--(axis cs:22,11.31)
+--(axis cs:21,10.56)
+--(axis cs:20,10.42)
+--(axis cs:19,9.540125)
+--(axis cs:18,9.51)
+--(axis cs:17,9)
+--(axis cs:16,8)
+--(axis cs:15,7)
+--(axis cs:14,6)
+--(axis cs:13,5)
+--(axis cs:12,5)
+--(axis cs:11,5)
+--(axis cs:10,5)
+--(axis cs:9,5)
+--(axis cs:8,5)
+--(axis cs:7,4)
+--(axis cs:6,3)
+--(axis cs:5,2)
+--(axis cs:4,2)
+--(axis cs:3,1)
+--(axis cs:2,1)
+--(axis cs:1,0)
+--cycle;
+
+\path [draw=forestgreen4416044, fill=forestgreen4416044, opacity=0.2, line width=0.32pt]
+(axis cs:1,0)
+--(axis cs:1,0)
+--(axis cs:2,1)
+--(axis cs:3,1)
+--(axis cs:4,1.189875)
+--(axis cs:5,1.55)
+--(axis cs:6,2)
+--(axis cs:7,2)
+--(axis cs:8,2)
+--(axis cs:9,2)
+--(axis cs:10,2)
+--(axis cs:11,2)
+--(axis cs:12,2)
+--(axis cs:13,2.195)
+--(axis cs:14,3)
+--(axis cs:15,3.685)
+--(axis cs:16,4.38)
+--(axis cs:17,5.07)
+--(axis cs:18,5.484875)
+--(axis cs:19,5.785)
+--(axis cs:20,6.185)
+--(axis cs:21,6.32)
+--(axis cs:22,6.835)
+--(axis cs:23,7.255)
+--(axis cs:24,8.025)
+--(axis cs:25,8.699875)
+--(axis cs:26,8.83)
+--(axis cs:27,9.749875)
+--(axis cs:28,9.825)
+--(axis cs:29,10.28)
+--(axis cs:30,10.92)
+--(axis cs:31,11.2)
+--(axis cs:32,12.155)
+--(axis cs:33,12.559875)
+--(axis cs:34,13.349875)
+--(axis cs:35,13.874875)
+--(axis cs:36,14.57)
+--(axis cs:37,15.38)
+--(axis cs:38,15.695)
+--(axis cs:39,16.399875)
+--(axis cs:40,16.884875)
+--(axis cs:41,17.619875)
+--(axis cs:42,18.42)
+--(axis cs:43,19.229875)
+--(axis cs:44,19.74)
+--(axis cs:45,20.114875)
+--(axis cs:46,20.629875)
+--(axis cs:47,20.974875)
+--(axis cs:48,21.5)
+--(axis cs:49,22.07)
+--(axis cs:50,22.634875)
+--(axis cs:51,23.39)
+--(axis cs:52,24.129875)
+--(axis cs:53,24.514875)
+--(axis cs:54,25.184625)
+--(axis cs:55,25.435)
+--(axis cs:56,25.76)
+--(axis cs:57,26.27475)
+--(axis cs:58,26.714875)
+--(axis cs:59,27.279875)
+--(axis cs:60,27.4661516853933)
+--(axis cs:61,26.5943396226415)
+--(axis cs:62,26)
+--(axis cs:63,25.22)
+--(axis cs:64,26.22)
+--(axis cs:65,26.2)
+--(axis cs:66,27)
+--(axis cs:67,27.2195)
+--(axis cs:68,27.22)
+--(axis cs:69,28.22)
+--(axis cs:70,28.44)
+--(axis cs:71,29)
+--(axis cs:72,30)
+--(axis cs:72,30)
+--(axis cs:72,30)
+--(axis cs:71,29)
+--(axis cs:70,28.96)
+--(axis cs:69,28.48)
+--(axis cs:68,27.48)
+--(axis cs:67,27.48)
+--(axis cs:66,27)
+--(axis cs:65,26.48)
+--(axis cs:64,26.48)
+--(axis cs:63,25.48)
+--(axis cs:62,27.2051282051282)
+--(axis cs:61,27.5474056603774)
+--(axis cs:60,28.1911516853933)
+--(axis cs:59,27.875125)
+--(axis cs:58,27.22)
+--(axis cs:57,26.81)
+--(axis cs:56,26.3)
+--(axis cs:55,25.96)
+--(axis cs:54,25.73)
+--(axis cs:53,25.085125)
+--(axis cs:52,24.655)
+--(axis cs:51,23.95)
+--(axis cs:50,23.14)
+--(axis cs:49,22.69)
+--(axis cs:48,22.095)
+--(axis cs:47,21.65)
+--(axis cs:46,21.21)
+--(axis cs:45,20.760125)
+--(axis cs:44,20.490125)
+--(axis cs:43,19.875125)
+--(axis cs:42,19.16025)
+--(axis cs:41,18.365)
+--(axis cs:40,17.525)
+--(axis cs:39,17.03)
+--(axis cs:38,16.210125)
+--(axis cs:37,15.945)
+--(axis cs:36,15.10025)
+--(axis cs:35,14.390125)
+--(axis cs:34,13.820125)
+--(axis cs:33,13.025)
+--(axis cs:32,12.5455)
+--(axis cs:31,11.61)
+--(axis cs:30,11.345)
+--(axis cs:29,10.615125)
+--(axis cs:28,10.28025)
+--(axis cs:27,10.175125)
+--(axis cs:26,9.26)
+--(axis cs:25,9.150125)
+--(axis cs:24,8.395)
+--(axis cs:23,7.68)
+--(axis cs:22,7.345)
+--(axis cs:21,6.89)
+--(axis cs:20,6.74)
+--(axis cs:19,6.360125)
+--(axis cs:18,5.940125)
+--(axis cs:17,5.43)
+--(axis cs:16,4.63)
+--(axis cs:15,3.805)
+--(axis cs:14,3)
+--(axis cs:13,2.31)
+--(axis cs:12,2)
+--(axis cs:11,2)
+--(axis cs:10,2)
+--(axis cs:9,2)
+--(axis cs:8,2)
+--(axis cs:7,2)
+--(axis cs:6,2)
+--(axis cs:5,1.68)
+--(axis cs:4,1.31)
+--(axis cs:3,1)
+--(axis cs:2,1)
+--(axis cs:1,0)
+--cycle;
+
+\addplot [line width=0.48pt, steelblue31119180, mark=*, mark size=2.4, mark options={solid,draw=white}]
+table {%
+1 0
+2 1
+3 1
+4 2
+5 2.155
+6 2.91
+7 3.075
+8 3.785
+9 4.495
+10 4.975
+11 5.58
+12 6.39
+13 7.235
+14 7.48
+15 8.48
+16 8.69
+17 8.845
+18 9.69
+19 10.14
+20 10.83
+21 11.335
+22 11.995
+23 12.525
+24 13.16
+25 13.94
+26 14.765
+27 15.47
+28 15.965
+29 16.695
+30 17.545
+31 18.445
+32 19.24
+33 19.575
+34 20.515
+35 21.44
+36 22.38
+37 22.53
+38 23.515
+39 24.44
+40 23.5333333333333
+41 23.7
+42 24.2763157894737
+43 25.2631578947368
+44 24.0526315789474
+45 24.1052631578947
+46 25
+47 26
+};
+\addplot [line width=0.48pt, steelblue31119180, dash pattern=on 4pt off 1.5pt, mark=x, mark size=2.4, mark options={solid,draw=white}]
+table {%
+1 0
+2 1
+3 1
+4 2
+5 2.5
+6 3
+7 3
+8 3.5
+9 4
+10 4.5
+11 5.5
+12 5.5
+13 6
+14 6.5
+15 6.75
+16 7.48
+17 7.965
+18 8.335
+19 9.04
+20 9.665
+21 10.34
+22 11.055
+23 11.865
+24 12.25
+25 13.055
+26 13.805
+27 14.305
+28 15.305
+29 15.8835978835979
+30 15.9866666666667
+31 16.7333333333333
+32 17.0196078431373
+33 17
+34 18
+};
+\addplot [line width=0.48pt, crimson2143940, mark=*, mark size=2.4, mark options={solid,draw=white}]
+table {%
+1 0
+2 1
+3 1
+4 2
+5 2
+6 3
+7 4
+8 5
+9 5
+10 5
+11 5
+12 5
+13 5
+14 6
+15 7
+16 8
+17 9
+18 9.48
+19 9.575
+20 10.47
+21 10.635
+22 11.36
+23 11.735
+24 12.195
+25 12.705
+26 13.205
+27 13.835
+28 14.46
+29 15.33
+30 15.78
+31 16.34
+32 16.97
+33 17.295
+34 18.1
+35 18.54
+36 19.21
+37 19.745
+38 20.415
+39 21.095
+40 21.89
+41 22.71
+42 23.5
+43 24.235
+44 25.01
+45 25.845
+46 26.655
+47 27.345
+48 28.21
+49 28.8
+50 29.79
+51 30.32
+52 31.32
+53 31.795
+54 32.06
+55 32.76
+56 32.5844155844156
+57 33.1688311688312
+58 33
+59 34
+};
+\addplot [line width=0.48pt, crimson2143940, dash pattern=on 4pt off 1.5pt, mark=x, mark size=2.4, mark options={solid,draw=white}]
+table {%
+1 0
+2 1
+3 1
+4 1.29
+5 1.6
+6 2
+7 2
+8 2
+9 2
+10 2
+11 2
+12 2
+13 2.25
+14 3
+15 3.75
+16 4.5
+17 5.25
+18 5.75
+19 6.11
+20 6.5
+21 6.64
+22 7.14
+23 7.53
+24 8.25
+25 8.975
+26 9.115
+27 9.975
+28 10.115
+29 10.505
+30 11.23
+31 11.505
+32 12.47
+33 12.945
+34 13.66
+35 14.315
+36 14.915
+37 15.73
+38 16.195
+39 16.805
+40 17.475
+41 17.925
+42 18.74
+43 19.59
+44 20.1489361702128
+45 20.5031055900621
+46 19.7628865979381
+47 19.6282051282051
+48 19.1525423728814
+49 19.46
+50 19.64
+51 20.46
+52 21.14
+53 21.92
+54 22
+55 23
+};
+\addplot [line width=0.48pt, forestgreen4416044, mark=*, mark size=2.4, mark options={solid,draw=white}]
+table {%
+1 0
+2 1
+3 1
+4 2
+5 2
+6 3
+7 4
+8 5
+9 5
+10 5
+11 5
+12 5
+13 5
+14 6
+15 7
+16 8
+17 9
+18 9.44
+19 9.465
+20 10.35
+21 10.48
+22 11.215
+23 11.665
+24 12.215
+25 12.965
+26 13.44
+27 14.115
+28 14.715
+29 15.32
+30 15.765
+31 16.23
+32 16.855
+33 17.2
+34 18.115
+35 18.745
+36 19.505
+37 20.215
+38 20.97
+39 21.72
+40 22.45
+41 23.155
+42 23.875
+43 24.535
+44 25.235
+45 25.885
+46 26.515
+47 27.015
+48 27.755
+49 28.35
+50 28.925
+51 29.515
+52 29.97
+53 30.435
+54 31.005
+55 31.435
+56 32.165
+57 32.66
+58 33.335
+59 33.91
+60 34.47
+61 35.07
+62 35.655
+63 36.165
+64 36.845
+65 37.32
+66 38.04
+67 38.63
+68 39.4
+69 40.055
+70 40.5333333333333
+71 41.2666666666667
+72 41.5703703703704
+73 42.4
+74 42.1388888888889
+75 43.0694444444444
+76 42.695652173913
+77 43.6521739130435
+78 43
+79 44
+};
+\addplot [line width=0.48pt, forestgreen4416044, dash pattern=on 4pt off 1.5pt, mark=x, mark size=2.4, mark options={solid,draw=white}]
+table {%
+1 0
+2 1
+3 1
+4 1.245
+5 1.62
+6 2
+7 2
+8 2
+9 2
+10 2
+11 2
+12 2
+13 2.25
+14 3
+15 3.75
+16 4.5
+17 5.25
+18 5.72
+19 6.08
+20 6.47
+21 6.61
+22 7.11
+23 7.47
+24 8.22
+25 8.915
+26 9.055
+27 9.945
+28 10.055
+29 10.445
+30 11.14
+31 11.415
+32 12.35
+33 12.8
+34 13.585
+35 14.13
+36 14.83
+37 15.665
+38 15.97
+39 16.72
+40 17.21
+41 18.005
+42 18.81
+43 19.555
+44 20.14
+45 20.445
+46 20.945
+47 21.305
+48 21.805
+49 22.39
+50 22.89
+51 23.665
+52 24.415
+53 24.805
+54 25.47
+55 25.695
+56 26.03
+57 26.555
+58 26.97
+59 27.58
+60 27.8426966292135
+61 27.0660377358491
+62 26.5897435897436
+63 25.34
+64 26.34
+65 26.34
+66 27
+67 27.34
+68 27.34
+69 28.34
+70 28.68
+71 29
+72 30
+};
+\addplot [very thin, red, dashed]
+table {%
+2 -2.2
+2 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+4 -2.2
+4 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+6 -2.2
+6 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+8 -2.2
+8 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+10 -2.2
+10 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+14 -2.2
+14 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+15 -2.2
+15 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+16 -2.2
+16 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+17 -2.2
+17 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+20 -2.2
+20 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+22 -2.2
+22 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+24 -2.2
+24 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+26 -2.2
+26 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+27 -2.2
+27 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+29 -2.2
+29 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+30 -2.2
+30 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+32 -2.2
+32 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+34 -2.2
+34 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+36 -2.2
+36 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+38 -2.2
+38 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+40 -2.2
+40 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+42 -2.2
+42 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+43 -2.2
+43 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+42 -2.2
+42 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+43 -2.2
+43 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+45 -2.2
+45 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+48 -2.2
+48 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+49 -2.2
+49 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+50 -2.2
+50 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+52 -2.2
+52 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+53 -2.2
+53 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+54 -2.2
+54 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+56 -2.2
+56 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+57 -2.2
+57 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+60 -2.2
+60 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+62 -2.2
+62 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+64 -2.2
+64 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+66 -2.2
+66 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+67 -2.2
+67 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+68 -2.2
+68 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+70 -2.2
+70 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+71 -2.2
+71 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+72 -2.2
+72 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+73 -2.2
+73 46.2
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={AL: 2.0},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Plan step},
+xmajorgrids,
+xmajorticks=false,
+xmajorticks=true,
+xmin=-2.9, xmax=82.9,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=-2.2, ymax=46.2,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\path [draw=steelblue31119180, fill=steelblue31119180, opacity=0.2, line width=0.32pt]
+(axis cs:1,0)
+--(axis cs:1,0)
+--(axis cs:2,1)
+--(axis cs:3,1)
+--(axis cs:4,1.355)
+--(axis cs:5,1.539875)
+--(axis cs:6,1.93)
+--(axis cs:7,2.645)
+--(axis cs:8,3)
+--(axis cs:9,3)
+--(axis cs:10,4)
+--(axis cs:11,4)
+--(axis cs:12,4.325)
+--(axis cs:13,5.265)
+--(axis cs:14,6.19)
+--(axis cs:15,7.125)
+--(axis cs:16,8.02)
+--(axis cs:17,9)
+--(axis cs:18,10)
+--(axis cs:19,11)
+--(axis cs:20,12)
+--(axis cs:21,13)
+--(axis cs:22,14)
+--(axis cs:23,15)
+--(axis cs:24,16)
+--(axis cs:25,17)
+--(axis cs:26,18)
+--(axis cs:26,18)
+--(axis cs:26,18)
+--(axis cs:25,17)
+--(axis cs:24,16)
+--(axis cs:23,15)
+--(axis cs:22,14)
+--(axis cs:21,13)
+--(axis cs:20,12)
+--(axis cs:19,11)
+--(axis cs:18,10)
+--(axis cs:17,9.035)
+--(axis cs:16,8.075)
+--(axis cs:15,7.235125)
+--(axis cs:14,6.305)
+--(axis cs:13,5.385)
+--(axis cs:12,4.465)
+--(axis cs:11,4)
+--(axis cs:10,4)
+--(axis cs:9,3)
+--(axis cs:8,3)
+--(axis cs:7,2.765)
+--(axis cs:6,2.15)
+--(axis cs:5,1.665125)
+--(axis cs:4,1.485)
+--(axis cs:3,1)
+--(axis cs:2,1)
+--(axis cs:1,0)
+--cycle;
+
+\path [draw=steelblue31119180, fill=steelblue31119180, opacity=0.2, line width=0.32pt]
+(axis cs:1,0)
+--(axis cs:1,0)
+--(axis cs:2,1)
+--(axis cs:3,1)
+--(axis cs:4,2)
+--(axis cs:5,2)
+--(axis cs:6,2)
+--(axis cs:7,3)
+--(axis cs:8,3)
+--(axis cs:9,4)
+--(axis cs:10,5)
+--(axis cs:11,6)
+--(axis cs:12,7)
+--(axis cs:13,8)
+--(axis cs:14,9)
+--(axis cs:15,10)
+--(axis cs:16,11)
+--(axis cs:17,12)
+--(axis cs:18,13)
+--(axis cs:18,13)
+--(axis cs:18,13)
+--(axis cs:17,12)
+--(axis cs:16,11)
+--(axis cs:15,10)
+--(axis cs:14,9)
+--(axis cs:13,8)
+--(axis cs:12,7)
+--(axis cs:11,6)
+--(axis cs:10,5)
+--(axis cs:9,4)
+--(axis cs:8,3)
+--(axis cs:7,3)
+--(axis cs:6,2)
+--(axis cs:5,2)
+--(axis cs:4,2)
+--(axis cs:3,1)
+--(axis cs:2,1)
+--(axis cs:1,0)
+--cycle;
+
+\path [draw=crimson2143940, fill=crimson2143940, opacity=0.2, line width=0.32pt]
+(axis cs:1,0)
+--(axis cs:1,0)
+--(axis cs:2,0)
+--(axis cs:3,0)
+--(axis cs:4,0)
+--(axis cs:5,0)
+--(axis cs:6,0)
+--(axis cs:7,0)
+--(axis cs:8,0)
+--(axis cs:9,0)
+--(axis cs:10,1)
+--(axis cs:11,1)
+--(axis cs:12,1.265)
+--(axis cs:13,1.4)
+--(axis cs:14,1.745)
+--(axis cs:15,2.485)
+--(axis cs:16,3)
+--(axis cs:17,3)
+--(axis cs:18,4)
+--(axis cs:19,4)
+--(axis cs:20,4.34)
+--(axis cs:21,5.28)
+--(axis cs:22,6.245)
+--(axis cs:23,7.174875)
+--(axis cs:24,8.035)
+--(axis cs:25,9.005)
+--(axis cs:26,10)
+--(axis cs:27,11)
+--(axis cs:28,12)
+--(axis cs:29,13)
+--(axis cs:30,14)
+--(axis cs:31,15)
+--(axis cs:32,16)
+--(axis cs:33,17)
+--(axis cs:34,18)
+--(axis cs:34,18)
+--(axis cs:34,18)
+--(axis cs:33,17)
+--(axis cs:32,16)
+--(axis cs:31,15)
+--(axis cs:30,14)
+--(axis cs:29,13)
+--(axis cs:28,12)
+--(axis cs:27,11)
+--(axis cs:26,10)
+--(axis cs:25,9.04)
+--(axis cs:24,8.105)
+--(axis cs:23,7.29)
+--(axis cs:22,6.375125)
+--(axis cs:21,5.41)
+--(axis cs:20,4.485)
+--(axis cs:19,4)
+--(axis cs:18,4)
+--(axis cs:17,3)
+--(axis cs:16,3)
+--(axis cs:15,2.62)
+--(axis cs:14,1.975)
+--(axis cs:13,1.54)
+--(axis cs:12,1.395)
+--(axis cs:11,1)
+--(axis cs:10,1)
+--(axis cs:9,0)
+--(axis cs:8,0)
+--(axis cs:7,0)
+--(axis cs:6,0)
+--(axis cs:5,0)
+--(axis cs:4,0)
+--(axis cs:3,0)
+--(axis cs:2,0)
+--(axis cs:1,0)
+--cycle;
+
+\path [draw=crimson2143940, fill=crimson2143940, opacity=0.2, line width=0.32pt]
+(axis cs:1,0)
+--(axis cs:1,0)
+--(axis cs:2,0)
+--(axis cs:3,0)
+--(axis cs:4,0)
+--(axis cs:5,0)
+--(axis cs:6,0)
+--(axis cs:7,1)
+--(axis cs:8,1)
+--(axis cs:9,2)
+--(axis cs:10,2)
+--(axis cs:11,2)
+--(axis cs:12,3)
+--(axis cs:13,3)
+--(axis cs:14,4)
+--(axis cs:15,5)
+--(axis cs:16,6)
+--(axis cs:17,7)
+--(axis cs:18,8)
+--(axis cs:19,9)
+--(axis cs:20,10)
+--(axis cs:21,11)
+--(axis cs:22,12)
+--(axis cs:23,13)
+--(axis cs:23,13)
+--(axis cs:23,13)
+--(axis cs:22,12)
+--(axis cs:21,11)
+--(axis cs:20,10)
+--(axis cs:19,9)
+--(axis cs:18,8)
+--(axis cs:17,7)
+--(axis cs:16,6)
+--(axis cs:15,5)
+--(axis cs:14,4)
+--(axis cs:13,3)
+--(axis cs:12,3)
+--(axis cs:11,2)
+--(axis cs:10,2)
+--(axis cs:9,2)
+--(axis cs:8,1)
+--(axis cs:7,1)
+--(axis cs:6,0)
+--(axis cs:5,0)
+--(axis cs:4,0)
+--(axis cs:3,0)
+--(axis cs:2,0)
+--(axis cs:1,0)
+--cycle;
+
+\path [draw=forestgreen4416044, fill=forestgreen4416044, opacity=0.2, line width=0.32pt]
+(axis cs:1,0)
+--(axis cs:1,0)
+--(axis cs:2,0)
+--(axis cs:3,0)
+--(axis cs:4,0)
+--(axis cs:5,0)
+--(axis cs:6,0)
+--(axis cs:7,0)
+--(axis cs:8,0)
+--(axis cs:9,0)
+--(axis cs:10,1)
+--(axis cs:11,1)
+--(axis cs:12,1.42)
+--(axis cs:13,1.545)
+--(axis cs:14,1.745)
+--(axis cs:15,2.604875)
+--(axis cs:16,2.955)
+--(axis cs:17,3.154875)
+--(axis cs:18,4.08)
+--(axis cs:19,4.245)
+--(axis cs:20,5.009875)
+--(axis cs:21,5.865)
+--(axis cs:22,6.535)
+--(axis cs:23,7.24)
+--(axis cs:24,8.105)
+--(axis cs:25,8.68)
+--(axis cs:26,9.445)
+--(axis cs:27,9.754875)
+--(axis cs:28,10.074875)
+--(axis cs:29,10.655)
+--(axis cs:30,11.04)
+--(axis cs:31,11.645)
+--(axis cs:32,12.034875)
+--(axis cs:33,12.535)
+--(axis cs:34,13.14)
+--(axis cs:35,13.55)
+--(axis cs:36,14.225)
+--(axis cs:37,14.815)
+--(axis cs:38,15.34)
+--(axis cs:39,16.13)
+--(axis cs:40,16.85)
+--(axis cs:41,17.615)
+--(axis cs:42,18.58)
+--(axis cs:43,19)
+--(axis cs:44,20)
+--(axis cs:44,20)
+--(axis cs:44,20)
+--(axis cs:43,19)
+--(axis cs:42,18.835)
+--(axis cs:41,17.88)
+--(axis cs:40,17.08)
+--(axis cs:39,16.380125)
+--(axis cs:38,15.555)
+--(axis cs:37,15.060125)
+--(axis cs:36,14.54)
+--(axis cs:35,13.865)
+--(axis cs:34,13.475125)
+--(axis cs:33,12.87)
+--(axis cs:32,12.44)
+--(axis cs:31,12.010125)
+--(axis cs:30,11.425125)
+--(axis cs:29,11.035)
+--(axis cs:28,10.48)
+--(axis cs:27,10.15)
+--(axis cs:26,9.765125)
+--(axis cs:25,9.04)
+--(axis cs:24,8.435)
+--(axis cs:23,7.545)
+--(axis cs:22,6.775)
+--(axis cs:21,6.06)
+--(axis cs:20,5.175)
+--(axis cs:19,4.415)
+--(axis cs:18,4.205)
+--(axis cs:17,3.28)
+--(axis cs:16,2.995)
+--(axis cs:15,2.73)
+--(axis cs:14,1.925125)
+--(axis cs:13,1.68)
+--(axis cs:12,1.560125)
+--(axis cs:11,1)
+--(axis cs:10,1)
+--(axis cs:9,0)
+--(axis cs:8,0)
+--(axis cs:7,0)
+--(axis cs:6,0)
+--(axis cs:5,0)
+--(axis cs:4,0)
+--(axis cs:3,0)
+--(axis cs:2,0)
+--(axis cs:1,0)
+--cycle;
+
+\path [draw=forestgreen4416044, fill=forestgreen4416044, opacity=0.2, line width=0.32pt]
+(axis cs:1,0)
+--(axis cs:1,0)
+--(axis cs:2,0)
+--(axis cs:3,0)
+--(axis cs:4,0)
+--(axis cs:5,0)
+--(axis cs:6,0)
+--(axis cs:7,1)
+--(axis cs:8,1)
+--(axis cs:9,2)
+--(axis cs:10,2)
+--(axis cs:11,2)
+--(axis cs:12,3)
+--(axis cs:13,3)
+--(axis cs:14,4)
+--(axis cs:15,5)
+--(axis cs:16,6)
+--(axis cs:17,7)
+--(axis cs:18,8)
+--(axis cs:19,8.75)
+--(axis cs:20,9.63)
+--(axis cs:21,10)
+--(axis cs:22,10)
+--(axis cs:23,11)
+--(axis cs:24,11)
+--(axis cs:25,12)
+--(axis cs:26,12)
+--(axis cs:27,12)
+--(axis cs:28,13)
+--(axis cs:29,13)
+--(axis cs:30,14)
+--(axis cs:30,14)
+--(axis cs:30,14)
+--(axis cs:29,13)
+--(axis cs:28,13)
+--(axis cs:27,12)
+--(axis cs:26,12)
+--(axis cs:25,12)
+--(axis cs:24,11)
+--(axis cs:23,11)
+--(axis cs:22,10)
+--(axis cs:21,10)
+--(axis cs:20,9.76)
+--(axis cs:19,8.865)
+--(axis cs:18,8)
+--(axis cs:17,7)
+--(axis cs:16,6)
+--(axis cs:15,5)
+--(axis cs:14,4)
+--(axis cs:13,3)
+--(axis cs:12,3)
+--(axis cs:11,2)
+--(axis cs:10,2)
+--(axis cs:9,2)
+--(axis cs:8,1)
+--(axis cs:7,1)
+--(axis cs:6,0)
+--(axis cs:5,0)
+--(axis cs:4,0)
+--(axis cs:3,0)
+--(axis cs:2,0)
+--(axis cs:1,0)
+--cycle;
+
+\addplot [line width=0.48pt, steelblue31119180, mark=*, mark size=2.4, mark options={solid,draw=white}]
+table {%
+1 0
+2 1
+3 1
+4 1.42
+5 1.6
+6 2.035
+7 2.705
+8 3
+9 3
+10 4
+11 4
+12 4.395
+13 5.325
+14 6.245
+15 7.18
+16 8.045
+17 9.015
+18 10
+19 11
+20 12
+21 13
+22 14
+23 15
+24 16
+25 17
+26 18
+};
+\addplot [line width=0.48pt, steelblue31119180, dash pattern=on 4pt off 1.5pt, mark=x, mark size=2.4, mark options={solid,draw=white}]
+table {%
+1 0
+2 1
+3 1
+4 2
+5 2
+6 2
+7 3
+8 3
+9 4
+10 5
+11 6
+12 7
+13 8
+14 9
+15 10
+16 11
+17 12
+18 13
+};
+\addplot [line width=0.48pt, crimson2143940, mark=*, mark size=2.4, mark options={solid,draw=white}]
+table {%
+1 0
+2 0
+3 0
+4 0
+5 0
+6 0
+7 0
+8 0
+9 0
+10 1
+11 1
+12 1.33
+13 1.47
+14 1.855
+15 2.55
+16 3
+17 3
+18 4
+19 4
+20 4.41
+21 5.345
+22 6.31
+23 7.23
+24 8.07
+25 9.02
+26 10
+27 11
+28 12
+29 13
+30 14
+31 15
+32 16
+33 17
+34 18
+};
+\addplot [line width=0.48pt, crimson2143940, dash pattern=on 4pt off 1.5pt, mark=x, mark size=2.4, mark options={solid,draw=white}]
+table {%
+1 0
+2 0
+3 0
+4 0
+5 0
+6 0
+7 1
+8 1
+9 2
+10 2
+11 2
+12 3
+13 3
+14 4
+15 5
+16 6
+17 7
+18 8
+19 9
+20 10
+21 11
+22 12
+23 13
+};
+\addplot [line width=0.48pt, forestgreen4416044, mark=*, mark size=2.4, mark options={solid,draw=white}]
+table {%
+1 0
+2 0
+3 0
+4 0
+5 0
+6 0
+7 0
+8 0
+9 0
+10 1
+11 1
+12 1.49
+13 1.61
+14 1.835
+15 2.67
+16 2.975
+17 3.215
+18 4.14
+19 4.33
+20 5.09
+21 5.96
+22 6.655
+23 7.395
+24 8.27
+25 8.865
+26 9.605
+27 9.945
+28 10.275
+29 10.85
+30 11.235
+31 11.835
+32 12.245
+33 12.71
+34 13.31
+35 13.715
+36 14.38
+37 14.93
+38 15.45
+39 16.255
+40 16.965
+41 17.75
+42 18.705
+43 19
+44 20
+};
+\addplot [line width=0.48pt, forestgreen4416044, dash pattern=on 4pt off 1.5pt, mark=x, mark size=2.4, mark options={solid,draw=white}]
+table {%
+1 0
+2 0
+3 0
+4 0
+5 0
+6 0
+7 1
+8 1
+9 2
+10 2
+11 2
+12 3
+13 3
+14 4
+15 5
+16 6
+17 7
+18 8
+19 8.81
+20 9.695
+21 10
+22 10
+23 11
+24 11
+25 12
+26 12
+27 12
+28 13
+29 13
+30 14
+};
+\addplot [very thin, red, dashed]
+table {%
+7 -2.2
+7 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+9 -2.2
+9 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+12 -2.2
+12 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+14 -2.2
+14 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+15 -2.2
+15 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+16 -2.2
+16 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+17 -2.2
+17 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+18 -2.2
+18 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+19 -2.2
+19 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+20 -2.2
+20 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+22 -2.2
+22 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+23.5 -2.2
+23.5 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+25.5 -2.2
+25.5 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+30 -2.2
+30 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+31 -2.2
+31 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+32 -2.2
+32 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+33 -2.2
+33 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+34 -2.2
+34 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+43 -2.2
+43 46.2
+};
+\addplot [very thin, red, dashed]
+table {%
+44 -2.2
+44 46.2
+};
+\end{groupplot}
+
+\end{tikzpicture}

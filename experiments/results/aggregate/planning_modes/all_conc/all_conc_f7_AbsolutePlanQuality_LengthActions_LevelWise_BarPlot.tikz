@@ -1,0 +1,576 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{brown1926061}{RGB}{192,60,61}
+\definecolor{darkslategray38}{RGB}{38,38,38}
+\definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{lavender234234242}{RGB}{234,234,242}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{groupplot}[group style={group size=3 by 3, horizontal sep=0.1cm, vertical sep=0.1cm}]
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled x ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={problem: ps1 | planning\_mode: classical},
+width=\plotWidth,
+x grid style={white},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=2.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xticklabels={},
+y grid style={white},
+ylabel=\textcolor{darkslategray38}{Monolevel plan length and number of actions},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=95,
+ytick style={color=darkslategray38},
+ytick style={color=white}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,27);
+\addlegendimage{ybar,ybar legend,draw=white,fill=steelblue49115161,line width=0.32pt}
+\addlegendentry{LE}
+
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,18);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,13);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,40);
+\addlegendimage{ybar,ybar legend,draw=white,fill=brown1926061,line width=0.32pt}
+\addlegendentry{AC}
+
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,27);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,19);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.2 27
+-0.2 27
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.8 18
+0.8 18
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.8 13
+1.8 13
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.2 40
+0.2 40
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.2 27
+1.2 27
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.2 19
+2.2 19
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled x ticks=manual:{}{\pgfmathparse{#1}},
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={problem: ps2 | planning\_mode: classical},
+width=\plotWidth,
+x grid style={white},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=2.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xticklabels={},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=95,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,41);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,23);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,13);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,54);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,37);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,19);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.2 41
+-0.2 41
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.8 23
+0.8 23
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.8 13
+1.8 13
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.2 54
+0.2 54
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.2 37
+1.2 37
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.2 19
+2.2 19
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled x ticks=manual:{}{\pgfmathparse{#1}},
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={problem: ps3 | planning\_mode: classical},
+width=\plotWidth,
+x grid style={white},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=2.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xticklabels={},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=95,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,57);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,30);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,14);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,68);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,47);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,21);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.2 57
+-0.2 57
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.8 30
+0.8 30
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.8 14
+1.8 14
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.2 68
+0.2 68
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.2 47
+1.2 47
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.2 21
+2.2 21
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled x ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={problem: ps1 | planning\_mode: offline},
+width=\plotWidth,
+x grid style={white},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=2.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xticklabels={},
+y grid style={white},
+ylabel=\textcolor{darkslategray38}{Monolevel plan length and number of actions},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=95,
+ytick style={color=darkslategray38},
+ytick style={color=white}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,28);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,18);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,13);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,40);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,27);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,19);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.2 27
+-0.2 28
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.8 18
+0.8 18
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.8 13
+1.8 13
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.2 40
+0.2 40
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.2 27
+1.2 27
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.2 19
+2.2 19
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled x ticks=manual:{}{\pgfmathparse{#1}},
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={problem: ps2 | planning\_mode: offline},
+width=\plotWidth,
+x grid style={white},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=2.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xticklabels={},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=95,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,42);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,23);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,13);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,56);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,37);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,19);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.2 41
+-0.2 42
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.8 23
+0.8 23
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.8 13
+1.8 13
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.2 56
+0.2 56
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.2 37
+1.2 37
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.2 19
+2.2 19
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled x ticks=manual:{}{\pgfmathparse{#1}},
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={problem: ps3 | planning\_mode: offline},
+width=\plotWidth,
+x grid style={white},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=2.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xticklabels={},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=95,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,57);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,30);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,14);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,74);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,47);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,21);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.2 57
+-0.2 57
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.8 30
+0.8 30
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.8 14
+1.8 14
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.2 74
+0.2 74
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.2 47
+1.2 47
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.2 21
+2.2 21
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+tick align=outside,
+title={problem: ps1 | planning\_mode: online},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Abstraction level},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=2.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1,2},
+xticklabels={1.0,2.0,3.0},
+y grid style={white},
+ylabel=\textcolor{darkslategray38}{Monolevel plan length and number of actions},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=95,
+ytick style={color=darkslategray38},
+ytick style={color=white}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,32);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,18);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,13);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,44);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,27);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,19);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.2 32
+-0.2 32
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.8 18
+0.8 18
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.8 13
+1.8 13
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.2 44
+0.2 44
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.2 27
+1.2 27
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.2 19
+2.2 19
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={problem: ps2 | planning\_mode: online},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Abstraction level},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=2.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1,2},
+xticklabels={1.0,2.0,3.0},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=95,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,51);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,23);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,13);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,64);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,37);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,19);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.2 50
+-0.2 52
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.8 23
+0.8 23
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.8 13
+1.8 13
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.2 64
+0.2 65
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.2 37
+1.2 37
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.2 19
+2.2 19
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={problem: ps3 | planning\_mode: online},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Abstraction level},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=2.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1,2},
+xticklabels={1.0,2.0,3.0},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=95,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,67);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,30);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,14);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,84);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,47);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,21);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.2 67
+-0.2 69
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.8 30
+0.8 30
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.8 14
+1.8 14
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.2 82
+0.2 85
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.2 47
+1.2 47
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.2 21
+2.2 21
+};
+\end{groupplot}
+
+\end{tikzpicture}

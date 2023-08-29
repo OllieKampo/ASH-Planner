@@ -1,0 +1,111 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{brown1926061}{RGB}{192,60,61}
+\definecolor{darkslategray38}{RGB}{38,38,38}
+\definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{lavender234234242}{RGB}{234,234,242}
+\definecolor{seagreen5814558}{RGB}{58,145,58}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{axis}[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+log basis y={10},
+tick align=outside,
+title={problem: ps3},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Abstraction level},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=2.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1,2},
+xticklabels={1.0,2.0,3.0},
+y grid style={white},
+ylabel=\textcolor{darkslategray38}{Total planning time (s)},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=1.57238162300861, ymax=74.4894762603849,
+ymode=log,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+ytick={0.1,1,10,100,1000},
+yticklabels={
+  \(\displaystyle {10^{-1}}\),
+  \(\displaystyle {10^{0}}\),
+  \(\displaystyle {10^{1}}\),
+  \(\displaystyle {10^{2}}\),
+  \(\displaystyle {10^{3}}\)
+}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:-0.133333333333333,36.9385651);
+\addlegendimage{ybar,ybar legend,draw=white,fill=steelblue49115161,line width=0.32pt}
+\addlegendentry{minbound}
+
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:0.866666666666667,8.94751800000029);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:1.86666666666667,1.89194084999988);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-0.133333333333333,0) rectangle (axis cs:0.133333333333333,56.74420875);
+\addlegendimage{ybar,ybar legend,draw=white,fill=brown1926061,line width=0.32pt}
+\addlegendentry{standard}
+
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:0.866666666666667,0) rectangle (axis cs:1.13333333333333,12.0637187000002);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1.86666666666667,0) rectangle (axis cs:2.13333333333333,1.91291419999902);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:0.133333333333333,0) rectangle (axis cs:0.4,45.5347112499995);
+\addlegendimage{ybar,ybar legend,draw=white,fill=seagreen5814558,line width=0.32pt}
+\addlegendentry{yield}
+
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:1.13333333333333,0) rectangle (axis cs:1.4,8.02487540000004);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:2.13333333333333,0) rectangle (axis cs:2.4,1.90846469999968);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.266666666666667 35.2563974000002
+-0.266666666666667 41.3822240999991
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.733333333333333 8.33983615000007
+0.733333333333333 10.2596103000001
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.73333333333333 1.87378056625004
+1.73333333333333 1.93835969999992
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0 53.0343636000001
+0 62.5077907675002
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1 10.282444550001
+1 13.6259247
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2 1.8836036000003
+2 1.93011274999998
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.266666666666667 41.7226790000007
+0.266666666666667 49.9154662499993
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.26666666666667 7.40686559999938
+1.26666666666667 8.59778280000023
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.26666666666667 1.87600150000105
+2.26666666666667 1.94699049999917
+};
+\end{axis}
+
+\end{tikzpicture}

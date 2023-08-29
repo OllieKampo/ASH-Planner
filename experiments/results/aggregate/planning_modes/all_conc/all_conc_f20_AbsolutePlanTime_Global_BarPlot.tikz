@@ -1,0 +1,111 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{brown1926061}{RGB}{192,60,61}
+\definecolor{darkslategray38}{RGB}{38,38,38}
+\definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{lavender234234242}{RGB}{234,234,242}
+\definecolor{seagreen5814558}{RGB}{58,145,58}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{axis}[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+log basis y={10},
+tick align=outside,
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{problem},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=2.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1,2},
+xticklabels={ps1,ps2,ps3},
+y grid style={white},
+ylabel=\textcolor{darkslategray38}{Hierarchical Absolution Time (s)},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=5.5836507118793, ymax=166.534708889934,
+ymode=log,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+ytick={0.1,1,10,100,1000,10000},
+yticklabels={
+  \(\displaystyle {10^{-1}}\),
+  \(\displaystyle {10^{0}}\),
+  \(\displaystyle {10^{1}}\),
+  \(\displaystyle {10^{2}}\),
+  \(\displaystyle {10^{3}}\),
+  \(\displaystyle {10^{4}}\)
+}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:-0.133333333333333,6.5449157999999);
+\addlegendimage{ybar,ybar legend,draw=white,fill=steelblue49115161,line width=0.32pt}
+\addlegendentry{classical}
+
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:0.866666666666667,12.3922317999996);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:1.86666666666667,133.093055000001);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-0.133333333333333,0) rectangle (axis cs:0.133333333333333,9.93237610000005);
+\addlegendimage{ybar,ybar legend,draw=white,fill=brown1926061,line width=0.32pt}
+\addlegendentry{offline}
+
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:0.866666666666667,0) rectangle (axis cs:1.13333333333333,17.0015114999999);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1.86666666666667,0) rectangle (axis cs:2.13333333333333,32.1971623999995);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:0.133333333333333,0) rectangle (axis cs:0.4,10.0056231);
+\addlegendimage{ybar,ybar legend,draw=white,fill=seagreen5814558,line width=0.32pt}
+\addlegendentry{online}
+
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:1.13333333333333,0) rectangle (axis cs:1.4,14.7278232499995);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:2.13333333333333,0) rectangle (axis cs:2.4,19.2692972499996);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.266666666666667 6.51545729999995
+-0.266666666666667 6.57606390000001
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.733333333333333 12.2813348999996
+0.733333333333333 12.4905351000002
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.73333333333333 126.3205384
+1.73333333333333 142.717786799999
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0 9.62500109999993
+0 9.98674389250007
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1 16.2433495000002
+1 17.4747548000001
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2 31.5893339000005
+2 33.2858801999994
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.266666666666667 9.95837074999994
+0.266666666666667 10.0882003937503
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.26666666666667 14.6162483049995
+1.26666666666667 15.1953090087495
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.26666666666667 19.0816042912496
+2.26666666666667 19.6305119499996
+};
+\end{axis}
+
+\end{tikzpicture}

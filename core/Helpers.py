@@ -1,3 +1,26 @@
+###########################################################################
+###########################################################################
+## Module containing helper classes and functions used by ASH.           ##
+## Copyright (C)  2021  Oliver Michael Kamperis                          ##
+## Email: o.m.kamperis@gmail.com                                         ##
+##                                                                       ##
+## This program is free software: you can redistribute it and/or modify  ##
+## it under the terms of the GNU General Public License as published by  ##
+## the Free Software Foundation, either version 3 of the License, or     ##
+## any later version.                                                    ##
+##                                                                       ##
+## This program is distributed in the hope that it will be useful,       ##
+## but WITHOUT ANY WARRANTY; without even the implied warranty of        ##
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the          ##
+## GNU General Public License for more details.                          ##
+##                                                                       ##
+## You should have received a copy of the GNU General Public License     ##
+## along with this program. If not, see <https://www.gnu.org/licenses/>. ##
+###########################################################################
+###########################################################################
+
+"""Module containing helper classes and functions used by ASH."""
+
 import itertools
 import textwrap
 from abc import ABCMeta, abstractproperty
@@ -8,7 +31,7 @@ import _collections_abc
 def center_text(text: str, prefix_blank_line: bool = False, append_blank_line: bool = False,
                 framing_width: int = 0, frame_before: bool = True, frame_after: bool = True, framing_char: str = '=',
                 vbar_left: str = '', vbar_right: str = '', centering_width: int = 120, terminal_width: int = 160) -> str:
-    "Function for generating centered text for printing to the console."
+    """Function for generating centered text for printing to the console."""
     centered_text: str = ""
     free_space: int = framing_width - (len(vbar_left) + len(vbar_right))
     line_iter = itertools.chain(*[textwrap.wrap(f"{vbar_left + (' ' * ((free_space - len(part)) // 2)):>s}{part}{(' ' * ((free_space - len(part)) // 2)) + vbar_right:<s}",
@@ -23,8 +46,9 @@ def center_text(text: str, prefix_blank_line: bool = False, append_blank_line: b
 class AbstractionHierarchy(metaclass=ABCMeta):
     """
     Interface class for defining classes representing or containing abstraction hierarchies.
+
     Implementation requires overriding the single abstract property `top_level : int`.
-    
+
     Properties
     ----------
     `top_level : int` - The top level of abstraction hierarchy.
@@ -39,7 +63,7 @@ class AbstractionHierarchy(metaclass=ABCMeta):
     class SimpleHierarchy(AbstractionHierarchy):
         def __init__(self, top_level: int):
             if top_level < 1:
-                raise valueError("Top level must be a non-zero positive integer")
+                raise ValueError("Top level must be a non-zero positive integer")
             self.__top_level = top_level
         
         @property
@@ -77,6 +101,7 @@ class AbstractionHierarchy(metaclass=ABCMeta):
     -----
     This class declares no instance variables and an empty `__slots__`.
     """
+
     __slots__ = ()
     
     @property
@@ -99,6 +124,7 @@ class AbstractionHierarchy(metaclass=ABCMeta):
     def constrained_level_range(self, bottom_level: Optional[int] = None, top_level: Optional[int] = None) -> range:
         """
         A contiguous constrained range over the levels of the abstraction hierarchy.
+
         The returned range is `[max(1, bottom_level)-min(self.top_level, top_level)]`,
         and is always valid, such that all levels in the range and in the hierarchy.
         
@@ -175,9 +201,11 @@ class ReversableDict(_collections_abc.MutableMapping, Generic[KT, VT]):
     >>> dict_(2)
     ["C"]
     """
+    
     __slots__ = ("__dict", "__reversed_dict")
     
     def __init__(self, dict_: dict[KT, VT] = {}) -> None:
+        """Create a new reversable dictionary from a standard dictionary."""
         self.__dict: dict[KT, VT] = {}
         self.__reversed_dict: dict[VT, list[KT]] = {}
         for key, value in dict_.items():

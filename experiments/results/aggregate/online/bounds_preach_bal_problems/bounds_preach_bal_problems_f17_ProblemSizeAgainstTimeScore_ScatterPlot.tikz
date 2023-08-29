@@ -1,0 +1,426 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{crimson2143940}{RGB}{214,39,40}
+\definecolor{darkslategray38}{RGB}{38,38,38}
+\definecolor{forestgreen4416044}{RGB}{44,160,44}
+\definecolor{lavender234234242}{RGB}{234,234,242}
+\definecolor{steelblue31119180}{RGB}{31,119,180}
+
+\begin{groupplot}[group style={group size=8 by 1, horizontal sep=0.1cm, vertical sep=0.1cm}]
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+tick align=outside,
+title={online\_bounds: (2, 2)},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Problem size},
+xmajorgrids,
+xmajorticks=false,
+xmajorticks=true,
+xmin=1.5875, xmax=10.6625,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+y grid style={white},
+ylabel=\textcolor{darkslategray38}{Time score},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=1,
+ytick style={color=darkslategray38},
+ytick style={color=white}
+]
+\addplot [
+  draw=white,
+  mark=*,
+  only marks,
+  scatter,
+  scatter/@post marker code/.code={%
+  \endscope
+},
+  scatter/@pre marker code/.code={%
+  \expanded{%
+  \noexpand\definecolor{thispointdrawcolor}{RGB}{\drawcolor}%
+  \noexpand\definecolor{thispointfillcolor}{RGB}{\fillcolor}%
+  }%
+  \scope[draw=thispointdrawcolor, fill=thispointfillcolor]%
+},
+  visualization depends on={value \thisrow{draw} \as \drawcolor},
+  visualization depends on={value \thisrow{fill} \as \fillcolor}
+]
+table{%
+x  y  fill
+7.75 1 31,119,180
+8.75 0.979848793425377 214,39,40
+10.25 0.955597396771777 44,160,44
+};
+\addplot [draw=steelblue31119180, fill=steelblue31119180, mark=*, only marks]
+table{%
+x  y
+};
+\addplot [draw=crimson2143940, fill=crimson2143940, mark=*, only marks]
+table{%
+x  y
+};
+\addplot [draw=forestgreen4416044, fill=forestgreen4416044, mark=*, only marks]
+table{%
+x  y
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={online\_bounds: (2, 4)},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Problem size},
+xmajorgrids,
+xmajorticks=false,
+xmajorticks=true,
+xmin=1.5875, xmax=10.6625,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=1,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\addplot [
+  draw=white,
+  mark=*,
+  only marks,
+  scatter,
+  scatter/@post marker code/.code={%
+  \endscope
+},
+  scatter/@pre marker code/.code={%
+  \expanded{%
+  \noexpand\definecolor{thispointdrawcolor}{RGB}{\drawcolor}%
+  \noexpand\definecolor{thispointfillcolor}{RGB}{\fillcolor}%
+  }%
+  \scope[draw=thispointdrawcolor, fill=thispointfillcolor]%
+},
+  visualization depends on={value \thisrow{draw} \as \drawcolor},
+  visualization depends on={value \thisrow{fill} \as \fillcolor}
+]
+table{%
+x  y  fill
+6.25 1 31,119,180
+6.75 0.99272848514112 214,39,40
+7.75 0.970134576245198 44,160,44
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={online\_bounds: (2, 6)},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Problem size},
+xmajorgrids,
+xmajorticks=false,
+xmajorticks=true,
+xmin=1.5875, xmax=10.6625,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=1,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\addplot [
+  draw=white,
+  mark=*,
+  only marks,
+  scatter,
+  scatter/@post marker code/.code={%
+  \endscope
+},
+  scatter/@pre marker code/.code={%
+  \expanded{%
+  \noexpand\definecolor{thispointdrawcolor}{RGB}{\drawcolor}%
+  \noexpand\definecolor{thispointfillcolor}{RGB}{\fillcolor}%
+  }%
+  \scope[draw=thispointdrawcolor, fill=thispointfillcolor]%
+},
+  visualization depends on={value \thisrow{draw} \as \drawcolor},
+  visualization depends on={value \thisrow{fill} \as \fillcolor}
+]
+table{%
+x  y  fill
+5.5 1 31,119,180
+6 1 214,39,40
+7 0.991280475353811 44,160,44
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={online\_bounds: (4, 2)},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Problem size},
+xmajorgrids,
+xmajorticks=false,
+xmajorticks=true,
+xmin=1.5875, xmax=10.6625,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=1,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\addplot [
+  draw=white,
+  mark=*,
+  only marks,
+  scatter,
+  scatter/@post marker code/.code={%
+  \endscope
+},
+  scatter/@pre marker code/.code={%
+  \expanded{%
+  \noexpand\definecolor{thispointdrawcolor}{RGB}{\drawcolor}%
+  \noexpand\definecolor{thispointfillcolor}{RGB}{\fillcolor}%
+  }%
+  \scope[draw=thispointdrawcolor, fill=thispointfillcolor]%
+},
+  visualization depends on={value \thisrow{draw} \as \drawcolor},
+  visualization depends on={value \thisrow{fill} \as \fillcolor}
+]
+table{%
+x  y  fill
+3.75 1 31,119,180
+3.75 0.998332526711608 214,39,40
+5 0.989571335586026 44,160,44
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={online\_bounds: (4, 4)},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Problem size},
+xmajorgrids,
+xmajorticks=false,
+xmajorticks=true,
+xmin=1.5875, xmax=10.6625,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=1,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\addplot [
+  draw=white,
+  mark=*,
+  only marks,
+  scatter,
+  scatter/@post marker code/.code={%
+  \endscope
+},
+  scatter/@pre marker code/.code={%
+  \expanded{%
+  \noexpand\definecolor{thispointdrawcolor}{RGB}{\drawcolor}%
+  \noexpand\definecolor{thispointfillcolor}{RGB}{\fillcolor}%
+  }%
+  \scope[draw=thispointdrawcolor, fill=thispointfillcolor]%
+},
+  visualization depends on={value \thisrow{draw} \as \drawcolor},
+  visualization depends on={value \thisrow{fill} \as \fillcolor}
+]
+table{%
+x  y  fill
+3 1 31,119,180
+4 1 44,160,44
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={online\_bounds: (4, 6)},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Problem size},
+xmajorgrids,
+xmajorticks=false,
+xmajorticks=true,
+xmin=1.5875, xmax=10.6625,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=1,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\addplot [
+  draw=white,
+  mark=*,
+  only marks,
+  scatter,
+  scatter/@post marker code/.code={%
+  \endscope
+},
+  scatter/@pre marker code/.code={%
+  \expanded{%
+  \noexpand\definecolor{thispointdrawcolor}{RGB}{\drawcolor}%
+  \noexpand\definecolor{thispointfillcolor}{RGB}{\fillcolor}%
+  }%
+  \scope[draw=thispointdrawcolor, fill=thispointfillcolor]%
+},
+  visualization depends on={value \thisrow{draw} \as \drawcolor},
+  visualization depends on={value \thisrow{fill} \as \fillcolor}
+]
+table{%
+x  y  fill
+2.75 1 31,119,180
+3.5 1 44,160,44
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={online\_bounds: (6, 2)},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Problem size},
+xmajorgrids,
+xmajorticks=false,
+xmajorticks=true,
+xmin=1.5875, xmax=10.6625,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=1,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\addplot [
+  draw=white,
+  mark=*,
+  only marks,
+  scatter,
+  scatter/@post marker code/.code={%
+  \endscope
+},
+  scatter/@pre marker code/.code={%
+  \expanded{%
+  \noexpand\definecolor{thispointdrawcolor}{RGB}{\drawcolor}%
+  \noexpand\definecolor{thispointfillcolor}{RGB}{\fillcolor}%
+  }%
+  \scope[draw=thispointdrawcolor, fill=thispointfillcolor]%
+},
+  visualization depends on={value \thisrow{draw} \as \drawcolor},
+  visualization depends on={value \thisrow{fill} \as \fillcolor}
+]
+table{%
+x  y  fill
+2.5 1 31,119,180
+3.25 1 214,39,40
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={online\_bounds: (6, 4)},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Problem size},
+xmajorgrids,
+xmajorticks=false,
+xmajorticks=true,
+xmin=1.5875, xmax=10.6625,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=1,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\addplot [draw=none, draw=white, fill=steelblue31119180, mark=*]
+table{%
+x  y
+0 -0.5
+0.13260155 -0.5
+0.259789935392427 -0.447316845794121
+0.353553390593274 -0.353553390593274
+0.447316845794121 -0.259789935392427
+0.5 -0.13260155
+0.5 0
+0.5 0.13260155
+0.447316845794121 0.259789935392427
+0.353553390593274 0.353553390593274
+0.259789935392427 0.447316845794121
+0.13260155 0.5
+0 0.5
+-0.13260155 0.5
+-0.259789935392427 0.447316845794121
+-0.353553390593274 0.353553390593274
+-0.447316845794121 0.259789935392427
+-0.5 0.13260155
+-0.5 0
+-0.5 -0.13260155
+-0.447316845794121 -0.259789935392427
+-0.353553390593274 -0.353553390593274
+-0.259789935392427 -0.447316845794121
+-0.13260155 -0.5
+0 -0.5
+0 -0.5
+};
+\end{groupplot}
+
+\end{tikzpicture}

@@ -1,0 +1,322 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{brown1926061}{RGB}{192,60,61}
+\definecolor{darkslategray38}{RGB}{38,38,38}
+\definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{lavender234234242}{RGB}{234,234,242}
+\definecolor{peru22412844}{RGB}{224,128,44}
+\definecolor{seagreen5814558}{RGB}{58,145,58}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{groupplot}[group style={group size=3 by 1, horizontal sep=0.1cm, vertical sep=0.1cm}]
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+tick align=outside,
+title={problem: ps1},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Abstraction level},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=2.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1,2},
+xticklabels={1.0,2.0,3.0},
+y grid style={white},
+ylabel=\textcolor{darkslategray38}{Monolevel plan length},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=79,
+ytick style={color=darkslategray38},
+ytick style={color=white}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:-0.2,36.5);
+\addlegendimage{ybar,ybar legend,draw=white,fill=steelblue49115161,line width=0.32pt}
+\addlegendentry{NONE}
+
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:0.8,22);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:1.8,15.5);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-0.2,0) rectangle (axis cs:0,34);
+\addlegendimage{ybar,ybar legend,draw=white,fill=brown1926061,line width=0.32pt}
+\addlegendentry{1}
+
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:0.8,0) rectangle (axis cs:1,22);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1.8,0) rectangle (axis cs:2,15.5);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:2.77555756156289e-17,0) rectangle (axis cs:0.2,32.5);
+\addlegendimage{ybar,ybar legend,draw=white,fill=seagreen5814558,line width=0.32pt}
+\addlegendentry{2}
+
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.2,22);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.2,15.5);
+\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:0.2,0) rectangle (axis cs:0.4,32);
+\addlegendimage{ybar,ybar legend,draw=white,fill=peru22412844,line width=0.32pt}
+\addlegendentry{3}
+
+\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:1.2,0) rectangle (axis cs:1.4,22);
+\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:2.2,0) rectangle (axis cs:2.4,15.5);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.3 34
+-0.3 39
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.7 18
+0.7 26
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.7 13
+1.7 18
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.1 29
+-0.1 39
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.9 18
+0.9 26
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.9 13
+1.9 18
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.1 29
+0.1 36
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.1 18
+1.1 26
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.1 13
+2.1 18
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.3 29
+0.3 35
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.3 18
+1.3 26
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.3 13
+2.3 18
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={problem: ps2},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Abstraction level},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=2.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1,2},
+xticklabels={1.0,2.0,3.0},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=79,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:-0.2,53);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:0.8,28.5);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:1.8,15.5);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-0.2,0) rectangle (axis cs:0,49);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:0.8,0) rectangle (axis cs:1,28.5);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1.8,0) rectangle (axis cs:2,15.5);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:2.77555756156289e-17,0) rectangle (axis cs:0.2,47);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.2,28.5);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.2,15.5);
+\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:0.2,0) rectangle (axis cs:0.4,46.5);
+\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:1.2,0) rectangle (axis cs:1.4,28.5);
+\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:2.2,0) rectangle (axis cs:2.4,15.5);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.3 53
+-0.3 53
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.7 23
+0.7 34
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.7 13
+1.7 18
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.1 44
+-0.1 53
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.9 23
+0.9 34
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.9 13
+1.9 18
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.1 44
+0.1 52
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.1 23
+1.1 34
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.1 13
+2.1 18
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.3 44
+0.3 49
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.3 23
+1.3 34
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.3 13
+2.3 18
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={problem: ps3},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Abstraction level},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=2.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1,2},
+xticklabels={1.0,2.0,3.0},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=79,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:-0.2,71);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:0.8,36);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:1.8,17);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-0.2,0) rectangle (axis cs:0,65);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:0.8,0) rectangle (axis cs:1,36);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1.8,0) rectangle (axis cs:2,17);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:2.77555756156289e-17,0) rectangle (axis cs:0.2,63);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.2,36);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.2,17);
+\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:0.2,0) rectangle (axis cs:0.4,61.5);
+\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:1.2,0) rectangle (axis cs:1.4,36);
+\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:2.2,0) rectangle (axis cs:2.4,17);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.3 70
+-0.3 71
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.7 30
+0.7 42
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.7 14
+1.7 20
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.1 60
+-0.1 69
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.9 30
+0.9 42
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.9 14
+1.9 20
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.1 60
+0.1 69
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.1 30
+1.1 42
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.1 14
+2.1 20
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.3 58
+0.3 67
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.3 30
+1.3 42
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.3 14
+2.3 20
+};
+\end{groupplot}
+
+\end{tikzpicture}

@@ -1,0 +1,2891 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{brown1926061}{RGB}{192,60,61}
+\definecolor{darkslategray38}{RGB}{38,38,38}
+\definecolor{darkslategray61}{RGB}{61,61,61}
+\definecolor{lavender234234242}{RGB}{234,234,242}
+\definecolor{lightseagreen45171184}{RGB}{45,171,184}
+\definecolor{orchid213132188}{RGB}{213,132,188}
+\definecolor{peru22412844}{RGB}{224,128,44}
+\definecolor{seagreen5814558}{RGB}{58,145,58}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{groupplot}[group style={group size=6 by 1, horizontal sep=0.1cm, vertical sep=0.1cm}]
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+tick align=outside,
+title={online\_bounds: (0.5, 0.5)},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Level},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=1.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1},
+xticklabels={1.0,2.0},
+y grid style={white},
+ylabel=\textcolor{darkslategray38}{Partial-problem size and partial-plan length},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=-0.188068181818182, ymax=4.19943181818182,
+ytick style={color=darkslategray38},
+ytick style={color=white}
+]
+\path [draw=darkslategray61, fill=steelblue49115161, line width=0.48pt]
+(axis cs:-0.398666666666667,0.0494047619047619)
+--(axis cs:-0.268,0.0494047619047619)
+--(axis cs:-0.268,0.0625)
+--(axis cs:-0.398666666666667,0.0625)
+--(axis cs:-0.398666666666667,0.0494047619047619)
+--cycle;
+\path [draw=darkslategray61, fill=brown1926061, line width=0.48pt]
+(axis cs:-0.265333333333333,0.299390670633791)
+--(axis cs:-0.134666666666667,0.299390670633791)
+--(axis cs:-0.134666666666667,0.387164044146631)
+--(axis cs:-0.265333333333333,0.387164044146631)
+--(axis cs:-0.265333333333333,0.299390670633791)
+--cycle;
+\path [draw=darkslategray61, fill=seagreen5814558, line width=0.48pt]
+(axis cs:-0.132,0.243132411067194)
+--(axis cs:-0.00133333333333327,0.243132411067194)
+--(axis cs:-0.00133333333333327,0.400696033562167)
+--(axis cs:-0.132,0.400696033562167)
+--(axis cs:-0.132,0.243132411067194)
+--cycle;
+\path [draw=darkslategray61, fill=peru22412844, line width=0.48pt]
+(axis cs:0.00133333333333344,1.5)
+--(axis cs:0.132,1.5)
+--(axis cs:0.132,1.58333333333333)
+--(axis cs:0.00133333333333344,1.58333333333333)
+--(axis cs:0.00133333333333344,1.5)
+--cycle;
+\path [draw=darkslategray61, fill=lightseagreen45171184, line width=0.48pt]
+(axis cs:0.134666666666667,0.374888197983426)
+--(axis cs:0.265333333333333,0.374888197983426)
+--(axis cs:0.265333333333333,0.590318806094802)
+--(axis cs:0.134666666666667,0.590318806094802)
+--(axis cs:0.134666666666667,0.374888197983426)
+--cycle;
+\path [draw=darkslategray61, fill=orchid213132188, line width=0.48pt]
+(axis cs:0.268,0.21797520661157)
+--(axis cs:0.398666666666667,0.21797520661157)
+--(axis cs:0.398666666666667,0.33853298404382)
+--(axis cs:0.268,0.33853298404382)
+--(axis cs:0.268,0.21797520661157)
+--cycle;
+\path [draw=darkslategray61, fill=steelblue49115161, line width=0.48pt]
+(axis cs:0.601333333333333,0.125)
+--(axis cs:0.732,0.125)
+--(axis cs:0.732,0.166666666666667)
+--(axis cs:0.601333333333333,0.166666666666667)
+--(axis cs:0.601333333333333,0.125)
+--cycle;
+\path [draw=darkslategray61, fill=brown1926061, line width=0.48pt]
+(axis cs:0.734666666666667,0.525357021462548)
+--(axis cs:0.865333333333333,0.525357021462548)
+--(axis cs:0.865333333333333,0.676123403782813)
+--(axis cs:0.734666666666667,0.676123403782813)
+--(axis cs:0.734666666666667,0.525357021462548)
+--cycle;
+\path [draw=darkslategray61, fill=seagreen5814558, line width=0.48pt]
+(axis cs:0.868,0.4421875)
+--(axis cs:0.998666666666667,0.4421875)
+--(axis cs:0.998666666666667,0.65625)
+--(axis cs:0.868,0.65625)
+--(axis cs:0.868,0.4421875)
+--cycle;
+\path [draw=darkslategray61, fill=peru22412844, line width=0.48pt]
+(axis cs:1.00133333333333,2.20833333333333)
+--(axis cs:1.132,2.20833333333333)
+--(axis cs:1.132,2.66666666666667)
+--(axis cs:1.00133333333333,2.66666666666667)
+--(axis cs:1.00133333333333,2.20833333333333)
+--cycle;
+\path [draw=darkslategray61, fill=lightseagreen45171184, line width=0.48pt]
+(axis cs:1.13466666666667,0.892273090898219)
+--(axis cs:1.26533333333333,0.892273090898219)
+--(axis cs:1.26533333333333,1.23734723920525)
+--(axis cs:1.13466666666667,1.23734723920525)
+--(axis cs:1.13466666666667,0.892273090898219)
+--cycle;
+\path [draw=darkslategray61, fill=orchid213132188, line width=0.48pt]
+(axis cs:1.268,0.14212228101117)
+--(axis cs:1.39866666666667,0.14212228101117)
+--(axis cs:1.39866666666667,0.264106951154053)
+--(axis cs:1.268,0.264106951154053)
+--(axis cs:1.268,0.14212228101117)
+--cycle;
+\draw[draw=darkslategray61,fill=steelblue49115161,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\addlegendimage{ybar,ybar legend,draw=darkslategray61,fill=steelblue49115161,line width=0.24pt}
+\addlegendentry{PR_TS_F_MEAN}
+
+\draw[draw=darkslategray61,fill=brown1926061,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\addlegendimage{ybar,ybar legend,draw=darkslategray61,fill=brown1926061,line width=0.24pt}
+\addlegendentry{PR_TS_CD}
+
+\draw[draw=darkslategray61,fill=seagreen5814558,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\addlegendimage{ybar,ybar legend,draw=darkslategray61,fill=seagreen5814558,line width=0.24pt}
+\addlegendentry{DIV_INDEX_NMAE}
+
+\draw[draw=darkslategray61,fill=peru22412844,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\addlegendimage{ybar,ybar legend,draw=darkslategray61,fill=peru22412844,line width=0.24pt}
+\addlegendentry{PP_EF_LE_MED}
+
+\draw[draw=darkslategray61,fill=lightseagreen45171184,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\addlegendimage{ybar,ybar legend,draw=darkslategray61,fill=lightseagreen45171184,line width=0.24pt}
+\addlegendentry{PP_EB_L}
+
+\draw[draw=darkslategray61,fill=orchid213132188,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\addlegendimage{ybar,ybar legend,draw=darkslategray61,fill=orchid213132188,line width=0.24pt}
+\addlegendentry{DIV_STEP_NMAE}
+
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.333333333333333 0.0494047619047619
+-0.333333333333333 0.04
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.333333333333333 0.0625
+-0.333333333333333 0.0714285714285714
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.366 0.04
+-0.300666666666667 0.04
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.366 0.0714285714285714
+-0.300666666666667 0.0714285714285714
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.2 0.299390670633791
+-0.2 0.184598213487169
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.2 0.387164044146631
+-0.2 0.488042267840079
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.232666666666667 0.184598213487169
+-0.167333333333333 0.184598213487169
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.232666666666667 0.488042267840079
+-0.167333333333333 0.488042267840079
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0666666666666666 0.243132411067194
+-0.0666666666666666 0.0973557692307693
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0666666666666666 0.400696033562167
+-0.0666666666666666 0.636363636363637
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0993333333333333 0.0973557692307693
+-0.0339999999999999 0.0973557692307693
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0993333333333333 0.636363636363637
+-0.0339999999999999 0.636363636363637
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+-0.0666666666666666 0.725490196078431
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0666666666666668 1.5
+0.0666666666666668 1.41666666666667
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0666666666666668 1.58333333333333
+0.0666666666666668 1.66666666666667
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0340000000000001 1.41666666666667
+0.0993333333333334 1.41666666666667
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0340000000000001 1.66666666666667
+0.0993333333333334 1.66666666666667
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+0.0666666666666668 1.375
+0.0666666666666668 1.33333333333333
+0.0666666666666668 1.33333333333333
+0.0666666666666668 1.33333333333333
+0.0666666666666668 1.25
+0.0666666666666668 1.33333333333333
+0.0666666666666668 1.375
+0.0666666666666668 1.33333333333333
+0.0666666666666668 1.33333333333333
+0.0666666666666668 1.33333333333333
+0.0666666666666668 1.33333333333333
+0.0666666666666668 1.33333333333333
+0.0666666666666668 1.83333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.2 0.374888197983426
+0.2 0.273649884449563
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.2 0.590318806094802
+0.2 0.816264489113917
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.167333333333333 0.273649884449563
+0.232666666666667 0.273649884449563
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.167333333333333 0.816264489113917
+0.232666666666667 0.816264489113917
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.333333333333333 0.21797520661157
+0.333333333333333 0.147203947368421
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.333333333333333 0.33853298404382
+0.333333333333333 0.502717391304348
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.300666666666667 0.147203947368421
+0.366 0.147203947368421
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.300666666666667 0.502717391304348
+0.366 0.502717391304348
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+0.333333333333333 0.652173913043479
+0.333333333333333 0.623211446740858
+0.333333333333333 0.671641791044776
+0.333333333333333 0.528344671201814
+0.333333333333333 0.581818181818182
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.666666666666667 0.125
+0.666666666666667 0.111111111111111
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.666666666666667 0.166666666666667
+0.666666666666667 0.166666666666667
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.634 0.111111111111111
+0.699333333333333 0.111111111111111
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.634 0.166666666666667
+0.699333333333333 0.166666666666667
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.8 0.525357021462548
+0.8 0.409878030638384
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.8 0.676123403782813
+0.8 0.890692614392492
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.767333333333333 0.409878030638384
+0.832666666666667 0.409878030638384
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.767333333333333 0.890692614392492
+0.832666666666667 0.890692614392492
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.933333333333333 0.4421875
+0.933333333333333 0.242857142857143
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.933333333333333 0.65625
+0.933333333333333 0.933333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.900666666666667 0.242857142857143
+0.966 0.242857142857143
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.900666666666667 0.933333333333333
+0.966 0.933333333333333
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+0.933333333333333 0.977777777777778
+0.933333333333333 1.11111111111111
+0.933333333333333 1.11111111111111
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.06666666666667 2.20833333333333
+1.06666666666667 2
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.06666666666667 2.66666666666667
+1.06666666666667 3.33333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.034 2
+1.09933333333333 2
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.034 3.33333333333333
+1.09933333333333 3.33333333333333
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+1.06666666666667 3.5
+1.06666666666667 3.83333333333333
+1.06666666666667 3.5
+1.06666666666667 3.83333333333333
+1.06666666666667 3.83333333333333
+1.06666666666667 3.45833333333333
+1.06666666666667 3.83333333333333
+1.06666666666667 3.5
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.2 0.892273090898219
+1.2 0.798756845413423
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.2 1.23734723920525
+1.2 1.47416953500818
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.16733333333333 0.798756845413423
+1.23266666666667 0.798756845413423
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.16733333333333 1.47416953500818
+1.23266666666667 1.47416953500818
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.33333333333333 0.14212228101117
+1.33333333333333 0.0621118012422359
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.33333333333333 0.264106951154053
+1.33333333333333 0.444444444444444
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.30066666666667 0.0621118012422359
+1.366 0.0621118012422359
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.30066666666667 0.444444444444444
+1.366 0.444444444444444
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+1.33333333333333 0.525462962962963
+1.33333333333333 0.476851851851852
+1.33333333333333 0.476851851851852
+1.33333333333333 0.476851851851852
+1.33333333333333 0.476851851851852
+1.33333333333333 0.525462962962963
+1.33333333333333 0.476851851851852
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.398666666666667 0.0555555555555556
+-0.268 0.0555555555555556
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.265333333333333 0.348034903678079
+-0.134666666666667 0.348034903678079
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.132 0.296164772727273
+-0.00133333333333327 0.296164772727273
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.00133333333333344 1.5
+0.132 1.5
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.134666666666667 0.496048572504342
+0.265333333333333 0.496048572504342
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.268 0.272363636363636
+0.398666666666667 0.272363636363636
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.601333333333333 0.142857142857143
+0.732 0.142857142857143
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.734666666666667 0.619677335393187
+0.865333333333333 0.619677335393187
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.868 0.557142857142857
+0.998666666666667 0.557142857142857
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.00133333333333 2.33333333333333
+1.132 2.33333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.13466666666667 1.02763468106187
+1.26533333333333 1.02763468106187
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.268 0.211615449991054
+1.39866666666667 0.211615449991054
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={online\_bounds: (1.0, 0.5)},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Level},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=1.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1},
+xticklabels={1.0,2.0},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=-0.188068181818182, ymax=4.19943181818182,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\path [draw=darkslategray61, fill=steelblue49115161, line width=0.48pt]
+(axis cs:-0.398666666666667,0.0555555555555555)
+--(axis cs:-0.268,0.0555555555555555)
+--(axis cs:-0.268,0.0714285714285714)
+--(axis cs:-0.398666666666667,0.0714285714285714)
+--(axis cs:-0.398666666666667,0.0555555555555555)
+--cycle;
+\path [draw=darkslategray61, fill=brown1926061, line width=0.48pt]
+(axis cs:-0.265333333333333,0.330296804316123)
+--(axis cs:-0.134666666666667,0.330296804316123)
+--(axis cs:-0.134666666666667,0.400346395388579)
+--(axis cs:-0.265333333333333,0.400346395388579)
+--(axis cs:-0.265333333333333,0.330296804316123)
+--cycle;
+\path [draw=darkslategray61, fill=seagreen5814558, line width=0.48pt]
+(axis cs:-0.132,0.214393939393939)
+--(axis cs:-0.00133333333333327,0.214393939393939)
+--(axis cs:-0.00133333333333327,0.365166083916084)
+--(axis cs:-0.132,0.365166083916084)
+--(axis cs:-0.132,0.214393939393939)
+--cycle;
+\path [draw=darkslategray61, fill=peru22412844, line width=0.48pt]
+(axis cs:0.00133333333333344,1.58333333333333)
+--(axis cs:0.132,1.58333333333333)
+--(axis cs:0.132,1.66666666666667)
+--(axis cs:0.00133333333333344,1.66666666666667)
+--(axis cs:0.00133333333333344,1.58333333333333)
+--cycle;
+\path [draw=darkslategray61, fill=lightseagreen45171184, line width=0.48pt]
+(axis cs:0.134666666666667,0.36043231043436)
+--(axis cs:0.265333333333333,0.36043231043436)
+--(axis cs:0.265333333333333,0.642875181653851)
+--(axis cs:0.134666666666667,0.642875181653851)
+--(axis cs:0.134666666666667,0.36043231043436)
+--cycle;
+\path [draw=darkslategray61, fill=orchid213132188, line width=0.48pt]
+(axis cs:0.268,0.22405096315914)
+--(axis cs:0.398666666666667,0.22405096315914)
+--(axis cs:0.398666666666667,0.47981220657277)
+--(axis cs:0.268,0.47981220657277)
+--(axis cs:0.268,0.22405096315914)
+--cycle;
+\path [draw=darkslategray61, fill=steelblue49115161, line width=0.48pt]
+(axis cs:0.601333333333333,0.25)
+--(axis cs:0.732,0.25)
+--(axis cs:0.732,0.25)
+--(axis cs:0.601333333333333,0.25)
+--(axis cs:0.601333333333333,0.25)
+--cycle;
+\path [draw=darkslategray61, fill=brown1926061, line width=0.48pt]
+(axis cs:0.734666666666667,0.377491721763538)
+--(axis cs:0.865333333333333,0.377491721763538)
+--(axis cs:0.865333333333333,0.522698974698008)
+--(axis cs:0.734666666666667,0.522698974698008)
+--(axis cs:0.734666666666667,0.377491721763538)
+--cycle;
+\path [draw=darkslategray61, fill=seagreen5814558, line width=0.48pt]
+(axis cs:0.868,0.16)
+--(axis cs:0.998666666666667,0.16)
+--(axis cs:0.998666666666667,0.28)
+--(axis cs:0.868,0.28)
+--(axis cs:0.868,0.16)
+--cycle;
+\path [draw=darkslategray61, fill=peru22412844, line width=0.48pt]
+(axis cs:1.00133333333333,1.90694444444444)
+--(axis cs:1.132,1.90694444444444)
+--(axis cs:1.132,2.75)
+--(axis cs:1.00133333333333,2.75)
+--(axis cs:1.00133333333333,1.90694444444444)
+--cycle;
+\path [draw=darkslategray61, fill=lightseagreen45171184, line width=0.48pt]
+(axis cs:1.13466666666667,0.540983131695814)
+--(axis cs:1.26533333333333,0.540983131695814)
+--(axis cs:1.26533333333333,0.762157860034177)
+--(axis cs:1.13466666666667,0.762157860034177)
+--(axis cs:1.13466666666667,0.540983131695814)
+--cycle;
+\path [draw=darkslategray61, fill=orchid213132188, line width=0.48pt]
+(axis cs:1.268,0.0852272727272728)
+--(axis cs:1.39866666666667,0.0852272727272728)
+--(axis cs:1.39866666666667,0.272727272727273)
+--(axis cs:1.268,0.272727272727273)
+--(axis cs:1.268,0.0852272727272728)
+--cycle;
+\draw[draw=darkslategray61,fill=steelblue49115161,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=brown1926061,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=seagreen5814558,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=peru22412844,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=lightseagreen45171184,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=orchid213132188,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.333333333333333 0.0555555555555555
+-0.333333333333333 0.0434782608695652
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.333333333333333 0.0714285714285714
+-0.333333333333333 0.0769230769230769
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.366 0.0434782608695652
+-0.300666666666667 0.0434782608695652
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.366 0.0769230769230769
+-0.300666666666667 0.0769230769230769
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.2 0.330296804316123
+-0.2 0.256962281911312
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.2 0.400346395388579
+-0.2 0.47284588921431
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.232666666666667 0.256962281911312
+-0.167333333333333 0.256962281911312
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.232666666666667 0.47284588921431
+-0.167333333333333 0.47284588921431
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+-0.2 0.506161304423651
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0666666666666666 0.214393939393939
+-0.0666666666666666 0.113945578231292
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0666666666666666 0.365166083916084
+-0.0666666666666666 0.553977272727273
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0993333333333333 0.113945578231292
+-0.0339999999999999 0.113945578231292
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0993333333333333 0.553977272727273
+-0.0339999999999999 0.553977272727273
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+-0.0666666666666666 0.621969696969697
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0666666666666668 1.58333333333333
+0.0666666666666668 1.5
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0666666666666668 1.66666666666667
+0.0666666666666668 1.75
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0340000000000001 1.5
+0.0993333333333334 1.5
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0340000000000001 1.75
+0.0993333333333334 1.75
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+0.0666666666666668 1.41666666666667
+0.0666666666666668 2
+0.0666666666666668 1.83333333333333
+0.0666666666666668 1.83333333333333
+0.0666666666666668 2
+0.0666666666666668 2
+0.0666666666666668 2
+0.0666666666666668 2
+0.0666666666666668 1.875
+0.0666666666666668 2
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.2 0.36043231043436
+0.2 0.315196053108214
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.2 0.642875181653851
+0.2 0.875382725774693
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.167333333333333 0.315196053108214
+0.232666666666667 0.315196053108214
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.167333333333333 0.875382725774693
+0.232666666666667 0.875382725774693
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.333333333333333 0.22405096315914
+0.333333333333333 0.137834036568214
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.333333333333333 0.47981220657277
+0.333333333333333 0.706335616438357
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.300666666666667 0.137834036568214
+0.366 0.137834036568214
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.300666666666667 0.706335616438357
+0.366 0.706335616438357
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.666666666666667 0.25
+0.666666666666667 0.25
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.666666666666667 0.25
+0.666666666666667 0.25
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.634 0.25
+0.699333333333333 0.25
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.634 0.25
+0.699333333333333 0.25
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+0.666666666666667 0.2
+0.666666666666667 0.2
+0.666666666666667 0.2
+0.666666666666667 0.2
+0.666666666666667 0.2
+0.666666666666667 0.2
+0.666666666666667 0.2
+0.666666666666667 0.2
+0.666666666666667 0.2
+0.666666666666667 0.2
+0.666666666666667 0.2
+0.666666666666667 0.2
+0.666666666666667 0.2
+0.666666666666667 0.2
+0.666666666666667 0.2
+0.666666666666667 0.2
+0.666666666666667 0.2
+0.666666666666667 0.2
+0.666666666666667 0.2
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.8 0.377491721763538
+0.8 0.25
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.8 0.522698974698008
+0.8 0.673300329224139
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.767333333333333 0.25
+0.832666666666667 0.25
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.767333333333333 0.673300329224139
+0.832666666666667 0.673300329224139
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.933333333333333 0.16
+0.933333333333333 0.08
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.933333333333333 0.28
+0.933333333333333 0.44
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.900666666666667 0.08
+0.966 0.08
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.900666666666667 0.44
+0.966 0.44
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+0.933333333333333 0.48
+0.933333333333333 0.5
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.06666666666667 1.90694444444444
+1.06666666666667 1.57142857142857
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.06666666666667 2.75
+1.06666666666667 3.66666666666667
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.034 1.57142857142857
+1.09933333333333 1.57142857142857
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.034 3.66666666666667
+1.09933333333333 3.66666666666667
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.2 0.540983131695814
+1.2 0.257468481240698
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.2 0.762157860034177
+1.2 0.93264492453036
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.16733333333333 0.257468481240698
+1.23266666666667 0.257468481240698
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.16733333333333 0.93264492453036
+1.23266666666667 0.93264492453036
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+1.2 1.27464352883095
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.33333333333333 0.0852272727272728
+1.33333333333333 0.0357142857142857
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.33333333333333 0.272727272727273
+1.33333333333333 0.476190476190476
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.30066666666667 0.0357142857142857
+1.366 0.0357142857142857
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.30066666666667 0.476190476190476
+1.366 0.476190476190476
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.398666666666667 0.0625
+-0.268 0.0625
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.265333333333333 0.371420188108797
+-0.134666666666667 0.371420188108797
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.132 0.266666666666667
+-0.00133333333333327 0.266666666666667
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.00133333333333344 1.66666666666667
+0.132 1.66666666666667
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.134666666666667 0.587137021159078
+0.265333333333333 0.587137021159078
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.268 0.315389977800639
+0.398666666666667 0.315389977800639
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.601333333333333 0.25
+0.732 0.25
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.734666666666667 0.445635135693902
+0.865333333333333 0.445635135693902
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.868 0.225
+0.998666666666667 0.225
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.00133333333333 2.28095238095238
+1.132 2.28095238095238
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.13466666666667 0.698072082665422
+1.26533333333333 0.698072082665422
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.268 0.125771604938272
+1.39866666666667 0.125771604938272
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={online\_bounds: (1.0, 1.0)},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Level},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=1.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1},
+xticklabels={1.0,2.0},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=-0.188068181818182, ymax=4.19943181818182,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\path [draw=darkslategray61, fill=steelblue49115161, line width=0.48pt]
+(axis cs:-0.398666666666667,0.0909090909090909)
+--(axis cs:-0.268,0.0909090909090909)
+--(axis cs:-0.268,0.125)
+--(axis cs:-0.398666666666667,0.125)
+--(axis cs:-0.398666666666667,0.0909090909090909)
+--cycle;
+\path [draw=darkslategray61, fill=brown1926061, line width=0.48pt]
+(axis cs:-0.265333333333333,0.270086716701522)
+--(axis cs:-0.134666666666667,0.270086716701522)
+--(axis cs:-0.134666666666667,0.386171379549978)
+--(axis cs:-0.265333333333333,0.386171379549978)
+--(axis cs:-0.265333333333333,0.270086716701522)
+--cycle;
+\path [draw=darkslategray61, fill=seagreen5814558, line width=0.48pt]
+(axis cs:-0.132,0.181818181818182)
+--(axis cs:-0.00133333333333327,0.181818181818182)
+--(axis cs:-0.00133333333333327,0.387313579277865)
+--(axis cs:-0.132,0.387313579277865)
+--(axis cs:-0.132,0.181818181818182)
+--cycle;
+\path [draw=darkslategray61, fill=peru22412844, line width=0.48pt]
+(axis cs:0.00133333333333344,1.5)
+--(axis cs:0.132,1.5)
+--(axis cs:0.132,1.66666666666667)
+--(axis cs:0.00133333333333344,1.66666666666667)
+--(axis cs:0.00133333333333344,1.5)
+--cycle;
+\path [draw=darkslategray61, fill=lightseagreen45171184, line width=0.48pt]
+(axis cs:0.134666666666667,0.235303564188048)
+--(axis cs:0.265333333333333,0.235303564188048)
+--(axis cs:0.265333333333333,0.319210680037696)
+--(axis cs:0.134666666666667,0.319210680037696)
+--(axis cs:0.134666666666667,0.235303564188048)
+--cycle;
+\path [draw=darkslategray61, fill=orchid213132188, line width=0.48pt]
+(axis cs:0.268,0.213432835820895)
+--(axis cs:0.398666666666667,0.213432835820895)
+--(axis cs:0.398666666666667,0.4808599695586)
+--(axis cs:0.268,0.4808599695586)
+--(axis cs:0.268,0.213432835820895)
+--cycle;
+\path [draw=darkslategray61, fill=steelblue49115161, line width=0.48pt]
+(axis cs:0.601333333333333,0.25)
+--(axis cs:0.732,0.25)
+--(axis cs:0.732,0.333333333333333)
+--(axis cs:0.601333333333333,0.333333333333333)
+--(axis cs:0.601333333333333,0.25)
+--cycle;
+\path [draw=darkslategray61, fill=brown1926061, line width=0.48pt]
+(axis cs:0.734666666666667,0.395284707521047)
+--(axis cs:0.865333333333333,0.395284707521047)
+--(axis cs:0.865333333333333,0.519880856093219)
+--(axis cs:0.734666666666667,0.519880856093219)
+--(axis cs:0.734666666666667,0.395284707521047)
+--cycle;
+\path [draw=darkslategray61, fill=seagreen5814558, line width=0.48pt]
+(axis cs:0.868,0.16)
+--(axis cs:0.998666666666667,0.16)
+--(axis cs:0.998666666666667,0.28)
+--(axis cs:0.868,0.28)
+--(axis cs:0.868,0.16)
+--cycle;
+\path [draw=darkslategray61, fill=peru22412844, line width=0.48pt]
+(axis cs:1.00133333333333,2)
+--(axis cs:1.132,2)
+--(axis cs:1.132,2.7)
+--(axis cs:1.00133333333333,2.7)
+--(axis cs:1.00133333333333,2)
+--cycle;
+\path [draw=darkslategray61, fill=lightseagreen45171184, line width=0.48pt]
+(axis cs:1.13466666666667,0.535311808083235)
+--(axis cs:1.26533333333333,0.535311808083235)
+--(axis cs:1.26533333333333,0.762157860034177)
+--(axis cs:1.13466666666667,0.762157860034177)
+--(axis cs:1.13466666666667,0.535311808083235)
+--cycle;
+\path [draw=darkslategray61, fill=orchid213132188, line width=0.48pt]
+(axis cs:1.268,0.0695652173913043)
+--(axis cs:1.39866666666667,0.0695652173913043)
+--(axis cs:1.39866666666667,0.247112360909531)
+--(axis cs:1.268,0.247112360909531)
+--(axis cs:1.268,0.0695652173913043)
+--cycle;
+\draw[draw=darkslategray61,fill=steelblue49115161,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=brown1926061,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=seagreen5814558,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=peru22412844,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=lightseagreen45171184,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=orchid213132188,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.333333333333333 0.0909090909090909
+-0.333333333333333 0.0714285714285714
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.333333333333333 0.125
+-0.333333333333333 0.142857142857143
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.366 0.0714285714285714
+-0.300666666666667 0.0714285714285714
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.366 0.142857142857143
+-0.300666666666667 0.142857142857143
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.2 0.270086716701522
+-0.2 0.166666666666667
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.2 0.386171379549978
+-0.2 0.535780692460285
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.232666666666667 0.166666666666667
+-0.167333333333333 0.166666666666667
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.232666666666667 0.535780692460285
+-0.167333333333333 0.535780692460285
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+-0.2 0.564304955360688
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0666666666666666 0.181818181818182
+-0.0666666666666666 0.0625
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0666666666666666 0.387313579277865
+-0.0666666666666666 0.674528301886792
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0993333333333333 0.0625
+-0.0339999999999999 0.0625
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0993333333333333 0.674528301886792
+-0.0339999999999999 0.674528301886792
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+-0.0666666666666666 0.705128205128205
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0666666666666668 1.5
+0.0666666666666668 1.39285714285714
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0666666666666668 1.66666666666667
+0.0666666666666668 1.8
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0340000000000001 1.39285714285714
+0.0993333333333334 1.39285714285714
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0340000000000001 1.8
+0.0993333333333334 1.8
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.2 0.235303564188048
+0.2 0.178860436322659
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.2 0.319210680037696
+0.2 0.413684967435071
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.167333333333333 0.178860436322659
+0.232666666666667 0.178860436322659
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.167333333333333 0.413684967435071
+0.232666666666667 0.413684967435071
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+0.2 0.609175412634518
+0.2 0.715079020711226
+0.2 0.568554002316716
+0.2 0.487067461028727
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.333333333333333 0.213432835820895
+0.333333333333333 0.10387323943662
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.333333333333333 0.4808599695586
+0.333333333333333 0.877957658779577
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.300666666666667 0.10387323943662
+0.366 0.10387323943662
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.300666666666667 0.877957658779577
+0.366 0.877957658779577
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.666666666666667 0.25
+0.666666666666667 0.166666666666667
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.634 0.166666666666667
+0.699333333333333 0.166666666666667
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.634 0.333333333333333
+0.699333333333333 0.333333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.8 0.395284707521047
+0.8 0.25
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.8 0.519880856093219
+0.8 0.673300329224139
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.767333333333333 0.25
+0.832666666666667 0.25
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.767333333333333 0.673300329224139
+0.832666666666667 0.673300329224139
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+0.8 0.176776695296637
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.933333333333333 0.16
+0.933333333333333 0.08
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.933333333333333 0.28
+0.933333333333333 0.458333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.900666666666667 0.08
+0.966 0.08
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.900666666666667 0.458333333333333
+0.966 0.458333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.06666666666667 2
+1.06666666666667 1.625
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.06666666666667 2.7
+1.06666666666667 3.66666666666667
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.034 1.625
+1.09933333333333 1.625
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.034 3.66666666666667
+1.09933333333333 3.66666666666667
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+1.06666666666667 4
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.2 0.535311808083235
+1.2 0.273413278639936
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.2 0.762157860034177
+1.2 1.07995331556758
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.16733333333333 0.273413278639936
+1.23266666666667 0.273413278639936
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.16733333333333 1.07995331556758
+1.23266666666667 1.07995331556758
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+1.2 1.38021972045663
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.33333333333333 0.0695652173913043
+1.33333333333333 0.0178571428571429
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.33333333333333 0.247112360909531
+1.33333333333333 0.436363636363636
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.30066666666667 0.0178571428571429
+1.366 0.0178571428571429
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.30066666666667 0.436363636363636
+1.366 0.436363636363636
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.398666666666667 0.111111111111111
+-0.268 0.111111111111111
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.265333333333333 0.333065062698973
+-0.134666666666667 0.333065062698973
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.132 0.273929773929774
+-0.00133333333333327 0.273929773929774
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.00133333333333344 1.59285714285714
+0.132 1.59285714285714
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.134666666666667 0.271816955612902
+0.265333333333333 0.271816955612902
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.268 0.308257229832573
+0.398666666666667 0.308257229832573
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.601333333333333 0.25
+0.732 0.25
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.734666666666667 0.458257569495584
+0.865333333333333 0.458257569495584
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.868 0.225
+0.998666666666667 0.225
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.00133333333333 2.33333333333333
+1.132 2.33333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.13466666666667 0.698072082665422
+1.26533333333333 0.698072082665422
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.268 0.13357683982684
+1.39866666666667 0.13357683982684
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={online\_bounds: (1.5, 0.5)},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Level},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=1.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1},
+xticklabels={1.0,2.0},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=-0.188068181818182, ymax=4.19943181818182,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\path [draw=darkslategray61, fill=steelblue49115161, line width=0.48pt]
+(axis cs:-0.398666666666667,0.0588235294117647)
+--(axis cs:-0.268,0.0588235294117647)
+--(axis cs:-0.268,0.0714285714285714)
+--(axis cs:-0.398666666666667,0.0714285714285714)
+--(axis cs:-0.398666666666667,0.0588235294117647)
+--cycle;
+\path [draw=darkslategray61, fill=brown1926061, line width=0.48pt]
+(axis cs:-0.265333333333333,0.326806194281061)
+--(axis cs:-0.134666666666667,0.326806194281061)
+--(axis cs:-0.134666666666667,0.411474406138841)
+--(axis cs:-0.265333333333333,0.411474406138841)
+--(axis cs:-0.265333333333333,0.326806194281061)
+--cycle;
+\path [draw=darkslategray61, fill=seagreen5814558, line width=0.48pt]
+(axis cs:-0.132,0.234117965367965)
+--(axis cs:-0.00133333333333327,0.234117965367965)
+--(axis cs:-0.00133333333333327,0.412097537878788)
+--(axis cs:-0.132,0.412097537878788)
+--(axis cs:-0.132,0.234117965367965)
+--cycle;
+\path [draw=darkslategray61, fill=peru22412844, line width=0.48pt]
+(axis cs:0.00133333333333344,1.58333333333333)
+--(axis cs:0.132,1.58333333333333)
+--(axis cs:0.132,1.66666666666667)
+--(axis cs:0.00133333333333344,1.66666666666667)
+--(axis cs:0.00133333333333344,1.58333333333333)
+--cycle;
+\path [draw=darkslategray61, fill=lightseagreen45171184, line width=0.48pt]
+(axis cs:0.134666666666667,0.394984710128923)
+--(axis cs:0.265333333333333,0.394984710128923)
+--(axis cs:0.265333333333333,0.725932754181208)
+--(axis cs:0.134666666666667,0.725932754181208)
+--(axis cs:0.134666666666667,0.394984710128923)
+--cycle;
+\path [draw=darkslategray61, fill=orchid213132188, line width=0.48pt]
+(axis cs:0.268,0.231510695187166)
+--(axis cs:0.398666666666667,0.231510695187166)
+--(axis cs:0.398666666666667,0.387662037037037)
+--(axis cs:0.268,0.387662037037037)
+--(axis cs:0.268,0.231510695187166)
+--cycle;
+\path [draw=darkslategray61, fill=steelblue49115161, line width=0.48pt]
+(axis cs:0.601333333333333,0.333333333333333)
+--(axis cs:0.732,0.333333333333333)
+--(axis cs:0.732,0.333333333333333)
+--(axis cs:0.601333333333333,0.333333333333333)
+--(axis cs:0.601333333333333,0.333333333333333)
+--cycle;
+\path [draw=darkslategray61, fill=brown1926061, line width=0.48pt]
+(axis cs:0.734666666666667,0.346410161513775)
+--(axis cs:0.865333333333333,0.346410161513775)
+--(axis cs:0.865333333333333,0.526782687642637)
+--(axis cs:0.734666666666667,0.526782687642637)
+--(axis cs:0.734666666666667,0.346410161513775)
+--cycle;
+\path [draw=darkslategray61, fill=seagreen5814558, line width=0.48pt]
+(axis cs:0.868,0.1125)
+--(axis cs:0.998666666666667,0.1125)
+--(axis cs:0.998666666666667,0.1625)
+--(axis cs:0.868,0.1625)
+--(axis cs:0.868,0.1125)
+--cycle;
+\path [draw=darkslategray61, fill=peru22412844, line width=0.48pt]
+(axis cs:1.00133333333333,1.83333333333333)
+--(axis cs:1.132,1.83333333333333)
+--(axis cs:1.132,2.125)
+--(axis cs:1.00133333333333,2.125)
+--(axis cs:1.00133333333333,1.83333333333333)
+--cycle;
+\path [draw=darkslategray61, fill=lightseagreen45171184, line width=0.48pt]
+(axis cs:1.13466666666667,0.562340756407001)
+--(axis cs:1.26533333333333,0.562340756407001)
+--(axis cs:1.26533333333333,0.770587960430784)
+--(axis cs:1.13466666666667,0.770587960430784)
+--(axis cs:1.13466666666667,0.562340756407001)
+--cycle;
+\path [draw=darkslategray61, fill=orchid213132188, line width=0.48pt]
+(axis cs:1.268,0.119318181818182)
+--(axis cs:1.39866666666667,0.119318181818182)
+--(axis cs:1.39866666666667,0.196428571428571)
+--(axis cs:1.268,0.196428571428571)
+--(axis cs:1.268,0.119318181818182)
+--cycle;
+\draw[draw=darkslategray61,fill=steelblue49115161,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=brown1926061,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=seagreen5814558,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=peru22412844,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=lightseagreen45171184,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=orchid213132188,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.333333333333333 0.0588235294117647
+-0.333333333333333 0.05
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.333333333333333 0.0714285714285714
+-0.333333333333333 0.0769230769230769
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.366 0.05
+-0.300666666666667 0.05
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.366 0.0769230769230769
+-0.300666666666667 0.0769230769230769
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.2 0.326806194281061
+-0.2 0.224408182787281
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.2 0.411474406138841
+-0.2 0.474355260562314
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.232666666666667 0.224408182787281
+-0.167333333333333 0.224408182787281
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.232666666666667 0.474355260562314
+-0.167333333333333 0.474355260562314
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+-0.2 0.185449546754729
+-0.2 0.185449546754729
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0666666666666666 0.234117965367965
+-0.0666666666666666 0.111111111111111
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0666666666666666 0.412097537878788
+-0.0666666666666666 0.678787878787879
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0993333333333333 0.111111111111111
+-0.0339999999999999 0.111111111111111
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0993333333333333 0.678787878787879
+-0.0339999999999999 0.678787878787879
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+-0.0666666666666666 0.724431818181818
+-0.0666666666666666 0.684491978609626
+-0.0666666666666666 0.742063492063492
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0666666666666668 1.58333333333333
+0.0666666666666668 1.5
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0666666666666668 1.66666666666667
+0.0666666666666668 1.75
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0340000000000001 1.5
+0.0993333333333334 1.5
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0340000000000001 1.75
+0.0993333333333334 1.75
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+0.0666666666666668 1.33333333333333
+0.0666666666666668 2
+0.0666666666666668 1.83333333333333
+0.0666666666666668 1.83333333333333
+0.0666666666666668 1.83333333333333
+0.0666666666666668 1.83333333333333
+0.0666666666666668 2
+0.0666666666666668 2
+0.0666666666666668 1.83333333333333
+0.0666666666666668 2
+0.0666666666666668 2
+0.0666666666666668 2
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.2 0.394984710128923
+0.2 0.274069684263154
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.2 0.725932754181208
+0.2 0.949304576782374
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.167333333333333 0.274069684263154
+0.232666666666667 0.274069684263154
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.167333333333333 0.949304576782374
+0.232666666666667 0.949304576782374
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.333333333333333 0.231510695187166
+0.333333333333333 0.121777777777778
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.333333333333333 0.387662037037037
+0.333333333333333 0.571830985915493
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.300666666666667 0.121777777777778
+0.366 0.121777777777778
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.300666666666667 0.571830985915493
+0.366 0.571830985915493
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+0.333333333333333 0.624413145539906
+0.333333333333333 0.650704225352113
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.634 0.333333333333333
+0.699333333333333 0.333333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.634 0.333333333333333
+0.699333333333333 0.333333333333333
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+0.666666666666667 0.25
+0.666666666666667 0.25
+0.666666666666667 0.25
+0.666666666666667 0.25
+0.666666666666667 0.25
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.8 0.346410161513775
+0.8 0.229128784747792
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.8 0.526782687642637
+0.8 0.692820323027551
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.767333333333333 0.229128784747792
+0.832666666666667 0.229128784747792
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.767333333333333 0.692820323027551
+0.832666666666667 0.692820323027551
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.933333333333333 0.1125
+0.933333333333333 0.075
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.933333333333333 0.1625
+0.933333333333333 0.225
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.900666666666667 0.075
+0.966 0.075
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.900666666666667 0.225
+0.966 0.225
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+0.933333333333333 0.3
+0.933333333333333 0.24
+0.933333333333333 0.2625
+0.933333333333333 0.24
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.06666666666667 1.83333333333333
+1.06666666666667 1.54545454545454
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.06666666666667 2.125
+1.06666666666667 2.52777777777778
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.034 1.54545454545454
+1.09933333333333 1.54545454545454
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.034 2.52777777777778
+1.09933333333333 2.52777777777778
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+1.06666666666667 3
+1.06666666666667 2.70238095238095
+1.06666666666667 2.625
+1.06666666666667 2.75
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.2 0.562340756407001
+1.2 0.35989533112548
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.2 0.770587960430784
+1.2 0.873304425617709
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.16733333333333 0.35989533112548
+1.23266666666667 0.35989533112548
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.16733333333333 0.873304425617709
+1.23266666666667 0.873304425617709
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.33333333333333 0.119318181818182
+1.33333333333333 0.0113636363636364
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.33333333333333 0.196428571428571
+1.33333333333333 0.292307692307692
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.30066666666667 0.0113636363636364
+1.366 0.0113636363636364
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.30066666666667 0.292307692307692
+1.366 0.292307692307692
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+1.33333333333333 0.316666666666667
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.398666666666667 0.0666666666666667
+-0.268 0.0666666666666667
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.265333333333333 0.374926202892132
+-0.134666666666667 0.374926202892132
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.132 0.323484848484848
+-0.00133333333333327 0.323484848484848
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.00133333333333344 1.66666666666667
+0.132 1.66666666666667
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.134666666666667 0.633836967664664
+0.265333333333333 0.633836967664664
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.268 0.286720321931589
+0.398666666666667 0.286720321931589
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.601333333333333 0.333333333333333
+0.732 0.333333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.734666666666667 0.445635135693902
+0.865333333333333 0.445635135693902
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.868 0.15
+0.998666666666667 0.15
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.00133333333333 2
+1.132 2
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.13466666666667 0.66899209435451
+1.26533333333333 0.66899209435451
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.268 0.142857142857143
+1.39866666666667 0.142857142857143
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={online\_bounds: (1.5, 1.0)},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Level},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=1.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1},
+xticklabels={1.0,2.0},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=-0.188068181818182, ymax=4.19943181818182,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\path [draw=darkslategray61, fill=steelblue49115161, line width=0.48pt]
+(axis cs:-0.398666666666667,0.111111111111111)
+--(axis cs:-0.268,0.111111111111111)
+--(axis cs:-0.268,0.125)
+--(axis cs:-0.398666666666667,0.125)
+--(axis cs:-0.398666666666667,0.111111111111111)
+--cycle;
+\path [draw=darkslategray61, fill=brown1926061, line width=0.48pt]
+(axis cs:-0.265333333333333,0.280699029305731)
+--(axis cs:-0.134666666666667,0.280699029305731)
+--(axis cs:-0.134666666666667,0.37994123523906)
+--(axis cs:-0.265333333333333,0.37994123523906)
+--(axis cs:-0.265333333333333,0.280699029305731)
+--cycle;
+\path [draw=darkslategray61, fill=seagreen5814558, line width=0.48pt]
+(axis cs:-0.132,0.144886363636364)
+--(axis cs:-0.00133333333333327,0.144886363636364)
+--(axis cs:-0.00133333333333327,0.303030303030303)
+--(axis cs:-0.132,0.303030303030303)
+--(axis cs:-0.132,0.144886363636364)
+--cycle;
+\path [draw=darkslategray61, fill=peru22412844, line width=0.48pt]
+(axis cs:0.00133333333333344,1.58125)
+--(axis cs:0.132,1.58125)
+--(axis cs:0.132,1.75625)
+--(axis cs:0.00133333333333344,1.75625)
+--(axis cs:0.00133333333333344,1.58125)
+--cycle;
+\path [draw=darkslategray61, fill=lightseagreen45171184, line width=0.48pt]
+(axis cs:0.134666666666667,0.241103307843905)
+--(axis cs:0.265333333333333,0.241103307843905)
+--(axis cs:0.265333333333333,0.32979312620022)
+--(axis cs:0.134666666666667,0.32979312620022)
+--(axis cs:0.134666666666667,0.241103307843905)
+--cycle;
+\path [draw=darkslategray61, fill=orchid213132188, line width=0.48pt]
+(axis cs:0.268,0.147930735095505)
+--(axis cs:0.398666666666667,0.147930735095505)
+--(axis cs:0.398666666666667,0.407143010268613)
+--(axis cs:0.268,0.407143010268613)
+--(axis cs:0.268,0.147930735095505)
+--cycle;
+\path [draw=darkslategray61, fill=steelblue49115161, line width=0.48pt]
+(axis cs:0.601333333333333,0.333333333333333)
+--(axis cs:0.732,0.333333333333333)
+--(axis cs:0.732,0.333333333333333)
+--(axis cs:0.601333333333333,0.333333333333333)
+--(axis cs:0.601333333333333,0.333333333333333)
+--cycle;
+\path [draw=darkslategray61, fill=brown1926061, line width=0.48pt]
+(axis cs:0.734666666666667,0.346410161513775)
+--(axis cs:0.865333333333333,0.346410161513775)
+--(axis cs:0.865333333333333,0.526782687642637)
+--(axis cs:0.734666666666667,0.526782687642637)
+--(axis cs:0.734666666666667,0.346410161513775)
+--cycle;
+\path [draw=darkslategray61, fill=seagreen5814558, line width=0.48pt]
+(axis cs:0.868,0.1125)
+--(axis cs:0.998666666666667,0.1125)
+--(axis cs:0.998666666666667,0.1625)
+--(axis cs:0.868,0.1625)
+--(axis cs:0.868,0.1125)
+--cycle;
+\path [draw=darkslategray61, fill=peru22412844, line width=0.48pt]
+(axis cs:1.00133333333333,1.83333333333333)
+--(axis cs:1.132,1.83333333333333)
+--(axis cs:1.132,2.2)
+--(axis cs:1.00133333333333,2.2)
+--(axis cs:1.00133333333333,1.83333333333333)
+--cycle;
+\path [draw=darkslategray61, fill=lightseagreen45171184, line width=0.48pt]
+(axis cs:1.13466666666667,0.486974505454188)
+--(axis cs:1.26533333333333,0.486974505454188)
+--(axis cs:1.26533333333333,0.777072354900453)
+--(axis cs:1.13466666666667,0.777072354900453)
+--(axis cs:1.13466666666667,0.486974505454188)
+--cycle;
+\path [draw=darkslategray61, fill=orchid213132188, line width=0.48pt]
+(axis cs:1.268,0.119318181818182)
+--(axis cs:1.39866666666667,0.119318181818182)
+--(axis cs:1.39866666666667,0.189732142857143)
+--(axis cs:1.268,0.189732142857143)
+--(axis cs:1.268,0.119318181818182)
+--cycle;
+\draw[draw=darkslategray61,fill=steelblue49115161,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=brown1926061,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=seagreen5814558,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=peru22412844,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=lightseagreen45171184,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=orchid213132188,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.333333333333333 0.111111111111111
+-0.333333333333333 0.0909090909090909
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.333333333333333 0.125
+-0.333333333333333 0.142857142857143
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.366 0.0909090909090909
+-0.300666666666667 0.0909090909090909
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.366 0.142857142857143
+-0.300666666666667 0.142857142857143
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+-0.333333333333333 0.0833333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.2 0.280699029305731
+-0.2 0.132582521472478
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.2 0.37994123523906
+-0.2 0.457063731181768
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.232666666666667 0.132582521472478
+-0.167333333333333 0.132582521472478
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.232666666666667 0.457063731181768
+-0.167333333333333 0.457063731181768
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+-0.2 0.0962250448649376
+-0.2 0.0962250448649376
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0666666666666666 0.144886363636364
+-0.0666666666666666 0.0208333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0666666666666666 0.303030303030303
+-0.0666666666666666 0.496527777777778
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0993333333333333 0.0208333333333333
+-0.0339999999999999 0.0208333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0993333333333333 0.496527777777778
+-0.0339999999999999 0.496527777777778
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+-0.0666666666666666 0.568047337278107
+-0.0666666666666666 0.763888888888889
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0666666666666668 1.58125
+0.0666666666666668 1.45
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0666666666666668 1.75625
+0.0666666666666668 2
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0340000000000001 1.45
+0.0993333333333334 1.45
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0340000000000001 2
+0.0993333333333334 2
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.2 0.241103307843905
+0.2 0.16350637279696
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.2 0.32979312620022
+0.2 0.399510159253728
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.167333333333333 0.16350637279696
+0.232666666666667 0.16350637279696
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.167333333333333 0.399510159253728
+0.232666666666667 0.399510159253728
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+0.2 0.548140082041834
+0.2 0.612687733912705
+0.2 0.53020000239621
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.333333333333333 0.147930735095505
+0.333333333333333 0.0698630136986303
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.333333333333333 0.407143010268613
+0.333333333333333 0.6875
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.300666666666667 0.0698630136986303
+0.366 0.0698630136986303
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.300666666666667 0.6875
+0.366 0.6875
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.634 0.333333333333333
+0.699333333333333 0.333333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.634 0.333333333333333
+0.699333333333333 0.333333333333333
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+0.666666666666667 0.25
+0.666666666666667 0.25
+0.666666666666667 0.25
+0.666666666666667 0.25
+0.666666666666667 0.25
+0.666666666666667 0.25
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.8 0.346410161513775
+0.8 0.229128784747792
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.8 0.526782687642637
+0.8 0.708872343937891
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.767333333333333 0.229128784747792
+0.832666666666667 0.229128784747792
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.767333333333333 0.708872343937891
+0.832666666666667 0.708872343937891
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.933333333333333 0.1125
+0.933333333333333 0.075
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.933333333333333 0.1625
+0.933333333333333 0.225
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.900666666666667 0.075
+0.966 0.075
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.900666666666667 0.225
+0.966 0.225
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+0.933333333333333 0.3
+0.933333333333333 0.3
+0.933333333333333 0.3375
+0.933333333333333 0.24
+0.933333333333333 0.2625
+0.933333333333333 0.3
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.06666666666667 1.83333333333333
+1.06666666666667 1.54545454545454
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.06666666666667 2.2
+1.06666666666667 2.71428571428571
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.034 1.54545454545454
+1.09933333333333 1.54545454545454
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.034 2.71428571428571
+1.09933333333333 2.71428571428571
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+1.06666666666667 3.5
+1.06666666666667 3.5
+1.06666666666667 3.4
+1.06666666666667 2.8125
+1.06666666666667 2.8125
+1.06666666666667 3.5
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.2 0.486974505454188
+1.2 0.271861344056317
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.2 0.777072354900453
+1.2 0.892841352297681
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.16733333333333 0.271861344056317
+1.23266666666667 0.271861344056317
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.16733333333333 0.892841352297681
+1.23266666666667 0.892841352297681
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.33333333333333 0.119318181818182
+1.33333333333333 0.0340909090909091
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.33333333333333 0.189732142857143
+1.33333333333333 0.276923076923077
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.30066666666667 0.0340909090909091
+1.366 0.0340909090909091
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.30066666666667 0.276923076923077
+1.366 0.276923076923077
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+1.33333333333333 0.0113636363636364
+1.33333333333333 0.31304347826087
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.398666666666667 0.111111111111111
+-0.268 0.111111111111111
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.265333333333333 0.330523626642022
+-0.134666666666667 0.330523626642022
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.132 0.21900826446281
+-0.00133333333333327 0.21900826446281
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.00133333333333344 1.66666666666667
+0.132 1.66666666666667
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.134666666666667 0.278745027462323
+0.265333333333333 0.278745027462323
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.268 0.208178178661007
+0.398666666666667 0.208178178661007
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.601333333333333 0.333333333333333
+0.732 0.333333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.734666666666667 0.433012701892219
+0.865333333333333 0.433012701892219
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.868 0.15
+0.998666666666667 0.15
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.00133333333333 2
+1.132 2
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.13466666666667 0.620914462275877
+1.26533333333333 0.620914462275877
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.268 0.148133116883117
+1.39866666666667 0.148133116883117
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={online\_bounds: (1.5, 1.5)},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Level},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=1.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1},
+xticklabels={1.0,2.0},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=-0.188068181818182, ymax=4.19943181818182,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\path [draw=darkslategray61, fill=steelblue49115161, line width=0.48pt]
+(axis cs:-0.398666666666667,0.142857142857143)
+--(axis cs:-0.268,0.142857142857143)
+--(axis cs:-0.268,0.142857142857143)
+--(axis cs:-0.398666666666667,0.142857142857143)
+--(axis cs:-0.398666666666667,0.142857142857143)
+--cycle;
+\path [draw=darkslategray61, fill=brown1926061, line width=0.48pt]
+(axis cs:-0.265333333333333,0.341363333736702)
+--(axis cs:-0.134666666666667,0.341363333736702)
+--(axis cs:-0.134666666666667,0.491037807845333)
+--(axis cs:-0.265333333333333,0.491037807845333)
+--(axis cs:-0.265333333333333,0.341363333736702)
+--cycle;
+\path [draw=darkslategray61, fill=seagreen5814558, line width=0.48pt]
+(axis cs:-0.132,0.165816326530612)
+--(axis cs:-0.00133333333333327,0.165816326530612)
+--(axis cs:-0.00133333333333327,0.224431818181818)
+--(axis cs:-0.132,0.224431818181818)
+--(axis cs:-0.132,0.165816326530612)
+--cycle;
+\path [draw=darkslategray61, fill=peru22412844, line width=0.48pt]
+(axis cs:0.00133333333333344,1.6)
+--(axis cs:0.132,1.6)
+--(axis cs:0.132,1.75)
+--(axis cs:0.00133333333333344,1.75)
+--(axis cs:0.00133333333333344,1.6)
+--cycle;
+\path [draw=darkslategray61, fill=lightseagreen45171184, line width=0.48pt]
+(axis cs:0.134666666666667,0.224850808188565)
+--(axis cs:0.265333333333333,0.224850808188565)
+--(axis cs:0.265333333333333,0.33441526137171)
+--(axis cs:0.134666666666667,0.33441526137171)
+--(axis cs:0.134666666666667,0.224850808188565)
+--cycle;
+\path [draw=darkslategray61, fill=orchid213132188, line width=0.48pt]
+(axis cs:0.268,0.162751499708021)
+--(axis cs:0.398666666666667,0.162751499708021)
+--(axis cs:0.398666666666667,0.300085616438356)
+--(axis cs:0.268,0.300085616438356)
+--(axis cs:0.268,0.162751499708021)
+--cycle;
+\path [draw=darkslategray61, fill=steelblue49115161, line width=0.48pt]
+(axis cs:0.601333333333333,0.333333333333333)
+--(axis cs:0.732,0.333333333333333)
+--(axis cs:0.732,0.333333333333333)
+--(axis cs:0.601333333333333,0.333333333333333)
+--(axis cs:0.601333333333333,0.333333333333333)
+--cycle;
+\path [draw=darkslategray61, fill=brown1926061, line width=0.48pt]
+(axis cs:0.734666666666667,0.346410161513775)
+--(axis cs:0.865333333333333,0.346410161513775)
+--(axis cs:0.865333333333333,0.493332575447895)
+--(axis cs:0.734666666666667,0.493332575447895)
+--(axis cs:0.734666666666667,0.346410161513775)
+--cycle;
+\path [draw=darkslategray61, fill=seagreen5814558, line width=0.48pt]
+(axis cs:0.868,0.1125)
+--(axis cs:0.998666666666667,0.1125)
+--(axis cs:0.998666666666667,0.1625)
+--(axis cs:0.868,0.1625)
+--(axis cs:0.868,0.1125)
+--cycle;
+\path [draw=darkslategray61, fill=peru22412844, line width=0.48pt]
+(axis cs:1.00133333333333,1.8)
+--(axis cs:1.132,1.8)
+--(axis cs:1.132,2.125)
+--(axis cs:1.00133333333333,2.125)
+--(axis cs:1.00133333333333,1.8)
+--cycle;
+\path [draw=darkslategray61, fill=lightseagreen45171184, line width=0.48pt]
+(axis cs:1.13466666666667,0.590583984997246)
+--(axis cs:1.26533333333333,0.590583984997246)
+--(axis cs:1.26533333333333,0.787978941769497)
+--(axis cs:1.13466666666667,0.787978941769497)
+--(axis cs:1.13466666666667,0.590583984997246)
+--cycle;
+\path [draw=darkslategray61, fill=orchid213132188, line width=0.48pt]
+(axis cs:1.268,0.119318181818182)
+--(axis cs:1.39866666666667,0.119318181818182)
+--(axis cs:1.39866666666667,0.178571428571429)
+--(axis cs:1.268,0.178571428571429)
+--(axis cs:1.268,0.119318181818182)
+--cycle;
+\draw[draw=darkslategray61,fill=steelblue49115161,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=brown1926061,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=seagreen5814558,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=peru22412844,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=lightseagreen45171184,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\draw[draw=darkslategray61,fill=orchid213132188,line width=0.24pt] (axis cs:0,0) rectangle (axis cs:0,0);
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.333333333333333 0.142857142857143
+-0.333333333333333 0.142857142857143
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.333333333333333 0.142857142857143
+-0.333333333333333 0.142857142857143
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.366 0.142857142857143
+-0.300666666666667 0.142857142857143
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.366 0.142857142857143
+-0.300666666666667 0.142857142857143
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+-0.333333333333333 0.125
+-0.333333333333333 0.125
+-0.333333333333333 0.125
+-0.333333333333333 0.125
+-0.333333333333333 0.125
+-0.333333333333333 0.125
+-0.333333333333333 0.125
+-0.333333333333333 0.125
+-0.333333333333333 0.125
+-0.333333333333333 0.125
+-0.333333333333333 0.125
+-0.333333333333333 0.125
+-0.333333333333333 0.125
+-0.333333333333333 0.125
+-0.333333333333333 0.125
+-0.333333333333333 0.125
+-0.333333333333333 0.125
+-0.333333333333333 0.125
+-0.333333333333333 0.166666666666667
+-0.333333333333333 0.166666666666667
+-0.333333333333333 0.166666666666667
+-0.333333333333333 0.166666666666667
+-0.333333333333333 0.166666666666667
+-0.333333333333333 0.166666666666667
+-0.333333333333333 0.166666666666667
+-0.333333333333333 0.166666666666667
+-0.333333333333333 0.166666666666667
+-0.333333333333333 0.166666666666667
+-0.333333333333333 0.166666666666667
+-0.333333333333333 0.166666666666667
+-0.333333333333333 0.166666666666667
+-0.333333333333333 0.166666666666667
+-0.333333333333333 0.166666666666667
+-0.333333333333333 0.166666666666667
+-0.333333333333333 0.166666666666667
+-0.333333333333333 0.166666666666667
+-0.333333333333333 0.166666666666667
+-0.333333333333333 0.166666666666667
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.2 0.341363333736702
+-0.2 0.18070158058105
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.2 0.491037807845333
+-0.2 0.629940788348712
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.232666666666667 0.18070158058105
+-0.167333333333333 0.18070158058105
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.232666666666667 0.629940788348712
+-0.167333333333333 0.629940788348712
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0666666666666666 0.165816326530612
+-0.0666666666666666 0.0994318181818182
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0666666666666666 0.224431818181818
+-0.0666666666666666 0.277777777777778
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0993333333333333 0.0994318181818182
+-0.0339999999999999 0.0994318181818182
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.0993333333333333 0.277777777777778
+-0.0339999999999999 0.277777777777778
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+-0.0666666666666666 0.323232323232323
+-0.0666666666666666 0.333333333333333
+-0.0666666666666666 0.383838383838384
+-0.0666666666666666 0.323232323232323
+-0.0666666666666666 0.351851851851852
+-0.0666666666666666 0.314814814814815
+-0.0666666666666666 0.333333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0666666666666668 1.6
+0.0666666666666668 1.41666666666667
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0666666666666668 1.75
+0.0666666666666668 1.88888888888889
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0340000000000001 1.41666666666667
+0.0993333333333334 1.41666666666667
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.0340000000000001 1.88888888888889
+0.0993333333333334 1.88888888888889
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+0.0666666666666668 2
+0.0666666666666668 2
+0.0666666666666668 2
+0.0666666666666668 2
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.2 0.224850808188565
+0.2 0.105648011724566
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.2 0.33441526137171
+0.2 0.42865429944737
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.167333333333333 0.105648011724566
+0.232666666666667 0.105648011724566
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.167333333333333 0.42865429944737
+0.232666666666667 0.42865429944737
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+0.2 0.693595547612091
+0.2 0.700887795519395
+0.2 0.713006432071258
+0.2 0.701816661878326
+0.2 0.679754224638731
+0.2 0.735993286253297
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.333333333333333 0.162751499708021
+0.333333333333333 0.0880626223091977
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.333333333333333 0.300085616438356
+0.333333333333333 0.480974124809741
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.300666666666667 0.0880626223091977
+0.366 0.0880626223091977
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.300666666666667 0.480974124809741
+0.366 0.480974124809741
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+0.333333333333333 0.551226551226551
+0.333333333333333 0.544901065449011
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.666666666666667 0.333333333333333
+0.666666666666667 0.333333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.634 0.333333333333333
+0.699333333333333 0.333333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.634 0.333333333333333
+0.699333333333333 0.333333333333333
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+0.666666666666667 0.25
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.8 0.346410161513775
+0.8 0.229128784747792
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.8 0.493332575447895
+0.8 0.692820323027551
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.767333333333333 0.229128784747792
+0.832666666666667 0.229128784747792
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.767333333333333 0.692820323027551
+0.832666666666667 0.692820323027551
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.933333333333333 0.1125
+0.933333333333333 0.075
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.933333333333333 0.1625
+0.933333333333333 0.225
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.900666666666667 0.075
+0.966 0.075
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.900666666666667 0.225
+0.966 0.225
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+0.933333333333333 0.2625
+0.933333333333333 0.24
+0.933333333333333 0.3
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.06666666666667 1.8
+1.06666666666667 1.54545454545454
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.06666666666667 2.125
+1.06666666666667 2.6
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.034 1.54545454545454
+1.09933333333333 1.54545454545454
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.034 2.6
+1.09933333333333 2.6
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+1.06666666666667 2.625
+1.06666666666667 3.5
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.2 0.590583984997246
+1.2 0.35989533112548
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.2 0.787978941769497
+1.2 0.952048856903128
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.16733333333333 0.35989533112548
+1.23266666666667 0.35989533112548
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.16733333333333 0.952048856903128
+1.23266666666667 0.952048856903128
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.33333333333333 0.119318181818182
+1.33333333333333 0.0454545454545454
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.33333333333333 0.178571428571429
+1.33333333333333 0.204545454545455
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.30066666666667 0.0454545454545454
+1.366 0.0454545454545454
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.30066666666667 0.204545454545455
+1.366 0.204545454545455
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+1.33333333333333 0.283333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.398666666666667 0.142857142857143
+-0.268 0.142857142857143
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.265333333333333 0.410603265114044
+-0.134666666666667 0.410603265114044
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+-0.132 0.188920454545455
+-0.00133333333333327 0.188920454545455
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.00133333333333344 1.625
+0.132 1.625
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.134666666666667 0.263985576565294
+0.265333333333333 0.263985576565294
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.268 0.230899093189273
+0.398666666666667 0.230899093189273
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.601333333333333 0.333333333333333
+0.732 0.333333333333333
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.734666666666667 0.433012701892219
+0.865333333333333 0.433012701892219
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+0.868 0.15
+0.998666666666667 0.15
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.00133333333333 2
+1.132 2
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.13466666666667 0.738136522008979
+1.26533333333333 0.738136522008979
+};
+\addplot [line width=0.48pt, darkslategray61]
+table {%
+1.268 0.148133116883117
+1.39866666666667 0.148133116883117
+};
+\end{groupplot}
+
+\end{tikzpicture}

@@ -1,0 +1,273 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{brown1926061}{RGB}{192,60,61}
+\definecolor{darkslategray38}{RGB}{38,38,38}
+\definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{lavender234234242}{RGB}{234,234,242}
+\definecolor{seagreen5814558}{RGB}{58,145,58}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{groupplot}[group style={group size=4 by 1, horizontal sep=0.1cm, vertical sep=0.1cm}]
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+tick align=outside,
+title={online\_bounds: (2, 2)},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{action planning},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=1.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1},
+xticklabels={sequential,concurrent},
+y grid style={white},
+ylabel=\textcolor{darkslategray38}{Grade/Score},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=1,
+ytick style={color=darkslategray38},
+ytick style={color=white}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:-0.133333333333333,0.868320204105115);
+\addlegendimage{ybar,ybar legend,draw=white,fill=steelblue49115161,line width=0.32pt}
+\addlegendentry{GRADE}
+
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:0.866666666666667,0.807679613906743);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-0.133333333333333,0) rectangle (axis cs:0.133333333333333,0.917808219178082);
+\addlegendimage{ybar,ybar legend,draw=white,fill=brown1926061,line width=0.32pt}
+\addlegendentry{QL_SCORE}
+
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:0.866666666666667,0) rectangle (axis cs:1.13333333333333,0.858974358974359);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:0.133333333333333,0) rectangle (axis cs:0.4,0.94286331889445);
+\addlegendimage{ybar,ybar legend,draw=white,fill=seagreen5814558,line width=0.32pt}
+\addlegendentry{TI_SCORE}
+
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:1.13333333333333,0) rectangle (axis cs:1.4,0.940283729622776);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.266666666666667 0.865087951451365
+-0.266666666666667 0.875063321886137
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.733333333333333 0.807081951139494
+0.733333333333333 0.807958591491281
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0 0.917808219178082
+0 0.943661971830986
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1 0.858974358974359
+1 0.858974358974359
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.266666666666667 0.936751571615248
+0.266666666666667 0.945592497295718
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.26666666666667 0.93957485389275
+1.26666666666667 0.940620287844102
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={online\_bounds: (2, 4)},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{action planning},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=1.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1},
+xticklabels={sequential,concurrent},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=1,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:-0.133333333333333,0.88690001869678);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:0.866666666666667,0.798767615236961);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-0.133333333333333,0) rectangle (axis cs:0.133333333333333,0.917808219178082);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:0.866666666666667,0) rectangle (axis cs:1.13333333333333,0.8375);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:0.133333333333333,0) rectangle (axis cs:0.4,0.970025889766298);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:1.13333333333333,0) rectangle (axis cs:1.4,0.952861179535935);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.266666666666667 0.868782424569404
+-0.266666666666667 0.892781827014779
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.733333333333333 0.798352835974434
+0.733333333333333 0.814664040108683
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0 0.893333333333333
+0 0.917808219178082
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1 0.8375
+1 0.858974358974359
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.266666666666667 0.967795637991765
+0.266666666666667 0.971904838763511
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.26666666666667 0.952353753866349
+1.26666666666667 0.953312163823648
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={online\_bounds: (4, 2)},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{action planning},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=1.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1},
+xticklabels={sequential,concurrent},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=1,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:-0.133333333333333,0.904917785475527);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:0.866666666666667,0.842136221232937);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-0.133333333333333,0) rectangle (axis cs:0.133333333333333,0.917808219178082);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:0.866666666666667,0) rectangle (axis cs:1.13333333333333,0.881578947368421);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:0.133333333333333,0) rectangle (axis cs:0.4,0.975657443771266);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:1.13333333333333,0) rectangle (axis cs:1.4,0.954728530502184);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.266666666666667 0.897428628718296
+-0.266666666666667 0.91277818500591
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.733333333333333 0.841884699591035
+0.733333333333333 0.863427166477961
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0 0.917808219178082
+0 0.943661971830986
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1 0.881578947368421
+1 0.905405405405405
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.266666666666667 0.972057937760721
+0.266666666666667 0.980071162541743
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.26666666666667 0.95448941832859
+1.26666666666667 0.954909695684676
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={online\_bounds: (4, 4)},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{action planning},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=1.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1},
+xticklabels={sequential,concurrent},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=1,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:-0.133333333333333,0.893333333333333);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:0.866666666666667,0.750158933937133);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-0.133333333333333,0) rectangle (axis cs:0.133333333333333,0.893333333333333);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:0.866666666666667,0) rectangle (axis cs:1.13333333333333,0.770114942528736);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:0.133333333333333,0) rectangle (axis cs:0.4,1);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:1.13333333333333,0) rectangle (axis cs:1.4,0.973846056269617);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.266666666666667 0.893333333333333
+-0.266666666666667 0.90918314622416
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.733333333333333 0.749928641960831
+0.733333333333333 0.750634533912119
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0 0.893333333333333
+0 0.917808219178082
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1 0.770114942528736
+1 0.770114942528736
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.266666666666667 1
+0.266666666666667 1
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.26666666666667 0.973654585759177
+1.26666666666667 0.974063381761821
+};
+\end{groupplot}
+
+\end{tikzpicture}

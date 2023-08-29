@@ -261,7 +261,7 @@ else:
 def extract_configuration(excel_file_name: str) -> Optional[list[str]]:
     """Extract the data set configuration for a given excel file name."""
     configuration_dict: dict[str, str] = {}
-    raw_config: str = os.path.basename(excel_file_name).strip("ASH_Excel_").lower().split(".")[0]
+    raw_config: str = os.path.basename(excel_file_name).strip("ASH_Excel_").removesuffix(".xls").lower()
     terms: list[str] = raw_config.split("_")
     
     for index, term in enumerate(terms):
@@ -303,15 +303,17 @@ def extract_configuration(excel_file_name: str) -> Optional[list[str]]:
         configuration_dict["planning_mode"] = get_term(["offline", "online"], "online")
         
         if configuration_dict["planning_mode"] == "online":
-            configuration_dict["grounding"] = get_term(["save", "discard"], "save")
+            configuration_dict["grounding"] = get_term(["save", "discard"], "discard")
             configuration_dict["strategy"] = get_term(["basic", "hasty", "steady", "jumpy", "impetuous", "relentless"], "basic")
             configuration_dict["commit_type"] = get_term(["con", "rup", "comb"], "rup")
             configuration_dict["check_type"] = get_term(["prediv", "childdiv"], "childdiv")
             configuration_dict["bound_type"] = get_term(["abs", "per", "sl", "cumt", "inct", "dift", "intt", "pidt"], "abs")
             for rel_index, term in enumerate(terms[(index := index + 1):]):
-                if not term.isdigit():
+                ## Remove any decimal point and check if the term is a number
+                if not term.replace('.', '', 1).isdigit():
                     rel_index -= 1; break
-            configuration_dict["online_bounds"] = str(tuple(int(bound) for bound in terms[index : index + rel_index + 1]))
+            convert = lambda x: float(x) if "." in x else int(x)
+            configuration_dict["online_bounds"] = str(tuple(convert(bound) for bound in terms[index : index + rel_index + 1]))
             index += rel_index
         else:
             configuration_dict["strategy"] = "NONE"
@@ -337,7 +339,7 @@ def extract_configuration(excel_file_name: str) -> Optional[list[str]]:
                 
                 blend: str = get_term()
                 configuration_dict["blend_type"] = {"a" : "abs", "p" : "per"}[blend[0]]
-                configuration_dict["blend_quantity"] = int(blend[1:])
+                configuration_dict["blend_quantity"] = blend[1:]
             else:
                 configuration_dict["blend_direction"] = "NONE"
                 configuration_dict["blend_type"] = "NONE"
@@ -397,7 +399,7 @@ for path in cli_args.input_paths:
             null_rows: pandas.Series = worksheets["Globals"].isnull().all(axis=1)
             null_rows_index: pandas.Index = worksheets["Globals"].index[null_rows]
             worksheets["Globals"] = worksheets["Globals"][:null_rows_index.values[0]]
-            
+
             ## Some of the early classical planning files don't have the time score in globals or cat plans.
             if "TI_SCORE" not in worksheets["Globals"]:
                 worksheets["Globals"].insert(worksheets["Globals"].columns.get_loc("AME_PA_SCORE") + 1,
@@ -530,7 +532,7 @@ for configuration, combined_data_set in tqdm.tqdm(data_sets.items()):
                 if make_quantiles: data_quantiles.insert(index, level_name, configuration[index])
             individual_data_set = individual_data_set.set_index(configuration_headers)
             if make_quantiles: data_quantiles = data_quantiles.set_index(configuration_headers, append=True)
-            
+
             ## Set the order of the index levels;
             ##      - Configurations comes first, then abstraction level for concatenated plans, then the statistic.
             individual_data_set = individual_data_set.reorder_levels(configuration_headers)
@@ -594,7 +596,8 @@ summary_par_plans: pandas.DataFrame = quantiles_par_plans.query("statistic in [0
 #########################################################################################################################################################################################
 
 ## Stacked version of the globals, with break-second along the columns and break-first along the rows, coverting the dataframe from long format to wide format.
-summary_globals_1N_stacked = quantiles_globals.query("statistic == 0.5")[summary_statistics_globals].droplevel("statistic").reorder_levels(HEADER_ORDER, axis=0).unstack(cli_args.break_second).swaplevel(0, 1, axis=1).sort_index(axis=1, level=0).reindex(summary_statistics_globals, axis=1, level=1)
+summary_globals_1N_stacked = quantiles_globals.query("statistic == 0.5")[summary_statistics_globals].droplevel("statistic").reorder_levels(HEADER_ORDER, axis=0) \
+    .unstack(cli_args.break_second).swaplevel(0, 1, axis=1).sort_index(axis=1, level=0).reindex(summary_statistics_globals, axis=1, level=1)
 
 ## Construct dataframes that group the fully combined data based on the break headers
 fully_combined_data_sets_grouped = fully_combined_data_sets["Cat Plans"].groupby([cli_args.break_first, cli_args.break_second, "RU"])
@@ -608,7 +611,7 @@ fully_combined_data_sets_ground_level_grouped = fully_combined_data_sets["Cat Pl
 fully_combined_data_sets_partial_plans = fully_combined_data_sets["Partial Plans"]
 if "planning_mode" in configuration_headers:
     fully_combined_data_sets_partial_plans = fully_combined_data_sets_partial_plans.query("planning_mode == 'online'")
-fully_combined_data_sets_partial_plans.loc[:,["WT_POHA", "YT_POHA"]] = fully_combined_data_sets_partial_plans.apply(lambda row: row[["WT", "YT"]] / fully_combined_data_sets["Globals"].loc[row["RU"],["RU", "HA_T"]]["HA_T"], axis=1)[["WT", "YT"]]
+# fully_combined_data_sets_partial_plans.loc[:,["WT_POHA", "YT_POHA"]] = fully_combined_data_sets_partial_plans.apply(lambda row: row[["WT", "YT"]] / fully_combined_data_sets["Globals"].loc[row["RU"],["RU", "HA_T"]]["HA_T"], axis=1)[["WT", "YT"]]
 fully_combined_data_sets_partial_plans_level_and_problem_grouped = fully_combined_data_sets_partial_plans.groupby([cli_args.break_first, cli_args.break_second, "AL", "PN"])
 
 ## Construct a datafrace containing the sum of the grounding, solving, overhead, and total times to the ground level (these are needed for plotting)
@@ -619,11 +622,14 @@ fully_combined_data_sets_cat_plans_time_sums = fully_combined_data_sets_grouped[
 for time_type in time_types:
     fully_combined_data_sets_cat_plans_time_sums[f"{time_type}_POTT"] = fully_combined_data_sets_cat_plans_time_sums[time_type] / fully_combined_data_sets_cat_plans_time_sums["TT"]
 
-## Construct a dataframge containing the raw ground-level statistics.
+## Construct a dataframe containing the raw ground-level statistics.
 summary_statistics_ground_level = ["GT", "ST", "LT", "WT", "CT", "LE"]
 if cli_args.include_actions: summary_statistics_ground_level.extend(["AC", "CF"])
 summary_raw_ground_level = pandas.merge(fully_combined_data_sets_cat_plans_time_sums.droplevel("RU").groupby([cli_args.break_first, cli_args.break_second])[[*time_types, "TT"]].median(),
-                                        fully_combined_data_sets_ground_level_grouped[["LT", "WT", "MET", "CT", "LE", "AC", "CF", "LT_SCORE", "AW_SCORE", "AME_SCORE", "CT_SCORE"]].median(), left_index=True, right_index=True)
+                                        fully_combined_data_sets_ground_level_grouped[["LT", "WT", "MET_PA", "CT", "LE", "AC", "CF", "LT_SCORE", "AW_SCORE", "AME_PA_SCORE", "CT_SCORE"]].median(), left_index=True, right_index=True)
+summary_raw_ground_level_med_min_max = pandas.merge(fully_combined_data_sets_cat_plans_time_sums.droplevel("RU").groupby([cli_args.break_first, cli_args.break_second])[[*time_types, "TT"]].quantile([0.0, 0.5, 1.0]),
+                                                    fully_combined_data_sets_ground_level_grouped["LE"].quantile([0.0, 0.50, 1.0]), left_index=True, right_index=True)
+summary_raw_ground_level_med_min_max_stacked = summary_raw_ground_level_med_min_max.unstack(level=-1).rename(columns={0.0: "min", 0.5: "med", 1.0: "max"})
 summary_raw_ground_level_stacked = summary_raw_ground_level[summary_statistics_ground_level].unstack(cli_args.break_second).swaplevel(0, 1, axis=1).sort_index(axis=1, level=0).reindex(summary_statistics_ground_level, axis=1, level=1)
 
 if include_percent_classical := (cli_args.include_percent_classical
@@ -633,50 +639,55 @@ if include_percent_classical := (cli_args.include_percent_classical
     summary_raw_ground_level_classical = summary_raw_ground_level.query("planning_mode == 'classical'").droplevel("planning_mode")
     summary_raw_ground_level_precent_classical = summary_raw_ground_level.query("planning_mode != 'classical'").apply(lambda row: row / summary_raw_ground_level_classical.loc[row.name[1],:], axis=1) # Name of series is the index of the row (break_first, break_second), and the series index are the columns over the row.
     summary_raw_ground_level_stacked_percent_classical = summary_raw_ground_level_precent_classical.unstack(cli_args.break_second).swaplevel(0, 1, axis=1).sort_index(axis=1, level=0).reindex(summary_statistics_ground_level, axis=1, level=1)
+    summary_raw_ground_level_med_min_max_percent_classical = summary_raw_ground_level_med_min_max.query("planning_mode != 'classical'").apply(lambda row: row / summary_raw_ground_level_med_min_max.query("planning_mode == 'classical'").loc[("classical", *row.name[1:]),:], axis=1)
 
 ## Calculate "smoothness" of expansion factor across the hierarchy;
 ##      - Average expansion factor: aef = root(top-level - 1, ground-level plan length / top-level plan length)
-##      - Smoothest descent plan length: sdpl = top-level plan length * aef ^ (top-level - level)
-##      - Plan length percentage difference: pld = (plan length / sdpl) - 1
-##      - Hierarchical smoothness score: hs = statistics.mean(abs(pld) for level in levels) / aef
 hierarchy_balances: list[pandas.DataFrame] = []
 for index, configuration in enumerate(fully_combined_data_sets["Cat Plans"][[cli_args.break_first, cli_args.break_second]].drop_duplicates().itertuples(index=False)):
-    print(index, configuration)
     fully_combined_data_sets_for_configuration = fully_combined_data_sets["Cat Plans"].query(f"{cli_args.break_first} == '{configuration[0]}' and {cli_args.break_second} == '{configuration[1]}'")
-    print(fully_combined_data_sets_for_configuration.head(10))
-    overall_ef = (fully_combined_data_sets_for_configuration.query(f"AL == {min(al_range)}")["LE"].median() / fully_combined_data_sets_for_configuration.query(f"AL == {max(al_range)}")["LE"].median()) ** (1 / (max(al_range) - 1))
-    print(overall_ef)
+    overall_ef = (fully_combined_data_sets_for_configuration.query(f"AL == {min(al_range)}")["LE"].median() / fully_combined_data_sets_for_configuration.query(f"AL == {max(al_range)}")["LE"].median())
     level_wise_ef = fully_combined_data_sets_for_configuration.query(f"AL < {max(al_range)}").groupby("AL")["CP_EF_L"].median()
-    print(level_wise_ef)
     average_ef = statistics.mean(level_wise_ef)
     stdev_ef = statistics.stdev(level_wise_ef)
     norm_stdev_ef = stdev_ef / average_ef
-    error_ef = statistics.mean([abs(ef - average_ef) for ef in level_wise_ef])
-    norm_error_ef = error_ef / average_ef
+    smoothed_ef = overall_ef ** (1 / (max(al_range) - 1))
+    error_ef = statistics.mean([abs(ef - smoothed_ef) for ef in level_wise_ef])
+    norm_error_ef = error_ef / smoothed_ef
     hierarchy_balances.append(pandas.DataFrame({cli_args.break_first: configuration[0], cli_args.break_second: configuration[1],
-                                                "Overall Hierarchical Expansion Factor": overall_ef, "Mean Expansion Factor Per Level": average_ef,
-                                                "Hierarchical Expansion Balance Normalised Deviation": norm_stdev_ef, "Hierarchical Expansion Balance Normalised Error": norm_error_ef}, index=[index]))
+                                                "\Theta_h": overall_ef, "\Theta_s": smoothed_ef,
+                                                "B_d": norm_stdev_ef, "B_e": norm_error_ef}, index=[index]))
 
 ## Overall hierarchical expansion factor and complete plan balance (smoothness of refinement over the hierarchy);
 ##      - mean expansion factor over all levels (this is overall mean sub-plan length at any given level), overall refinement tree balancing,
 ##      - average number of problems per level, overall problem division tree number of problems balancing, overall problem division tree size balancing.
-summary_hierarchy_balance_1N_stacked = pandas.concat(hierarchy_balances).set_index([cli_args.break_first, cli_args.break_second]).rename_axis([cli_args.break_first, cli_args.break_second]).unstack(cli_args.break_second).swaplevel(0, 1, axis=1).sort_index(axis=1, level=0)
+summary_statistics_hierarchy_balance_names = ["\Theta_h", "\Theta_s", "B_d", "B_e"]
+summary_hierarchy_balance_1N_stacked = pandas.concat(hierarchy_balances).set_index([cli_args.break_first, cli_args.break_second]) \
+    .rename_axis([cli_args.break_first, cli_args.break_second]).unstack(cli_args.break_second) \
+        .sort_index(axis=1, level=1).reindex(summary_statistics_hierarchy_balance_names, axis=1, level=0) # .swaplevel(0, 1, axis=1).sort_index(axis=1, level=0).reindex(summary_statistics_hierarchy_balance_names, axis=1, level=1)
 
 ## Level-wise expansion and balance break-down.
 summary_statistics_level_wise_balance = ["PR_T", "PR_TS_F_MEAN", "PR_TS_CD", "DIV_INDEX_NMAE", "CP_EF_L", "PP_EB_L", "DIV_STEP_NMAE", "SP_EB_L", "M_CHILD_NMAE"]
-summary_statistics_level_wise_balance_names = ["Number of Problems", "Mean Problem Size Factor", "Problem Balance Normalised Deviation", "Problem Balance Normalised Error",
-                                               "Complete-Plan Expansion Factor", "Partial-Plan Expansion Balance Normalised Deviation", "Partial-Plan Expansion Balance Normalised Error",
-                                               "Sub-Plan Expansion Balance Normalised Deviation", "Sub-Plan Expansion Balance Normalised Error"]
-summary_balance_1N_stacked = fully_combined_data_sets_level_grouped[summary_statistics_level_wise_balance].median() \
+# summary_statistics_level_wise_balance_names = ["Number of Problems", "Mean Problem Size Factor", "Problem Balance Normalised Deviation", "Problem Balance Normalised Error",
+#                                                "Complete-Plan Expansion Factor", "Partial-Plan Expansion Balance Normalised Deviation", "Partial-Plan Expansion Balance Normalised Error",
+#                                                "Sub-Plan Expansion Balance Normalised Deviation", "Sub-Plan Expansion Balance Normalised Error"]
+summary_statistics_level_wise_balance_names = ["N", "S_f", "\mu_d", "\mu_e", "\\theta", "\\beta_d", "\\beta_e", "b_d", "b_e"]
+summary_balance_1N_stacked = fully_combined_data_sets_level_grouped[summary_statistics_level_wise_balance].median().query(f"AL < {max(al_range)}") \
     .rename(columns=lambda index_value: summary_statistics_level_wise_balance_names[summary_statistics_level_wise_balance.index(index_value)]) \
-        .unstack(cli_args.break_second).swaplevel(0, 1, axis=1).sort_index(axis=1, level=0).reindex(summary_statistics_level_wise_balance_names, axis=1, level=1)
+        .unstack(cli_args.break_second).sort_index(axis=1, level=1).reindex(summary_statistics_level_wise_balance_names, axis=1, level=0) # .swaplevel(0, 1, axis=1).sort_index(axis=1, level=0).reindex(summary_statistics_level_wise_balance_names, axis=1, level=1)
+summary_balance_problems_1N_stacked = summary_balance_1N_stacked[["N", "S_f", "\mu_d", "\mu_e"]]
+summary_balance_plans_1N_stacked = summary_balance_1N_stacked[["\\theta", "\\beta_d", "\\beta_e", "b_d", "b_e"]]
 
 ## Level-wise/iteration-wise partial-plan: Raw time, percent total time, size, length, expansion factor, sub-plan expansion balance deviation.
-summary_statistics_problem_wise = ["WT", "YT", "WT_POHA", "YT_POHA", "SIZE", "LE", "PP_EF_L", "SP_ED_L"]
-summary_statistics_problem_wise_names = ["Wait time", "Yield time", "Percent wait time", "Percent yield time", "Size", "Length", "Expansion factor", "Sub-Plan expansion deviation"]
+summary_statistics_problem_wise = ["TT", "WT", "SIZE", "LE"]
+# summary_statistics_problem_wise = ["WT", "YT", "WT_POHA", "YT_POHA", "SIZE", "LE", "PP_EF_L", "SP_ED_L"]
+summary_statistics_problem_wise_names = ["Total Time", "Wait time", "Size", "Length"]
+# summary_statistics_problem_wise_names = ["Wait time", "Yield time", "Percent wait time", "Percent yield time", "Size", "Length", "Expansion factor", "Sub-Plan expansion deviation"]
 summary_partial_plan_1N_stacked = fully_combined_data_sets_partial_plans_level_and_problem_grouped[summary_statistics_problem_wise].median() \
     .rename(columns=lambda index_value: summary_statistics_problem_wise_names[summary_statistics_problem_wise.index(index_value)]) \
         .unstack(cli_args.break_second).swaplevel(0, 1, axis=1).sort_index(axis=1, level=0).reindex(summary_statistics_problem_wise_names, axis=1, level=1)
+
+summary_partial_plan_per_classical = fully_combined_data_sets_partial_plans_level_and_problem_grouped[["YT", "LE"]].median().query("AL == 1").droplevel("AL").apply(lambda row: row / summary_raw_ground_level_classical.loc[row.name[1], ["TT", "LE"]].rename({"TT": "YT"}), axis=1).unstack(level=-1)
 
 #########################################################################################################################################################################################
 ######## Tests of statistical significance
@@ -684,7 +695,7 @@ summary_partial_plan_1N_stacked = fully_combined_data_sets_partial_plans_level_a
 ##      - The p-value, is a measure of the significance or confidence in the difference between the measurements in two different samples (data sets).
 ##        If the p-value is statistically significant, the values in one sample are more likely to be larger than the values in the other sample.
 ##          - A p-value less than 0.05 is statistically significant, and indicates strong evidence against the null hypothesis.
-##            Therefore, the null hypothesis (that there's no difference between the medians of the samples) is rejected, and significant support for the alternative hypothesis (that a significant difference does exist) exists.
+##            Therefore, the null hypothesis (that there's no difference between the medians of the samples) is rejected, and strong support for the alternative hypothesis (that a significant difference does exist) exists.
 ##            Note that this does not mean that the alternative is accepted, i.e. it does not prove that the data are different, only that there is a sufficiently low chance (less than 5%) that the difference in the data was caused by random chance.
 ##          - A p-value greater than 0.05 is not statistically significant, and indicates evidence for the null hypothesis. The null hypothesis is retained, and the alternative hypothesis rejected.
 ##      - https://www.simplypsychology.org/p-value.html#:~:text=A%20p%2Dvalue%20less%20than,and%20accept%20the%20alternative%20hypothesis.
@@ -861,6 +872,7 @@ if cli_args.make_excel:
         global sheet_num
         sheet_num += 1
         print(f"\t- {sheet_num}) Generating sheet: {name}")
+        print(f"\t\t- {df.shape[0]} rows, {df.shape[1]} columns")
         df.to_excel(writer, sheet_name=name, merge_cells=merge_cells)
     
     ################################################################
@@ -871,7 +883,8 @@ if cli_args.make_excel:
     if include_percent_classical:
         save_sheet(summary_raw_ground_level_stacked_percent_classical, "Per-Class 1N Summary", merge_cells=True)
     save_sheet(summary_hierarchy_balance_1N_stacked, "HierExpansion 1N Summary", merge_cells=True)
-    save_sheet(summary_balance_1N_stacked, "Balance 1N Summary", merge_cells=True)
+    save_sheet(summary_balance_problems_1N_stacked, "Balance Problems 1N Summary", merge_cells=True)
+    save_sheet(summary_balance_plans_1N_stacked, "Balance Plans 1N Summary", merge_cells=True)
     save_sheet(summary_partial_plan_1N_stacked, "PartialPlan 1N Summary", merge_cells=True)
     
     save_sheet(summary_globals, "Globals 2N Score Summary", merge_cells=True)
@@ -963,6 +976,7 @@ if cli_args.make_tables:
         global table_num
         table_num += 1
         print(f"\t- {table_num}) Generating table: {filename}")
+        print(f"\t\t- {df.shape[0]} rows, {df.shape[1]} columns")
         name: str = f"{cli_args.output_path}_t{table_num}_{filename}"
         df.to_latex(name + ".tex", float_format="%.2f")
         df.to_csv(name + ".dat", sep=" ", line_terminator="\n", index=True)
@@ -970,10 +984,14 @@ if cli_args.make_tables:
     ## All 1N summaries are median over all experimental runs for each combined configuration.
     save_table(summary_globals_1N_stacked, "OverallScore_1N_Summary")
     save_table(summary_raw_ground_level_stacked, "CatRaw_1N_Summary")
+    save_table(summary_raw_ground_level_med_min_max_stacked, "CatRawMinMax_1N_Summary")
+    save_table(summary_raw_ground_level_med_min_max_percent_classical, "CatRawMinMaxPerClassical_1N_Summary")
+    save_table(summary_partial_plan_per_classical, "PartialPlanPerClassical_1N_Summary")
     if include_percent_classical:
         save_table(summary_raw_ground_level_stacked_percent_classical, "PerClassical_1N_Summary")
     save_table(summary_hierarchy_balance_1N_stacked, "HierExpansion_1N_Summary")
-    save_table(summary_balance_1N_stacked, "LevelWiseExpansionAndBalance_1N_Summary")
+    save_table(summary_balance_problems_1N_stacked, "BalProblems_1N_Summary")
+    save_table(summary_balance_plans_1N_stacked, "BalPlans_1N_Summary")
     save_table(summary_partial_plan_1N_stacked, "PartialPlanWise_1N_Summary")
     
     ## All 2N summaries are median over all experimental runs for each combined configuration.
@@ -989,6 +1007,15 @@ if not cli_args.make_plots:
     print("\nSkipping graph generation and exiting.\n")
     sys.exit(0)
 print("\nGenerating graphs...")
+
+## https://stackoverflow.com/questions/68616781/customizing-the-hue-colors-used-in-seaborn-barplot
+## https://stackoverflow.com/questions/48601175/controlling-color-order-in-seaborn
+## https://seaborn.pydata.org/tutorial/color_palettes.html
+## https://seaborn.pydata.org/tutorial/aesthetics.html
+color_palette = numpy.array(sns.color_palette("tab10"))[[0, 3, 2, 1, 9, 6, 4, 5, 7, 8]]
+sns.set_palette(color_palette)
+sns.set_style("darkgrid")
+sns.set_context("paper")
 
 def set_title_and_labels(fig_or_ax: Union[sns.FacetGrid, sns.JointGrid, pyplot.Axes],
                          x_label: str, y_label: str, title: str) -> None:
@@ -1024,11 +1051,15 @@ def save_figure(fig: figure.Figure, filename: str, tikz_clean: bool = False) -> 
     fig.savefig(fname=name + ".png", bbox_inches="tight", dpi=600)
     if tikz_clean: tikzplotlib.clean_figure(fig)
     tikzplotlib.save(figure=fig, filepath=name + ".tikz", dpi=600,
-                     textsize=12, axis_width="\\plotWidth", axis_height="\\plotHeight")
+                     textsize=12, axis_width="\\plotWidth", axis_height="\\plotHeight",
+                     extra_axis_parameters=["xmajorticks=true", "ymajorticks=true", "xtick style={color=white}", "ytick style={color=white}"],
+                     extra_groupstyle_parameters=["horizontal sep=0.1cm", "vertical sep=0.1cm"])
 
 ## Max limits for absolute plots.
 cat_plans_length_max = fully_combined_data_sets["Cat Plans"]["LE"].max()
 globals_length_max = fully_combined_data_sets["Globals"]["BL_LE"].max()
+cat_plans_actions_max = fully_combined_data_sets["Cat Plans"]["AC"].max()
+globals_actions_max = fully_combined_data_sets["Globals"]["BL_AC"].max()
 cat_plans_total_time_max = fully_combined_data_sets["Cat Plans"]["TT"].max()
 globals_total_time_max = fully_combined_data_sets["Globals"]["HA_T"].max()
 
@@ -1053,38 +1084,85 @@ if "grades" in cli_args.make_plots:
     fg = sns.catplot(
         data=fully_combined_data_sets["Globals"],
         x=cli_args.break_second, y="GRADE", hue=cli_args.break_first,
+        kind="bar", estimator="median", height=4
+    )
+    fg.set(ylim=(0, 1))
+    set_title_and_labels(fg, cli_args.break_second, "Grade", f"Grade of Planner Performance for each {cli_args.break_first} and {cli_args.break_second}s")
+    save_figure(fg.figure, "Grades_BarPlot")
+    fg = sns.catplot(
+        data=fully_combined_data_sets["Globals"],
+        x=cli_args.break_second, y="GRADE", hue=cli_args.break_first,
         kind="box", estimator="median", height=4
     )
     fg.set(ylim=(0, 1))
     set_title_and_labels(fg, cli_args.break_second, "Grade", f"Grade of Planner Performance for each {cli_args.break_first} and {cli_args.break_second}s")
-    save_figure(fg.figure, "Grades")
-    
-    ## Grade of planner perfomance trade-off chart;
-    fg = sns.displot(
-        data=fully_combined_data_sets["Globals"],
-        x="TI_SCORE", y="QL_SCORE", hue=cli_args.break_first,
-        kind="hist", rug=False, height=4
+    save_figure(fg.figure, "Grades_BoxPlot")
+
+    ## Grade and scores of planner performance for each configuration;
+    grades_and_scores = fully_combined_data_sets["Globals"].melt(id_vars=[cli_args.break_first, cli_args.break_second], value_vars=["GRADE", "QL_SCORE", "TI_SCORE"], var_name="Score type", value_name="Grade/Score")
+    fg = sns.catplot(
+        data=grades_and_scores,
+        x=cli_args.break_first, y="Grade/Score", hue="Score type", col=cli_args.break_second,
+        kind="bar", estimator="median", height=4
     )
-    fg.set(xlim=(0, 1), ylim=(0, 1))
-    # fg = sns.relplot(
+    fg.set_titles("{col_var}: {col_name}")
+    fg.set(ylim=(0, 1))
+    set_title_and_labels(fg, cli_args.break_first, "Grade/Score", f"Grade and Scores of Planner Performance for each {cli_args.break_first} and {cli_args.break_second}s")
+    save_figure(fg.figure, "GradeAndScores_BarPlot")
+    fg = sns.catplot(
+        data=grades_and_scores,
+        x=cli_args.break_second, y="Grade/Score", hue=cli_args.break_first, col="Score type",
+        kind="bar", estimator="median", height=4
+    )
+    fg.set_titles("{col_var}: {col_name}")
+    fg.set(ylim=(0, 1))
+    set_title_and_labels(fg, cli_args.break_second, "Grade/Score", f"Grade and Scores of Planner Performance for each {cli_args.break_first} and {cli_args.break_second}s")
+    save_figure(fg.figure, "GradeAndScores_Rotated_BarPlot")
+    fg = sns.catplot(
+        data=grades_and_scores,
+        x=cli_args.break_first, y="Grade/Score", hue="Score type", col=cli_args.break_second,
+        kind="box", estimator="median", height=4
+    )
+    fg.set_titles("{col_var}: {col_name}")
+    fg.set(ylim=(0, 1))
+    set_title_and_labels(fg, cli_args.break_first, "Grade/Score", f"Grade and Scores of Planner Performance for each {cli_args.break_first} and {cli_args.break_second}s")
+    save_figure(fg.figure, "GradeAndScores_BoxPlot")
+    fg = sns.catplot(
+        data=grades_and_scores,
+        x=cli_args.break_second, y="Grade/Score", hue=cli_args.break_first, col="Score type",
+        kind="box", estimator="median", height=4
+    )
+    fg.set_titles("{col_var}: {col_name}")
+    fg.set(ylim=(0, 1))
+    set_title_and_labels(fg, cli_args.break_second, "Grade/Score", f"Grade and Scores of Planner Performance for each {cli_args.break_first} and {cli_args.break_second}s")
+    save_figure(fg.figure, "GradeAndScores_Rotated_BoxPlot")
+
+    # ## Grade of planner perfomance trade-off chart;
+    # fg = sns.displot(
     #     data=fully_combined_data_sets["Globals"],
     #     x="TI_SCORE", y="QL_SCORE", hue=cli_args.break_first,
-    #     kind="scatter", height=4
-    # )
-    # sns.kdeplot(
-    #     data=fully_combined_data_sets["Globals"],
-    #     x="TI_SCORE", y="QL_SCORE", hue=cli_args.break_first, zorder=0, alpha=0.5
+    #     kind="hist", rug=False, height=4
     # )
     # fg.set(xlim=(0, 1), ylim=(0, 1))
-    # jg = sns.JointGrid(
-    #     data=fully_combined_data_sets["Globals"],
-    #     x="TI_SCORE", y="QL_SCORE", hue=cli_args.break_first,
-    #     xlim=(0, 1), ylim=(0, 1)
-    # )
-    # jg.plot_joint(sns.scatterplot); jg.plot_joint(sns.kdeplot, zorder=0, n_levels=6) # zorder=0 plots kde behind scatterplot
-    # jg.plot_marginals(sns.boxplot); jg.plot_marginals(sns.rugplot, height=-0.15, clip_on=False)
-    set_title_and_labels(fg, "Time Score", "Quality Score", f"Performance Trade-off between Planning Time and Plan Quality for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
-    save_figure(fg.figure, "Grades_ScoreTradeOff")
+    # # fg = sns.relplot(
+    # #     data=fully_combined_data_sets["Globals"],
+    # #     x="TI_SCORE", y="QL_SCORE", hue=cli_args.break_first,
+    # #     kind="scatter", height=4
+    # # )
+    # # sns.kdeplot(
+    # #     data=fully_combined_data_sets["Globals"],
+    # #     x="TI_SCORE", y="QL_SCORE", hue=cli_args.break_first, zorder=0, alpha=0.5
+    # # )
+    # # fg.set(xlim=(0, 1), ylim=(0, 1))
+    # # jg = sns.JointGrid(
+    # #     data=fully_combined_data_sets["Globals"],
+    # #     x="TI_SCORE", y="QL_SCORE", hue=cli_args.break_first,
+    # #     xlim=(0, 1), ylim=(0, 1)
+    # # )
+    # # jg.plot_joint(sns.scatterplot); jg.plot_joint(sns.kdeplot, zorder=0, n_levels=6) # zorder=0 plots kde behind scatterplot
+    # # jg.plot_marginals(sns.boxplot); jg.plot_marginals(sns.rugplot, height=-0.15, clip_on=False)
+    # set_title_and_labels(fg, "Time Score", "Quality Score", f"Performance Trade-off between Planning Time and Plan Quality for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
+    # save_figure(fg.figure, "Grades_ScoreTradeOff")
 
 ################################################################################################################################
 ################################################################################################################################
@@ -1101,20 +1179,30 @@ if "quality" in cli_args.make_plots:
             x="AL", y="Total", hue="Type", row=cli_args.break_first, col=cli_args.break_second,
             kind="bar", estimator="median", height=4
         )
-        fg.set_titles("{col_var} {col_name}")
-        fg.set(ylim=(0, cat_plans_length_max))
-        set_title_and_labels(fg, "Abstraction level", "Monolevel plan length and total number of actions", f"Median plan length per level for each {cli_args.break_first} and {cli_args.break_second}s")
-        save_figure(fg.figure, "AbsolutePlanQuality_LevelWise_BarPlot")
-    else:
+        fg.set_titles("{col_var}: {col_name} | {row_var}: {row_name}")
+        fg.set(ylim=(0, cat_plans_actions_max))
+        set_title_and_labels(fg, "Abstraction level", "Monolevel plan length and number of actions", f"Median plan length and number of actions per level for each {cli_args.break_first} and {cli_args.break_second}s")
+        save_figure(fg.figure, "AbsolutePlanQuality_LengthActions_LevelWise_BarPlot")
+
         fg = sns.catplot(
             data=fully_combined_data_sets["Cat Plans"],
-            x="AL", y="LE", hue=cli_args.break_first, col=cli_args.break_second,
+            x="AL", y="AC", hue=cli_args.break_first, col=cli_args.break_second,
             kind="bar", estimator="median", height=4
         )
-        fg.set_titles("{col_var} {col_name}")
-        fg.set(ylim=(0, cat_plans_length_max))
-        set_title_and_labels(fg, "Abstraction level", "Monolevel plan length", f"Median plan length per level for each {cli_args.break_first} and {cli_args.break_second}s")
-        save_figure(fg.figure, "AbsolutePlanQuality_LevelWise_BarPlot")
+        fg.set_titles("{col_var}: {col_name}")
+        fg.set(ylim=(0, cat_plans_actions_max))
+        set_title_and_labels(fg, "Abstraction level", "Number of Actions", f"Median number of actions per level for each {cli_args.break_first} and {cli_args.break_second}s")
+        save_figure(fg.figure, "AbsolutePlanQuality_Actions_LevelWise_BarPlot")
+    
+    fg = sns.catplot(
+        data=fully_combined_data_sets["Cat Plans"],
+        x="AL", y="LE", hue=cli_args.break_first, col=cli_args.break_second,
+        kind="bar", estimator="median", height=4
+    )
+    fg.set_titles("{col_var}: {col_name}")
+    fg.set(ylim=(0, cat_plans_length_max))
+    set_title_and_labels(fg, "Abstraction level", "Monolevel plan length", f"Median plan length per level for each {cli_args.break_first} and {cli_args.break_second}s")
+    save_figure(fg.figure, "AbsolutePlanQuality_LevelWise_BarPlot")
     
     ## Absolute plan quality global bar plot;
     if cli_args.include_actions:
@@ -1123,18 +1211,28 @@ if "quality" in cli_args.make_plots:
             x=cli_args.break_first, y="Total", hue="Type", col=cli_args.break_second,
             kind="bar", estimator="median", height=4
         )
-        fg.set(ylim=(0, globals_length_max))
-        set_title_and_labels(fg, cli_args.break_second, "Ground-level plan length", f"Median ground-plan length for each {cli_args.break_first} and {cli_args.break_second}s")
-        save_figure(fg.figure, "AbsolutePlanQuality_Global_BarPlot")
-    else:
+        fg.set_titles("{col_var}: {col_name}")
+        fg.set(ylim=(0, globals_actions_max))
+        set_title_and_labels(fg, cli_args.break_second, "Ground-level plan length and number of actions", f"Median ground-plan length and number of actions for each {cli_args.break_first} and {cli_args.break_second}s")
+        save_figure(fg.figure, "AbsolutePlanQuality_LengthActions_Global_BarPlot")
+
         fg = sns.catplot(
             data=fully_combined_data_sets["Globals"],
-            x=cli_args.break_second, y="BL_LE", hue=cli_args.break_first,
+            x=cli_args.break_second, y="BL_AC", hue=cli_args.break_first,
             kind="bar", estimator="median", height=4
         )
         fg.set(ylim=(0, globals_length_max))
-        set_title_and_labels(fg, cli_args.break_second, "Ground-level plan length", f"Median ground-plan length for each {cli_args.break_first} and {cli_args.break_second}s")
-        save_figure(fg.figure, "AbsolutePlanQuality_Global_BarPlot")
+        set_title_and_labels(fg, cli_args.break_second, "Ground-level number of actions", f"Median number of actions for each {cli_args.break_first} and {cli_args.break_second}s")
+        save_figure(fg.figure, "AbsolutePlanQuality_Actions_Global_BarPlot")
+
+    fg = sns.catplot(
+        data=fully_combined_data_sets["Globals"],
+        x=cli_args.break_second, y="BL_LE", hue=cli_args.break_first,
+        kind="bar", estimator="median", height=4
+    )
+    fg.set(ylim=(0, globals_length_max))
+    set_title_and_labels(fg, cli_args.break_second, "Ground-level plan length", f"Median ground-plan length for each {cli_args.break_first} and {cli_args.break_second}s")
+    save_figure(fg.figure, "AbsolutePlanQuality_Global_BarPlot")
     
     ## Plan quality score level-wise bar plot;
     fg = sns.catplot(
@@ -1168,7 +1266,7 @@ if "quality" in cli_args.make_plots:
         kind="hist", height=4,
         stat="percent", common_norm=False, element="step", kde=True
     )
-    fg.set_titles("{col_var} {col_name}")
+    fg.set_titles("{col_var}: {col_name}")
     fg.set(xlim=(0, 1)); fg.set(ylim=(0, 100))
     set_title_and_labels(fg, "Plan quality score", "Percent of runs achieving score", f"Histogram of plan length per level for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
     save_figure(fg.figure, "PlanQualityScore_LevelWise_HistPlot")
@@ -1222,7 +1320,7 @@ if "time" in cli_args.make_plots:
         x="AL", y="TT", hue=cli_args.break_first, col=cli_args.break_second,
         kind="bar", estimator="median", height=4
     )
-    fg.set_titles("{col_var} {col_name}")
+    fg.set_titles("{col_var}: {col_name}")
     fg.set(yscale="log")
     set_title_and_labels(fg, "Abstraction level", "Total planning time (s)", f"Median total planning time per level for each {cli_args.break_first} and {cli_args.break_second}s")
     save_figure(fg.figure, "AbsolutePlanningTime_LevelWise_BarPlot")
@@ -1269,7 +1367,7 @@ if "time" in cli_args.make_plots:
         kind="hist", height=4,
         stat="percent", common_norm=False, element="step", kde=True
     )
-    fg.set_titles("{col_var} {col_name}")
+    fg.set_titles("{col_var}: {col_name}")
     fg.set(xlim=(0, 1)); fg.set(ylim=(0, 100))
     set_title_and_labels(fg, "Level-wise time score", "Percent of runs achieving score", f"Histogram of time score per level for each {cli_args.break_first} and {cli_args.break_second}s")
     save_figure(fg.figure, "PlanTimeScore_LevelWise_HistPlot")
@@ -1311,14 +1409,14 @@ if "time" in cli_args.make_plots:
     
     #########################
     ## Bar charts: Aggregate time types showing contribution of each type to overall score
-    
+
     ## Raw aggreate ground-level planning times bar chart;
     fg = sns.catplot(
-        data=summary_raw_ground_level.reset_index(level=[cli_args.break_first, cli_args.break_second]).melt(id_vars=[cli_args.break_first, cli_args.break_second], value_vars=["LT", "WT", "MET", "CT"], var_name="Time type", value_name="Time"),
+        data=summary_raw_ground_level.reset_index(level=[cli_args.break_first, cli_args.break_second]).melt(id_vars=[cli_args.break_first, cli_args.break_second], value_vars=["LT", "WT", "MET_PA", "CT"], var_name="Time type", value_name="Time"),
         x="Time type", y="Time", hue=cli_args.break_first, col=cli_args.break_second,
         kind="bar", estimator="median", height=4
     )
-    fg.set_titles("{col_var} {col_name}")
+    fg.set_titles("{col_var}: {col_name}")
     fg.set(yscale="log")
     set_title_and_labels(fg, "Time type", "Time (s)", f"Median hierarchical aggregate planning times for each {cli_args.break_first} and {cli_args.break_second}s")
     save_figure(fg.figure, "RawAggregatePlanningTime_Global_CatPlot")
@@ -1327,10 +1425,10 @@ if "time" in cli_args.make_plots:
     ##      - These show how each sub-score contributes to the total time score,
     ##      - Fine to just have ground-level as these are the ones that are critical for these time scores,
     ##      - Note that the LT and AW scores are the same as the CT score for classical and offline planning modes,
-    ##      - Note also that the AME_SCORE is not meaningful for classical or offline planning, since they only yield one plan per level, the wait time cannot be calculated and the score is always 1.0,
+    ##      - Note also that the AME_PA_SCORE is not meaningful for classical or offline planning, since they only yield one plan per level, the wait time cannot be calculated and the score is always 1.0,
     ##      - Therefore this graph is only meaningful for comparing different online planning configurations.
     fg = sns.catplot(
-        data=summary_raw_ground_level.reset_index(level=[cli_args.break_first, cli_args.break_second]).melt(id_vars=[cli_args.break_first, cli_args.break_second], value_vars=["LT_SCORE", "AW_SCORE", "AME_SCORE", "CT_SCORE"], var_name="Time score type", value_name="Score"),
+        data=summary_raw_ground_level.reset_index(level=[cli_args.break_first, cli_args.break_second]).melt(id_vars=[cli_args.break_first, cli_args.break_second], value_vars=["LT_SCORE", "AW_SCORE", "AME_PA_SCORE", "CT_SCORE"], var_name="Time score type", value_name="Score"),
         x="Time score type", y="Score", hue=cli_args.break_first,
         kind="bar", estimator="median", height=4
     )
@@ -1348,7 +1446,7 @@ if "time" in cli_args.make_plots:
         x="Time type", y="Time", hue=cli_args.break_first, col=cli_args.break_second,
         kind="bar", estimator="median", height=4
     )
-    fg.set_titles("{col_var} {col_name}")
+    fg.set_titles("{col_var}: {col_name}")
     fg.set(yscale="log")
     set_title_and_labels(fg, "Time type", "Time (s)", f"Median grounding and solving times for each {cli_args.break_first} and {cli_args.break_second}s")
     save_figure(fg.figure, "GroundSum_PlanningTime_BarPlot")
@@ -1367,22 +1465,22 @@ if "time" in cli_args.make_plots:
     #########################
     ## Scatter plots: Contributions to grand total times
     
-    fg = sns.displot(
-        data=fully_combined_data_sets_cat_plans_time_sums,
-        x="GT", y="ST", hue=cli_args.break_first,
-        kind="kde", fill=True, height=4
-    )
-    fg.set(xscale="log", yscale="log")
-    # jg = sns.JointGrid(
+    # fg = sns.displot(
     #     data=fully_combined_data_sets_cat_plans_time_sums,
-    #     x="GT", y="ST", hue=cli_args.break_first
+    #     x="GT", y="ST", hue=cli_args.break_first,
+    #     kind="kde", fill=True, height=4
     # )
-    # jg.ax_joint.set_xscale("log"); jg.ax_joint.set_yscale("log")
-    # jg.ax_marg_x.set_xscale("log"); jg.ax_marg_y.set_yscale("log")
-    # jg.plot_joint(sns.scatterplot); jg.plot_joint(sns.kdeplot, zorder=0, n_levels=6)
-    # jg.plot_marginals(sns.boxplot); # jg.plot_marginals(sns.rugplot, height=-0.15, clip_on=False)
-    set_title_and_labels(fg, "Grounding time", "Solving time", f"Grand total grounding time vs solving time for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
-    save_figure(fg.figure, "GroundSum_PlanningTime_DisPlot")
+    # fg.set(xscale="log", yscale="log")
+    # # jg = sns.JointGrid(
+    # #     data=fully_combined_data_sets_cat_plans_time_sums,
+    # #     x="GT", y="ST", hue=cli_args.break_first
+    # # )
+    # # jg.ax_joint.set_xscale("log"); jg.ax_joint.set_yscale("log")
+    # # jg.ax_marg_x.set_xscale("log"); jg.ax_marg_y.set_yscale("log")
+    # # jg.plot_joint(sns.scatterplot); jg.plot_joint(sns.kdeplot, zorder=0, n_levels=6)
+    # # jg.plot_marginals(sns.boxplot); # jg.plot_marginals(sns.rugplot, height=-0.15, clip_on=False)
+    # set_title_and_labels(fg, "Grounding time", "Solving time", f"Grand total grounding time vs solving time for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
+    # save_figure(fg.figure, "GroundSum_PlanningTime_DisPlot")
     
     # fg = sns.displot(
     #     data=fully_combined_data_sets_cat_plans_time_sums,
@@ -1403,27 +1501,41 @@ if "time" in cli_args.make_plots:
     #########################
     ## Relational plots: Step-wise search times, sub-goal achievement, and refinement expansions, https://seaborn.pydata.org/tutorial/relational.html
     
-    ## Step-wise grounding and solving times with reflines for problem divisions;
-    ##      - Uses vertical reflines to show for the step-wise plots where the end of each partial-plan and the start of the unconsidered final-goal problem is on average.
+    ## Level-wise step-wise grounding and solving times;
+    grounding_solving_times = fully_combined_data_sets["Concat Step-wise"].melt(id_vars=["AL", cli_args.break_first, cli_args.break_second, "SL"], value_vars=["S_GT", "S_ST"], var_name="Time type", value_name="Time")
     fg = sns.relplot(
-        data=fully_combined_data_sets["Concat Step-wise"].melt(id_vars=["AL", cli_args.break_first, cli_args.break_second, "SL"], value_vars=["S_GT", "S_ST", "S_TT"], var_name="Time type", value_name="Time"),
-        x="SL", y="Time", hue="Time type", style=cli_args.break_first, col=cli_args.break_second, row="AL",
-        kind="line"
+        data=grounding_solving_times.query(f"AL < {max(al_range)}"),
+        x="SL", y="Time", hue=cli_args.break_first, style="Time type", col=cli_args.break_second, row="AL", kind="line"
     )
-    fg.set_titles("{col_var} {col_name} | {row_var} {row_name}")
+    fg.set_titles("{col_var}: {col_name} | {row_var}: {row_name}")
     set_title_and_labels(fg, "Step", "Time (s)", f"Step-wise grounding and solving times per level for each {cli_args.break_first} and {cli_args.break_second}")
     save_figure(fg.figure, "Stepwise_GroundingSolvingTimes_LevelWise_RelPlot")
+
+    fg = sns.relplot(
+        data=grounding_solving_times.query(f"AL < {max(al_range)}"),
+        x="SL", y="Time", hue=cli_args.break_first, style="Time type", col="AL", kind="line"
+    )
+    fg.set_titles("{col_var}: {col_name}")
+    set_title_and_labels(fg, "Step", "Time (s)", f"Step-wise grounding and solving times per level for each {cli_args.break_first} averaged over {cli_args.break_second}")
+    save_figure(fg.figure, "Stepwise_GroundingSolvingTimes_LevelWise_Flattened_RelPlot")
     
     ## Level-wise step-wise total search time line plots with confidence intervals;
     fg = sns.relplot(
-        data=fully_combined_data_sets["Concat Step-wise"],
-        x="SL", y="S_TT", hue=cli_args.break_first, style="AL", col=cli_args.break_second,
-        kind="line"
+        data=fully_combined_data_sets["Concat Step-wise"].query(f"AL < {max(al_range)}"),
+        x="SL", y="S_TT", hue=cli_args.break_first, col=cli_args.break_second, row="AL", kind="line"
     )
-    fg.set_titles("{col_var} {col_name}")
+    fg.set_titles("{col_var}: {col_name} | {row_var}: {row_name}")
     set_title_and_labels(fg, "Step", "Time (s)", f"Step-wise total time per level for each {cli_args.break_first} and {cli_args.break_second}")
     save_figure(fg.figure, "Stepwise_TotalTimes_LevelWise_RelPlot")
     
+    fg = sns.relplot(
+        data=fully_combined_data_sets["Concat Step-wise"].query(f"AL < {max(al_range)}"),
+        x="SL", y="S_TT", hue=cli_args.break_first, col="AL", kind="line"
+    )
+    fg.set_titles("{col_var}: {col_name}")
+    set_title_and_labels(fg, "Step", "Time (s)", f"Step-wise total time per level for each {cli_args.break_first} averaged over {cli_args.break_second}")
+    save_figure(fg.figure, "Stepwise_TotalTimes_LevelWise_Flattened_RelPlot")
+
     ## Ground-level step-wise total search time line plots with confidence intervals;
     fg = sns.relplot(
         data=fully_combined_data_sets["Concat Step-wise"].query("AL == 1"),
@@ -1434,10 +1546,12 @@ if "time" in cli_args.make_plots:
         for i, problem in enumerate(fully_combined_data_sets["Partial Plans"]["problem"].unique()):
             for x in fully_combined_data_sets["Partial Plans"].query(f"AL == 1 and problem == '{problem}'").groupby("PN").median()["LE"]:
                 fg.axes[0, i].axvline(x, color="red", linestyle="dashed", linewidth=0.5)
+    fg.set_titles("{col_var}: {col_name}")
     set_title_and_labels(fg, "Step", "Total Time (s)", f"Ground-level step-wise total time for each {cli_args.break_first} and {cli_args.break_second}")
     save_figure(fg.figure, "Stepwise_TotalTimes_GroundLevel_RelPlot")
     
     ## Ground-level step-wise total search time scatter with exponential regression lines;
+    ##      - Uses vertical reflines to show for the step-wise plots where the end of each partial-plan and the start of the unconsidered final-goal problem is on average.
     ##      - https://stackoverflow.com/questions/46497892/non-linear-regression-in-seaborn-python
     def regress(func, steps, times):
         """Regress the given times against the given steps using the given function."""
@@ -1455,20 +1569,24 @@ if "time" in cli_args.make_plots:
     for configuration in step_wise_ground_level_data[[cli_args.break_first, cli_args.break_second]].drop_duplicates().itertuples(index=False):
         step_wise_ground_level_data_for_configuaration = step_wise_ground_level_data.query(f"{cli_args.break_first} == '{configuration[0]}' and {cli_args.break_second} == '{configuration[1]}'")
         popt, pcov = regress(func, step_wise_ground_level_data_for_configuaration["SL"], step_wise_ground_level_data_for_configuaration["S_TT"])
-        regression_x = numpy.linspace(step_wise_ground_level_data_for_configuaration["SL"].min(), step_wise_ground_level_data_for_configuaration["SL"].max(), step_wise_ground_level_data_for_configuaration["SL"].count())
+        regression_x = numpy.linspace(step_wise_ground_level_data_for_configuaration["SL"].min(), step_wise_ground_level_data_for_configuaration["SL"].max(), step_wise_ground_level_data_for_configuaration["SL"].unique().size)
         regression_y = func(regression_x, *popt)
         regression_data.append(pandas.DataFrame({cli_args.break_first: [configuration[0]]*regression_x.size, cli_args.break_second: [configuration[1]]*regression_x.size, "SL": regression_x, "S_TT": regression_y}))
-    regression_data = pandas.concat([fully_combined_data_sets["Concat Step-wise"].query("AL == 1")[[cli_args.break_first, cli_args.break_second, "SL", "S_TT"]], *regression_data])
+    # regression_data = pandas.concat([fully_combined_data_sets["Concat Step-wise"].query("AL == 1")[[cli_args.break_first, cli_args.break_second, "SL", "S_TT"]], *regression_data])
+    regression_data = pandas.concat(regression_data)
     
     fg = sns.relplot(
         data=regression_data,
         x="SL", y="S_TT", hue=cli_args.break_first, style=cli_args.break_first, col=cli_args.break_second,
         kind="line", markers=False, dashes=True
     )
-    if "problem" in fully_combined_data_sets["Partial Plans"]:
-        for i, problem in enumerate(fully_combined_data_sets["Partial Plans"]["problem"].unique()):
-            for x in fully_combined_data_sets["Partial Plans"].query(f"AL == 1 and problem == '{problem}'").groupby("PN").median()["LE"]:
-                fg.axes[0, i].axvline(x, color="red", linestyle="dashed", linewidth=0.5)
+    # if cli_args.break_second == "problem" and "problem" in fully_combined_data_sets["Partial Plans"]:
+    #     for i, problem in enumerate(fully_combined_data_sets["Partial Plans"]["problem"].unique()):
+    #         x_previous = 0
+    #         for x in fully_combined_data_sets["Partial Plans"].query(f"AL == 1 and problem == '{problem}'").groupby("PN").median()["LE"]:
+    #             fg.axes[0, i].axvline(x_previous + x, color="red", linestyle="dashed", linewidth=0.5)
+    #             x_previous += x
+    fg.set_titles("{col_var}: {col_name}")
     set_title_and_labels(fg, "Step", "Total Time (s)", f"Exponential regression fit for ground-level step-wise total time for each {cli_args.break_first} and {cli_args.break_second}")
     save_figure(fg.figure, "Regression_Stepwise_TotalTimes_GroundLevel_RelPlot")
 
@@ -1491,6 +1609,7 @@ if "balance" in cli_args.make_plots:
     for i, al in enumerate(range(1, max(al_range))):
         for x in fully_combined_data_sets["Concat Index-wise"].query(f"AL == {al}").groupby("INDEX").median()["ACH_AT"]:
             fg.axes[0, i].axvline(x, color="red", linestyle="dashed", linewidth=0.5)
+    fg.set_titles("{col_var}: {col_name}")
     set_title_and_labels(fg, "Plan step", "Number of achieved sub-goals", f"Ground-level step-wise number of achieved sub-goals per level for each {cli_args.break_first} and {cli_args.break_second}")
     save_figure(fg.figure, "Stepwise_AchievedSubGoals_GroundLevel_RelPlot")
     
@@ -1500,7 +1619,7 @@ if "balance" in cli_args.make_plots:
         x="INDEX", y="SP_END_S", hue=cli_args.break_second, style=cli_args.break_first, col="AL",
         kind="line", markers=True, dashes=True
     )
-    fg.set_titles("{col_var} {col_name}")
+    fg.set_titles("{col_var}: {col_name}")
     set_title_and_labels(fg, "Sub-goal stage index", "Concatenated plan length", f"Ground-level index-wise concatenated plan length per level for each {cli_args.break_first} and {cli_args.break_second}")
     save_figure(fg.figure, "Indexwise_ConcatPlanLength_GroundLevel_RelPlot")
     
@@ -1510,7 +1629,7 @@ if "balance" in cli_args.make_plots:
         x="SL", y="Expansion", hue="Expansion type", style=cli_args.break_first, col=cli_args.break_second, row="AL",
         kind="line", markers=True, dashes=True
     )
-    fg.set_titles("{col_var} {col_name} | {row_var} {row_name}")
+    fg.set_titles("{col_var}: {col_name} | {row_var}: {row_name}")
     set_title_and_labels(fg, "Plan step", "Expansion", f"Step-wise accumulating refinement expansion factor and deviation per level for each {cli_args.break_first} and {cli_args.break_second}")
     save_figure(fg.figure, "Stepwise_AccuExpansion_LevelWise_RelPlot")
     
@@ -1522,7 +1641,7 @@ if "balance" in cli_args.make_plots:
         kind="hist", height=4,
         stat="percent", common_norm=False, element="step", kde=True
     )
-    fg.set_titles("{col_var} {col_name} | {row_var} {row_name}")
+    fg.set_titles("{col_var}: {col_name} | {row_var}: {row_name}")
     fg.set(ylim=(0, 100))
     set_title_and_labels(fg, "Plan step", "Percentage of plans where a division or matching child fell on the given step", f"Histogram showing distribution of problem divisions and mathching children per level for each {cli_args.break_first} averaged over all {cli_args.break_second}")
     save_figure(fg.figure, "Indexwise_DivisionAndMatchingChildren_LevelWise_HistPlot")
@@ -1533,7 +1652,7 @@ if "balance" in cli_args.make_plots:
         x="INDEX", y="Length", hue="Length type", row=cli_args.break_first, col=cli_args.break_second,
         kind="bar", estimator="median", height=4
     )
-    fg.set_titles("{col_var} {col_name} | {row_var} {row_name}")
+    fg.set_titles("{col_var}: {col_name} | {row_var}: {row_name}")
     set_title_and_labels(fg, "Sub-goal stage index", "Sub-plan length and interleaving quantity", f"Ground-level index-wise sub-plan lengths and interleaving quantities for each {cli_args.break_first} and {cli_args.break_second}")
     save_figure(fg.figure, "Indexwise_SubPlanLengthInterleaving_LevelWise_BarPlot")
     
@@ -1549,7 +1668,7 @@ if "balance" in cli_args.make_plots:
         x="AL", y="Value", hue="Value type", row=cli_args.break_first, col=cli_args.break_second,
         kind="violin", split=True, estimator="median", height=4
     )
-    fg.set_titles("{col_var} {col_name} | {row_var} {row_name}")
+    fg.set_titles("{col_var}: {col_name} | {row_var}: {row_name}")
     set_title_and_labels(fg, "Level", "Partial-problem size and partial-plan length", f"Median problem size and partial-plan length per level for each {cli_args.break_first} and {cli_args.break_second}")
     save_figure(fg.figure, "MedianPartialProblemSizePlanLength_Levelwise_ViolinPlot")
     
@@ -1559,7 +1678,7 @@ if "balance" in cli_args.make_plots:
         x="AL", y="PR_T", hue=cli_args.break_first, col=cli_args.break_second,
         kind="bar", estimator="median", height=4
     )
-    fg.set_titles("{col_var} {col_name}")
+    fg.set_titles("{col_var}: {col_name}")
     set_title_and_labels(fg, "Level", "Total partial-problems", f"Total partial-problems per level for each {cli_args.break_first} and {cli_args.break_second}")
     save_figure(fg.figure, "MedianTotalProblems_Levelwise_BoxPlot")
     
@@ -1581,13 +1700,36 @@ if "balance" in cli_args.make_plots:
     ##          - The normalised absolute error of the division indices to the 'perfect' balance indices
     ##            (i.e. the ratio of the absolute error to the size of a 'perfectly' balanced partial-problem).
     fg = sns.catplot(
-        data=fully_combined_data_sets_cat_plans.query(f"AL < {max(al_range)}").melt(id_vars=["AL", cli_args.break_first, cli_args.break_second], value_vars=["PR_TS_F_MEAN", "PR_TS_CD", "DIV_INDEX_MAE", "PP_EF_LE_MED", "PP_ED_L", "DIV_STEP_MAE"], var_name="Value type", value_name="Value"),
+        data=fully_combined_data_sets_cat_plans.query(f"AL < {max(al_range)}").melt(id_vars=["AL", cli_args.break_first, cli_args.break_second], value_vars=["PR_TS_F_MEAN", "PR_TS_CD", "DIV_INDEX_NMAE", "PP_EF_LE_MED", "PP_EB_L", "DIV_STEP_NMAE"], var_name="Value type", value_name="Value"),
         x="AL", y="Value", hue="Value type", col=cli_args.break_first,
         kind="bar", estimator="median", height=4
     )
-    fg.set_titles("{col_var} {col_name}")
+    fg.set_titles("{col_var}: {col_name}")
     set_title_and_labels(fg, "Level", "Partial-problem size and partial-plan length", f"Partial problem/plan size and length balancing per level for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
     save_figure(fg.figure, "PartialProblemAndPlanBalance_Levelwise_BarPlot")
+    fg = sns.catplot(
+        data=fully_combined_data_sets_cat_plans.query(f"AL < {max(al_range)}").melt(id_vars=["AL", cli_args.break_first, cli_args.break_second], value_vars=["PR_TS_F_MEAN", "PR_TS_CD", "DIV_INDEX_NMAE", "PP_EF_LE_MED", "PP_EB_L", "DIV_STEP_NMAE"], var_name="Value type", value_name="Value"),
+        x="AL", y="Value", hue="Value type", col=cli_args.break_first,
+        kind="box", estimator="median", height=4
+    )
+    fg.set_titles("{col_var}: {col_name}")
+    set_title_and_labels(fg, "Level", "Partial-problem size and partial-plan length", f"Partial problem/plan size and length balancing per level for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
+    save_figure(fg.figure, "PartialProblemAndPlanBalance_Levelwise_BoxPlot")
+    ## Flattened versions of the above;
+    fg = sns.catplot(
+        data=fully_combined_data_sets_cat_plans.query(f"AL < {max(al_range)}").melt(id_vars=["AL", cli_args.break_first, cli_args.break_second], value_vars=["PR_TS_F_MEAN", "PR_TS_CD", "DIV_INDEX_NMAE", "PP_EF_LE_MED", "PP_EB_L", "DIV_STEP_NMAE"], var_name="Value type", value_name="Value"),
+        x="AL", y="Value", hue="Value type",
+        kind="bar", estimator="median", height=4
+    )
+    set_title_and_labels(fg, "Level", "Partial-problem size and partial-plan length", f"Partial problem/plan size and length balancing per level for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
+    save_figure(fg.figure, "PartialProblemAndPlanBalance_Levelwise_Flattened_BarPlot")
+    fg = sns.catplot(
+        data=fully_combined_data_sets_cat_plans.query(f"AL < {max(al_range)}").melt(id_vars=["AL", cli_args.break_first, cli_args.break_second], value_vars=["PR_TS_F_MEAN", "PR_TS_CD", "DIV_INDEX_NMAE", "PP_EF_LE_MED", "PP_EB_L", "DIV_STEP_NMAE"], var_name="Value type", value_name="Value"),
+        x="AL", y="Value", hue="Value type",
+        kind="box", estimator="median", height=4
+    )
+    set_title_and_labels(fg, "Level", "Partial-problem size and partial-plan length", f"Partial problem/plan size and length balancing per level for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
+    save_figure(fg.figure, "PartialProblemAndPlanBalance_Levelwise_Flattened_BoxPlot")
     
     ## Pair-wise plots to show relations between each of total time, plan length, and problem size; https://seaborn.pydata.org/generated/seaborn.pairplot.html
     ##      - For example, TT against LE would show how time tends to grow with length and LE against SIZE would show how length tends to grow with size.
@@ -1600,6 +1742,75 @@ if "balance" in cli_args.make_plots:
     pg.map_diag(sns.histplot, element="step", kde=True)
     set_title_and_labels(pg, "Property", "Property", f"Pair-wise partial-problem/plan properties for each {cli_args.break_first} averaged over all {cli_args.break_second}s")
     save_figure(pg.figure, "PartialPlanProperties_PairPlot")
+
+    ## Scatter plot of problem size against plan length;
+    ##      - Shows how plan length tends to grow with problem size.
+    fg = sns.relplot(
+        data=fully_combined_data_sets_par_plans.query(f"AL < {max(al_range)}")[[cli_args.break_first, cli_args.break_second, "SIZE", "LE"]].drop_duplicates(),
+        x="SIZE", y="LE", hue=cli_args.break_first, col=cli_args.break_second,
+        kind="scatter", height=4
+    )
+    fg.set_titles("{col_var}: {col_name}")
+    set_title_and_labels(fg, "Problem size", "Plan length", f"Plan length against problem size for each {cli_args.break_first} and {cli_args.break_second}")
+    save_figure(fg.figure, "ProblemSizeAgainstPlanLength_ScatterPlot")
+
+    ## Scatter plot of problem size against planning time;
+    ##      - Shows how planning time tends to grow with problem size.
+    fg = sns.relplot(
+        data=fully_combined_data_sets_par_plans.query(f"AL < {max(al_range)}")[[cli_args.break_first, cli_args.break_second, "SIZE", "TT"]].drop_duplicates(),
+        x="SIZE", y="TT", hue=cli_args.break_first, col=cli_args.break_second,
+        kind="scatter", height=4
+    )
+    fg.set_titles("{col_var}: {col_name}")
+    set_title_and_labels(fg, "Problem size", "Planning time", f"Planning time against problem size for each {cli_args.break_first} and {cli_args.break_second}")
+    save_figure(fg.figure, "ProblemSizeAgainstPlanningTime_ScatterPlot")
+
+    ## Scatter plot of plan length against planning time;
+    ##      - Shows how planning time tends to grow with plan length.
+    fg = sns.relplot(
+        data=fully_combined_data_sets_par_plans.query(f"AL < {max(al_range)}")[[cli_args.break_first, cli_args.break_second, "LE", "TT"]].drop_duplicates(),
+        x="LE", y="TT", hue=cli_args.break_first, col=cli_args.break_second,
+        kind="scatter", height=4
+    )
+    fg.set_titles("{col_var}: {col_name}")
+    set_title_and_labels(fg, "Plan length", "Planning time", f"Planning time against plan length for each {cli_args.break_first} and {cli_args.break_second}")
+    save_figure(fg.figure, "PlanLengthAgainstPlanningTime_ScatterPlot")
+
+    ## Scatter plot of problem size against quality score;
+    ##      - Shows how quality score tends to grow with problem size.
+    fg = sns.relplot(
+        data=fully_combined_data_sets_cat_plans.query(f"AL < {max(al_range)}")[[cli_args.break_first, cli_args.break_second, "PR_TS_MED", "QL_SCORE"]].groupby([cli_args.break_first, cli_args.break_second]).median().drop_duplicates(),
+        x="PR_TS_MED", y="QL_SCORE", hue=cli_args.break_first, col=cli_args.break_second,
+        kind="scatter", height=4
+    )
+    fg.set(ylim=(0, 1))
+    fg.set_titles("{col_var}: {col_name}")
+    set_title_and_labels(fg, "Problem size", "Quality score", f"Quality score against problem size for each {cli_args.break_first} and {cli_args.break_second}")
+    save_figure(fg.figure, "ProblemSizeAgainstQualityScore_ScatterPlot")
+
+    ## Scatter plot of problem size against time score;
+    ##      - Shows how time score tends to grow with problem size.
+    fg = sns.relplot(
+        data=fully_combined_data_sets_cat_plans.query(f"AL < {max(al_range)}")[[cli_args.break_first, cli_args.break_second, "PR_TS_MED", "TI_SCORE"]].groupby([cli_args.break_first, cli_args.break_second]).median().drop_duplicates(),
+        x="PR_TS_MED", y="TI_SCORE", hue=cli_args.break_first, col=cli_args.break_second,
+        kind="scatter", height=4
+    )
+    fg.set(ylim=(0, 1))
+    fg.set_titles("{col_var}: {col_name}")
+    set_title_and_labels(fg, "Problem size", "Time score", f"Time score against problem size for each {cli_args.break_first} and {cli_args.break_second}")
+    save_figure(fg.figure, "ProblemSizeAgainstTimeScore_ScatterPlot")
+
+    ## Scatter plot of quality score against time score;
+    ##      - Shows how time score tends to grow with quality score.
+    fg = sns.relplot(
+        data=fully_combined_data_sets_cat_plans.query(f"AL < {max(al_range)}")[[cli_args.break_first, cli_args.break_second, "QL_SCORE", "TI_SCORE"]].groupby([cli_args.break_first, cli_args.break_second]).median().drop_duplicates(),
+        x="QL_SCORE", y="TI_SCORE", hue=cli_args.break_first, col=cli_args.break_second,
+        kind="scatter", height=4
+    )
+    fg.set(xlim=(0, 1), ylim=(0, 1))
+    fg.set_titles("{col_var}: {col_name}")
+    set_title_and_labels(fg, "Quality score", "Time score", f"Time score against quality score for each {cli_args.break_first} and {cli_args.break_second}")
+    save_figure(fg.figure, "QualityScoreAgainstTimeScore_ScatterPlot")
 
 #########################
 #########################

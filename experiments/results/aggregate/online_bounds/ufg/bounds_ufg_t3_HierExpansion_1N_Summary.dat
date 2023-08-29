@@ -1,6 +1,0 @@
-problem ps15 ps15 ps15 ps15
- "Hierarchical Expansion Balance Normalised Deviation" "Hierarchical Expansion Balance Normalised Error" "Mean Expansion Factor Per Level" "Overall Hierarchical Expansion Factor"
-planning_mode    
-classical 0.0 0.0 1.0 1.61245154965971
-offline 0.07109152557710348 0.05026929982046676 1.6144927536231881 1.61245154965971
-online 0.08893637106155014 0.06288751107174513 1.636231884057971 1.632993161855452

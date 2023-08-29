@@ -1,101 +1,126 @@
 % This file was created with tikzplotlib v0.10.1.
 \begin{tikzpicture}
 
-\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{darkslategray38}{RGB}{38,38,38}
 \definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{lavender234234242}{RGB}{234,234,242}
 \definecolor{steelblue49115161}{RGB}{49,115,161}
 
-\begin{groupplot}[group style={group size=3 by 1}]
+\begin{groupplot}[group style={group size=3 by 1, horizontal sep=0.1cm, vertical sep=0.1cm}]
 \nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
 height=\plotHeight,
 tick align=outside,
-tick pos=left,
-title={problem ps1},
+title={problem: ps1},
 width=\plotWidth,
-x grid style={darkgray176},
-xlabel={Level},
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Level},
+xmajorticks=false,
+xmajorticks=true,
 xmin=-0.5, xmax=1.5,
-xtick style={color=black},
+xtick style={color=darkslategray38},
+xtick style={color=white},
 xtick={0,1},
 xticklabels={1.0,2.0},
-y grid style={darkgray176},
-ylabel={Total partial-problems},
+y grid style={white},
+ylabel=\textcolor{darkslategray38}{Total partial-problems},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
 ymin=0, ymax=12.6,
-ytick style={color=black}
+ytick style={color=darkslategray38},
+ytick style={color=white}
 ]
-\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:0.4,12);
-\addlegendimage{ybar,ybar legend,draw=none,fill=steelblue49115161}
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0.4,12);
+\addlegendimage{ybar,ybar legend,draw=white,fill=steelblue49115161,line width=0.32pt}
 \addlegendentry{online}
 
-\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:1.4,4);
-\addplot [line width=1.08pt, darkslategray66]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1.4,4);
+\addplot [line width=0.864pt, darkslategray66]
 table {%
 0 12
 0 12
 };
-\addplot [line width=1.08pt, darkslategray66]
-table {%
-1 4
-1 4
-};
-
-\nextgroupplot[
-height=\plotHeight,
-scaled y ticks=manual:{}{\pgfmathparse{#1}},
-tick align=outside,
-tick pos=left,
-title={problem ps2},
-width=\plotWidth,
-x grid style={darkgray176},
-xlabel={Level},
-xmin=-0.5, xmax=1.5,
-xtick style={color=black},
-xtick={0,1},
-xticklabels={1.0,2.0},
-y grid style={darkgray176},
-ymin=0, ymax=12.6,
-ytick style={color=black},
-yticklabels={}
-]
-\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:0.4,12);
-\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:1.4,4);
-\addplot [line width=1.08pt, darkslategray66]
-table {%
-0 12
-0 12
-};
-\addplot [line width=1.08pt, darkslategray66]
+\addplot [line width=0.864pt, darkslategray66]
 table {%
 1 4
 1 4
 };
 
 \nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
 height=\plotHeight,
 scaled y ticks=manual:{}{\pgfmathparse{#1}},
 tick align=outside,
-tick pos=left,
-title={problem ps3},
+title={problem: ps2},
 width=\plotWidth,
-x grid style={darkgray176},
-xlabel={Level},
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Level},
+xmajorticks=false,
+xmajorticks=true,
 xmin=-0.5, xmax=1.5,
-xtick style={color=black},
+xtick style={color=darkslategray38},
+xtick style={color=white},
 xtick={0,1},
 xticklabels={1.0,2.0},
-y grid style={darkgray176},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
 ymin=0, ymax=12.6,
-ytick style={color=black},
+ytick style={color=darkslategray38},
+ytick style={color=white},
 yticklabels={}
 ]
-\draw[draw=none,fill=steelblue49115161] (axis cs:-0.4,0) rectangle (axis cs:0.4,12);
-\draw[draw=none,fill=steelblue49115161] (axis cs:0.6,0) rectangle (axis cs:1.4,4);
-\addplot [line width=1.08pt, darkslategray66]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0.4,12);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1.4,4);
+\addplot [line width=0.864pt, darkslategray66]
 table {%
 0 12
 0 12
 };
-\addplot [line width=1.08pt, darkslategray66]
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1 4
+1 4
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={problem: ps3},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Level},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=1.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1},
+xticklabels={1.0,2.0},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=12.6,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0.4,12);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1.4,4);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0 12
+0 12
+};
+\addplot [line width=0.864pt, darkslategray66]
 table {%
 1 4
 1 4

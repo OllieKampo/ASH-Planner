@@ -418,28 +418,30 @@ class MonolevelPlan(_collections_abc.Mapping):
     ------
     `level: int` - The abstraction level of the monolevel plan.
     
-    `states: dict[int, list[Fluent]]` -
+    `states: dict[int, list[Fluent]]` - The seqeuence of states that the plan transitions through.
     
-    `actions: dict[int, list[Action]]` -
+    `actions: dict[int, list[Action]]` - The sequence of actions that the plan executes.
     
-    `produced_sgoals: dict[int, list[SubGoal]]` -
+    `produced_sgoals: dict[int, list[SubGoal]]` - The sequence of sub-goal stages the plan produces.
     
-    `is_final: bool` -
+    `is_final: bool` - Whether the plan is final.
     
-    `planning_statistics: ASH_IncrementalStatistics` -
+    `planning_statistics: ASH_IncrementalStatistics` - The statistics of the planning process.
     
-    `conformance_mapping: {ConformanceMapping | None} = None` -
+    `conformance_mapping: {ConformanceMapping | None} = None` - The conformance mapping of this plan to the abstract plan it refines.
+    This is None iff the plan is not refined (i.e. it is the top-leve classical plan).
     
-    `problem_divisions: {list[DivisionPoint] | None} = None` -
-    
-    `total_choices: int = 0` -
+    `problem_divisions: {list[DivisionPoint] | None} = None` - The division points over the combined refinement problem of the abstract plan that this plan refines.
+    This is None iff the plan is not refined (i.e. it is the top-leve classical plan).
+
+    `total_choices: int = 0` - The total number of truth value choices made by the ASP solver during the planning process.
     This is None iff the plan is concatenated.
     
-    `preemptive_choices: int = 0` -
+    `preemptive_choices: int = 0` - The number of choices made heuristically by the ASP solver to preemptively achieve final-goal literals.
     This is None iff the plan is concatenated.
     
     `fgoal_ordering_correct: {bool | None} = None` - Whether the final-goal intermediate order preferences were achieved in the correct order.
-    This is None iff the plan is not top-level (i.e. not the most abstract classical plan)
+    This is None iff the plan is not top-level (i.e. not the most abstract classical plan).
     """
     ## Universal plan variables
     level: int
@@ -824,9 +826,9 @@ class RefinementSchema:
     
     Fields
     ------
-    `constraining_sgoals: dict[int, list[SubGoal]]`
+    `constraining_sgoals: dict[int, list[SubGoal]]` - The constraining sub-goals of the refinement schema.
     
-    `problem_divisions: list[DivisionPoint] = []`
+    `problem_divisions: list[DivisionPoint] = []` - The problem divisions of the refinement schema.
     """
     
     constraining_sgoals: dict[int, list[SubGoal]]
@@ -948,7 +950,7 @@ class HierarchicalPlan(_collections_abc.Mapping, AbstractionHierarchy):
             return 0.0
         raw_wait_time: float = self.get_wait_time(level, problem_number + 1)
         if per_action:
-            return raw_wait_time / self.partial_plans[level][problem_number].total_actions
+            return raw_wait_time / list(self.partial_plans[level].items())[problem_number - 1][1].total_actions
         return raw_wait_time
     
     def get_average_minimum_execution_time(self, level: int, per_action: bool = False) -> float:
@@ -974,7 +976,7 @@ class HierarchicalPlan(_collections_abc.Mapping, AbstractionHierarchy):
         """
         if not self.is_hierarchical_refinement:
             return self.concatenated_plans[level].grand_totals.total_time
-        increment_sequence: list[int] = list(self.partial_plans[level])
+        increment_sequence: list[int] = list(self.partial_plans[level]) ## TODO: This is also not correct because partial-plans are being indexed by problem number, not increment number.
         yield_increment: int = increment_sequence[problem_number - 1]
         return sum(self.partial_plans[_level][increment].grand_totals.total_time
                    for _level in reversed(self.constrained_level_range(bottom_level=level))
@@ -991,7 +993,7 @@ class HierarchicalPlan(_collections_abc.Mapping, AbstractionHierarchy):
             raw_wait_time = self.get_yield_time(level, problem_number)
         else: raw_wait_time = self.get_yield_time(level, problem_number) - self.get_yield_time(level, problem_number - 1)
         if per_action:
-            return raw_wait_time / self.partial_plans[level][problem_number].total_actions
+            return raw_wait_time / list(self.partial_plans[level].items())[problem_number - 1][1].total_actions
         return raw_wait_time
     
     def get_average_wait_time(self, level: int, exclude_initial: bool = False, per_action: bool = False) -> float:
@@ -1030,7 +1032,7 @@ class HierarchicalPlan(_collections_abc.Mapping, AbstractionHierarchy):
         if self.is_hierarchical_refinement:
             for iteration in range(1, max(self.partial_plans[self.bottom_level]) + 1):
                 for level in reversed(self.level_range):
-                    for problem_number, inner_iteration in enumerate(self.partial_plans[level], start=1):
+                    for problem_number, inner_iteration in enumerate(self.partial_plans[level], start=1): ## TODO: This is not correct because partial plans are being indexed by problem number, not iteration number.
                         if inner_iteration == iteration:
                             sequence_number: int = len(problem_sequence) + 1
                             problem_sequence.append((sequence_number, level, iteration, problem_number))
@@ -1211,7 +1213,8 @@ class PlanningDomain(AbstractionHierarchy):
     This is a two-tuple of:
         - Domain Definition = {classes,
                                sorts = {fluents, actions, statics},
-                               rules = {effects, preconditions, relations}, abstraction mappings}
+                               rules = {effects, preconditions, relations},
+                               abstraction mappings}
         - World Structure = {static state,
                              entity declarations,
                              ancestry relation declarations}
@@ -3412,7 +3415,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
                         if problems[level] not in dividing_scenario.problem_range:
                             raise ASH_InternalError(f"Invalid problem number for current division scenario: number = {problems[level]}, scenario range = {dividing_scenario.problem_range}.")
                         
-                        ## TODO The sub-goal stage range should include the true division points, and the calculated blend points
+                        ## TODO: The sub-goal stage range should include the true division points, and the calculated blend points.
                         sgoals_range: SubGoalRange = dividing_scenario.get_subgoals_indices_range(problems[level])
                         first_sgoals, last_sgoals = sgoals_range.first_index, sgoals_range.last_index
                         self.__logger.log(self.__log_level(Verbosity.Verbose),
@@ -3471,7 +3474,7 @@ class HierarchicalPlanner(AbstractionHierarchy):
                                                          length_limit=_length_limit)
                     
                     ## Save the solution if one was found
-                    self.__partial_plans.setdefault(level, {})[problems[level]] = monolevel_plan
+                    self.__partial_plans.setdefault(level, {})[increments] = monolevel_plan
                     
                 except ASH_NoSolutionError as error:
                     ## An error will be raise if a solution to the planning problem was not found

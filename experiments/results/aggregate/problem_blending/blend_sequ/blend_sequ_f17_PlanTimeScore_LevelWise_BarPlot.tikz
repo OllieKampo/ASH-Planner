@@ -1,0 +1,122 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{brown1926061}{RGB}{192,60,61}
+\definecolor{darkslategray38}{RGB}{38,38,38}
+\definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{lavender234234242}{RGB}{234,234,242}
+\definecolor{peru22412844}{RGB}{224,128,44}
+\definecolor{seagreen5814558}{RGB}{58,145,58}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{axis}[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+tick align=outside,
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Abstraction level},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=2.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1,2},
+xticklabels={1.0,2.0,3.0},
+y grid style={white},
+ylabel=\textcolor{darkslategray38}{Level-wise time score},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=1,
+ytick style={color=darkslategray38},
+ytick style={color=white}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:-0.2,1);
+\addlegendimage{ybar,ybar legend,draw=white,fill=steelblue49115161,line width=0.32pt}
+\addlegendentry{NONE}
+
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:0.8,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:1.8,1);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-0.2,0) rectangle (axis cs:0,0.986356181381472);
+\addlegendimage{ybar,ybar legend,draw=white,fill=brown1926061,line width=0.32pt}
+\addlegendentry{1}
+
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:0.8,0) rectangle (axis cs:1,1);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1.8,0) rectangle (axis cs:2,1);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:2.77555756156289e-17,0) rectangle (axis cs:0.2,0.978983032926852);
+\addlegendimage{ybar,ybar legend,draw=white,fill=seagreen5814558,line width=0.32pt}
+\addlegendentry{2}
+
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.2,1);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.2,1);
+\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:0.2,0) rectangle (axis cs:0.4,0.971970857705472);
+\addlegendimage{ybar,ybar legend,draw=white,fill=peru22412844,line width=0.32pt}
+\addlegendentry{3}
+
+\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:1.2,0) rectangle (axis cs:1.4,1);
+\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:2.2,0) rectangle (axis cs:2.4,1);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.3 1
+-0.3 1
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.7 1
+0.7 1
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.7 1
+1.7 1
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.1 0.983214284486198
+-0.1 0.993295944525634
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.9 1
+0.9 1
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.9 1
+1.9 1
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.1 0.977324664388378
+0.1 0.983701679659196
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.1 1
+1.1 1
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.1 1
+2.1 1
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.3 0.97077184403504
+0.3 0.973712872195076
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.3 1
+1.3 1
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.3 1
+2.3 1
+};
+\end{axis}
+
+\end{tikzpicture}

@@ -1,5 +1,5 @@
-online_method cf cf cf cf gf gf gf gf hy hy hy hy
- "Hierarchical Expansion Balance Normalised Deviation" "Hierarchical Expansion Balance Normalised Error" "Mean Expansion Factor Per Level" "Overall Hierarchical Expansion Factor" "Hierarchical Expansion Balance Normalised Deviation" "Hierarchical Expansion Balance Normalised Error" "Mean Expansion Factor Per Level" "Overall Hierarchical Expansion Factor" "Hierarchical Expansion Balance Normalised Deviation" "Hierarchical Expansion Balance Normalised Error" "Mean Expansion Factor Per Level" "Overall Hierarchical Expansion Factor"
+ \Theta_h \Theta_h \Theta_h \Theta_s \Theta_s \Theta_s B_d B_d B_d B_e B_e B_e
+online_method cf gf hy cf gf hy cf gf hy cf gf hy
 problem            
-ps3 0.36771716295746276 0.26165220186435234 1.646031746031746  0.36945456223074546 0.2577085361895488 1.6301587301587301  0.368858891303624 0.25888168056842764 1.634848484848485 
-ps3ts 0.12175609446667715 0.09357985794433854 1.833536029188203 1.8248531140351991 0.1295308798593628 0.09963692416265055 1.8190432755650146 1.8093216960274119 0.1294333662229535 0.09956593859570702 1.819211795955982 1.8171205928321397
+ps3       0.36771716295746276 0.36945456223074546 0.368858891303624   
+ps3ts 6.076923076923077 5.923076923076923 6.0 1.8248531140351991 1.8093216960274119 1.8171205928321397 0.12175609446667715 0.1295308798593628 0.1294333662229535 0.09243907621871397 0.09838126120653104 0.09929691126309291

@@ -1,0 +1,90 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{crimson2143940}{RGB}{214,39,40}
+\definecolor{darkorange25512714}{RGB}{255,127,14}
+\definecolor{darkslategray38}{RGB}{38,38,38}
+\definecolor{darkturquoise23190207}{RGB}{23,190,207}
+\definecolor{forestgreen4416044}{RGB}{44,160,44}
+\definecolor{lavender234234242}{RGB}{234,234,242}
+\definecolor{orchid227119194}{RGB}{227,119,194}
+\definecolor{steelblue31119180}{RGB}{31,119,180}
+
+\begin{axis}[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+tick align=outside,
+title={problem: ps3},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Problem size},
+xmajorgrids,
+xmajorticks=false,
+xmajorticks=true,
+xmin=1.8, xmax=6.2,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+y grid style={white},
+ylabel=\textcolor{darkslategray38}{Quality score},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=1,
+ytick style={color=darkslategray38},
+ytick style={color=white}
+]
+\addplot [
+  draw=white,
+  mark=*,
+  only marks,
+  scatter,
+  scatter/@post marker code/.code={%
+  \endscope
+},
+  scatter/@pre marker code/.code={%
+  \expanded{%
+  \noexpand\definecolor{thispointdrawcolor}{RGB}{\drawcolor}%
+  \noexpand\definecolor{thispointfillcolor}{RGB}{\fillcolor}%
+  }%
+  \scope[draw=thispointdrawcolor, fill=thispointfillcolor]%
+},
+  visualization depends on={value \thisrow{draw} \as \drawcolor},
+  visualization depends on={value \thisrow{fill} \as \fillcolor}
+]
+table{%
+x  y  fill
+6 0.917808219178082 31,119,180
+3 0.91304347826087 214,39,40
+4.5 0.917808219178082 44,160,44
+2 0.817073170731707 255,127,14
+3 0.84 23,190,207
+4 0.858974358974359 227,119,194
+};
+\addplot [draw=steelblue31119180, fill=steelblue31119180, mark=*, only marks]
+table{%
+x  y
+};
+\addplot [draw=crimson2143940, fill=crimson2143940, mark=*, only marks]
+table{%
+x  y
+};
+\addplot [draw=forestgreen4416044, fill=forestgreen4416044, mark=*, only marks]
+table{%
+x  y
+};
+\addplot [draw=darkorange25512714, fill=darkorange25512714, mark=*, only marks]
+table{%
+x  y
+};
+\addplot [draw=darkturquoise23190207, fill=darkturquoise23190207, mark=*, only marks]
+table{%
+x  y
+};
+\addplot [draw=orchid227119194, fill=orchid227119194, mark=*, only marks]
+table{%
+x  y
+};
+\end{axis}
+
+\end{tikzpicture}

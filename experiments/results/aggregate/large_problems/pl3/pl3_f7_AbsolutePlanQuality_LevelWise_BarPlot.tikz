@@ -1,0 +1,281 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{brown1926061}{RGB}{192,60,61}
+\definecolor{darkslategray38}{RGB}{38,38,38}
+\definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{lavender234234242}{RGB}{234,234,242}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{groupplot}[group style={group size=3 by 1, horizontal sep=0.1cm, vertical sep=0.1cm}]
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+tick align=outside,
+title={online\_method: cf},
+unbounded coords=jump,
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Abstraction level},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=4.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1,2,3,4},
+xticklabels={1.0,2.0,3.0,4.0,5.0},
+y grid style={white},
+ylabel=\textcolor{darkslategray38}{Monolevel plan length},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=275,
+ytick style={color=darkslategray38},
+ytick style={color=white}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,167);
+\addlegendimage{ybar,ybar legend,draw=white,fill=steelblue49115161,line width=0.32pt}
+\addlegendentry{pl3tsdc}
+
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,91.5);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,57);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:2.6,0) rectangle (axis cs:3,31);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:3.6,0) rectangle (axis cs:4,17);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,164);
+\addlegendimage{ybar,ybar legend,draw=white,fill=brown1926061,line width=0.32pt}
+\addlegendentry{pl3ts}
+
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,57.5);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,31);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:3,0) rectangle (axis cs:3.4,17);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:4,0) rectangle (axis cs:4.4,nan);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.2 165
+-0.2 169
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.8 90
+0.8 92
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.8 57
+1.8 58
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.8 31
+2.8 32
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+3.8 17
+3.8 17
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.2 163
+0.2 166
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.2 57
+1.2 58
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.2 31
+2.2 32
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+3.2 17
+3.2 17
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+4.2 nan
+4.2 nan
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={online\_method: gf},
+unbounded coords=jump,
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Abstraction level},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=4.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1,2,3,4},
+xticklabels={1.0,2.0,3.0,4.0,5.0},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=275,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,166);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,92);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,58);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:2.6,0) rectangle (axis cs:3,32);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:3.6,0) rectangle (axis cs:4,17);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,165);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,58);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,31.5);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:3,0) rectangle (axis cs:3.4,17);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:4,0) rectangle (axis cs:4.4,nan);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.2 164
+-0.2 177.0125
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.8 91
+0.8 97
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.8 57
+1.8 61
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.8 31
+2.8 32
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+3.8 17
+3.8 17
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.2 162
+0.2 168.5
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.2 57
+1.2 60
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.2 31
+2.2 32
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+3.2 17
+3.2 17
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+4.2 nan
+4.2 nan
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={online\_method: hy},
+unbounded coords=jump,
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Abstraction level},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=4.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1,2,3,4},
+xticklabels={1.0,2.0,3.0,4.0,5.0},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=275,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,166.5);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,90);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,57);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:2.6,0) rectangle (axis cs:3,31);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:3.6,0) rectangle (axis cs:4,17);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,164.5);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,58);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,32);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:3,0) rectangle (axis cs:3.4,17);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:4,0) rectangle (axis cs:4.4,nan);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.2 164
+-0.2 170
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.8 90
+0.8 93.5
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.8 57
+1.8 58
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.8 31
+2.8 32
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+3.8 17
+3.8 17
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.2 162.5
+0.2 169.0125
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.2 57
+1.2 60
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.2 31
+2.2 32
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+3.2 17
+3.2 17
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+4.2 nan
+4.2 nan
+};
+\end{groupplot}
+
+\end{tikzpicture}

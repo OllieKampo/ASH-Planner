@@ -1,0 +1,181 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkslategray38}{RGB}{38,38,38}
+\definecolor{lavender234234242}{RGB}{234,234,242}
+\definecolor{steelblue31119180}{RGB}{31,119,180}
+
+\begin{groupplot}[group style={group size=3 by 1, horizontal sep=0.1cm, vertical sep=0.1cm}]
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+tick align=outside,
+title={problem: ps1},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Problem size},
+xmajorgrids,
+xmajorticks=false,
+xmajorticks=true,
+xmin=2.925, xmax=4.575,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+y grid style={white},
+ylabel=\textcolor{darkslategray38}{Time score},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=1,
+ytick style={color=darkslategray38},
+ytick style={color=white}
+]
+\addplot [draw=none, draw=white, fill=steelblue31119180, mark=*]
+table{%
+x  y
+0 -0.5
+0.13260155 -0.5
+0.259789935392427 -0.447316845794121
+0.353553390593274 -0.353553390593274
+0.447316845794121 -0.259789935392427
+0.5 -0.13260155
+0.5 0
+0.5 0.13260155
+0.447316845794121 0.259789935392427
+0.353553390593274 0.353553390593274
+0.259789935392427 0.447316845794121
+0.13260155 0.5
+0 0.5
+-0.13260155 0.5
+-0.259789935392427 0.447316845794121
+-0.353553390593274 0.353553390593274
+-0.447316845794121 0.259789935392427
+-0.5 0.13260155
+-0.5 0
+-0.5 -0.13260155
+-0.447316845794121 -0.259789935392427
+-0.353553390593274 -0.353553390593274
+-0.259789935392427 -0.447316845794121
+-0.13260155 -0.5
+0 -0.5
+0 -0.5
+};
+\addplot [draw=steelblue31119180, fill=steelblue31119180, mark=*, only marks]
+table{%
+x  y
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={problem: ps2},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Problem size},
+xmajorgrids,
+xmajorticks=false,
+xmajorticks=true,
+xmin=2.925, xmax=4.575,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=1,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\addplot [draw=none, draw=white, fill=steelblue31119180, mark=*]
+table{%
+x  y
+0 -0.5
+0.13260155 -0.5
+0.259789935392427 -0.447316845794121
+0.353553390593274 -0.353553390593274
+0.447316845794121 -0.259789935392427
+0.5 -0.13260155
+0.5 0
+0.5 0.13260155
+0.447316845794121 0.259789935392427
+0.353553390593274 0.353553390593274
+0.259789935392427 0.447316845794121
+0.13260155 0.5
+0 0.5
+-0.13260155 0.5
+-0.259789935392427 0.447316845794121
+-0.353553390593274 0.353553390593274
+-0.447316845794121 0.259789935392427
+-0.5 0.13260155
+-0.5 0
+-0.5 -0.13260155
+-0.447316845794121 -0.259789935392427
+-0.353553390593274 -0.353553390593274
+-0.259789935392427 -0.447316845794121
+-0.13260155 -0.5
+0 -0.5
+0 -0.5
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={problem: ps3},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Problem size},
+xmajorgrids,
+xmajorticks=false,
+xmajorticks=true,
+xmin=2.925, xmax=4.575,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=1,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\addplot [draw=none, draw=white, fill=steelblue31119180, mark=*]
+table{%
+x  y
+0 -0.5
+0.13260155 -0.5
+0.259789935392427 -0.447316845794121
+0.353553390593274 -0.353553390593274
+0.447316845794121 -0.259789935392427
+0.5 -0.13260155
+0.5 0
+0.5 0.13260155
+0.447316845794121 0.259789935392427
+0.353553390593274 0.353553390593274
+0.259789935392427 0.447316845794121
+0.13260155 0.5
+0 0.5
+-0.13260155 0.5
+-0.259789935392427 0.447316845794121
+-0.353553390593274 0.353553390593274
+-0.447316845794121 0.259789935392427
+-0.5 0.13260155
+-0.5 0
+-0.5 -0.13260155
+-0.447316845794121 -0.259789935392427
+-0.353553390593274 -0.353553390593274
+-0.259789935392427 -0.447316845794121
+-0.13260155 -0.5
+0 -0.5
+0 -0.5
+};
+\end{groupplot}
+
+\end{tikzpicture}

@@ -1,0 +1,346 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{brown1926061}{RGB}{192,60,61}
+\definecolor{darkslategray38}{RGB}{38,38,38}
+\definecolor{darkslategray66}{RGB}{66,66,66}
+\definecolor{lavender234234242}{RGB}{234,234,242}
+\definecolor{steelblue49115161}{RGB}{49,115,161}
+
+\begin{groupplot}[group style={group size=4 by 1, horizontal sep=0.1cm, vertical sep=0.1cm}]
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+log basis y={10},
+tick align=outside,
+title={online\_bounds: (2, 2)},
+unbounded coords=jump,
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Time type},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=3.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1,2,3},
+xticklabels={LT,WT,MET\_PA,CT},
+y grid style={white},
+ylabel=\textcolor{darkslategray38}{Time (s)},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0.00577624662921458, ymax=30.1066941875876,
+ymode=log,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+ytick={0.0001,0.001,0.01,0.1,1,10,100,1000},
+yticklabels={
+  \(\displaystyle {10^{-4}}\),
+  \(\displaystyle {10^{-3}}\),
+  \(\displaystyle {10^{-2}}\),
+  \(\displaystyle {10^{-1}}\),
+  \(\displaystyle {10^{0}}\),
+  \(\displaystyle {10^{1}}\),
+  \(\displaystyle {10^{2}}\),
+  \(\displaystyle {10^{3}}\)
+}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,7.82982935000007);
+\addlegendimage{ybar,ybar legend,draw=white,fill=steelblue49115161,line width=0.32pt}
+\addlegendentry{concurrent}
+
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,4.75544717500007);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,0.0473579288461541);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:2.6,0) rectangle (axis cs:3,18.8906018500003);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,7.61407034999958);
+\addlegendimage{ybar,ybar legend,draw=white,fill=brown1926061,line width=0.32pt}
+\addlegendentry{sequential}
+
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,3.75148803750007);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,0.0332199897990866);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:3,0) rectangle (axis cs:3.4,14.8737570500001);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.2 nan
+-0.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.8 nan
+0.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.8 nan
+1.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.8 nan
+2.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.2 nan
+0.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.2 nan
+1.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.2 nan
+2.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+3.2 nan
+3.2 nan
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+log basis y={10},
+minor yticklabels={},
+scaled minor y ticks=manual:{}{\pgfmathparse{#1}},
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={online\_bounds: (2, 4)},
+unbounded coords=jump,
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Time type},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=3.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1,2,3},
+xticklabels={LT,WT,MET\_PA,CT},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0.00577624662921458, ymax=30.1066941875876,
+ymode=log,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,6.8863625000003);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,2.33270361875001);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,0.0211156908928573);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:2.6,0) rectangle (axis cs:3,18.3026310500002);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,5.96210259999964);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,1.77180389999996);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,0.0153259747553813);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:3,0) rectangle (axis cs:3.4,13.9051249999997);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.2 nan
+-0.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.8 nan
+0.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.8 nan
+1.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.8 nan
+2.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.2 nan
+0.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.2 nan
+1.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.2 nan
+2.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+3.2 nan
+3.2 nan
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+log basis y={10},
+minor yticklabels={},
+scaled minor y ticks=manual:{}{\pgfmathparse{#1}},
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={online\_bounds: (4, 2)},
+unbounded coords=jump,
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Time type},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=3.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1,2,3},
+xticklabels={LT,WT,MET\_PA,CT},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0.00577624662921458, ymax=30.1066941875876,
+ymode=log,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,6.76766575000008);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,2.31399387500003);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,0.0222284824781552);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:2.6,0) rectangle (axis cs:3,18.1627992499995);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,5.72872124999995);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,1.72799637500004);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,0.0158576759499028);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:3,0) rectangle (axis cs:3.4,13.4469327000003);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.2 nan
+-0.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.8 nan
+0.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.8 nan
+1.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.8 nan
+2.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.2 nan
+0.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.2 nan
+1.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.2 nan
+2.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+3.2 nan
+3.2 nan
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+log basis y={10},
+minor yticklabels={},
+scaled minor y ticks=manual:{}{\pgfmathparse{#1}},
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={online\_bounds: (4, 4)},
+unbounded coords=jump,
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Time type},
+xmajorticks=false,
+xmajorticks=true,
+xmin=-0.5, xmax=3.5,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+xtick={0,1,2,3},
+xticklabels={LT,WT,MET\_PA,CT},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0.00577624662921458, ymax=30.1066941875876,
+ymode=log,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
+]
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,5.80058949999972);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,1.31394954062499);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,0.0116269105747126);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:2.6,0) rectangle (axis cs:3,20.4036440000001);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,4.50422375000023);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,0.878097884375007);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,0.0085231682545454);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:3,0) rectangle (axis cs:3.4,13.4390840000003);
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+-0.2 nan
+-0.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.8 nan
+0.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.8 nan
+1.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.8 nan
+2.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+0.2 nan
+0.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+1.2 nan
+1.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+2.2 nan
+2.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+3.2 nan
+3.2 nan
+};
+\end{groupplot}
+
+\end{tikzpicture}
