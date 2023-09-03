@@ -78,7 +78,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 -0.2 77
--0.2 79
+-0.2 78
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -112,7 +112,7 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.2 74
+1.2 73.975
 1.2 75
 };
 \addplot [line width=0.864pt, darkslategray66]

@@ -29,11 +29,11 @@ ylabel=\textcolor{darkslategray38}{Monolevel plan length},
 ymajorgrids,
 ymajorticks=false,
 ymajorticks=true,
-ymin=0, ymax=125,
+ymin=0, ymax=119,
 ytick style={color=darkslategray38},
 ytick style={color=white}
 ]
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,75);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,77);
 \addlegendimage{ybar,ybar legend,draw=white,fill=steelblue49115161,line width=0.32pt}
 \addlegendentry{hasty}
 
@@ -97,7 +97,7 @@ y grid style={white},
 ymajorgrids,
 ymajorticks=false,
 ymajorticks=true,
-ymin=0, ymax=125,
+ymin=0, ymax=119,
 ytick style={color=darkslategray38},
 ytick style={color=white},
 yticklabels={}
@@ -160,7 +160,7 @@ y grid style={white},
 ymajorgrids,
 ymajorticks=false,
 ymajorticks=true,
-ymin=0, ymax=125,
+ymin=0, ymax=119,
 ytick style={color=darkslategray38},
 ytick style={color=white},
 yticklabels={}

@@ -64,7 +64,7 @@ ytick style={color=white}
 \addlegendimage{ybar,ybar legend,draw=white,fill=orchid213132188,line width=0.32pt}
 \addlegendentry{(6, 6)}
 
-\draw[draw=white,fill=orchid213132188,line width=0.32pt] (axis cs:1.26666666666667,0) rectangle (axis cs:1.4,0.977254142391324);
+\draw[draw=white,fill=orchid213132188,line width=0.32pt] (axis cs:1.26666666666667,0) rectangle (axis cs:1.4,0.977480131548453);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 -0.333333333333333 1
@@ -122,8 +122,8 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.33333333333333 0.976255753911686
-1.33333333333333 0.978186992781779
+1.33333333333333 0.976805023322505
+1.33333333333333 0.979233679585837
 };
 \end{axis}
 

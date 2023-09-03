@@ -1,11 +1,13 @@
 % This file was created with tikzplotlib v0.10.1.
 \begin{tikzpicture}
 
+\definecolor{crimson2143940}{RGB}{214,39,40}
 \definecolor{darkslategray38}{RGB}{38,38,38}
 \definecolor{lavender234234242}{RGB}{234,234,242}
 \definecolor{steelblue31119180}{RGB}{31,119,180}
 
-\begin{axis}[
+\begin{groupplot}[group style={group size=2 by 1, horizontal sep=0.1cm, vertical sep=0.1cm}]
+\nextgroupplot[
 axis background/.style={fill=lavender234234242},
 axis line style={white},
 height=\plotHeight,
@@ -28,6 +30,63 @@ ymajorticks=true,
 ymin=0, ymax=1,
 ytick style={color=darkslategray38},
 ytick style={color=white}
+]
+\addplot [
+  draw=white,
+  mark=*,
+  only marks,
+  scatter,
+  scatter/@post marker code/.code={%
+  \endscope
+},
+  scatter/@pre marker code/.code={%
+  \expanded{%
+  \noexpand\definecolor{thispointdrawcolor}{RGB}{\drawcolor}%
+  \noexpand\definecolor{thispointfillcolor}{RGB}{\fillcolor}%
+  }%
+  \scope[draw=thispointdrawcolor, fill=thispointfillcolor]%
+},
+  visualization depends on={value \thisrow{draw} \as \drawcolor},
+  visualization depends on={value \thisrow{fill} \as \fillcolor}
+]
+table{%
+x  y  fill
+4 0.989845863014059 31,119,180
+4 0.990968988844345 214,39,40
+};
+\addplot [draw=steelblue31119180, fill=steelblue31119180, mark=*, only marks]
+table{%
+x  y
+};
+\addplot [draw=crimson2143940, fill=crimson2143940, mark=*, only marks]
+table{%
+x  y
+};
+
+\nextgroupplot[
+axis background/.style={fill=lavender234234242},
+axis line style={white},
+height=\plotHeight,
+scaled y ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+title={online\_method: gf},
+width=\plotWidth,
+x grid style={white},
+xlabel=\textcolor{darkslategray38}{Problem size},
+xmajorgrids,
+xmajorticks=false,
+xmajorticks=true,
+xmin=3.78, xmax=4.22,
+xtick style={color=darkslategray38},
+xtick style={color=white},
+y grid style={white},
+ymajorgrids,
+ymajorticks=false,
+ymajorticks=true,
+ymin=0, ymax=1,
+ytick style={color=darkslategray38},
+ytick style={color=white},
+yticklabels={}
 ]
 \addplot [draw=none, draw=white, fill=steelblue31119180, mark=*]
 table{%
@@ -59,10 +118,6 @@ x  y
 0 -0.5
 0 -0.5
 };
-\addplot [draw=steelblue31119180, fill=steelblue31119180, mark=*, only marks]
-table{%
-x  y
-};
-\end{axis}
+\end{groupplot}
 
 \end{tikzpicture}

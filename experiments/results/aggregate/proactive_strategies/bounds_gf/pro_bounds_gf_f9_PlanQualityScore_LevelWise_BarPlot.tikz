@@ -72,7 +72,7 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.666666666666667 0.800072568940494
+0.666666666666667 0.807692307692308
 0.666666666666667 0.91304347826087
 };
 \addplot [line width=0.864pt, darkslategray66]

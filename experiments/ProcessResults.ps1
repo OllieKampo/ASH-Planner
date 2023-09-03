@@ -101,33 +101,12 @@ if ($process -contains "blend") {
     python .\ProcessResults.py .\results\main\improved_initial\preemptive_achievement\optimise\ .\results\main\improved_initial\problem_blending\sequ_action_planning\ .\results\main\improved_initial\action_concurrency\online\ .\results\main\improved_initial\problem_blending\conc_action_planning\ -out .\results\aggregate\problem_blending\blend_problems\blend_problems -combine all -diff blend_quantity action_planning -same problem online_bounds -filter search_mode=minbound achievement_type=seqa online_bounds="(2~ 2)","(2~ 4)","(4~ 2)","(4~ 4)" blend_type=abs -allow_none all -breakf blend_quantity -breaks problem -plots grades quality time -excel False -p False -show False
 }
 
-if ($process -contains "large") {
-    Write-Output "Processing: Performance on Large Problems for Standard and Modified Hierarchies..."
-    Start-Sleep -Seconds 1
-    make_directories -parent large_problems -children lpsh_sequ, lpsh_conc, lpmh_sequ, lpmh_conc, pl3
-
-    # Standard Hierarchies
-    python .\ProcessResults.py .\results\main\improved_initial\preemptive_achievement\additional\ -out .\results\aggregate\large_problems\lpsh_sequ\lpsh_sequ -combine all -diff online_bounds -same problem -filter problem=pl1,pl2 search_mode=minbound achievement_type=seqa -allow_none all -breakf online_bounds -breaks problem -plots grades quality time -p False -show False
-    python .\ProcessResults.py .\results\main\improved_initial\action_concurrency\online\additional\ -out .\results\aggregate\large_problems\lpsh_conc\lpsh_conc -combine all -diff online_bounds -same problem -filter problem=pl1,pl2 search_mode=minbound achievement_type=seqa -allow_none all -breakf online_bounds -breaks problem -plots grades quality time -p False -show False
-
-    # Modified Hierarchies
-    python .\ProcessResults.py .\results\main\modified_hierarchies\online\sequ_action_planning\ -out .\results\aggregate\large_problems\lpmh_sequ\lpmh_sequ -combine all -diff online_bounds -same problem -filter problem=pl1ts,pl2dc search_mode=minbound achievement_type=seqa -allow_none all -breakf online_bounds -breaks problem -plots grades quality time -p False -show False
-    python .\ProcessResults.py .\results\main\modified_hierarchies\online\conc_action_planning\ -out .\results\aggregate\large_problems\lpmh_conc\lpmh_conc -combine all -diff online_bounds -same problem -filter problem=pl1ts,pl2dc search_mode=minbound achievement_type=seqa -allow_none all -breakf online_bounds -breaks problem -plots grades quality time -p False -show False
-
-    # PL3
-    python .\ProcessResults.py .\results\main\proactive_strategies\large_problems -out .\results\aggregate\large_problems\pl3\pl3 -combine all -diff online_method -same problem -filter search_mode=minbound achievement_type=seqa -allow_none all -breakf problem -breaks online_method -plots grades quality time -p False -show False
-}
-
-# TODO: Remove online methods from the following.
 if ($process -contains "pro") {
     Write-Output "Processing: Proactive Sized-Bound Strategies with Final-Goal Pre-emptive Achievement for all Small Problems and Different Online Bounds and Online Methods..."
     Start-Sleep -Seconds 1
-    make_directories -parent proactive_strategies -children problems, strategies, methods_bal, bounds_cf, bounds_gf, bounds_hy
+    make_directories -parent proactive_strategies -children strategies, methods_bal, bounds_cf, bounds_gf, bounds_hy
 
-    # Difference between Problems (PS3 and PS3TS) and Online Methods averaged over bounds and strategies
-    python .\ProcessResults.py .\results\main\proactive_strategies\complete_first\hasty\ .\results\main\proactive_strategies\complete_first\steady\ .\results\main\proactive_strategies\ground_first\hasty\ .\results\main\proactive_strategies\ground_first\steady\ .\results\main\proactive_strategies\hybrid\hasty\ .\results\main\proactive_strategies\hybrid\steady\ -out .\results\aggregate\proactive_strategies\problems\pro_problems -combine all -diff problem -same strategy,online_bounds,online_method -filter problem=ps3,ps3ts strategy=hasty,steady -allow_none all -breakf problem -breaks online_method -excel False -p False -show False
-
-    # Difference between Strategies and Online Methods averaged over bounds and problems
+    # Difference between Strategies and Online Methods for PS3 averaged over bounds
     python .\ProcessResults.py .\results\main\proactive_strategies\complete_first\hasty\ .\results\main\proactive_strategies\complete_first\steady\ .\results\main\proactive_strategies\ground_first\hasty\ .\results\main\proactive_strategies\ground_first\steady\ .\results\main\proactive_strategies\hybrid\hasty\ .\results\main\proactive_strategies\hybrid\steady\ -out .\results\aggregate\proactive_strategies\strategies\pro_strategies -combine all -diff strategy -same online_bounds,online_method -filter problem=ps3 strategy=hasty,steady -allow_none all -breakf strategy -breaks online_method -excel False -p False -show False
     python .\ProcessResults.py .\results\main\proactive_strategies\complete_first\hasty\ .\results\main\proactive_strategies\complete_first\steady\ .\results\main\proactive_strategies\ground_first\hasty\ .\results\main\proactive_strategies\ground_first\steady\ .\results\main\proactive_strategies\hybrid\hasty\ .\results\main\proactive_strategies\hybrid\steady\ -out .\results\aggregate\proactive_strategies\methods_bal\pro_methods_bal -combine all -diff online_method -same strategy,online_bounds -filter problem=ps3 strategy=hasty,steady -allow_none all -breakf online_method -breaks strategy -plots balance -excel False -p False -show False
 
@@ -135,17 +114,4 @@ if ($process -contains "pro") {
     python .\ProcessResults.py .\results\main\proactive_strategies\complete_first\hasty\ .\results\main\proactive_strategies\complete_first\steady\ .\results\main\proactive_strategies\ground_first\hasty\ .\results\main\proactive_strategies\ground_first\steady\ .\results\main\proactive_strategies\hybrid\hasty\ .\results\main\proactive_strategies\hybrid\steady\ -out .\results\aggregate\proactive_strategies\bounds_cf\pro_bounds_cf -combine all -diff strategy -same online_bounds -filter problem=ps3 online_method=cf strategy=hasty,steady -allow_none all -breakf online_bounds -breaks strategy -excel False -p False -show False
     python .\ProcessResults.py .\results\main\proactive_strategies\complete_first\hasty\ .\results\main\proactive_strategies\complete_first\steady\ .\results\main\proactive_strategies\ground_first\hasty\ .\results\main\proactive_strategies\ground_first\steady\ .\results\main\proactive_strategies\hybrid\hasty\ .\results\main\proactive_strategies\hybrid\steady\ -out .\results\aggregate\proactive_strategies\bounds_gf\pro_bounds_gf -combine all -diff strategy -same online_bounds -filter problem=ps3 online_method=gf strategy=hasty,steady -allow_none all -breakf online_bounds -breaks strategy -excel False -p False -show False
     python .\ProcessResults.py .\results\main\proactive_strategies\complete_first\hasty\ .\results\main\proactive_strategies\complete_first\steady\ .\results\main\proactive_strategies\ground_first\hasty\ .\results\main\proactive_strategies\ground_first\steady\ .\results\main\proactive_strategies\hybrid\hasty\ .\results\main\proactive_strategies\hybrid\steady\ -out .\results\aggregate\proactive_strategies\bounds_hy\pro_bounds_hy -combine all -diff strategy -same online_bounds -filter problem=ps3 online_method=hy strategy=hasty,steady -allow_none all -breakf online_bounds -breaks strategy -excel False -p False -show False
-}
-
-if ($process -contains "react") {
-    Write-Output "Processing: Interrupting Reactive Strategies with Final-Goal Pre-emptive Achievement for Small Problems and Different Bound Type and Pre-Emptive Division Enabled/Disabled..."
-    Start-Sleep -Seconds 1
-    make_directories -parent reactive_strategies -children problems, bounds_sl, bounds_st
-
-    # Difference between Problems (PS3 and PS3TS) averaged over bounds
-    python .\ProcessResults.py .\results\main\reactive_strategies\interrupting\length\ .\results\main\reactive_strategies\interrupting\time\ -out .\results\aggregate\reactive_strategies\problems\react_problems -combine all -diff problem -same online_bounds,bound_type -filter problem=ps3,ps3ts strategy=relentless -allow_none all -breakf problem -breaks bound_type -excel False -p False -show False
-
-    # Difference between Bound Values for PS3 for each bound type
-    python .\ProcessResults.py .\results\main\reactive_strategies\interrupting\length\ .\results\main\reactive_strategies\interrupting\time\ -out .\results\aggregate\reactive_strategies\bounds_sl\react_bounds_sl -combine all -diff online_bounds -filter problem=ps3 bound_type=sl strategy=relentless -allow_none all -breakf online_bounds -breaks problem -excel False -p False -show False
-    python .\ProcessResults.py .\results\main\reactive_strategies\interrupting\length\ .\results\main\reactive_strategies\interrupting\time\ -out .\results\aggregate\reactive_strategies\bounds_st\react_bounds_st -combine all -diff online_bounds -filter problem=ps3 bound_type=cumt strategy=relentless -allow_none all -breakf online_bounds -breaks problem -excel False -p False -show False
 }

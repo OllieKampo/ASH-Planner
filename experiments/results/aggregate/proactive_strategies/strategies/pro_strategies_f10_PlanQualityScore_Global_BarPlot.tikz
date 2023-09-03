@@ -31,7 +31,7 @@ ymin=0, ymax=1,
 ytick style={color=darkslategray38},
 ytick style={color=white}
 ]
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,0.893333333333333);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,0.87012987012987);
 \addlegendimage{ybar,ybar legend,draw=white,fill=steelblue49115161,line width=0.32pt}
 \addlegendentry{hasty}
 

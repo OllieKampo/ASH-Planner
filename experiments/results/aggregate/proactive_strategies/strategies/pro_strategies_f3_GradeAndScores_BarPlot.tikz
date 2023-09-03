@@ -34,30 +34,30 @@ ymin=0, ymax=1,
 ytick style={color=darkslategray38},
 ytick style={color=white}
 ]
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:-0.133333333333333,0.893333333333333);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:-0.133333333333333,0.844829440369434);
 \addlegendimage{ybar,ybar legend,draw=white,fill=steelblue49115161,line width=0.32pt}
 \addlegendentry{GRADE}
 
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:0.866666666666667,0.87012987012987);
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-0.133333333333333,0) rectangle (axis cs:0.133333333333333,0.893333333333333);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:0.866666666666667,0.846752642880308);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-0.133333333333333,0) rectangle (axis cs:0.133333333333333,0.87012987012987);
 \addlegendimage{ybar,ybar legend,draw=white,fill=brown1926061,line width=0.32pt}
 \addlegendentry{QL_SCORE}
 
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:0.866666666666667,0) rectangle (axis cs:1.13333333333333,0.87012987012987);
-\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:0.133333333333333,0) rectangle (axis cs:0.4,1);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:0.133333333333333,0) rectangle (axis cs:0.4,0.964025626009881);
 \addlegendimage{ybar,ybar legend,draw=white,fill=seagreen5814558,line width=0.32pt}
 \addlegendentry{TI_SCORE}
 
-\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:1.13333333333333,0) rectangle (axis cs:1.4,1);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:1.13333333333333,0) rectangle (axis cs:1.4,0.963522798742234);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
--0.266666666666667 0.87012987012987
--0.266666666666667 0.893333333333333
+-0.266666666666667 0.83855432987645
+-0.266666666666667 0.852053871150356
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.733333333333333 0.87012987012987
-0.733333333333333 0.890333888697079
+0.733333333333333 0.842602255316088
+0.733333333333333 0.856469037263913
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -71,13 +71,13 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.266666666666667 1
-0.266666666666667 1
+0.266666666666667 0.962858098508421
+0.266666666666667 0.965122874392705
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.26666666666667 1
-1.26666666666667 1
+1.26666666666667 0.962611433405252
+1.26666666666667 0.964821662853377
 };
 
 \nextgroupplot[
@@ -183,7 +183,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 0.733333333333333 0.893333333333333
-0.733333333333333 0.897017509419447
+0.733333333333333 0.896913056635604
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%

@@ -31,25 +31,25 @@ ylabel=\textcolor{darkslategray38}{Ground-level plan length},
 ymajorgrids,
 ymajorticks=false,
 ymajorticks=true,
-ymin=0, ymax=107,
+ymin=0, ymax=119,
 ytick style={color=darkslategray38},
 ytick style={color=white}
 ]
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:-0.266666666666667,84);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:-0.266666666666667,88);
 \addlegendimage{ybar,ybar legend,draw=white,fill=steelblue49115161,line width=0.32pt}
 \addlegendentry{(2, 2)}
 
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:0.733333333333333,88);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:0.733333333333333,90);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-0.266666666666667,0) rectangle (axis cs:-0.133333333333333,77);
 \addlegendimage{ybar,ybar legend,draw=white,fill=brown1926061,line width=0.32pt}
 \addlegendentry{(4, 2)}
 
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:0.733333333333333,0) rectangle (axis cs:0.866666666666667,77);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:0.733333333333333,0) rectangle (axis cs:0.866666666666667,75);
 \draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:-0.133333333333333,0) rectangle (axis cs:8.32667268468867e-17,73);
 \addlegendimage{ybar,ybar legend,draw=white,fill=seagreen5814558,line width=0.32pt}
 \addlegendentry{(4, 4)}
 
-\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:0.866666666666667,0) rectangle (axis cs:1,72);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:0.866666666666667,0) rectangle (axis cs:1,71);
 \draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:9.71445146547012e-17,0) rectangle (axis cs:0.133333333333333,77);
 \addlegendimage{ybar,ybar legend,draw=white,fill=peru22412844,line width=0.32pt}
 \addlegendentry{(6, 2)}
@@ -64,31 +64,31 @@ ytick style={color=white}
 \addlegendimage{ybar,ybar legend,draw=white,fill=orchid213132188,line width=0.32pt}
 \addlegendentry{(6, 6)}
 
-\draw[draw=white,fill=orchid213132188,line width=0.32pt] (axis cs:1.26666666666667,0) rectangle (axis cs:1.4,71);
+\draw[draw=white,fill=orchid213132188,line width=0.32pt] (axis cs:1.26666666666667,0) rectangle (axis cs:1.4,71.5);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
--0.333333333333333 77
--0.333333333333333 88
+-0.333333333333333 79.5
+-0.333333333333333 90
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.666666666666667 76
-0.666666666666667 89
+0.666666666666667 83
+0.666666666666667 91
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
--0.2 76
--0.2 78
+-0.2 77
+-0.2 79
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
+0.8 75
 0.8 77
-0.8 77
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
--0.0666666666666666 71
 -0.0666666666666666 73
+-0.0666666666666666 74
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -102,8 +102,8 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
+1.06666666666667 78
 1.06666666666667 79
-1.06666666666667 81
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -123,7 +123,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 1.33333333333333 71
-1.33333333333333 71
+1.33333333333333 73
 };
 \end{axis}
 

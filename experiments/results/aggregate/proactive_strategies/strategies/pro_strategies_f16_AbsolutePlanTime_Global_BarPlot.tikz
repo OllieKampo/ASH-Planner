@@ -12,15 +12,16 @@ axis background/.style={fill=lavender234234242},
 axis line style={white},
 height=\plotHeight,
 log basis y={10},
-minor ytick={13.1,13.2,13.3,13.4,13.5,13.6,13.7},
+minor ytick={13.2,13.3,13.4,13.5,13.6,13.7,13.8,13.9},
 minor yticklabels={
-  \(\displaystyle {1.31\times10^{1}}\),
   \(\displaystyle {1.32\times10^{1}}\),
   \(\displaystyle {1.33\times10^{1}}\),
   \(\displaystyle {1.34\times10^{1}}\),
   \(\displaystyle {1.35\times10^{1}}\),
   \(\displaystyle {1.36\times10^{1}}\),
-  \(\displaystyle {1.37\times10^{1}}\)
+  \(\displaystyle {1.37\times10^{1}}\),
+  \(\displaystyle {1.38\times10^{1}}\),
+  \(\displaystyle {1.39\times10^{1}}\)
 },
 tick align=outside,
 width=\plotWidth,
@@ -38,7 +39,7 @@ ylabel=\textcolor{darkslategray38}{Hierarchical Absolution Time (s)},
 ymajorgrids,
 ymajorticks=false,
 ymajorticks=true,
-ymin=13.1487212925123, ymax=13.6401258464986,
+ymin=13.2024860432429, ymax=13.8249767495961,
 ymode=log,
 ytick style={color=darkslategray38},
 ytick style={color=white},
@@ -50,47 +51,47 @@ yticklabels={
   \(\displaystyle {10^{3}}\)
 }
 ]
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,13.4827206000001);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,13.6762418000003);
 \addlegendimage{ybar,ybar legend,draw=white,fill=steelblue49115161,line width=0.32pt}
 \addlegendentry{hasty}
 
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,13.3838327999995);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,13.2666014500003);
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,13.5348862499999);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,13.4273604000023);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,13.6989714999989);
 \addlegendimage{ybar,ybar legend,draw=white,fill=brown1926061,line width=0.32pt}
 \addlegendentry{steady}
 
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,13.35775435);
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,13.36162755);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,13.4819623499996);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
--0.2 13.3639954499995
--0.2 13.5988238500008
+-0.2 13.5783311325
+-0.2 13.7776551574984
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.8 13.2348040900001
-0.8 13.4951073499996
+0.8 13.2301632500002
+0.8 13.4975607999999
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.8 13.1706688862497
-1.8 13.3590789000002
+1.8 13.3198783999985
+1.8 13.5553156000004
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.2 13.432491725
-0.2 13.6173959499997
+0.2 13.5980134
+0.2 13.7960552062499
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.2 13.2729703850001
-1.2 13.4845581000002
+1.2 13.2755446000002
+1.2 13.4853226250001
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-2.2 13.2691243
-2.2 13.462198600001
+2.2 13.3416252500012
+2.2 13.5983776137501
 };
 \end{axis}
 

@@ -71,11 +71,11 @@ ytick style={color=white}
 --(axis cs:0.134666666666667,1)
 --cycle;
 \path [draw=darkslategray61, fill=orchid213132188, line width=0.48pt]
-(axis cs:0.268,0.977300789013719)
---(axis cs:0.398666666666667,0.977300789013719)
+(axis cs:0.268,0.977442219552223)
+--(axis cs:0.398666666666667,0.977442219552223)
 --(axis cs:0.398666666666667,1)
 --(axis cs:0.268,1)
---(axis cs:0.268,0.977300789013719)
+--(axis cs:0.268,0.977442219552223)
 --cycle;
 \path [draw=darkslategray61, fill=steelblue49115161, line width=0.48pt]
 (axis cs:0.601333333333333,1)
@@ -225,6 +225,10 @@ table {%
 -0.232666666666667 1
 -0.167333333333333 1
 };
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+-0.2 0.999748248312499
+};
 \addplot [line width=0.48pt, darkslategray61]
 table {%
 -0.0666666666666666 1
@@ -247,9 +251,8 @@ table {%
 };
 \addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
 table {%
--0.0666666666666666 0.998141416724971
--0.0666666666666666 0.98700813169431
--0.0666666666666666 0.999064010547744
+-0.0666666666666666 0.99236319223829
+-0.0666666666666666 0.99517949460352
 };
 \addplot [line width=0.48pt, darkslategray61]
 table {%
@@ -270,6 +273,10 @@ table {%
 table {%
 0.0340000000000001 1
 0.0993333333333334 1
+};
+\addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
+table {%
+0.0666666666666668 0.986857415593383
 };
 \addplot [line width=0.48pt, darkslategray61]
 table {%
@@ -293,19 +300,18 @@ table {%
 };
 \addplot [black, mark=diamond*, mark size=2.5, mark options={solid,fill=darkslategray61}, only marks]
 table {%
-0.2 0.994182893486143
-0.2 0.980931606303681
-0.2 0.997611205973401
-0.2 0.997430241127083
-0.2 0.995026146849573
-0.2 0.983314118279065
-0.2 0.981638765944407
-0.2 0.980030349173378
+0.2 0.993861738519943
+0.2 0.993673532641623
+0.2 0.987076739001649
+0.2 0.989475629389224
+0.2 0.994861890699047
+0.2 0.997418460597877
+0.2 0.981165169543867
 };
 \addplot [line width=0.48pt, darkslategray61]
 table {%
-0.333333333333333 0.977300789013719
-0.333333333333333 0.963284895580301
+0.333333333333333 0.977442219552223
+0.333333333333333 0.958918689551182
 };
 \addplot [line width=0.48pt, darkslategray61]
 table {%
@@ -314,8 +320,8 @@ table {%
 };
 \addplot [line width=0.48pt, darkslategray61]
 table {%
-0.300666666666667 0.963284895580301
-0.366 0.963284895580301
+0.300666666666667 0.958918689551182
+0.366 0.958918689551182
 };
 \addplot [line width=0.48pt, darkslategray61]
 table {%
@@ -589,8 +595,8 @@ table {%
 };
 \addplot [line width=0.48pt, darkslategray61]
 table {%
-0.268 0.987728320637718
-0.398666666666667 0.987728320637718
+0.268 0.988603266117282
+0.398666666666667 0.988603266117282
 };
 \addplot [line width=0.48pt, darkslategray61]
 table {%

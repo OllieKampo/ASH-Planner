@@ -37,17 +37,17 @@ ytick style={color=white}
 
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:2.6,0) rectangle (axis cs:3,0.690903985789649);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:2.6,0) rectangle (axis cs:3,0.700673278134208);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,1);
 \addlegendimage{ybar,ybar legend,draw=white,fill=brown1926061,line width=0.32pt}
 \addlegendentry{steady}
 
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,1);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,1);
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:3,0) rectangle (axis cs:3.4,0.690694818530082);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:3,0) rectangle (axis cs:3.4,0.699902843122751);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
--0.2 1
+-0.2 0.892076878029644
 -0.2 1
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -62,12 +62,12 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-2.8 0.690739881172793
-2.8 0.693882432225683
+2.8 0.697196869224565
+2.8 0.701290677307906
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.2 1
+0.2 0.890568396226702
 0.2 1
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -82,8 +82,8 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-3.2 0.690581581736009
-3.2 0.692543059512981
+3.2 0.696883855025102
+3.2 0.701661957698301
 };
 \end{axis}
 

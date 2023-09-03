@@ -637,8 +637,8 @@ if include_percent_classical := (cli_args.include_percent_classical
                                  and "problem" in configuration_headers
                                  and "classical" in fully_combined_data_sets["Cat Plans"]["planning_mode"].unique()):
     summary_raw_ground_level_classical = summary_raw_ground_level.query("planning_mode == 'classical'").droplevel("planning_mode")
-    summary_raw_ground_level_precent_classical = summary_raw_ground_level.query("planning_mode != 'classical'").apply(lambda row: row / summary_raw_ground_level_classical.loc[row.name[1],:], axis=1) # Name of series is the index of the row (break_first, break_second), and the series index are the columns over the row.
-    summary_raw_ground_level_stacked_percent_classical = summary_raw_ground_level_precent_classical.unstack(cli_args.break_second).swaplevel(0, 1, axis=1).sort_index(axis=1, level=0).reindex(summary_statistics_ground_level, axis=1, level=1)
+    summary_raw_ground_level_percent_classical = summary_raw_ground_level.query("planning_mode != 'classical'").apply(lambda row: row / summary_raw_ground_level_classical.loc[row.name[1],:], axis=1) # Name of series is the index of the row (break_first, break_second), and the series index are the columns over the row.
+    summary_raw_ground_level_stacked_percent_classical = summary_raw_ground_level_percent_classical.unstack(cli_args.break_second).swaplevel(0, 1, axis=1).sort_index(axis=1, level=0).reindex(summary_statistics_ground_level, axis=1, level=1)
     summary_raw_ground_level_med_min_max_percent_classical = summary_raw_ground_level_med_min_max.query("planning_mode != 'classical'").apply(lambda row: row / summary_raw_ground_level_med_min_max.query("planning_mode == 'classical'").loc[("classical", *row.name[1:]),:], axis=1)
 
 ## Calculate "smoothness" of expansion factor across the hierarchy;
@@ -687,7 +687,8 @@ summary_partial_plan_1N_stacked = fully_combined_data_sets_partial_plans_level_a
     .rename(columns=lambda index_value: summary_statistics_problem_wise_names[summary_statistics_problem_wise.index(index_value)]) \
         .unstack(cli_args.break_second).swaplevel(0, 1, axis=1).sort_index(axis=1, level=0).reindex(summary_statistics_problem_wise_names, axis=1, level=1)
 
-summary_partial_plan_per_classical = fully_combined_data_sets_partial_plans_level_and_problem_grouped[["YT", "LE"]].median().query("AL == 1").droplevel("AL").apply(lambda row: row / summary_raw_ground_level_classical.loc[row.name[1], ["TT", "LE"]].rename({"TT": "YT"}), axis=1).unstack(level=-1)
+if include_percent_classical:
+    summary_partial_plan_per_classical = fully_combined_data_sets_partial_plans_level_and_problem_grouped[["YT", "LE"]].median().query("AL == 1").droplevel("AL").apply(lambda row: row / summary_raw_ground_level_classical.loc[row.name[1], ["TT", "LE"]].rename({"TT": "YT"}), axis=1).unstack(level=-1)
 
 #########################################################################################################################################################################################
 ######## Tests of statistical significance
@@ -985,10 +986,10 @@ if cli_args.make_tables:
     save_table(summary_globals_1N_stacked, "OverallScore_1N_Summary")
     save_table(summary_raw_ground_level_stacked, "CatRaw_1N_Summary")
     save_table(summary_raw_ground_level_med_min_max_stacked, "CatRawMinMax_1N_Summary")
-    save_table(summary_raw_ground_level_med_min_max_percent_classical, "CatRawMinMaxPerClassical_1N_Summary")
-    save_table(summary_partial_plan_per_classical, "PartialPlanPerClassical_1N_Summary")
     if include_percent_classical:
+        save_table(summary_raw_ground_level_med_min_max_percent_classical, "CatRawMinMaxPerClassical_1N_Summary")
         save_table(summary_raw_ground_level_stacked_percent_classical, "PerClassical_1N_Summary")
+        save_table(summary_partial_plan_per_classical, "PartialPlanPerClassical_1N_Summary")
     save_table(summary_hierarchy_balance_1N_stacked, "HierExpansion_1N_Summary")
     save_table(summary_balance_problems_1N_stacked, "BalProblems_1N_Summary")
     save_table(summary_balance_plans_1N_stacked, "BalPlans_1N_Summary")

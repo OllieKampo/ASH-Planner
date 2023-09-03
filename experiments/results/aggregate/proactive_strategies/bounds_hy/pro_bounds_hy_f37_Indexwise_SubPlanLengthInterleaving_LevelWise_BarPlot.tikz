@@ -20,7 +20,7 @@ width=\plotWidth,
 x grid style={white},
 xmajorticks=false,
 xmajorticks=true,
-xmin=-0.5, xmax=59.5,
+xmin=-0.5, xmax=69.5,
 xtick style={color=darkslategray38},
 xtick style={color=white},
 xticklabels={},
@@ -48,9 +48,9 @@ ytick style={color=white}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:8.6,0) rectangle (axis cs:9,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:9.6,0) rectangle (axis cs:10,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:10.6,0) rectangle (axis cs:11,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:11.6,0) rectangle (axis cs:12,1.5);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:11.6,0) rectangle (axis cs:12,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:12.6,0) rectangle (axis cs:13,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:13.6,0) rectangle (axis cs:14,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:13.6,0) rectangle (axis cs:14,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:14.6,0) rectangle (axis cs:15,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:15.6,0) rectangle (axis cs:16,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:16.6,0) rectangle (axis cs:17,1);
@@ -63,17 +63,17 @@ ytick style={color=white}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:23.6,0) rectangle (axis cs:24,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:24.6,0) rectangle (axis cs:25,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:25.6,0) rectangle (axis cs:26,2);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:26.6,0) rectangle (axis cs:27,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:27.6,0) rectangle (axis cs:28,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:28.6,0) rectangle (axis cs:29,2);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:29.6,0) rectangle (axis cs:30,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:26.6,0) rectangle (axis cs:27,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:27.6,0) rectangle (axis cs:28,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:28.6,0) rectangle (axis cs:29,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:29.6,0) rectangle (axis cs:30,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:30.6,0) rectangle (axis cs:31,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:31.6,0) rectangle (axis cs:32,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:31.6,0) rectangle (axis cs:32,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:32.6,0) rectangle (axis cs:33,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:33.6,0) rectangle (axis cs:34,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:34.6,0) rectangle (axis cs:35,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:35.6,0) rectangle (axis cs:36,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:36.6,0) rectangle (axis cs:37,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:36.6,0) rectangle (axis cs:37,1.5);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:37.6,0) rectangle (axis cs:38,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:38.6,0) rectangle (axis cs:39,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:39.6,0) rectangle (axis cs:40,2);
@@ -82,20 +82,30 @@ ytick style={color=white}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:42.6,0) rectangle (axis cs:43,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:43.6,0) rectangle (axis cs:44,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:44.6,0) rectangle (axis cs:45,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:45.6,0) rectangle (axis cs:46,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:45.6,0) rectangle (axis cs:46,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:46.6,0) rectangle (axis cs:47,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:47.6,0) rectangle (axis cs:48,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:48.6,0) rectangle (axis cs:49,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:49.6,0) rectangle (axis cs:50,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:49.6,0) rectangle (axis cs:50,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:50.6,0) rectangle (axis cs:51,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:51.6,0) rectangle (axis cs:52,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:51.6,0) rectangle (axis cs:52,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:52.6,0) rectangle (axis cs:53,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:53.6,0) rectangle (axis cs:54,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:54.6,0) rectangle (axis cs:55,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:55.6,0) rectangle (axis cs:56,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:56.6,0) rectangle (axis cs:57,3);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:57.6,0) rectangle (axis cs:58,1.5);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:58.6,0) rectangle (axis cs:59,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:54.6,0) rectangle (axis cs:55,1.5);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:55.6,0) rectangle (axis cs:56,1.5);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:56.6,0) rectangle (axis cs:57,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:57.6,0) rectangle (axis cs:58,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:58.6,0) rectangle (axis cs:59,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:59.6,0) rectangle (axis cs:60,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:60.6,0) rectangle (axis cs:61,2.5);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:61.6,0) rectangle (axis cs:62,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:62.6,0) rectangle (axis cs:63,2.5);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:63.6,0) rectangle (axis cs:64,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:64.6,0) rectangle (axis cs:65,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:65.6,0) rectangle (axis cs:66,2.5);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:66.6,0) rectangle (axis cs:67,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:67.6,0) rectangle (axis cs:68,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:68.6,0) rectangle (axis cs:69,1);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,0);
 \addlegendimage{ybar,ybar legend,draw=white,fill=brown1926061,line width=0.32pt}
 \addlegendentry{INTER_Q}
@@ -159,6 +169,16 @@ ytick style={color=white}
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:57,0) rectangle (axis cs:57.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:58,0) rectangle (axis cs:58.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:59,0) rectangle (axis cs:59.4,0);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:60,0) rectangle (axis cs:60.4,0);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:61,0) rectangle (axis cs:61.4,0);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:62,0) rectangle (axis cs:62.4,0);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:63,0) rectangle (axis cs:63.4,0);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:64,0) rectangle (axis cs:64.4,0);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:65,0) rectangle (axis cs:65.4,0);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:66,0) rectangle (axis cs:66.4,0);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:67,0) rectangle (axis cs:67.4,0);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:68,0) rectangle (axis cs:68.4,0);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:69,0) rectangle (axis cs:69.4,0);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 -0.2 2
@@ -222,7 +242,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 11.8 1
-11.8 4
+11.8 6
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -241,7 +261,7 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-15.8 1
+15.8 1.4875
 15.8 6
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -267,7 +287,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 20.8 1
-20.8 1.5
+20.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -281,8 +301,8 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-23.8 1
 23.8 2
+23.8 5
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -291,13 +311,13 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-25.8 1.9875
+25.8 1
 25.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 26.8 1
-26.8 2
+26.8 2.5
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -322,7 +342,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 31.8 1
-31.8 2
+31.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -331,7 +351,7 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-33.8 1
+33.8 1.5
 33.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -342,7 +362,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 35.8 1
-35.8 1
+35.8 1.5
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -362,7 +382,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 39.8 1
-39.8 2
+39.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -371,13 +391,13 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-41.8 2
+41.8 1
 41.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 42.8 1
-42.8 1.5
+42.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -427,27 +447,27 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 52.8 1
-52.8 1.5
+52.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 53.8 1
-53.8 1
+53.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 54.8 1
-54.8 1.5
+54.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 55.8 1
-55.8 6
+55.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-56.8 2
-56.8 4
+56.8 1
+56.8 6
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -456,8 +476,58 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-58.8 nan
-58.8 nan
+58.8 1
+58.8 3
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+59.8 1
+59.8 1
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.8 2
+60.8 3
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.8 1
+61.8 1
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.8 1
+62.8 4
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.8 1
+63.8 3
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.8 1
+64.8 1
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.8 1
+65.8 4
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.8 nan
+66.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.8 nan
+67.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.8 nan
+68.8 nan
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -756,8 +826,58 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-59.2 nan
-59.2 nan
+59.2 0
+59.2 0
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.2 0
+60.2 0
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.2 0
+61.2 0
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.2 0
+62.2 0
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.2 0
+63.2 0
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.2 0
+64.2 0
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.2 0
+65.2 0
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.2 0
+66.2 0
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.2 nan
+67.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.2 nan
+68.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+69.2 nan
+69.2 nan
 };
 
 \nextgroupplot[
@@ -773,7 +893,7 @@ width=\plotWidth,
 x grid style={white},
 xmajorticks=false,
 xmajorticks=true,
-xmin=-0.5, xmax=59.5,
+xmin=-0.5, xmax=69.5,
 xtick style={color=darkslategray38},
 xtick style={color=white},
 xticklabels={},
@@ -797,26 +917,26 @@ yticklabels={}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:7.6,0) rectangle (axis cs:8,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:8.6,0) rectangle (axis cs:9,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:9.6,0) rectangle (axis cs:10,2);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:10.6,0) rectangle (axis cs:11,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:10.6,0) rectangle (axis cs:11,1.5);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:11.6,0) rectangle (axis cs:12,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:12.6,0) rectangle (axis cs:13,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:13.6,0) rectangle (axis cs:14,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:14.6,0) rectangle (axis cs:15,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:13.6,0) rectangle (axis cs:14,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:14.6,0) rectangle (axis cs:15,3);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:15.6,0) rectangle (axis cs:16,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:16.6,0) rectangle (axis cs:17,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:17.6,0) rectangle (axis cs:18,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:18.6,0) rectangle (axis cs:19,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:19.6,0) rectangle (axis cs:20,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:20.6,0) rectangle (axis cs:21,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:20.6,0) rectangle (axis cs:21,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:21.6,0) rectangle (axis cs:22,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:22.6,0) rectangle (axis cs:23,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:22.6,0) rectangle (axis cs:23,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:23.6,0) rectangle (axis cs:24,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:24.6,0) rectangle (axis cs:25,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:25.6,0) rectangle (axis cs:26,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:26.6,0) rectangle (axis cs:27,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:27.6,0) rectangle (axis cs:28,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:28.6,0) rectangle (axis cs:29,2);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:29.6,0) rectangle (axis cs:30,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:29.6,0) rectangle (axis cs:30,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:30.6,0) rectangle (axis cs:31,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:31.6,0) rectangle (axis cs:32,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:32.6,0) rectangle (axis cs:33,2);
@@ -829,23 +949,33 @@ yticklabels={}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:39.6,0) rectangle (axis cs:40,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:40.6,0) rectangle (axis cs:41,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:41.6,0) rectangle (axis cs:42,2);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:42.6,0) rectangle (axis cs:43,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:42.6,0) rectangle (axis cs:43,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:43.6,0) rectangle (axis cs:44,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:44.6,0) rectangle (axis cs:45,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:44.6,0) rectangle (axis cs:45,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:45.6,0) rectangle (axis cs:46,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:46.6,0) rectangle (axis cs:47,2);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:47.6,0) rectangle (axis cs:48,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:48.6,0) rectangle (axis cs:49,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:47.6,0) rectangle (axis cs:48,1.5);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:48.6,0) rectangle (axis cs:49,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:49.6,0) rectangle (axis cs:50,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:50.6,0) rectangle (axis cs:51,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:51.6,0) rectangle (axis cs:52,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:52.6,0) rectangle (axis cs:53,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:53.6,0) rectangle (axis cs:54,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:54.6,0) rectangle (axis cs:55,nan);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:55.6,0) rectangle (axis cs:56,nan);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:56.6,0) rectangle (axis cs:57,nan);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:57.6,0) rectangle (axis cs:58,nan);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:58.6,0) rectangle (axis cs:59,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:54.6,0) rectangle (axis cs:55,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:55.6,0) rectangle (axis cs:56,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:56.6,0) rectangle (axis cs:57,1.5);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:57.6,0) rectangle (axis cs:58,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:58.6,0) rectangle (axis cs:59,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:59.6,0) rectangle (axis cs:60,1.5);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:60.6,0) rectangle (axis cs:61,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:61.6,0) rectangle (axis cs:62,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:62.6,0) rectangle (axis cs:63,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:63.6,0) rectangle (axis cs:64,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:64.6,0) rectangle (axis cs:65,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:65.6,0) rectangle (axis cs:66,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:66.6,0) rectangle (axis cs:67,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:67.6,0) rectangle (axis cs:68,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:68.6,0) rectangle (axis cs:69,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,0);
@@ -901,11 +1031,21 @@ yticklabels={}
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:52,0) rectangle (axis cs:52.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:53,0) rectangle (axis cs:53.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:54,0) rectangle (axis cs:54.4,0);
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:55,0) rectangle (axis cs:55.4,nan);
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:56,0) rectangle (axis cs:56.4,nan);
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:57,0) rectangle (axis cs:57.4,nan);
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:58,0) rectangle (axis cs:58.4,nan);
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:59,0) rectangle (axis cs:59.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:55,0) rectangle (axis cs:55.4,0);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:56,0) rectangle (axis cs:56.4,0);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:57,0) rectangle (axis cs:57.4,0);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:58,0) rectangle (axis cs:58.4,0);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:59,0) rectangle (axis cs:59.4,0);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:60,0) rectangle (axis cs:60.4,0);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:61,0) rectangle (axis cs:61.4,0);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:62,0) rectangle (axis cs:62.4,0);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:63,0) rectangle (axis cs:63.4,0);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:64,0) rectangle (axis cs:64.4,0);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:65,0) rectangle (axis cs:65.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:66,0) rectangle (axis cs:66.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:67,0) rectangle (axis cs:67.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:68,0) rectangle (axis cs:68.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:69,0) rectangle (axis cs:69.4,nan);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 -0.2 2
@@ -979,11 +1119,11 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 13.8 1
-13.8 1
+13.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-14.8 1
+14.8 3
 14.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -1044,7 +1184,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 26.8 1.5
-26.8 3
+26.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -1053,8 +1193,8 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
+28.8 1.5
 28.8 2
-28.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -1063,7 +1203,7 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-30.8 1
+30.8 2
 30.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -1084,7 +1224,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 34.8 1
-34.8 2
+34.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -1093,7 +1233,7 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-36.8 2
+36.8 1
 36.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -1103,7 +1243,7 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-38.8 1.9875
+38.8 1
 38.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -1114,11 +1254,11 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 40.8 1
-40.8 1.5
+40.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-41.8 1
+41.8 2
 41.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -1134,12 +1274,12 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 44.8 1
-44.8 2
+44.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 45.8 1
-45.8 2
+45.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -1154,7 +1294,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 48.8 1
-48.8 1
+48.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -1179,32 +1319,82 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 53.8 1
-53.8 1
+53.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-54.8 nan
-54.8 nan
+54.8 1
+54.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-55.8 nan
-55.8 nan
+55.8 1
+55.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-56.8 nan
-56.8 nan
+56.8 1
+56.8 5
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-57.8 nan
-57.8 nan
+57.8 1
+57.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-58.8 nan
-58.8 nan
+58.8 2
+58.8 2
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+59.8 1
+59.8 2
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.8 nan
+60.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.8 nan
+61.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.8 nan
+62.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.8 nan
+63.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.8 nan
+64.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.8 nan
+65.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.8 nan
+66.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.8 nan
+67.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.8 nan
+68.8 nan
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -1483,28 +1673,78 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-55.2 nan
-55.2 nan
+55.2 0
+55.2 0
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-56.2 nan
-56.2 nan
+56.2 0
+56.2 0
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-57.2 nan
-57.2 nan
+57.2 0
+57.2 0
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-58.2 nan
-58.2 nan
+58.2 0
+58.2 0
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-59.2 nan
-59.2 nan
+59.2 0
+59.2 0
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.2 0
+60.2 0
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.2 nan
+61.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.2 nan
+62.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.2 nan
+63.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.2 nan
+64.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.2 nan
+65.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.2 nan
+66.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.2 nan
+67.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.2 nan
+68.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+69.2 nan
+69.2 nan
 };
 
 \nextgroupplot[
@@ -1519,7 +1759,7 @@ width=\plotWidth,
 x grid style={white},
 xmajorticks=false,
 xmajorticks=true,
-xmin=-0.5, xmax=59.5,
+xmin=-0.5, xmax=69.5,
 xtick style={color=darkslategray38},
 xtick style={color=white},
 xticklabels={},
@@ -1545,7 +1785,7 @@ ytick style={color=white}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:9.6,0) rectangle (axis cs:10,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:10.6,0) rectangle (axis cs:11,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:11.6,0) rectangle (axis cs:12,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:12.6,0) rectangle (axis cs:13,1.5);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:12.6,0) rectangle (axis cs:13,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:13.6,0) rectangle (axis cs:14,3);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:14.6,0) rectangle (axis cs:15,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:15.6,0) rectangle (axis cs:16,2);
@@ -1565,14 +1805,14 @@ ytick style={color=white}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:29.6,0) rectangle (axis cs:30,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:30.6,0) rectangle (axis cs:31,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:31.6,0) rectangle (axis cs:32,2);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:32.6,0) rectangle (axis cs:33,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:32.6,0) rectangle (axis cs:33,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:33.6,0) rectangle (axis cs:34,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:34.6,0) rectangle (axis cs:35,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:35.6,0) rectangle (axis cs:36,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:36.6,0) rectangle (axis cs:37,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:37.6,0) rectangle (axis cs:38,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:37.6,0) rectangle (axis cs:38,1.5);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:38.6,0) rectangle (axis cs:39,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:39.6,0) rectangle (axis cs:40,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:39.6,0) rectangle (axis cs:40,1.5);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:40.6,0) rectangle (axis cs:41,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:41.6,0) rectangle (axis cs:42,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:42.6,0) rectangle (axis cs:43,1);
@@ -1592,6 +1832,16 @@ ytick style={color=white}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:56.6,0) rectangle (axis cs:57,nan);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:57.6,0) rectangle (axis cs:58,nan);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:58.6,0) rectangle (axis cs:59,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:59.6,0) rectangle (axis cs:60,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:60.6,0) rectangle (axis cs:61,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:61.6,0) rectangle (axis cs:62,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:62.6,0) rectangle (axis cs:63,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:63.6,0) rectangle (axis cs:64,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:64.6,0) rectangle (axis cs:65,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:65.6,0) rectangle (axis cs:66,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:66.6,0) rectangle (axis cs:67,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:67.6,0) rectangle (axis cs:68,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:68.6,0) rectangle (axis cs:69,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,0);
@@ -1652,6 +1902,16 @@ ytick style={color=white}
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:57,0) rectangle (axis cs:57.4,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:58,0) rectangle (axis cs:58.4,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:59,0) rectangle (axis cs:59.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:60,0) rectangle (axis cs:60.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:61,0) rectangle (axis cs:61.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:62,0) rectangle (axis cs:62.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:63,0) rectangle (axis cs:63.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:64,0) rectangle (axis cs:64.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:65,0) rectangle (axis cs:65.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:66,0) rectangle (axis cs:66.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:67,0) rectangle (axis cs:67.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:68,0) rectangle (axis cs:68.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:69,0) rectangle (axis cs:69.4,nan);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 -0.2 2
@@ -1705,7 +1965,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 9.8 1
-9.8 2
+9.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -1744,7 +2004,7 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-17.8 1.5
+17.8 2
 17.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -1780,7 +2040,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 24.8 1
-24.8 2
+24.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -1794,13 +2054,13 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-27.8 1.5
+27.8 1
 27.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 28.8 1
-28.8 1
+28.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -1835,7 +2095,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 35.8 1
-35.8 2.5
+35.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -1855,7 +2115,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 39.8 1
-39.8 1
+39.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -1954,6 +2214,56 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
+59.8 nan
+59.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.8 nan
+60.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.8 nan
+61.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.8 nan
+62.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.8 nan
+63.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.8 nan
+64.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.8 nan
+65.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.8 nan
+66.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.8 nan
+67.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.8 nan
+68.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
 0.2 0
 0.2 0
 };
@@ -2251,6 +2561,56 @@ table {%
 table {%
 59.2 nan
 59.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.2 nan
+60.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.2 nan
+61.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.2 nan
+62.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.2 nan
+63.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.2 nan
+64.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.2 nan
+65.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.2 nan
+66.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.2 nan
+67.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.2 nan
+68.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+69.2 nan
+69.2 nan
 };
 
 \nextgroupplot[
@@ -2266,7 +2626,7 @@ width=\plotWidth,
 x grid style={white},
 xmajorticks=false,
 xmajorticks=true,
-xmin=-0.5, xmax=59.5,
+xmin=-0.5, xmax=69.5,
 xtick style={color=darkslategray38},
 xtick style={color=white},
 xticklabels={},
@@ -2288,11 +2648,11 @@ yticklabels={}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:5.6,0) rectangle (axis cs:6,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:6.6,0) rectangle (axis cs:7,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:7.6,0) rectangle (axis cs:8,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:8.6,0) rectangle (axis cs:9,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:8.6,0) rectangle (axis cs:9,3);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:9.6,0) rectangle (axis cs:10,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:10.6,0) rectangle (axis cs:11,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:11.6,0) rectangle (axis cs:12,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:12.6,0) rectangle (axis cs:13,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:12.6,0) rectangle (axis cs:13,1.5);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:13.6,0) rectangle (axis cs:14,3);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:14.6,0) rectangle (axis cs:15,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:15.6,0) rectangle (axis cs:16,2);
@@ -2300,7 +2660,7 @@ yticklabels={}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:17.6,0) rectangle (axis cs:18,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:18.6,0) rectangle (axis cs:19,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:19.6,0) rectangle (axis cs:20,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:20.6,0) rectangle (axis cs:21,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:20.6,0) rectangle (axis cs:21,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:21.6,0) rectangle (axis cs:22,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:22.6,0) rectangle (axis cs:23,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:23.6,0) rectangle (axis cs:24,1);
@@ -2313,13 +2673,13 @@ yticklabels={}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:30.6,0) rectangle (axis cs:31,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:31.6,0) rectangle (axis cs:32,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:32.6,0) rectangle (axis cs:33,2);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:33.6,0) rectangle (axis cs:34,1.5);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:33.6,0) rectangle (axis cs:34,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:34.6,0) rectangle (axis cs:35,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:35.6,0) rectangle (axis cs:36,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:36.6,0) rectangle (axis cs:37,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:37.6,0) rectangle (axis cs:38,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:38.6,0) rectangle (axis cs:39,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:39.6,0) rectangle (axis cs:40,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:39.6,0) rectangle (axis cs:40,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:40.6,0) rectangle (axis cs:41,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:41.6,0) rectangle (axis cs:42,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:42.6,0) rectangle (axis cs:43,1);
@@ -2339,6 +2699,16 @@ yticklabels={}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:56.6,0) rectangle (axis cs:57,nan);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:57.6,0) rectangle (axis cs:58,nan);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:58.6,0) rectangle (axis cs:59,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:59.6,0) rectangle (axis cs:60,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:60.6,0) rectangle (axis cs:61,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:61.6,0) rectangle (axis cs:62,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:62.6,0) rectangle (axis cs:63,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:63.6,0) rectangle (axis cs:64,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:64.6,0) rectangle (axis cs:65,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:65.6,0) rectangle (axis cs:66,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:66.6,0) rectangle (axis cs:67,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:67.6,0) rectangle (axis cs:68,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:68.6,0) rectangle (axis cs:69,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,0);
@@ -2399,6 +2769,16 @@ yticklabels={}
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:57,0) rectangle (axis cs:57.4,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:58,0) rectangle (axis cs:58.4,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:59,0) rectangle (axis cs:59.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:60,0) rectangle (axis cs:60.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:61,0) rectangle (axis cs:61.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:62,0) rectangle (axis cs:62.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:63,0) rectangle (axis cs:63.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:64,0) rectangle (axis cs:64.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:65,0) rectangle (axis cs:65.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:66,0) rectangle (axis cs:66.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:67,0) rectangle (axis cs:67.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:68,0) rectangle (axis cs:68.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:69,0) rectangle (axis cs:69.4,nan);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 -0.2 2
@@ -2471,7 +2851,7 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-13.8 2
+13.8 3
 13.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -2582,7 +2962,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 35.8 1
-35.8 1
+35.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -2592,7 +2972,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 37.8 1
-37.8 1
+37.8 1.5
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -2607,7 +2987,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 40.8 1
-40.8 2
+40.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -2698,6 +3078,56 @@ table {%
 table {%
 58.8 nan
 58.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+59.8 nan
+59.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.8 nan
+60.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.8 nan
+61.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.8 nan
+62.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.8 nan
+63.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.8 nan
+64.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.8 nan
+65.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.8 nan
+66.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.8 nan
+67.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.8 nan
+68.8 nan
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -2998,6 +3428,56 @@ table {%
 table {%
 59.2 nan
 59.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.2 nan
+60.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.2 nan
+61.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.2 nan
+62.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.2 nan
+63.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.2 nan
+64.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.2 nan
+65.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.2 nan
+66.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.2 nan
+67.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.2 nan
+68.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+69.2 nan
+69.2 nan
 };
 
 \nextgroupplot[
@@ -3012,7 +3492,7 @@ width=\plotWidth,
 x grid style={white},
 xmajorticks=false,
 xmajorticks=true,
-xmin=-0.5, xmax=59.5,
+xmin=-0.5, xmax=69.5,
 xtick style={color=darkslategray38},
 xtick style={color=white},
 xticklabels={},
@@ -3034,7 +3514,7 @@ ytick style={color=white}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:5.6,0) rectangle (axis cs:6,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:6.6,0) rectangle (axis cs:7,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:7.6,0) rectangle (axis cs:8,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:8.6,0) rectangle (axis cs:9,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:8.6,0) rectangle (axis cs:9,3);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:9.6,0) rectangle (axis cs:10,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:10.6,0) rectangle (axis cs:11,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:11.6,0) rectangle (axis cs:12,1);
@@ -3046,7 +3526,7 @@ ytick style={color=white}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:17.6,0) rectangle (axis cs:18,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:18.6,0) rectangle (axis cs:19,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:19.6,0) rectangle (axis cs:20,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:20.6,0) rectangle (axis cs:21,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:20.6,0) rectangle (axis cs:21,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:21.6,0) rectangle (axis cs:22,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:22.6,0) rectangle (axis cs:23,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:23.6,0) rectangle (axis cs:24,1);
@@ -3054,18 +3534,18 @@ ytick style={color=white}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:25.6,0) rectangle (axis cs:26,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:26.6,0) rectangle (axis cs:27,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:27.6,0) rectangle (axis cs:28,2);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:28.6,0) rectangle (axis cs:29,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:28.6,0) rectangle (axis cs:29,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:29.6,0) rectangle (axis cs:30,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:30.6,0) rectangle (axis cs:31,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:31.6,0) rectangle (axis cs:32,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:32.6,0) rectangle (axis cs:33,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:33.6,0) rectangle (axis cs:34,2);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:34.6,0) rectangle (axis cs:35,1.5);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:34.6,0) rectangle (axis cs:35,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:35.6,0) rectangle (axis cs:36,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:36.6,0) rectangle (axis cs:37,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:37.6,0) rectangle (axis cs:38,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:38.6,0) rectangle (axis cs:39,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:39.6,0) rectangle (axis cs:40,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:39.6,0) rectangle (axis cs:40,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:40.6,0) rectangle (axis cs:41,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:41.6,0) rectangle (axis cs:42,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:42.6,0) rectangle (axis cs:43,1);
@@ -3085,6 +3565,16 @@ ytick style={color=white}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:56.6,0) rectangle (axis cs:57,nan);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:57.6,0) rectangle (axis cs:58,nan);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:58.6,0) rectangle (axis cs:59,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:59.6,0) rectangle (axis cs:60,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:60.6,0) rectangle (axis cs:61,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:61.6,0) rectangle (axis cs:62,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:62.6,0) rectangle (axis cs:63,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:63.6,0) rectangle (axis cs:64,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:64.6,0) rectangle (axis cs:65,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:65.6,0) rectangle (axis cs:66,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:66.6,0) rectangle (axis cs:67,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:67.6,0) rectangle (axis cs:68,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:68.6,0) rectangle (axis cs:69,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,0);
@@ -3145,6 +3635,16 @@ ytick style={color=white}
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:57,0) rectangle (axis cs:57.4,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:58,0) rectangle (axis cs:58.4,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:59,0) rectangle (axis cs:59.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:60,0) rectangle (axis cs:60.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:61,0) rectangle (axis cs:61.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:62,0) rectangle (axis cs:62.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:63,0) rectangle (axis cs:63.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:64,0) rectangle (axis cs:64.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:65,0) rectangle (axis cs:65.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:66,0) rectangle (axis cs:66.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:67,0) rectangle (axis cs:67.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:68,0) rectangle (axis cs:68.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:69,0) rectangle (axis cs:69.4,nan);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 -0.2 2
@@ -3218,7 +3718,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 13.8 2
-13.8 2.01249999999999
+13.8 2.5
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -3232,7 +3732,7 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-16.8 3
+16.8 2.975
 16.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -3288,7 +3788,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 27.8 1
-27.8 2
+27.8 2.5
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -3308,7 +3808,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 31.8 2
-31.8 3
+31.8 2.5
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -3317,28 +3817,28 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-33.8 1.5
+33.8 2
 33.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-34.8 1
+34.8 1.5
 34.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 35.8 1
-35.8 2
+35.8 1.5
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-36.8 1
+36.8 2
 36.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 37.8 1
-37.8 1
+37.8 1.5
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -3347,7 +3847,7 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-39.8 1
+39.8 2
 39.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -3447,6 +3947,56 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
+59.8 nan
+59.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.8 nan
+60.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.8 nan
+61.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.8 nan
+62.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.8 nan
+63.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.8 nan
+64.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.8 nan
+65.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.8 nan
+66.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.8 nan
+67.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.8 nan
+68.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
 0.2 0
 0.2 0
 };
@@ -3744,6 +4294,56 @@ table {%
 table {%
 59.2 nan
 59.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.2 nan
+60.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.2 nan
+61.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.2 nan
+62.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.2 nan
+63.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.2 nan
+64.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.2 nan
+65.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.2 nan
+66.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.2 nan
+67.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.2 nan
+68.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+69.2 nan
+69.2 nan
 };
 
 \nextgroupplot[
@@ -3759,7 +4359,7 @@ width=\plotWidth,
 x grid style={white},
 xmajorticks=false,
 xmajorticks=true,
-xmin=-0.5, xmax=59.5,
+xmin=-0.5, xmax=69.5,
 xtick style={color=darkslategray38},
 xtick style={color=white},
 xticklabels={},
@@ -3781,19 +4381,19 @@ yticklabels={}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:5.6,0) rectangle (axis cs:6,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:6.6,0) rectangle (axis cs:7,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:7.6,0) rectangle (axis cs:8,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:8.6,0) rectangle (axis cs:9,3);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:8.6,0) rectangle (axis cs:9,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:9.6,0) rectangle (axis cs:10,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:10.6,0) rectangle (axis cs:11,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:11.6,0) rectangle (axis cs:12,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:12.6,0) rectangle (axis cs:13,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:13.6,0) rectangle (axis cs:14,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:14.6,0) rectangle (axis cs:15,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:15.6,0) rectangle (axis cs:16,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:15.6,0) rectangle (axis cs:16,1.5);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:16.6,0) rectangle (axis cs:17,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:17.6,0) rectangle (axis cs:18,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:18.6,0) rectangle (axis cs:19,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:19.6,0) rectangle (axis cs:20,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:20.6,0) rectangle (axis cs:21,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:20.6,0) rectangle (axis cs:21,1.5);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:21.6,0) rectangle (axis cs:22,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:22.6,0) rectangle (axis cs:23,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:23.6,0) rectangle (axis cs:24,1);
@@ -3802,7 +4402,7 @@ yticklabels={}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:26.6,0) rectangle (axis cs:27,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:27.6,0) rectangle (axis cs:28,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:28.6,0) rectangle (axis cs:29,2);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:29.6,0) rectangle (axis cs:30,1.5);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:29.6,0) rectangle (axis cs:30,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:30.6,0) rectangle (axis cs:31,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:31.6,0) rectangle (axis cs:32,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:32.6,0) rectangle (axis cs:33,1);
@@ -3832,6 +4432,16 @@ yticklabels={}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:56.6,0) rectangle (axis cs:57,nan);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:57.6,0) rectangle (axis cs:58,nan);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:58.6,0) rectangle (axis cs:59,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:59.6,0) rectangle (axis cs:60,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:60.6,0) rectangle (axis cs:61,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:61.6,0) rectangle (axis cs:62,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:62.6,0) rectangle (axis cs:63,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:63.6,0) rectangle (axis cs:64,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:64.6,0) rectangle (axis cs:65,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:65.6,0) rectangle (axis cs:66,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:66.6,0) rectangle (axis cs:67,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:67.6,0) rectangle (axis cs:68,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:68.6,0) rectangle (axis cs:69,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,0);
@@ -3892,6 +4502,16 @@ yticklabels={}
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:57,0) rectangle (axis cs:57.4,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:58,0) rectangle (axis cs:58.4,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:59,0) rectangle (axis cs:59.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:60,0) rectangle (axis cs:60.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:61,0) rectangle (axis cs:61.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:62,0) rectangle (axis cs:62.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:63,0) rectangle (axis cs:63.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:64,0) rectangle (axis cs:64.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:65,0) rectangle (axis cs:65.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:66,0) rectangle (axis cs:66.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:67,0) rectangle (axis cs:67.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:68,0) rectangle (axis cs:68.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:69,0) rectangle (axis cs:69.4,nan);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 -0.2 2
@@ -3964,8 +4584,8 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-13.8 2
-13.8 2.5
+13.8 1
+13.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -3979,8 +4599,8 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-16.8 1.5
-16.8 3
+16.8 1
+16.8 2.5
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -4050,7 +4670,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 30.8 1
-30.8 1
+30.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -4060,11 +4680,11 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 32.8 1
-32.8 2.5
+32.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-33.8 1.5
+33.8 1
 33.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -4075,7 +4695,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 35.8 1
-35.8 2
+35.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -4089,13 +4709,13 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-38.8 2
+38.8 1
 38.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 39.8 1
-39.8 1
+39.8 1.5
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -4191,6 +4811,56 @@ table {%
 table {%
 58.8 nan
 58.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+59.8 nan
+59.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.8 nan
+60.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.8 nan
+61.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.8 nan
+62.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.8 nan
+63.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.8 nan
+64.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.8 nan
+65.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.8 nan
+66.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.8 nan
+67.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.8 nan
+68.8 nan
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -4491,6 +5161,56 @@ table {%
 table {%
 59.2 nan
 59.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.2 nan
+60.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.2 nan
+61.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.2 nan
+62.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.2 nan
+63.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.2 nan
+64.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.2 nan
+65.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.2 nan
+66.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.2 nan
+67.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.2 nan
+68.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+69.2 nan
+69.2 nan
 };
 
 \nextgroupplot[
@@ -4505,7 +5225,7 @@ width=\plotWidth,
 x grid style={white},
 xmajorticks=false,
 xmajorticks=true,
-xmin=-0.5, xmax=59.5,
+xmin=-0.5, xmax=69.5,
 xtick style={color=darkslategray38},
 xtick style={color=white},
 xticklabels={},
@@ -4527,12 +5247,12 @@ ytick style={color=white}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:5.6,0) rectangle (axis cs:6,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:6.6,0) rectangle (axis cs:7,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:7.6,0) rectangle (axis cs:8,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:8.6,0) rectangle (axis cs:9,3);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:8.6,0) rectangle (axis cs:9,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:9.6,0) rectangle (axis cs:10,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:10.6,0) rectangle (axis cs:11,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:11.6,0) rectangle (axis cs:12,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:12.6,0) rectangle (axis cs:13,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:13.6,0) rectangle (axis cs:14,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:12.6,0) rectangle (axis cs:13,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:13.6,0) rectangle (axis cs:14,3);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:14.6,0) rectangle (axis cs:15,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:15.6,0) rectangle (axis cs:16,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:16.6,0) rectangle (axis cs:17,3);
@@ -4558,7 +5278,7 @@ ytick style={color=white}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:36.6,0) rectangle (axis cs:37,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:37.6,0) rectangle (axis cs:38,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:38.6,0) rectangle (axis cs:39,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:39.6,0) rectangle (axis cs:40,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:39.6,0) rectangle (axis cs:40,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:40.6,0) rectangle (axis cs:41,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:41.6,0) rectangle (axis cs:42,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:42.6,0) rectangle (axis cs:43,1);
@@ -4578,6 +5298,16 @@ ytick style={color=white}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:56.6,0) rectangle (axis cs:57,nan);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:57.6,0) rectangle (axis cs:58,nan);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:58.6,0) rectangle (axis cs:59,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:59.6,0) rectangle (axis cs:60,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:60.6,0) rectangle (axis cs:61,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:61.6,0) rectangle (axis cs:62,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:62.6,0) rectangle (axis cs:63,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:63.6,0) rectangle (axis cs:64,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:64.6,0) rectangle (axis cs:65,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:65.6,0) rectangle (axis cs:66,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:66.6,0) rectangle (axis cs:67,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:67.6,0) rectangle (axis cs:68,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:68.6,0) rectangle (axis cs:69,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,0);
@@ -4638,6 +5368,16 @@ ytick style={color=white}
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:57,0) rectangle (axis cs:57.4,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:58,0) rectangle (axis cs:58.4,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:59,0) rectangle (axis cs:59.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:60,0) rectangle (axis cs:60.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:61,0) rectangle (axis cs:61.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:62,0) rectangle (axis cs:62.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:63,0) rectangle (axis cs:63.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:64,0) rectangle (axis cs:64.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:65,0) rectangle (axis cs:65.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:66,0) rectangle (axis cs:66.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:67,0) rectangle (axis cs:67.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:68,0) rectangle (axis cs:68.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:69,0) rectangle (axis cs:69.4,nan);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 -0.2 2
@@ -4725,12 +5465,12 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-16.8 3
+16.8 1
 16.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-17.8 2
+17.8 1.5
 17.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -4746,12 +5486,12 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 20.8 1
-20.8 2
+20.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 21.8 1
-21.8 2
+21.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -4771,11 +5511,11 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 25.8 1
-25.8 1
+25.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-26.8 1
+26.8 2
 26.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -4786,7 +5526,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 28.8 1
-28.8 1
+28.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -4806,22 +5546,22 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 32.8 1
-32.8 3
+32.8 2.5
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-33.8 2
+33.8 1
 33.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-34.8 2
+34.8 1
 34.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 35.8 1
-35.8 1
+35.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -4940,6 +5680,56 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
+59.8 nan
+59.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.8 nan
+60.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.8 nan
+61.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.8 nan
+62.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.8 nan
+63.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.8 nan
+64.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.8 nan
+65.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.8 nan
+66.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.8 nan
+67.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.8 nan
+68.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
 0.2 0
 0.2 0
 };
@@ -5237,6 +6027,56 @@ table {%
 table {%
 59.2 nan
 59.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.2 nan
+60.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.2 nan
+61.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.2 nan
+62.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.2 nan
+63.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.2 nan
+64.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.2 nan
+65.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.2 nan
+66.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.2 nan
+67.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.2 nan
+68.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+69.2 nan
+69.2 nan
 };
 
 \nextgroupplot[
@@ -5252,7 +6092,7 @@ width=\plotWidth,
 x grid style={white},
 xmajorticks=false,
 xmajorticks=true,
-xmin=-0.5, xmax=59.5,
+xmin=-0.5, xmax=69.5,
 xtick style={color=darkslategray38},
 xtick style={color=white},
 xticklabels={},
@@ -5306,7 +6146,7 @@ yticklabels={}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:37.6,0) rectangle (axis cs:38,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:38.6,0) rectangle (axis cs:39,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:39.6,0) rectangle (axis cs:40,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:40.6,0) rectangle (axis cs:41,1.5);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:40.6,0) rectangle (axis cs:41,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:41.6,0) rectangle (axis cs:42,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:42.6,0) rectangle (axis cs:43,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:43.6,0) rectangle (axis cs:44,1);
@@ -5325,6 +6165,16 @@ yticklabels={}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:56.6,0) rectangle (axis cs:57,nan);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:57.6,0) rectangle (axis cs:58,nan);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:58.6,0) rectangle (axis cs:59,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:59.6,0) rectangle (axis cs:60,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:60.6,0) rectangle (axis cs:61,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:61.6,0) rectangle (axis cs:62,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:62.6,0) rectangle (axis cs:63,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:63.6,0) rectangle (axis cs:64,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:64.6,0) rectangle (axis cs:65,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:65.6,0) rectangle (axis cs:66,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:66.6,0) rectangle (axis cs:67,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:67.6,0) rectangle (axis cs:68,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:68.6,0) rectangle (axis cs:69,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,0);
@@ -5385,6 +6235,16 @@ yticklabels={}
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:57,0) rectangle (axis cs:57.4,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:58,0) rectangle (axis cs:58.4,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:59,0) rectangle (axis cs:59.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:60,0) rectangle (axis cs:60.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:61,0) rectangle (axis cs:61.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:62,0) rectangle (axis cs:62.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:63,0) rectangle (axis cs:63.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:64,0) rectangle (axis cs:64.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:65,0) rectangle (axis cs:65.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:66,0) rectangle (axis cs:66.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:67,0) rectangle (axis cs:67.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:68,0) rectangle (axis cs:68.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:69,0) rectangle (axis cs:69.4,nan);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 -0.2 2
@@ -5468,11 +6328,11 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 15.8 2
-15.8 3.01249999999999
+15.8 4
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-16.8 2
+16.8 1
 16.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -5493,7 +6353,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 20.8 1
-20.8 2
+20.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -5513,7 +6373,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 24.8 1
-24.8 1.01249999999999
+24.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -5522,7 +6382,7 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-26.8 1
+26.8 2
 26.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -5543,7 +6403,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 30.8 1
-30.8 2
+30.8 1.5
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -5552,18 +6412,18 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-32.8 1.5
-32.8 2.5
+32.8 1
+32.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 33.8 1
-33.8 1
+33.8 1.5
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 34.8 2
-34.8 2.5
+34.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -5572,7 +6432,7 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-36.8 2
+36.8 1
 36.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -5583,7 +6443,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 38.8 1
-38.8 1
+38.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -5598,7 +6458,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 41.8 1
-41.8 1
+41.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -5684,6 +6544,56 @@ table {%
 table {%
 58.8 nan
 58.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+59.8 nan
+59.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.8 nan
+60.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.8 nan
+61.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.8 nan
+62.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.8 nan
+63.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.8 nan
+64.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.8 nan
+65.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.8 nan
+66.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.8 nan
+67.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.8 nan
+68.8 nan
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -5984,6 +6894,56 @@ table {%
 table {%
 59.2 nan
 59.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.2 nan
+60.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.2 nan
+61.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.2 nan
+62.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.2 nan
+63.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.2 nan
+64.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.2 nan
+65.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.2 nan
+66.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.2 nan
+67.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.2 nan
+68.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+69.2 nan
+69.2 nan
 };
 
 \nextgroupplot[
@@ -5998,7 +6958,7 @@ width=\plotWidth,
 x grid style={white},
 xmajorticks=false,
 xmajorticks=true,
-xmin=-0.5, xmax=59.5,
+xmin=-0.5, xmax=69.5,
 xtick style={color=darkslategray38},
 xtick style={color=white},
 xticklabels={},
@@ -6024,7 +6984,7 @@ ytick style={color=white}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:9.6,0) rectangle (axis cs:10,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:10.6,0) rectangle (axis cs:11,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:11.6,0) rectangle (axis cs:12,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:12.6,0) rectangle (axis cs:13,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:12.6,0) rectangle (axis cs:13,1.5);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:13.6,0) rectangle (axis cs:14,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:14.6,0) rectangle (axis cs:15,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:15.6,0) rectangle (axis cs:16,2);
@@ -6035,12 +6995,12 @@ ytick style={color=white}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:20.6,0) rectangle (axis cs:21,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:21.6,0) rectangle (axis cs:22,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:22.6,0) rectangle (axis cs:23,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:23.6,0) rectangle (axis cs:24,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:23.6,0) rectangle (axis cs:24,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:24.6,0) rectangle (axis cs:25,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:25.6,0) rectangle (axis cs:26,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:26.6,0) rectangle (axis cs:27,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:26.6,0) rectangle (axis cs:27,1.5);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:27.6,0) rectangle (axis cs:28,2);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:28.6,0) rectangle (axis cs:29,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:28.6,0) rectangle (axis cs:29,1.5);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:29.6,0) rectangle (axis cs:30,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:30.6,0) rectangle (axis cs:31,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:31.6,0) rectangle (axis cs:32,2);
@@ -6071,6 +7031,16 @@ ytick style={color=white}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:56.6,0) rectangle (axis cs:57,nan);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:57.6,0) rectangle (axis cs:58,nan);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:58.6,0) rectangle (axis cs:59,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:59.6,0) rectangle (axis cs:60,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:60.6,0) rectangle (axis cs:61,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:61.6,0) rectangle (axis cs:62,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:62.6,0) rectangle (axis cs:63,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:63.6,0) rectangle (axis cs:64,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:64.6,0) rectangle (axis cs:65,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:65.6,0) rectangle (axis cs:66,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:66.6,0) rectangle (axis cs:67,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:67.6,0) rectangle (axis cs:68,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:68.6,0) rectangle (axis cs:69,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,0);
@@ -6131,6 +7101,16 @@ ytick style={color=white}
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:57,0) rectangle (axis cs:57.4,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:58,0) rectangle (axis cs:58.4,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:59,0) rectangle (axis cs:59.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:60,0) rectangle (axis cs:60.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:61,0) rectangle (axis cs:61.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:62,0) rectangle (axis cs:62.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:63,0) rectangle (axis cs:63.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:64,0) rectangle (axis cs:64.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:65,0) rectangle (axis cs:65.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:66,0) rectangle (axis cs:66.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:67,0) rectangle (axis cs:67.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:68,0) rectangle (axis cs:68.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:69,0) rectangle (axis cs:69.4,nan);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 -0.2 2
@@ -6239,7 +7219,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 20.8 1
-20.8 2
+20.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -6274,7 +7254,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 27.8 1
-27.8 2
+27.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -6284,7 +7264,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 29.8 1
-29.8 2
+29.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -6308,23 +7288,23 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-34.8 1.5
+34.8 2
 34.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 35.8 1
-35.8 1
+35.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-36.8 1.5
+36.8 2
 36.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 37.8 1
-37.8 2
+37.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -6344,7 +7324,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 41.8 1
-41.8 1
+41.8 1.02499999999998
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -6430,6 +7410,56 @@ table {%
 table {%
 58.8 nan
 58.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+59.8 nan
+59.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.8 nan
+60.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.8 nan
+61.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.8 nan
+62.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.8 nan
+63.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.8 nan
+64.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.8 nan
+65.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.8 nan
+66.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.8 nan
+67.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.8 nan
+68.8 nan
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -6730,6 +7760,56 @@ table {%
 table {%
 59.2 nan
 59.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.2 nan
+60.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.2 nan
+61.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.2 nan
+62.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.2 nan
+63.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.2 nan
+64.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.2 nan
+65.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.2 nan
+66.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.2 nan
+67.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.2 nan
+68.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+69.2 nan
+69.2 nan
 };
 
 \nextgroupplot[
@@ -6745,7 +7825,7 @@ width=\plotWidth,
 x grid style={white},
 xmajorticks=false,
 xmajorticks=true,
-xmin=-0.5, xmax=59.5,
+xmin=-0.5, xmax=69.5,
 xtick style={color=darkslategray38},
 xtick style={color=white},
 xticklabels={},
@@ -6772,37 +7852,37 @@ yticklabels={}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:10.6,0) rectangle (axis cs:11,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:11.6,0) rectangle (axis cs:12,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:12.6,0) rectangle (axis cs:13,2);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:13.6,0) rectangle (axis cs:14,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:13.6,0) rectangle (axis cs:14,2.5);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:14.6,0) rectangle (axis cs:15,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:15.6,0) rectangle (axis cs:16,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:16.6,0) rectangle (axis cs:17,3);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:17.6,0) rectangle (axis cs:18,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:18.6,0) rectangle (axis cs:19,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:19.6,0) rectangle (axis cs:20,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:20.6,0) rectangle (axis cs:21,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:20.6,0) rectangle (axis cs:21,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:21.6,0) rectangle (axis cs:22,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:22.6,0) rectangle (axis cs:23,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:23.6,0) rectangle (axis cs:24,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:24.6,0) rectangle (axis cs:25,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:25.6,0) rectangle (axis cs:26,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:26.6,0) rectangle (axis cs:27,1.5);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:27.6,0) rectangle (axis cs:28,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:26.6,0) rectangle (axis cs:27,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:27.6,0) rectangle (axis cs:28,2.5);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:28.6,0) rectangle (axis cs:29,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:29.6,0) rectangle (axis cs:30,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:30.6,0) rectangle (axis cs:31,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:31.6,0) rectangle (axis cs:32,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:32.6,0) rectangle (axis cs:33,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:33.6,0) rectangle (axis cs:34,2);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:34.6,0) rectangle (axis cs:35,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:34.6,0) rectangle (axis cs:35,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:35.6,0) rectangle (axis cs:36,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:36.6,0) rectangle (axis cs:37,2);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:37.6,0) rectangle (axis cs:38,1.5);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:38.6,0) rectangle (axis cs:39,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:37.6,0) rectangle (axis cs:38,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:38.6,0) rectangle (axis cs:39,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:39.6,0) rectangle (axis cs:40,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:40.6,0) rectangle (axis cs:41,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:41.6,0) rectangle (axis cs:42,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:42.6,0) rectangle (axis cs:43,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:43.6,0) rectangle (axis cs:44,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:43.6,0) rectangle (axis cs:44,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:44.6,0) rectangle (axis cs:45,nan);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:45.6,0) rectangle (axis cs:46,nan);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:46.6,0) rectangle (axis cs:47,nan);
@@ -6818,6 +7898,16 @@ yticklabels={}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:56.6,0) rectangle (axis cs:57,nan);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:57.6,0) rectangle (axis cs:58,nan);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:58.6,0) rectangle (axis cs:59,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:59.6,0) rectangle (axis cs:60,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:60.6,0) rectangle (axis cs:61,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:61.6,0) rectangle (axis cs:62,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:62.6,0) rectangle (axis cs:63,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:63.6,0) rectangle (axis cs:64,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:64.6,0) rectangle (axis cs:65,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:65.6,0) rectangle (axis cs:66,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:66.6,0) rectangle (axis cs:67,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:67.6,0) rectangle (axis cs:68,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:68.6,0) rectangle (axis cs:69,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,0);
@@ -6862,7 +7952,7 @@ yticklabels={}
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:41,0) rectangle (axis cs:41.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:42,0) rectangle (axis cs:42.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:43,0) rectangle (axis cs:43.4,0);
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:44,0) rectangle (axis cs:44.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:44,0) rectangle (axis cs:44.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:45,0) rectangle (axis cs:45.4,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:46,0) rectangle (axis cs:46.4,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:47,0) rectangle (axis cs:47.4,nan);
@@ -6878,6 +7968,16 @@ yticklabels={}
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:57,0) rectangle (axis cs:57.4,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:58,0) rectangle (axis cs:58.4,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:59,0) rectangle (axis cs:59.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:60,0) rectangle (axis cs:60.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:61,0) rectangle (axis cs:61.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:62,0) rectangle (axis cs:62.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:63,0) rectangle (axis cs:63.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:64,0) rectangle (axis cs:64.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:65,0) rectangle (axis cs:65.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:66,0) rectangle (axis cs:66.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:67,0) rectangle (axis cs:67.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:68,0) rectangle (axis cs:68.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:69,0) rectangle (axis cs:69.4,nan);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 -0.2 2
@@ -6941,17 +8041,17 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 11.8 1
-11.8 2
+11.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-12.8 1
+12.8 1.5
 12.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 13.8 1
-13.8 2.5
+13.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -6961,16 +8061,16 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 15.8 2
-15.8 2
+15.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-16.8 3
+16.8 1
 16.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-17.8 2
+17.8 1
 17.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -7011,27 +8111,27 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 25.8 1
-25.8 2
+25.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-26.8 1
+26.8 2
 26.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 27.8 1
-27.8 2
+27.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-28.8 1.5
+28.8 2
 28.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 29.8 1
-29.8 1
+29.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -7045,12 +8145,12 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-32.8 1.9875
-32.8 3
+32.8 1
+32.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-33.8 2
+33.8 1
 33.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -7071,12 +8171,12 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 37.8 1
-37.8 2
+37.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 38.8 1
-38.8 2.5
+38.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -7100,8 +8200,8 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-43.8 nan
-43.8 nan
+43.8 1
+43.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -7177,6 +8277,56 @@ table {%
 table {%
 58.8 nan
 58.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+59.8 nan
+59.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.8 nan
+60.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.8 nan
+61.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.8 nan
+62.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.8 nan
+63.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.8 nan
+64.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.8 nan
+65.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.8 nan
+66.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.8 nan
+67.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.8 nan
+68.8 nan
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -7400,8 +8550,8 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-44.2 nan
-44.2 nan
+44.2 0
+44.2 0
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -7477,6 +8627,56 @@ table {%
 table {%
 59.2 nan
 59.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.2 nan
+60.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.2 nan
+61.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.2 nan
+62.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.2 nan
+63.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.2 nan
+64.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.2 nan
+65.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.2 nan
+66.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.2 nan
+67.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.2 nan
+68.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+69.2 nan
+69.2 nan
 };
 
 \nextgroupplot[
@@ -7491,10 +8691,10 @@ x grid style={white},
 xlabel=\textcolor{darkslategray38}{Sub-goal stage index},
 xmajorticks=false,
 xmajorticks=true,
-xmin=-0.5, xmax=59.5,
+xmin=-0.5, xmax=69.5,
 xtick style={color=darkslategray38},
 xtick style={color=white},
-xtick={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59},
+xtick={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69},
 xticklabels={
   1.0,
   2.0,
@@ -7555,7 +8755,17 @@ xticklabels={
   57.0,
   58.0,
   59.0,
-  60.0
+  60.0,
+  61.0,
+  62.0,
+  63.0,
+  64.0,
+  65.0,
+  66.0,
+  67.0,
+  68.0,
+  69.0,
+  70.0
 },
 y grid style={white},
 ylabel=\textcolor{darkslategray38}{Sub-plan length and interleaving quantity},
@@ -7576,7 +8786,7 @@ ytick style={color=white}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:6.6,0) rectangle (axis cs:7,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:7.6,0) rectangle (axis cs:8,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:8.6,0) rectangle (axis cs:9,3);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:9.6,0) rectangle (axis cs:10,3);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:9.6,0) rectangle (axis cs:10,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:10.6,0) rectangle (axis cs:11,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:11.6,0) rectangle (axis cs:12,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:12.6,0) rectangle (axis cs:13,1);
@@ -7626,6 +8836,16 @@ ytick style={color=white}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:56.6,0) rectangle (axis cs:57,nan);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:57.6,0) rectangle (axis cs:58,nan);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:58.6,0) rectangle (axis cs:59,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:59.6,0) rectangle (axis cs:60,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:60.6,0) rectangle (axis cs:61,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:61.6,0) rectangle (axis cs:62,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:62.6,0) rectangle (axis cs:63,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:63.6,0) rectangle (axis cs:64,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:64.6,0) rectangle (axis cs:65,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:65.6,0) rectangle (axis cs:66,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:66.6,0) rectangle (axis cs:67,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:67.6,0) rectangle (axis cs:68,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:68.6,0) rectangle (axis cs:69,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,0);
@@ -7686,6 +8906,16 @@ ytick style={color=white}
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:57,0) rectangle (axis cs:57.4,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:58,0) rectangle (axis cs:58.4,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:59,0) rectangle (axis cs:59.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:60,0) rectangle (axis cs:60.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:61,0) rectangle (axis cs:61.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:62,0) rectangle (axis cs:62.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:63,0) rectangle (axis cs:63.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:64,0) rectangle (axis cs:64.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:65,0) rectangle (axis cs:65.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:66,0) rectangle (axis cs:66.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:67,0) rectangle (axis cs:67.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:68,0) rectangle (axis cs:68.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:69,0) rectangle (axis cs:69.4,nan);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 -0.2 2
@@ -7754,17 +8984,17 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 12.8 1
-12.8 1
+12.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 13.8 1
-13.8 1
+13.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 14.8 1
-14.8 1
+14.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -7773,7 +9003,7 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-16.8 3
+16.8 1
 16.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -7794,7 +9024,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 20.8 1
-20.8 2
+20.8 1.5
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -7809,7 +9039,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 23.8 1
-23.8 2
+23.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -7828,8 +9058,8 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-27.8 1
-27.8 2
+27.8 1.5
+27.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -7853,8 +9083,8 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
+32.8 1
 32.8 2
-32.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -7863,7 +9093,7 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-34.8 1
+34.8 2
 34.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -7879,7 +9109,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 37.8 1
-37.8 2.5
+37.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -7985,6 +9215,56 @@ table {%
 table {%
 58.8 nan
 58.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+59.8 nan
+59.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.8 nan
+60.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.8 nan
+61.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.8 nan
+62.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.8 nan
+63.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.8 nan
+64.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.8 nan
+65.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.8 nan
+66.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.8 nan
+67.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.8 nan
+68.8 nan
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -8285,6 +9565,56 @@ table {%
 table {%
 59.2 nan
 59.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.2 nan
+60.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.2 nan
+61.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.2 nan
+62.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.2 nan
+63.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.2 nan
+64.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.2 nan
+65.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.2 nan
+66.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.2 nan
+67.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.2 nan
+68.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+69.2 nan
+69.2 nan
 };
 
 \nextgroupplot[
@@ -8300,10 +9630,10 @@ x grid style={white},
 xlabel=\textcolor{darkslategray38}{Sub-goal stage index},
 xmajorticks=false,
 xmajorticks=true,
-xmin=-0.5, xmax=59.5,
+xmin=-0.5, xmax=69.5,
 xtick style={color=darkslategray38},
 xtick style={color=white},
-xtick={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59},
+xtick={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69},
 xticklabels={
   1.0,
   2.0,
@@ -8364,7 +9694,17 @@ xticklabels={
   57.0,
   58.0,
   59.0,
-  60.0
+  60.0,
+  61.0,
+  62.0,
+  63.0,
+  64.0,
+  65.0,
+  66.0,
+  67.0,
+  68.0,
+  69.0,
+  70.0
 },
 y grid style={white},
 ymajorgrids,
@@ -8391,7 +9731,7 @@ yticklabels={}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:12.6,0) rectangle (axis cs:13,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:13.6,0) rectangle (axis cs:14,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:14.6,0) rectangle (axis cs:15,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:15.6,0) rectangle (axis cs:16,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:15.6,0) rectangle (axis cs:16,1.5);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:16.6,0) rectangle (axis cs:17,3);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:17.6,0) rectangle (axis cs:18,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:18.6,0) rectangle (axis cs:19,1);
@@ -8408,9 +9748,9 @@ yticklabels={}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:29.6,0) rectangle (axis cs:30,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:30.6,0) rectangle (axis cs:31,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:31.6,0) rectangle (axis cs:32,2);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:32.6,0) rectangle (axis cs:33,1.5);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:33.6,0) rectangle (axis cs:34,1);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:34.6,0) rectangle (axis cs:35,1);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:32.6,0) rectangle (axis cs:33,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:33.6,0) rectangle (axis cs:34,2);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:34.6,0) rectangle (axis cs:35,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:35.6,0) rectangle (axis cs:36,1);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:36.6,0) rectangle (axis cs:37,2);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:37.6,0) rectangle (axis cs:38,1);
@@ -8435,6 +9775,16 @@ yticklabels={}
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:56.6,0) rectangle (axis cs:57,nan);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:57.6,0) rectangle (axis cs:58,nan);
 \draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:58.6,0) rectangle (axis cs:59,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:59.6,0) rectangle (axis cs:60,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:60.6,0) rectangle (axis cs:61,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:61.6,0) rectangle (axis cs:62,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:62.6,0) rectangle (axis cs:63,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:63.6,0) rectangle (axis cs:64,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:64.6,0) rectangle (axis cs:65,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:65.6,0) rectangle (axis cs:66,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:66.6,0) rectangle (axis cs:67,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:67.6,0) rectangle (axis cs:68,nan);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:68.6,0) rectangle (axis cs:69,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,0);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,0);
@@ -8495,6 +9845,16 @@ yticklabels={}
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:57,0) rectangle (axis cs:57.4,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:58,0) rectangle (axis cs:58.4,nan);
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:59,0) rectangle (axis cs:59.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:60,0) rectangle (axis cs:60.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:61,0) rectangle (axis cs:61.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:62,0) rectangle (axis cs:62.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:63,0) rectangle (axis cs:63.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:64,0) rectangle (axis cs:64.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:65,0) rectangle (axis cs:65.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:66,0) rectangle (axis cs:66.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:67,0) rectangle (axis cs:67.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:68,0) rectangle (axis cs:68.4,nan);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:69,0) rectangle (axis cs:69.4,nan);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 -0.2 2
@@ -8587,7 +9947,7 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-17.8 1
+17.8 1.5
 17.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -8598,7 +9958,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 19.8 1
-19.8 2
+19.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -8623,7 +9983,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 24.8 1
-24.8 1.5
+24.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -8633,11 +9993,11 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 26.8 1
-26.8 2
+26.8 1.5
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-27.8 3
+27.8 2
 27.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -8673,12 +10033,12 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 34.8 1
-34.8 1.5
+34.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 35.8 1
-35.8 1
+35.8 2
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -8688,7 +10048,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 37.8 1
-37.8 1
+37.8 3
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -8698,7 +10058,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 39.8 1
-39.8 2
+39.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -8717,8 +10077,8 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-43.8 nan
-43.8 nan
+43.8 1
+43.8 1
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -8794,6 +10154,56 @@ table {%
 table {%
 58.8 nan
 58.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+59.8 nan
+59.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.8 nan
+60.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.8 nan
+61.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.8 nan
+62.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.8 nan
+63.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.8 nan
+64.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.8 nan
+65.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.8 nan
+66.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.8 nan
+67.8 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.8 nan
+68.8 nan
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -9017,8 +10427,8 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-44.2 nan
-44.2 nan
+44.2 0
+44.2 0
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -9094,6 +10504,56 @@ table {%
 table {%
 59.2 nan
 59.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+60.2 nan
+60.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+61.2 nan
+61.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+62.2 nan
+62.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+63.2 nan
+63.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+64.2 nan
+64.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+65.2 nan
+65.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+66.2 nan
+66.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+67.2 nan
+67.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+68.2 nan
+68.2 nan
+};
+\addplot [line width=0.864pt, darkslategray66]
+table {%
+69.2 nan
+69.2 nan
 };
 \end{groupplot}
 

@@ -77,7 +77,7 @@ ylabel=\textcolor{darkslategray38}{Total planning time (s)},
 ymajorgrids,
 ymajorticks=false,
 ymajorticks=true,
-ymin=1.71712893573944, ymax=10.247179555632,
+ymin=1.75242259635247, ymax=10.9453284442846,
 ymode=log,
 ytick style={color=darkslategray38},
 ytick style={color=white},
@@ -90,131 +90,131 @@ yticklabels={
   \(\displaystyle {10^{3}}\)
 }
 ]
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:-0.266666666666667,9.13722504999954);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:-0.266666666666667,9.64551940000021);
 \addlegendimage{ybar,ybar legend,draw=white,fill=steelblue49115161,line width=0.32pt}
 \addlegendentry{(2, 2)}
 
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:0.733333333333333,3.98897850000054);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:1.73333333333333,1.90602679999972);
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-0.266666666666667,0) rectangle (axis cs:-0.133333333333333,8.24292980000024);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:0.733333333333333,4.08610894999921);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:1.73333333333333,1.96021209999998);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-0.266666666666667,0) rectangle (axis cs:-0.133333333333333,8.31773400000023);
 \addlegendimage{ybar,ybar legend,draw=white,fill=brown1926061,line width=0.32pt}
 \addlegendentry{(4, 2)}
 
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:0.733333333333333,0) rectangle (axis cs:0.866666666666667,3.39532440000031);
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1.73333333333333,0) rectangle (axis cs:1.86666666666667,1.9041868499998);
-\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:-0.133333333333333,0) rectangle (axis cs:8.32667268468867e-17,7.31493399999987);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:0.733333333333333,0) rectangle (axis cs:0.866666666666667,3.40574334999974);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1.73333333333333,0) rectangle (axis cs:1.86666666666667,1.91893740000014);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:-0.133333333333333,0) rectangle (axis cs:8.32667268468867e-17,7.53881775000016);
 \addlegendimage{ybar,ybar legend,draw=white,fill=seagreen5814558,line width=0.32pt}
 \addlegendentry{(4, 4)}
 
-\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:0.866666666666667,0) rectangle (axis cs:1,3.43491124999998);
-\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:1.86666666666667,0) rectangle (axis cs:2,1.92006555000015);
-\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:9.71445146547012e-17,0) rectangle (axis cs:0.133333333333333,8.21465714999943);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:0.866666666666667,0) rectangle (axis cs:1,3.44638989999989);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:1.86666666666667,0) rectangle (axis cs:2,1.95082760000015);
+\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:9.71445146547012e-17,0) rectangle (axis cs:0.133333333333333,8.40744305000004);
 \addlegendimage{ybar,ybar legend,draw=white,fill=peru22412844,line width=0.32pt}
 \addlegendentry{(6, 2)}
 
-\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.13333333333333,3.50002135000005);
-\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.13333333333333,1.87346119999988);
-\draw[draw=white,fill=lightseagreen45171184,line width=0.32pt] (axis cs:0.133333333333333,0) rectangle (axis cs:0.266666666666667,7.4092985000002);
+\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.13333333333333,3.51018110000004);
+\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.13333333333333,1.95599215);
+\draw[draw=white,fill=lightseagreen45171184,line width=0.32pt] (axis cs:0.133333333333333,0) rectangle (axis cs:0.266666666666667,7.64847595000015);
 \addlegendimage{ybar,ybar legend,draw=white,fill=lightseagreen45171184,line width=0.32pt}
 \addlegendentry{(6, 4)}
 
-\draw[draw=white,fill=lightseagreen45171184,line width=0.32pt] (axis cs:1.13333333333333,0) rectangle (axis cs:1.26666666666667,3.48950164999988);
-\draw[draw=white,fill=lightseagreen45171184,line width=0.32pt] (axis cs:2.13333333333333,0) rectangle (axis cs:2.26666666666667,1.90134379999976);
-\draw[draw=white,fill=orchid213132188,line width=0.32pt] (axis cs:0.266666666666667,0) rectangle (axis cs:0.4,7.46242489999986);
+\draw[draw=white,fill=lightseagreen45171184,line width=0.32pt] (axis cs:1.13333333333333,0) rectangle (axis cs:1.26666666666667,3.53801220000001);
+\draw[draw=white,fill=lightseagreen45171184,line width=0.32pt] (axis cs:2.13333333333333,0) rectangle (axis cs:2.26666666666667,1.98308215000001);
+\draw[draw=white,fill=orchid213132188,line width=0.32pt] (axis cs:0.266666666666667,0) rectangle (axis cs:0.4,7.54143780000012);
 \addlegendimage{ybar,ybar legend,draw=white,fill=orchid213132188,line width=0.32pt}
 \addlegendentry{(6, 6)}
 
-\draw[draw=white,fill=orchid213132188,line width=0.32pt] (axis cs:1.26666666666667,0) rectangle (axis cs:1.4,3.47787520000005);
-\draw[draw=white,fill=orchid213132188,line width=0.32pt] (axis cs:2.26666666666667,0) rectangle (axis cs:2.4,1.92185849999993);
+\draw[draw=white,fill=orchid213132188,line width=0.32pt] (axis cs:1.26666666666667,0) rectangle (axis cs:1.4,3.52133510000019);
+\draw[draw=white,fill=orchid213132188,line width=0.32pt] (axis cs:2.26666666666667,0) rectangle (axis cs:2.4,1.99347545000003);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
--0.333333333333333 8.71619972999856
--0.333333333333333 9.44801652875043
+-0.333333333333333 8.84250760875002
+-0.333333333333333 9.69468864999959
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.666666666666667 3.70821370000013
-0.666666666666667 4.15233144999974
+0.666666666666667 4.00141735000022
+0.666666666666667 4.19401295000011
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.66666666666667 1.89185889999976
-1.66666666666667 1.94760005000013
+1.66666666666667 1.9242158000001
+1.66666666666667 1.97304150000002
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
--0.2 8.10653572125021
--0.2 8.34504689749972
+-0.2 8.20830469999981
+-0.2 8.44018965000009
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.8 3.37616375000005
-0.8 3.40992772625001
+0.8 3.38330974999997
+0.8 3.44179571999995
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.8 1.86237274999989
-1.8 1.92040370000005
+1.8 1.90459229999988
+1.8 1.94736979999959
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
--0.0666666666666666 7.26079600000025
--0.0666666666666666 7.4977380087501
+-0.0666666666666666 7.4176125299995
+-0.0666666666666666 7.59500100000002
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.933333333333333 3.38281160000003
-0.933333333333333 3.46740103499993
+0.933333333333333 3.4246184000001
+0.933333333333333 3.47701070000008
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.93333333333333 1.90497620000013
-1.93333333333333 1.95197239999925
+1.93333333333333 1.92723400000005
+1.93333333333333 1.97076679999995
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.0666666666666668 8.07072470000003
-0.0666666666666668 8.33243770000016
+0.0666666666666668 8.20894580000042
+0.0666666666666668 8.53350500000018
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.06666666666667 3.45626755000032
-1.06666666666667 3.56747799250025
+1.06666666666667 3.47185035000004
+1.06666666666667 3.56600020000019
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-2.06666666666667 1.86306840000009
-2.06666666666667 1.90220525000009
+2.06666666666667 1.91831180000005
+2.06666666666667 1.98439640875007
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.2 7.30589300000088
-0.2 7.5572527999999
+0.2 7.50740240000003
+0.2 7.69388395624989
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.2 3.44484265
-1.2 3.54925943250004
+1.2 3.49082444999976
+1.2 3.5733663
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-2.2 1.86726560000011
-2.2 1.93407375000018
+2.2 1.94022080000008
+2.2 2.00342870000009
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.333333333333333 7.41314776374991
-0.333333333333333 7.56973309999999
+0.333333333333333 7.4967271999999
+0.333333333333333 7.5716156499998
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.33333333333333 3.44805280000003
-1.33333333333333 3.54365499999994
+1.33333333333333 3.46687140000012
+1.33333333333333 3.55602020000003
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-2.33333333333333 1.87466811374989
-2.33333333333333 1.93171954999996
+2.33333333333333 1.9628115000002
+2.33333333333333 2.02277919249995
 };
 
 \nextgroupplot[
@@ -241,119 +241,119 @@ y grid style={white},
 ymajorgrids,
 ymajorticks=false,
 ymajorticks=true,
-ymin=1.71712893573944, ymax=10.247179555632,
+ymin=1.75242259635247, ymax=10.9453284442846,
 ymode=log,
 ytick style={color=darkslategray38},
 ytick style={color=white},
 yticklabels={}
 ]
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:-0.266666666666667,9.20205509999897);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:0.733333333333333,3.98464524999974);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:1.73333333333333,1.87430129999972);
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-0.266666666666667,0) rectangle (axis cs:-0.133333333333333,8.15926860000018);
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:0.733333333333333,0) rectangle (axis cs:0.866666666666667,3.39555064999979);
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1.73333333333333,0) rectangle (axis cs:1.86666666666667,1.9074288500002);
-\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:-0.133333333333333,0) rectangle (axis cs:8.32667268468867e-17,7.33202069999991);
-\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:0.866666666666667,0) rectangle (axis cs:1,3.40875369999981);
-\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:1.86666666666667,0) rectangle (axis cs:2,1.88710039999978);
-\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:9.71445146547012e-17,0) rectangle (axis cs:0.133333333333333,8.45281184999996);
-\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.13333333333333,3.54935179999998);
-\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.13333333333333,1.90529325000011);
-\draw[draw=white,fill=lightseagreen45171184,line width=0.32pt] (axis cs:0.133333333333333,0) rectangle (axis cs:0.266666666666667,7.62762834999972);
-\draw[draw=white,fill=lightseagreen45171184,line width=0.32pt] (axis cs:1.13333333333333,0) rectangle (axis cs:1.26666666666667,3.60897814999977);
-\draw[draw=white,fill=lightseagreen45171184,line width=0.32pt] (axis cs:2.13333333333333,0) rectangle (axis cs:2.26666666666667,1.90193124999996);
-\draw[draw=white,fill=orchid213132188,line width=0.32pt] (axis cs:0.266666666666667,0) rectangle (axis cs:0.4,7.47750305000001);
-\draw[draw=white,fill=orchid213132188,line width=0.32pt] (axis cs:1.26666666666667,0) rectangle (axis cs:1.4,3.49964869999989);
-\draw[draw=white,fill=orchid213132188,line width=0.32pt] (axis cs:2.26666666666667,0) rectangle (axis cs:2.4,1.90817349999989);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:-0.266666666666667,9.6502287000001);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:0.733333333333333,4.23161670000001);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:1.73333333333333,1.95720069999986);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-0.266666666666667,0) rectangle (axis cs:-0.133333333333333,8.43609095000002);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:0.733333333333333,0) rectangle (axis cs:0.866666666666667,3.47761444999961);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1.73333333333333,0) rectangle (axis cs:1.86666666666667,1.95139630000008);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:-0.133333333333333,0) rectangle (axis cs:8.32667268468867e-17,7.33882699999997);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:0.866666666666667,0) rectangle (axis cs:1,3.40310069999992);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:1.86666666666667,0) rectangle (axis cs:2,1.91758179999997);
+\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:9.71445146547012e-17,0) rectangle (axis cs:0.133333333333333,8.57186089999975);
+\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.13333333333333,3.57595665000019);
+\draw[draw=white,fill=peru22412844,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.13333333333333,1.93337509999975);
+\draw[draw=white,fill=lightseagreen45171184,line width=0.32pt] (axis cs:0.133333333333333,0) rectangle (axis cs:0.266666666666667,7.64332394999974);
+\draw[draw=white,fill=lightseagreen45171184,line width=0.32pt] (axis cs:1.13333333333333,0) rectangle (axis cs:1.26666666666667,3.62083990000016);
+\draw[draw=white,fill=lightseagreen45171184,line width=0.32pt] (axis cs:2.13333333333333,0) rectangle (axis cs:2.26666666666667,1.96346729999995);
+\draw[draw=white,fill=orchid213132188,line width=0.32pt] (axis cs:0.266666666666667,0) rectangle (axis cs:0.4,7.52118719999987);
+\draw[draw=white,fill=orchid213132188,line width=0.32pt] (axis cs:1.26666666666667,0) rectangle (axis cs:1.4,3.60188190000025);
+\draw[draw=white,fill=orchid213132188,line width=0.32pt] (axis cs:2.26666666666667,0) rectangle (axis cs:2.4,1.9417572000001);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
--0.333333333333333 8.35528799999986
--0.333333333333333 9.42654075000081
+-0.333333333333333 8.96834805000009
+-0.333333333333333 10.0708381999996
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.666666666666667 3.83545260874994
-0.666666666666667 4.01521199999979
+0.666666666666667 4.00469840000051
+0.666666666666667 4.34210919999896
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.66666666666667 1.85129139999987
-1.66666666666667 1.90886059999934
+1.66666666666667 1.93171165000007
+1.66666666666667 1.99773050000056
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
--0.2 8.11426490000031
--0.2 8.31778445000043
+-0.2 8.31987904999997
+-0.2 8.59473430000004
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.8 3.37922860000003
-0.8 3.42788090000042
+0.8 3.43137501875047
+0.8 3.50683298500013
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.8 1.87067490000027
-1.8 1.93891237500007
+1.8 1.92451265000003
+1.8 2.00604860124991
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
--0.0666666666666666 7.26435273625012
--0.0666666666666666 7.35785349999981
+-0.0666666666666666 7.21868434999993
+-0.0666666666666666 7.39916158124996
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.933333333333333 3.38544029999957
-0.933333333333333 3.43405999999998
+0.933333333333333 3.39031278125019
+0.933333333333333 3.44400079999996
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.93333333333333 1.86732094999996
-1.93333333333333 1.9179969999999
+1.93333333333333 1.88311809999996
+1.93333333333333 1.97356169999986
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.0666666666666668 8.32695629999989
-0.0666666666666668 8.53964194999998
+0.0666666666666668 8.39028896500005
+0.0666666666666668 8.61158479999992
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.06666666666667 3.49519094999997
-1.06666666666667 3.60533839999977
+1.06666666666667 3.50356734999986
+1.06666666666667 3.64313169999991
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-2.06666666666667 1.85908950000021
-2.06666666666667 1.95384556124983
+2.06666666666667 1.91476051249995
+2.06666666666667 1.96965639999996
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.2 7.39665276750053
-0.2 7.77837003125011
+0.2 7.48343513874984
+0.2 7.80304539999997
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.2 3.51305889125011
-1.2 3.64976689999969
+1.2 3.5352736
+1.2 3.64801369999993
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-2.2 1.86908994999972
-2.2 1.92944410000018
+2.2 1.92829260000008
+2.2 2.00890390000001
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.333333333333333 7.41954260000001
-0.333333333333333 7.58100694999996
+0.333333333333333 7.37347212124983
+0.333333333333333 7.56465933499995
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.33333333333333 3.43240049999974
-1.33333333333333 3.57047219999993
+1.33333333333333 3.52531610000011
+1.33333333333333 3.63320540000004
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-2.33333333333333 1.87730285249991
-2.33333333333333 1.9572896
+2.33333333333333 1.88154350000013
+2.33333333333333 1.96426570000044
 };
 \end{groupplot}
 

@@ -135,7 +135,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 0.266666666666667 10
-0.266666666666667 21
+0.266666666666667 20
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%

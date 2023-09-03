@@ -65,7 +65,7 @@ ylabel=\textcolor{darkslategray38}{Total planning time (s)},
 ymajorgrids,
 ymajorticks=false,
 ymajorticks=true,
-ymin=1.74956100390883, ymax=8.80512781875113,
+ymin=1.79834720979891, ymax=8.91175357722715,
 ymode=log,
 ytick style={color=darkslategray38},
 ytick style={color=white},
@@ -77,47 +77,47 @@ yticklabels={
   \(\displaystyle {10^{2}}\)
 }
 ]
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,8.053382);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,8.17606340000034);
 \addlegendimage{ybar,ybar legend,draw=white,fill=steelblue49115161,line width=0.32pt}
 \addlegendentry{hasty}
 
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,3.50705794999976);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,1.91360354999978);
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,8.05476269999946);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,3.51086649999945);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,1.96565830000023);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,8.19758430000027);
 \addlegendimage{ybar,ybar legend,draw=white,fill=brown1926061,line width=0.32pt}
 \addlegendentry{steady}
 
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,3.55933425000006);
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,1.90919714999987);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,3.54171184999996);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,1.9405098500002);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
--0.2 7.96484479999947
--0.2 8.18154580000008
+-0.2 8.06683705000009
+-0.2 8.28644374249971
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.8 3.4878728000001
-0.8 3.52385594999996
+0.8 3.49433354999985
+0.8 3.52503137875009
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.8 1.90155249999995
-1.8 1.92608630000018
+1.8 1.95386815499999
+1.8 1.97558300000082
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.2 7.94063880125013
-0.2 8.11998270000083
+0.2 8.10598985749976
+0.2 8.27894494125
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.2 3.52579134999999
-1.2 3.58219949999989
+1.2 3.52520655624985
+1.2 3.58103079999955
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-2.2 1.89781178000002
-2.2 1.91735069999993
+2.2 1.92711730000008
+2.2 1.95479680000011
 };
 
 \nextgroupplot[
@@ -144,7 +144,7 @@ y grid style={white},
 ymajorgrids,
 ymajorticks=false,
 ymajorticks=true,
-ymin=1.74956100390883, ymax=8.80512781875113,
+ymin=1.79834720979891, ymax=8.91175357722715,
 ymode=log,
 ytick style={color=darkslategray38},
 ytick style={color=white},
@@ -158,33 +158,33 @@ yticklabels={}
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,1.91824764999998);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
--0.2 7.75095963499966
--0.2 8.02280344624984
+-0.2 7.74597337749976
+-0.2 8.02300025000028
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 0.8 3.48979560000014
-0.8 3.53957893124994
+0.8 3.53637714500003
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 1.8 1.90956250000011
-1.8 1.94395344999967
+1.8 1.94450714999977
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.2 7.78540813500013
+0.2 7.79465720000022
 0.2 8.01181010000025
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.2 3.51684830000015
-1.2 3.55987069999992
+1.2 3.51594340000005
+1.2 3.56170984999983
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-2.2 1.90672917749996
-2.2 1.92683794250013
+2.2 1.90524582750016
+2.2 1.92714337749991
 };
 
 \nextgroupplot[
@@ -211,47 +211,47 @@ y grid style={white},
 ymajorgrids,
 ymajorticks=false,
 ymajorticks=true,
-ymin=1.74956100390883, ymax=8.80512781875113,
+ymin=1.79834720979891, ymax=8.91175357722715,
 ymode=log,
 ytick style={color=darkslategray38},
 ytick style={color=white},
 yticklabels={}
 ]
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,7.88523440000014);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,3.4639298000001);
-\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,1.90579125000006);
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,7.88044360000006);
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,3.49795730000014);
-\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,1.89335829999993);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:-0.4,0) rectangle (axis cs:0,8.00139674999983);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:0.6,0) rectangle (axis cs:1,3.49118360000003);
+\draw[draw=white,fill=steelblue49115161,line width=0.32pt] (axis cs:1.6,0) rectangle (axis cs:2,1.96127885000004);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:-2.77555756156289e-17,0) rectangle (axis cs:0.4,7.8795468000001);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:1,0) rectangle (axis cs:1.4,3.54279324999986);
+\draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:2,0) rectangle (axis cs:2.4,1.94767064999999);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
--0.2 7.82807460000106
--0.2 7.93477204999991
+-0.2 7.8815403000001
+-0.2 8.1166211999992
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.8 3.4508728999997
-0.8 3.48197685000008
+0.8 3.48033564125029
+0.8 3.51285949999999
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.8 1.89384555000066
-1.8 1.91892569374978
+1.8 1.94687031499972
+1.8 1.96906813499996
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.2 7.80270339999987
-0.2 8.00815609500088
+0.2 7.7557182999999
+0.2 7.98640269999993
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.2 3.47570705750009
-1.2 3.52755164750002
+1.2 3.51233553250023
+1.2 3.5959582025
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-2.2 1.88290925000012
-2.2 1.90949067124966
+2.2 1.93405369999982
+2.2 1.96133939999996
 };
 \end{groupplot}
 

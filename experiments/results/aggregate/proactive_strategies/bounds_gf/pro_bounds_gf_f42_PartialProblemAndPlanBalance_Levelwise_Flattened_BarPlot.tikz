@@ -87,7 +87,7 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
--0.0666666666666666 0.175824175824176
+-0.0666666666666666 0.174788823911632
 -0.0666666666666666 0.185950413223141
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -107,8 +107,8 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.2 0.317482109205228
-0.2 0.360925499303963
+0.2 0.316044633791435
+0.2 0.363048712870709
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -117,8 +117,8 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.333333333333333 0.419765166340509
-0.333333333333333 0.454320987654321
+0.333333333333333 0.419457676351153
+0.333333333333333 0.454170524691358
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
