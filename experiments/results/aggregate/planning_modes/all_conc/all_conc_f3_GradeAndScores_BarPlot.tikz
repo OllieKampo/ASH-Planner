@@ -54,7 +54,7 @@ ytick style={color=white}
 \draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:2.13333333333333,0) rectangle (axis cs:2.4,1);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
--0.266666666666667 0.851912696187103
+-0.266666666666667 0.850949767146176
 -0.266666666666667 0.855009576708293
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -84,12 +84,12 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.266666666666667 0.872768991944796
-0.266666666666667 0.876932899187992
+0.266666666666667 0.873756611473952
+0.266666666666667 0.876632749915057
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.26666666666667 0.761251731650883
+1.26666666666667 0.761110755467343
 1.26666666666667 0.769566876341039
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -161,7 +161,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 2 0.815384615384615
-2 0.834697420634921
+2 0.828125
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -170,8 +170,8 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.26666666666667 0.653064035330517
-1.26666666666667 0.664976781204278
+1.26666666666667 0.653018028657544
+1.26666666666667 0.665803632297332
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -216,7 +216,7 @@ yticklabels={}
 \draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:2.13333333333333,0) rectangle (axis cs:2.4,1);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
--0.266666666666667 0.338391035183944
+-0.266666666666667 0.336921299567093
 -0.266666666666667 0.353457348098457
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -246,12 +246,12 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.266666666666667 0.343441647649376
+0.266666666666667 0.341949975680035
 0.266666666666667 0.358277891998081
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.26666666666667 0.549451457851114
+1.26666666666667 0.549515430515806
 1.26666666666667 0.558188593285706
 };
 \addplot [line width=0.864pt, darkslategray66]

@@ -42,11 +42,11 @@ ytick style={color=white}
 \addlegendentry{offline}
 
 \draw[draw=white,fill=brown1926061,line width=0.32pt] (axis cs:0.866666666666667,0) rectangle (axis cs:1.13333333333333,0.240871770631624);
-\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:0.133333333333333,0) rectangle (axis cs:0.4,0.912093054754479);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:0.133333333333333,0) rectangle (axis cs:0.4,0.911027974777154);
 \addlegendimage{ybar,ybar legend,draw=white,fill=seagreen5814558,line width=0.32pt}
 \addlegendentry{online}
 
-\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:1.13333333333333,0) rectangle (axis cs:1.4,0.0879069452455213);
+\draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:1.13333333333333,0) rectangle (axis cs:1.4,0.0889720252228457);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 -0.266666666666667 0.76813581076316
@@ -55,12 +55,12 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 0.733333333333333 0.209855533766681
-0.733333333333333 0.231864189236841
+0.733333333333333 0.23194516167359
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 0 0.712481620469115
-0 0.795300157039284
+0 0.799723337768198
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -69,13 +69,13 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0.266666666666667 0.911152705380808
-0.266666666666667 0.912662775528097
+0.266666666666667 0.910237404337877
+0.266666666666667 0.911886064430012
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-1.26666666666667 0.0872718947526588
-1.26666666666667 0.0888477444706502
+1.26666666666667 0.0881276687803333
+1.26666666666667 0.0898437519515808
 };
 \end{axis}
 

@@ -53,7 +53,7 @@ ytick style={color=white}
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 -0.266666666666667 0.713065022055498
--0.266666666666667 0.721070347272824
+-0.266666666666667 0.720191952684228
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
@@ -67,7 +67,7 @@ table {%
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
-0 0.645648789891971
+0 0.647563331449896
 0 0.67012589911651
 };
 \addplot [line width=0.864pt, darkslategray66]

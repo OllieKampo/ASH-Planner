@@ -26,12 +26,12 @@ function make_directories {
     }
 }
 
-if ($process -contains "paper") {
-    Start-Sleep -Seconds 1
-    make_directories -parent paper -children paper
+# if ($process -contains "paper") {
+#     Start-Sleep -Seconds 1
+#     make_directories -parent paper -children paper
     
-    python .\ProcessResults.py .\results\initial\classical\ .\results\initial\offline\sequential_achievement\ .\results\main\improved_initial\preemptive_achievement\optimise\ -out .\results\aggregate\paper\paper\paper -combine all -diff planning_mode -same problem -filter search_mode=minbound achievement_type=seqa online_bounds="(2~ 2)" -allow_none all -breakf planning_mode -breaks problem -plots grades quality time balance -percent_classical True -p False -show False
-}
+#     python .\ProcessResults.py .\results\initial\classical\ .\results\initial\offline\sequential_achievement\ .\results\main\improved_initial\preemptive_achievement\optimise\ -out .\results\aggregate\paper\paper\paper -combine all -diff planning_mode -same problem -filter search_mode=minbound achievement_type=seqa online_bounds="(2~ 2)" -allow_none all -breakf planning_mode -breaks problem -plots grades quality time balance -percent_classical True -p False -show False
+# }
 
 if ($process -contains "modes") {
     Write-Output "Processing: Affect of Planning Modes for Small Problems and Different Action Planning..."
@@ -39,11 +39,11 @@ if ($process -contains "modes") {
     make_directories -parent planning_modes -children all_sequ, all_sequ_bal, all_conc, all_conc_bal, online_combined_bal
 
     # Sequential Action Planning
-    python .\ProcessResults.py .\results\initial\classical\ .\results\initial\offline\sequential_achievement\ .\results\main\improved_initial\preemptive_achievement\optimise\ -out .\results\aggregate\planning_modes\all_sequ\all_sequ -combine all -diff planning_mode -same problem -filter search_mode=minbound achievement_type=seqa -allow_none all -breakf planning_mode -breaks problem -plots grades quality time -percent_classical True -p False -show False
+    python .\ProcessResults.py .\results\initial\classical\ .\results\initial\offline\sequential_achievement\ .\results\main\improved_initial\preemptive_achievement\optimise\ -out .\results\aggregate\planning_modes\all_sequ\all_sequ -combine all -diff planning_mode online_bounds -same problem -filter search_mode=minbound achievement_type=seqa -allow_none all -breakf planning_mode -breaks problem -plots grades quality time -percent_classical True -p False -show False
     python .\ProcessResults.py .\results\initial\offline\sequential_achievement\ .\results\main\improved_initial\preemptive_achievement\optimise\ -out .\results\aggregate\planning_modes\all_sequ_bal\all_sequ_bal -combine all -diff planning_mode -same problem -filter search_mode=yield achievement_type=seqa -allow_none all -breakf planning_mode -breaks problem -plots balance -p False -show False
 
     # Concurrent Action Planning
-    python .\ProcessResults.py .\results\main\improved_initial\action_concurrency\classical\ .\results\main\improved_initial\action_concurrency\offline\ .\results\main\improved_initial\action_concurrency\online\ -out .\results\aggregate\planning_modes\all_conc\all_conc -combine all -diff planning_mode -same problem -filter search_mode=minbound achievement_type=seqa -allow_none all -breakf planning_mode -breaks problem -plots grades quality time -actions True -percent_classical True -p False -show False
+    python .\ProcessResults.py .\results\main\improved_initial\action_concurrency\classical\ .\results\main\improved_initial\action_concurrency\offline\ .\results\main\improved_initial\action_concurrency\online\ -out .\results\aggregate\planning_modes\all_conc\all_conc -combine all -diff planning_mode online_bounds -same problem -filter search_mode=minbound achievement_type=seqa -allow_none all -breakf planning_mode -breaks problem -plots grades quality time -actions True -percent_classical True -p False -show False
     python .\ProcessResults.py .\results\main\improved_initial\action_concurrency\offline\ .\results\main\improved_initial\action_concurrency\online\ -out .\results\aggregate\planning_modes\all_conc_bal\all_conc_bal -combine all -diff planning_mode -same problem -filter search_mode=yield achievement_type=seqa -allow_none all -breakf planning_mode -breaks problem -plots balance -actions True -p False -show False
 
     python .\ProcessResults.py .\results\main\improved_initial\preemptive_achievement\optimise\ .\results\main\improved_initial\action_concurrency\online\ -out .\results\aggregate\planning_modes\online_combined_bal\online_combined_bal -combine all -diff action_planning -same problem -filter search_mode=minbound achievement_type=seqa planning_mode=online -allow_none all -breakf action_planning -breaks problem -plots balance -actions True -p False -show False

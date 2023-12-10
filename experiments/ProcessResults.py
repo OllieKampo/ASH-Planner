@@ -600,7 +600,10 @@ summary_globals_1N_stacked = quantiles_globals.query("statistic == 0.5")[summary
     .unstack(cli_args.break_second).swaplevel(0, 1, axis=1).sort_index(axis=1, level=0).reindex(summary_statistics_globals, axis=1, level=1)
 
 ## Construct dataframes that group the fully combined data based on the break headers
-fully_combined_data_sets_grouped = fully_combined_data_sets["Cat Plans"].groupby([cli_args.break_first, cli_args.break_second, "RU"])
+if "online_bounds" in configuration_headers and cli_args.break_first != "online_bounds" and cli_args.break_second != "online_bounds":
+    fully_combined_data_sets_grouped = fully_combined_data_sets["Cat Plans"].groupby([cli_args.break_first, cli_args.break_second, "online_bounds", "RU"])
+else:
+    fully_combined_data_sets_grouped = fully_combined_data_sets["Cat Plans"].groupby([cli_args.break_first, cli_args.break_second, "RU"])
 
 fully_combined_data_sets_cat_plans = fully_combined_data_sets["Cat Plans"]
 if "planning_mode" in configuration_headers:

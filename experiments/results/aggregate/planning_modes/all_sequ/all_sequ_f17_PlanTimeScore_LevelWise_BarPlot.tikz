@@ -52,7 +52,7 @@ ytick style={color=white}
 \draw[draw=white,fill=seagreen5814558,line width=0.32pt] (axis cs:2.13333333333333,0) rectangle (axis cs:2.4,1);
 \addplot [line width=0.864pt, darkslategray66]
 table {%
--0.266666666666667 0.523414620099242
+-0.266666666666667 0.520439944096781
 -0.266666666666667 0.538701869779027
 };
 \addplot [line width=0.864pt, darkslategray66]
@@ -68,7 +68,7 @@ table {%
 \addplot [line width=0.864pt, darkslategray66]
 table {%
 0 0.635558757200596
-0 0.674349060549401
+0 0.670871550135888
 };
 \addplot [line width=0.864pt, darkslategray66]
 table {%
