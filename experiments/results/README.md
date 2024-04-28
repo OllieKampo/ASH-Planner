@@ -7,7 +7,7 @@ This directory contains the results from all experimental trials.
     - png files contain summary graphs displaying basic performance data only.
 - Sub-directory `aggregate` contains the processed aggregrate results, including all tables and graphs presented in the thesis.
     - Sub-directories named `_final_` are the final graphs and tables that were presented in the thesis itself,
-    - The cli command for generating each aggregate result set is given in `aggregate\ProcessResults.ps1`.
+    - The cli command for generating each aggregate result set is given in `experiments\ProcessResults.ps1`.
 
 __IMPORTANT:__ Due to a bug in the experiment system;
 - In the globals for the initial and improved initial experiments, the average wait time per action is erroneously small. The time scores and grades are still correct, as the average wait time per action is not used for calculating those statistics.
@@ -27,14 +27,14 @@ For columns headers for aggregate results, see the `aggregate` sub-directory.
 | Header | Name | Description | Unit |
 |:-:|:-:|:-:|:-:|
 | RU | Run number | Ordinal number of the experimental run | Integer |
-| BL_LE |  |  |  |
-| BL_AC |  |  |  |
-| EX_T | Execution latency time | Yield time of the initial partial-plan |  |
-| HA_T | Hierarchical absolution time | The time to generate an absolute hierarchical plan, for monolevel classical problems this is the ground-level monolevel planning time |  |  |
-| AW_T |  |  |  |
-| AW_T_PA |  |  |  |
-| AME_T |  | Note that for classical and offline planning modes, this cannot be calculated as there is only ever one plan generated per level. |  |
-| AME_T_PA |  |  |  |
+| BL_LE | Bottom-level plan length |  | Integer |
+| BL_AC | Bottom-level number of planned actions |  | Integer |
+| EX_T | Execution latency time | Yield time of the initial partial-plan | Float |
+| HA_T | Hierarchical absolution time | The time to generate an absolute hierarchical plan, for monolevel classical problems this is the ground-level monolevel planning time | Float |
+| AW_T | Average wait time per partial plan |  |  |
+| AW_T_PA | Average wait time per action |  |  |
+| AME_T | Averge minimum execution time per partial plan | Note that for classical and offline planning modes, this cannot be calculated as there is only ever one plan generated per level. |  |
+| AME_T_PA | Averge minimum execution time per action |  |  |
 | QL_SCORE |  |  |  |
 | EX_SCORE |  |  |  |
 | HA_SCORE |  |  |  |
